@@ -1,0 +1,4 @@
+.git
+deprecated    # 어느 계층에서든 deprecated는 무시
+README.*
+stow.sh
