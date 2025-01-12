@@ -27,8 +27,5 @@ if [ $answer != 'y' ]; then
     exit 1
 fi
 
-read -p "bashrcc를 reload하시겠습니까? (y/n): " answer
-if [ $answer == 'y' ]; then source $HOME/.bashrc; fi
-
 read -p "dunst를 reload하시겠습니까? (y/n): " answer
 if [ $answer == 'y' ]; then dunstctl reload; fi
