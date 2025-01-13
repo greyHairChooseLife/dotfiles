@@ -1,0 +1,9 @@
+! DPI 설정 (글꼴 크기와 스케일링에 영향)
+Xft.dpi:       96
+
+! 폰트 렌더링 옵션
+Xft.antialias: true
+Xft.hinting:   true
+Xft.hintstyle: hintslight
+Xft.rgba:      rgb
+Xft.lcdfilter: lcddefault

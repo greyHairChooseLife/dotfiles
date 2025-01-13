@@ -1,0 +1,61 @@
+[user]
+	email = greyhairchooselife@gmail.com
+	name = sangyeon kim
+
+[core]
+	editor = nvim
+  pager = delta
+
+[delta]
+  navigate = true  # use n and N to move between diff sections
+  light = false
+  side-by-side = true
+  line-numbers = true
+
+#[color "diff"]
+#    meta = yellow bold
+#    frag = magenta bold
+#	old = red
+#    new = blue
+#	slot = red
+#	plain = red
+
+[color "diff"]
+	commit = blue bold
+	frag = magenta bold italic
+  meta = black red
+  old = red
+	new = green
+#    new = cyan
+#	context = white # context (ie: unchanged lines) text
+
+[color "branch"]
+	current = green
+
+[color "status"]
+  header = blue
+	updated = green
+
+[init]
+	defaultBranch = main
+
+[help]
+	autocorrect = prompt
+
+[push]
+  default = upstream
+
+[alias]
+  list-changed = ! git status -s | awk '/^.M/ {print $2}'
+  list-untracked = ! git status -s | awk '/^\\?\\?/ {print $2}'
+  list-unmerged = ! git status -s | awk '/^.U/ {print $2}'
+  list-staged = ! git status -s | awk '/^[AM]/ {print $2}'
+  list-added = ! git status -s | awk '/^[AM]/ {print $2}'
+
+[grep]
+    lineNumber = true
+[color "grep"]
+    lineNumber = yellow
+
+[commit]
+    ; template = /home/etr/.gitmessage

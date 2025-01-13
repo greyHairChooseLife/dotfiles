@@ -14,6 +14,11 @@ if [ $answer == 'c' ]; then
     exit 1
 fi
 
+if [ $answer != 'u' ]; then
+    echo "잘못된 입력입니다."
+    bash $0
+fi
+
 # --dotfiles는 이름이 'dot-'으로 시작하는 것을 '.'으로 번역해준다. ed) `dot-config -> .config`
 stow --target $HOME --dotfiles -R .
 
@@ -29,3 +34,9 @@ fi
 
 read -p "dunst를 reload하시겠습니까? (y/n): " answer
 if [ $answer == 'y' ]; then dunstctl reload; fi
+
+read -p ".Xresources를 reload하시겠습니까? (y/n): " answer
+if [ $answer == 'y' ]; then xrdb -merge ~/.Xresources; fi
+
+read -p ".xprofile을 reload하시겠습니까? (y/n): " answer
+if [ $answer == 'y' ]; then source ~/.xprofile; fi

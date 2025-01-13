@@ -1,0 +1,53 @@
+dark-mode: true
+haiku: true
+auto-commits: false #default true
+
+#################
+# Cache Settings:
+
+# Enable caching of prompts (default: False)
+cache-prompts: true
+
+# Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)
+cache-keepalive-pings: 2
+
+###############
+# Git Settings:
+
+# Attribute aider code changes in the git author name (default: True)
+attribute-author: false
+
+# Attribute aider commits in the git committer name (default: True)
+attribute-committer: false
+
+# Specify a custom prompt for generating commit messages
+commit-prompt: |
+  You are an expert software engineer that generates concise,
+  one-line Git commit messages based on the provided diffs.
+  Review the provided context and diffs which are about to be committed to a git repo.
+  Review the diffs carefully.
+  Generate a one-line commit message for those changes.
+  The commit message should be structured as follows: <type>: <description>
+  Use these for <type>: fix, feat, build, chore, ci, docs, style, refactor, perf, test, etc
+
+  Ensure the commit message:
+  - Starts with the appropriate prefix.
+  - Is in the imperative mood (e.g., "Add feature" not "Added feature" or "Adding feature").
+  - Does not exceed 72 characters.
+
+  Additionally:
+  - Reply with the one-line commit message in English.
+  - Provide a Korean version of the message with:
+    - A short (one-line) explanation.
+    - A detailed explanation (multi-line) for further context.
+    - Avoids honorifics or polite speech (e.g., omit "-습니다" or "-세요" endings).
+    - Uses concise and direct language suitable for technical documentation.
+    - Separate these two parts with line breaks.
+
+  Example of your response:
+  ```
+  etc: Correct typo in README
+
+  README의 오타 수정
+  README 파일에 오타가 발견되어 이를 수정하였습니다. 이 변경은 가독성과 정확성을 향상합니다.
+  ```
