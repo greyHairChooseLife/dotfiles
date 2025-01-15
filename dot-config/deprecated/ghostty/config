@@ -1,0 +1,19 @@
+# theme = tokyonight-storm
+theme = iceberg-dark
+font-family = "D2Coding"
+font-family-bold = "D2CodingLigature Nerd Font Propo"
+font-family-italic = "D2CodingLigature Nerd Font Propo"
+font-family-bold-italic = "D2CodingLigature Nerd Font Propo"
+font-synthetic-style = false
+
+adjust-cell-width = 20%
+# font-family = "Noto Sans CJK KR"
+# font-family-bold = "Noto Sans CJK KR"
+# font-family-italic = "Noto Sans CJK KR"
+# font-family-bold-italic = "Noto Sans CJK KR"
+
+# gtk-single-instance = true
+gtk-titlebar = false
+# gtk-tabs-location = left
+
+# linux-cgroup = single-instance

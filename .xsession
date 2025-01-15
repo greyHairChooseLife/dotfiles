@@ -3,6 +3,10 @@
 # 기본 실행 스크립트 작성하면 되겠다.
 
 btkb() {
+  if [ "$HOSTNAME" != "Lenovo-ideapad" ]; then
+    exit 0
+  fi
+
   DEVICE_NAME="AT Translated Set 2 keyboard"  # 내장 키보드 이름
 
   if [ "$1" == "on" ]; then

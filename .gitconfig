@@ -4,37 +4,45 @@
 
 [core]
 	editor = nvim
-  pager = delta
+  pager = delta --diff-so-fancy --file-style=omit --hunk-header-style="#FFFFFF"
 
 [delta]
-  navigate = true  # use n and N to move between diff sections
+  navigate = true   # use n and N to move between diff sections
   light = false
+  dark = true
   side-by-side = true
   line-numbers = true
+  commit-style                  = reverse blue            # 커밋 스타일
+  file-style                    = black red               # 파일명 스타일
+  hunk-header-style             = bold italic purple      # hunk 헤더 스타일
+  minus-style                   = normal "#1f0001"        # 빈 삭제 라인 표시 스타일
+  minus-emph-style              = bold red 52             # 강조된 삭제 라인 스타일
+  minus-empty-line-marker-style = normal "#3f0001"        # 빈 삭제 라인 표시 스타일
+  plus-style                    = normal "#102800"               # 강조된 추가 라인 스타일
+  plus-emph-style               = "#3ff800" 22           # 강조된 추가 라인 스타일
+  plus-empty-line-marker-style  = normal "#002800"        # 빈 추가 라인 표시 스타일
+  true-color                    = always                  # 24비트 색상 사용
 
-#[color "diff"]
-#    meta = yellow bold
-#    frag = magenta bold
-#	old = red
-#    new = blue
-#	slot = red
-#	plain = red
 
 [color "diff"]
 	commit = blue bold
 	frag = magenta bold italic
   meta = black red
   old = red
-	new = green
-#    new = cyan
-#	context = white # context (ie: unchanged lines) text
+	new = cyan
 
 [color "branch"]
 	current = green
 
 [color "status"]
-  header = blue
-	updated = green
+  branch = black brightblue
+  header = white
+  added = cyan
+  changed = red bold
+	untracked = magenta
+
+[color "grep"]
+    lineNumber = yellow
 
 [init]
 	defaultBranch = main
@@ -45,6 +53,9 @@
 [push]
   default = upstream
 
+[web]
+	browser = brave
+
 [alias]
   list-changed = ! git status -s | awk '/^.M/ {print $2}'
   list-untracked = ! git status -s | awk '/^\\?\\?/ {print $2}'
@@ -54,8 +65,6 @@
 
 [grep]
     lineNumber = true
-[color "grep"]
-    lineNumber = yellow
 
 [commit]
     ; template = /home/etr/.gitmessage

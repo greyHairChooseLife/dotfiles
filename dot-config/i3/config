@@ -338,7 +338,8 @@ bar {
 
 	i3bar_command i3bar
 	# status_command i3blocks
-	status_command i3status -c $HOME/.config/i3/i3status.conf
+	# status_command i3status -c $HOME/.config/i3/i3status.conf
+	status_command i3status
 	# status_command i3status-rs ~/.config/i3status-rust/config.toml
 	position bottom
   # workspace name에서 숫자를 지운다. 이렇게 해야만 순서대로 정렬 됨.

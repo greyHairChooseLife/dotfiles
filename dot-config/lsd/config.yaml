@@ -1,0 +1,37 @@
+color:
+  scale: true
+  when: always
+  symlink: target
+  date: date
+
+  # Define the default styles
+  # Each style can be a string with the form:
+  # "bold", "italic", "underline", "slowblink", "rapidblink",
+  # "reverse", "conceal", "crossed", "doubleunderline", "overline"
+  style:
+    permissions: "bold"
+    user: "bold"
+    group: "bold"
+    size: "bold"
+    datetime: "bold"
+
+  # Set colors for filetypes
+  filetypes:
+    directory: "97" # This is an example color code for directories
+    permission_777: "guifg=green guibg=red" # Custom color for 777 permissions
+
+  # Define permission bits styles
+  permission:
+    owner_read: "bold"
+    owner_write: "bold"
+    owner_exec: "bold"
+    group_read: "bold"
+    group_write: "bold"
+    group_exec: "bold"
+    other_read: "bold"
+    other_write: "bold"
+    other_exec: "bold"
+    sticky: "bold"
+    sticky_other_write: "bold"
+    setuid: "bold"
+    setgid: "bold"

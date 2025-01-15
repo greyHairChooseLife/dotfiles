@@ -96,12 +96,16 @@ fi
 
 unset use_color safe_term match_lhs sh
 
-alias youtube-mp3="youtube-dl --extract-audio --audio-format mp3"		# usage : youtube-mp3 url
-alias make-mp3="ffmpeg -i"												# usage : make-mp3 original-file.mp4 new-name.mp3
+# export PATH="/opt/flutter/bin:$PATH"
+# export JAVA_HOME='/usr/lib/jvm/java-8-openjdk/jre'
+# export PATH=$JAVA_HOME/bin:$PATH
+# export ANDROID_SDK_ROOT='/opt/android-sdk'
+# export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools/
+# export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin/
+# export PATH=$PATH:$ANDROID_ROOT/emulator
+# export PATH=$PATH:$ANDROID_SDK_ROOT/tools/
 
 xhost +local:root > /dev/null 2>&1
-
-complete -cf sudo
 
 # Bash won't get SIGWINCH if another process is in the foreground.
 # Enable checkwinsize so that bash will check the terminal size when
@@ -116,33 +120,19 @@ shopt -s expand_aliases
 # Enable history appending instead of overwriting.  #139609
 shopt -s histappend
 # show history datetime
-HISTTIMEFORMAT="%F %T "
+HISTTIMEFORMAT='%F %T '
 HISTCONTROL=ignoredups
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export EDITOR=/usr/bin/nvim
+export editor=/usr/bin/nvim
+export SUDO_EDITOR=/usr/bin/nvim
+export SYSTEMD_EDITOR=/usr/bin/nvim
 
-#custom colorizing
-#PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] '
-
-# webm >> gif 만들기
-function webm2gif() {
-    ffmpeg -y -i "$1" -vf palettegen _tmp_palette.png
-    ffmpeg -y -i "$1" -i _tmp_palette.png -filter_complex paletteuse -r 10 -loop 0  "${1%.webm}.gif"
-    rm -f _tmp_palette.png
-}
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-
-alias google-chrome="google-chrome-stable"
-
-for FILE in ~/.config/my-bashrc/src/*; do
-  source $FILE
+for file in ~/.config/my-bashrc/src/*.sh; do
+  source $file
 done
-. "/home/sy/.deno/env"
 
 # 터미널 열 때 항상 영어(keyboard layout)로 시작
-xdotool key Escape Escape
-clear
+# => 꼭 필요한가?
+# xdotool key Escape Escape
+# clear

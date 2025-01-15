@@ -2,6 +2,7 @@
 
 [general]
   import = [ "~/.config/alacritty/themes/themes/enfocado_dark.toml" ]
+  live_config_reload = true
 
 [env]
   TERM = "xterm-256color"
@@ -9,10 +10,13 @@
 [window]
   # padding.x = 1
   # padding.y = 5
-  # decorations = "Buttonless"
+  decorations = "Buttonless"
 
-  # opacity = 0.95
+  opacity = 0.95
   # blur = true
+  dynamic_padding = true
+  # startup_mode = "Maximized"
+  dynamic_title = true
 
 [font]
   # normal.family = "D2Coding"
@@ -29,10 +33,20 @@
     { key = "Space", mods = "Control", action = "ReceiveChar" }
   ]
 
+[cursor]
+  style = { shape = "Block", blinking = "Off" }
+  unfocused_hollow = true
+
 [colors]
   vi_mode_cursor = { background = "#FFA500" }
   search.matches = { background = "#FFFF00" }
   search.focused_match = { background = "#0000FF" }
+  # Colors which should be used to draw the terminal cursor. If these are unset,
+  # the cursor color will be the inverse of the cell color.
+  cursor = { text = "#000000", cursor = "#32CD32" }
+
+[terminal.shell]
+  program = "/bin/bash"
 
 [hints]
   alphabet = "jfkdls;ahgurieowpq"
@@ -46,7 +60,7 @@
   post_processing = true
   persist = false
 
-  mouse.enabled = true
+  mouse.enabled = false
 
   binding = { key = "u", mods = "Alt" }
 

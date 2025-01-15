@@ -4,5 +4,8 @@
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-. "/home/sy/.deno/env"
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[ -f /home/sy/.dart-cli-completion/bash-config.bash ] && . /home/sy/.dart-cli-completion/bash-config.bash || true
+## [/Completion]
+

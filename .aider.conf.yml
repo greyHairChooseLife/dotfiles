@@ -1,6 +1,8 @@
 dark-mode: true
 haiku: true
 auto-commits: false #default true
+vim: true
+read: [README.md]
 
 #################
 # Cache Settings:
@@ -21,33 +23,65 @@ attribute-author: false
 attribute-committer: false
 
 # Specify a custom prompt for generating commit messages
+# commit-prompt: |
+#   You are an expert software engineer that generates concise,
+#   one-line Git commit messages based on the provided diffs.
+#   Review the provided context and diffs which are about to be committed to a git repo.
+#   Review the diffs carefully.
+#   Generate a one-line commit message for those changes.
+#   The commit message should be structured as follows: <type>: <description>
+#   Use these for <type>: fix, feat, build, chore, ci, docs, style, refactor, perf, test, etc
+#
+#   Ensure the commit message:
+#   - Starts with the appropriate prefix.
+#   - Is in the imperative mood (e.g., "Add feature" not "Added feature" or "Adding feature").
+#   - Does not exceed 72 characters.
+#
+#   Additionally:
+#   - Reply with the one-line commit message in English.
+#   - Provide a Korean version of the message with:
+#     - A short (one-line) explanation.
+#     - A detailed explanation (multi-line) for further context.
+#     - Avoids honorifics or polite speech (e.g., omit "-습니다" or "-세요" endings).
+#     - Uses concise and direct language suitable for technical documentation.
+#     - Separate these two parts with line breaks.
+#     - Keep as short as possible while providing necessary context.
+#
+#   Example of your response:
+#   refactor: Add custom hook to optimize form state management
+#
+#   폼 상태 관리를 위한 커스텀 훅 추가
+#
+#   - 회원가입 폼의 상태 관리 로직을 useFormHandler 커스텀 훅으로 분리.
+#   - 불필요한 리렌더링 방지를 위해 useMemo와 debounce를 적용.
+#
 commit-prompt: |
-  You are an expert software engineer that generates concise,
-  one-line Git commit messages based on the provided diffs.
-  Review the provided context and diffs which are about to be committed to a git repo.
-  Review the diffs carefully.
-  Generate a one-line commit message for those changes.
-  The commit message should be structured as follows: <type>: <description>
-  Use these for <type>: fix, feat, build, chore, ci, docs, style, refactor, perf, test, etc
+  You are an expert software engineer tasked with generating concise, one-line Git commit messages based on provided diffs. Review the diffs carefully and create a commit message adhering to the following structure:
+
+  <type>[optional scope]: <description>
+
+  Where:
+  - **type**: One of the following: feat, fix, build, chore, ci, docs, style, refactor, perf, test, etc.
+  - **scope** (optional): A noun describing the section of the codebase affected.
+  - **description**: A brief summary of the change in the imperative mood (e.g., "Add feature").
 
   Ensure the commit message:
-  - Starts with the appropriate prefix.
-  - Is in the imperative mood (e.g., "Add feature" not "Added feature" or "Adding feature").
+  - Starts with the appropriate type.
+  - Uses the imperative mood.
   - Does not exceed 72 characters.
 
   Additionally:
-  - Reply with the one-line commit message in English.
-  - Provide a Korean version of the message with:
-    - A short (one-line) explanation.
-    - A detailed explanation (multi-line) for further context.
-    - Avoids honorifics or polite speech (e.g., omit "-습니다" or "-세요" endings).
-    - Uses concise and direct language suitable for technical documentation.
-    - Separate these two parts with line breaks.
+  - Provide the commit message in English.
+  - Include a Korean translation with:
+    - A one-line summary.
+    - A concise, multi-line detailed explanation without honorifics or polite speech, suitable for technical documentation.
+    - Separate the summary and detailed explanation with a line break.
 
-  Example of your response:
-  ```
-  etc: Correct typo in README
+  Example response:
+  refactor: Add custom hook to optimize form state management
 
-  README의 오타 수정
-  README 파일에 오타가 발견되어 이를 수정하였습니다. 이 변경은 가독성과 정확성을 향상합니다.
-  ```
+  폼 상태 관리를 위한 커스텀 훅 추가
+
+  - 회원가입 폼의 상태 관리 로직을 useFormHandler 커스텀 훅으로 분리.
+  - 불필요한 리렌더링 방지를 위해 useMemo와 디바운스를 적용.
+
