@@ -128,7 +128,11 @@ export editor=/usr/bin/nvim
 export SUDO_EDITOR=/usr/bin/nvim
 export SYSTEMD_EDITOR=/usr/bin/nvim
 
-for file in ~/.config/my-bashrc/src/*.sh; do
+for file in ~/.config/bash.sub/*.sh; do
+  source $file
+done
+
+for file in ~/.local/state/bash.sub/*.sh; do
   source $file
 done
 
