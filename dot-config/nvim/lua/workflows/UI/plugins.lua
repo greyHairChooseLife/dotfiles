@@ -445,10 +445,10 @@ return {
 					table.insert(result, "  " .. line)
 				end
 
-				table.insert(result, " origin/HEAD..HEAD")
+				table.insert(result, " origin/main..HEAD")
 				table.insert(result, "")
 
-				local workload_output = vim.fn.system("git log --oneline origin/HEAD..HEAD")
+				local workload_output = vim.fn.system("git log --oneline origin/main..HEAD")
 				local workload_lines = {}
 				for line in workload_output:gmatch("([^\n]*)\n?") do
 					table.insert(workload_lines, line)
@@ -493,7 +493,7 @@ return {
 				dashboard.button("2", "job", ":cd ~/Documents/job-wiki | :2VimwikiIndex<CR>"),
 				dashboard.button(".", "", ""),
 				dashboard.button("q", "                   ---------  configs   ", ":q<CR>"),
-				dashboard.button("up", "󰂖 plugin update", ":PackerSync<CR>"),
+				dashboard.button("lz", "󰂖 lazy plugins", ":Lazy<CR>"),
 				dashboard.button("i3", " i3", ":e ~/.config/i3/config<CR>"),
 				dashboard.button("te", " term", ":e ~/.config/alacritty/alacritty.toml<CR>"),
 				dashboard.button("vi", " vi", ":e ~/.config/nvim<CR>"),
