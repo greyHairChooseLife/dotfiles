@@ -1,0 +1,81 @@
+-- COMMIT_EDITMSG 버퍼를 우측에 열리도록 설정
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "gitcommit",
+	callback = function()
+		-- GUI
+		vim.api.nvim_set_hl(0, "FugitiveBufferHighlight", { bg = "#242024" })
+		vim.api.nvim_set_hl(0, "FugitiveBufferEOB", { fg = "#242024" })
+		vim.cmd(
+			"setlocal winhighlight=Normal:FugitiveBufferHighlight,SignColumn:FugitiveBufferHighlight,EndOfBuffer:FugitiveBufferEOB"
+		)
+
+		vim.cmd("wincmd p")
+		local save_view = vim.fn.winsaveview()
+		vim.cmd("WinShift up")
+		vim.cmd("wincmd p")
+		vim.cmd("WinShift right")
+		vim.cmd("wincmd p")
+		vim.fn.winrestview(save_view)
+		vim.cmd("wincmd p")
+		vim.cmd("normal gg")
+
+		-- KEYMAP
+		vim.keymap.set("n", "gq", function()
+			vim.api.nvim_buf_set_lines(0, 0, -1, false, { "" }) -- 현재 버퍼의 내용을 빈 문자열로 덮어씌워 커밋 메시지가 저장되지 않도록 합니다.
+			vim.cmd("wq")
+		end, { buffer = true })
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "fugitive",
+	callback = function()
+		-- GUI
+		vim.api.nvim_set_hl(0, "FugitiveBufferHighlight", { bg = "#242024" })
+		vim.api.nvim_set_hl(0, "FugitiveBufferEOB", { fg = "#242024" })
+		vim.cmd(
+			"setlocal winhighlight=Normal:FugitiveBufferHighlight,SignColumn:FugitiveBufferHighlight,EndOfBuffer:FugitiveBufferEOB"
+		)
+
+		-- Keymap
+		local opts = { buffer = true }
+
+		vim.keymap.set("n", "P", ":G push", opts)
+		vim.keymap.set("n", "F", "<Cmd>G fetch<CR>", opts)
+		vim.keymap.set("n", "gq", function()
+			vim.cmd("q")
+			if require("utils").tree:is_visible() then
+				ReloadLayout()
+			end
+			-- DEPRECATED:: 2024-12-28
+			-- if vim.fn.winnr("$") == 1 then
+			-- 	vim.cmd("q")
+			-- elseif vim.fn.winnr("$") == 2 and require("nvim-tree.api").tree.is_visible() then
+			-- 	vim.cmd("q")
+			-- else
+			-- 	vim.cmd("bd!")
+			-- end
+		end, opts) -- close buffer, saving memory
+		vim.keymap.set("n", "i", function()
+			vim.cmd("normal =")
+		end, opts) -- do nothing
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "DiffviewFiles",
+	callback = function()
+		-- gui
+		local tabnr = vim.fn.tabpagenr()
+		vim.fn.settabvar(tabnr, "tabname", " File")
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "DiffviewFileHistory",
+	callback = function()
+		-- gui
+		local tabnr = vim.fn.tabpagenr()
+		vim.fn.settabvar(tabnr, "tabname", " Commit")
+	end,
+})
