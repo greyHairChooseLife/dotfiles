@@ -1,11 +1,14 @@
 local map = vim.keymap.set
 local opt = { noremap = true, silent = true }
 
-
 ---------------------------------------------------------------------------------------------------------------------------------- BUFFER
 -- Navigation (next/prev)
-map("n", "<Tab>", function() NavBuffAfterCleaning("next") end)
-map("n", "<S-Tab>", function() NavBuffAfterCleaning("prev") end)
+map("n", "<Tab>", function()
+	NavBuffAfterCleaning("next")
+end)
+map("n", "<S-Tab>", function()
+	NavBuffAfterCleaning("prev")
+end)
 -- Quit
 map("n", "<leader>Q", "<cmd>qa!<CR>")
 map("n", "qq", "<cmd>q<CR>") -- 버퍼를 남겨둘 필요가 있는 경우가 오히려 더 적다. 희안하게 !를 붙이면 hidden이 아니라 active상태다.
@@ -37,7 +40,6 @@ map({ "n", "v" }, "<A-Enter><Space>", function()
 		utils.tree:open()
 	end
 end)
-
 
 ---------------------------------------------------------------------------------------------------------------------------------- WINDOW
 -- New ( horizontal / vertical )
@@ -83,14 +85,13 @@ map("n", ",mt", function() -- move window to tab
 	end
 end)
 
-
 ---------------------------------------------------------------------------------------------------------------------------------- TABS
 -- New / Rename / Swap Position
 map("n", "<A-t>", NewTabWithPrompt)
 map("n", "<A-r>", RenameCurrentTab)
 map("n", "<A-.>", MoveTabRight)
 map("n", "<A-,>", MoveTabLeft)
-										
+
 -- Navigaion
 map("n", "<A-p>", "<cmd>tabnext<CR>")
 map("n", "<A-o>", "gT")
@@ -105,12 +106,6 @@ map("n", "<A-8>", "8gt")
 map("n", "<A-9>", "9gt")
 -- Etc
 map({ "n", "v" }, "<A-Enter>t", TabOnlyAndCloseHiddenBuffers)
-
-
-
-
-
-
 
 -- DEPRECATED::, 2024-12-24 향후 문제 없으면 제거
 -- map('n', 'gq', function()
@@ -129,7 +124,6 @@ map({ "n", "v" }, "<A-Enter>t", TabOnlyAndCloseHiddenBuffers)
 --     end
 --   else vim.cmd('bd!') end
 -- end) -- close buffer, saving memory
-										
 
 -- DEPRECATED:: 2024-12-24 향후 문제 없으면 제거
 -- map('n', 'ge', function()
@@ -139,7 +133,6 @@ map({ "n", "v" }, "<A-Enter>t", TabOnlyAndCloseHiddenBuffers)
 --   else vim.cmd('bd') end
 --   vim.notify('Saved last buffers', 3, { render = 'minimal' })
 -- end)
-
 
 -- DEPRECATED:: 2024-12-24 향후 문제 없으면 제거
 -- map('n', 'gtq', function()

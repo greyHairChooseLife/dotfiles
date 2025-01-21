@@ -217,7 +217,6 @@ function FocusFloatingWindow()
 	end
 end
 
-
 function NewTabWithPrompt()
 	-- 입력 프롬프트 표시
 	local tabname = vim.fn.input("Enter tab name: ")

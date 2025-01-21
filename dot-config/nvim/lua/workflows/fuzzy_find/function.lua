@@ -1,4 +1,4 @@
-local utils = require('utils')
+local utils = require("utils")
 
 function TelescopeSearchVisual()
 	local text = utils.get_visual_text()
