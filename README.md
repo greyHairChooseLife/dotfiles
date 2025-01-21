@@ -87,7 +87,7 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 [yazi: TUI File Manager](https://github.com/sxyazi/yazi)
 
 
-## Todo
+## Todo - etc
 
 
 > [!ye] tmux
@@ -96,26 +96,6 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 > - default path를 확인하는 방법, 그냥 new pane 하면 자꾸 특정 path가 열린다.
 
 
-> [!ye] nvim
->
-> - packer to lazy
->   - 아예 새롭게 만들기 시작하자.
->   - 파일구조를 잘 짜는게 중요하다. 단순 QOL 플러그인과 설정이 있는 반면, 특정 workflow에 따른 것도 있을테니 잘 구분해보자.
->   - references
->     - 시작: TJ, 시작 구조
->     - 구조: 한국인 1 + 엔드류 1 + github repo 
->     [-] 완성 레퍼런스 하나만 찾아보기
->     - nvim-cmp랑 blink 비교 한번만 해보자. 만약 blink가 미래라면 주저없이 따라 하자. 단, 내 커스텀은 잘 이식해야한다.
->   
-> - `C-e` cmp 없애는건 되는데 copilot suggestion 날리는 것은 안된다. nvim-cmp mapping에서 fallback으로 마무리하는게 이 기능 아니었던가? 중간 분기점에서 막히나?
-> - `C-s` 마찬가지로 Avante input에서 insert-mode 시 prompt 날려주는 단축키로 작동 안한다.
-> - new plugin: [gitgraph](https://github.com/isakbm/gitgraph.nvim)
-> - render-markdown에서 'link' 항목 개선하자. 플러그인에서 기본 제공하는 링크 구분(github 등) 외에도 가장 기본 기능인 hyper link 기능을 구분하자.
->   내가 앞으로 만드는 문서들은 본문급인 index.md가 있고, 본문에 첨부될 매우 구체적인 노트 조각들도 있다. 이 조각들과 본문을 구분하는건데, 앞의 아이콘을 이용하자.
->   구분자로는 `path`가 "1.Project, 2.Area, 3.... "와 같은 문자로 시작되는지 보거나, 파일명이 index.md인지 아닌지만 봐도 좋을 것 같다.
-> - visual select에서 대문자 S 입력하면 이후 연속해서(sequence) 입력하는 문자에 따라 다양한 기능을 제공한다. 이게 뭔지 알아보자.
-> - render-markdown 관련, 만약 call-out 내에서 입력 중이라면 line change 훅으로 맨 앞에 `>` 기호 자동으로 붙여주기
-> - markdown 파일 내에선 textwidth 옵션 일괄 100자로 맞추기
 
 
 > [!ye] i3-WM
@@ -132,3 +112,122 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 >   end
 >   ```
 
+## Todo - nvim
+
+
+### 관심있는 플러그인
+
+- new plugin: [gitgraph](https://github.com/isakbm/gitgraph.nvim)
+
+- `folke/trouble.nvim`
+  coc.nvim과 함게는 쓰기 어렵고, 내장 lsp 매니저(?)로 전환할 때 활용하자
+
+- http client inside neovim
+
+  - https://github.com/rest-nvim/rest.nvim
+  - https://www.reddit.com/r/neovim/comments/1eh0yr6/restnvim_is_back/
+  - https://github.com/mistweaverco/kulala.nvim
+
+- indent or chunk marker(visualizer)
+
+  - https://github.com/shellRaining/hlchunk.nvim
+
+- chat with copilot
+
+  - https://github.com/CopilotC-Nvim/CopilotChat.nvim?tab=readme-ov-file
+
+- crawling web pages, rendering them to Markdown or JSON, and inserting the content into new buffers. It also supports asynchronous search functionality.
+
+  - https://github.com/twilwa/crawler.nvim
+
+- 선택한 코드라인의 github url을 생성
+
+  - https://www.reddit.com/r/neovim/comments/1gzid9o/browshernvim_create_commit_pinned_githubgitlab/
+  - https://github.com/claydugo/browsher.nvim
+
+- smooth scroll without neovide or kitty + smear cursor
+    - from reddit
+
+- jremmen/vim-ripgrep	
+```
+"jremmen/vim-ripgrep",
+		cmd = "Rg",
+		init = function()
+			vim.keymap.set("n", "<C-h>", ":Rg<space>")
+			vim.keymap.set("n", "<C-*>", "<cmd>Rg<space><CR>")
+			vim.keymap.set("n", "<C-g>", "<cmd> lua require('utils').replace_grep()<CR>")
+		end,
+```
+
+- [scope.nvim](https://github.com/tiagovla/scope.nvim)
+  원래는 tab과 buffer는 별 관련이 없다. 근데 텝마다 별도의 buffer그룹을 가졌으면... 하고 생각할 때가 있다. 이런 아이디어를 구현한 플러그인
+
+
+### config 훔치기 [-]
+
+- 전반적으로
+  https://patrick-f.tistory.com/36
+
+- nvim-cmp
+    https://github.com/gennaro-tedesco/dotfiles/blob/bc9acae08a4104ff5f1adbe8eef3ee58e11e1020/nvim/lua/plugins/cmp.lua#L95
+
+### 개선서항
+
+#### 간단
+
+- render-markdown에서 'link' 항목 개선하자. 플러그인에서 기본 제공하는 링크 구분(github 등) 외에도 가장 기본 기능인 hyper link 기능을 구분하자.
+  내가 앞으로 만드는 문서들은 본문급인 index.md가 있고, 본문에 첨부될 매우 구체적인 노트 조각들도 있다. 이 조각들과 본문을 구분하는건데, 앞의 아이콘을 이용하자.
+  구분자로는 `path`가 "1.Project, 2.Area, 3.... "와 같은 문자로 시작되는지 보거나, 파일명이 index.md인지 아닌지만 봐도 좋을 것 같다.
+- render-markdown 관련, 만약 call-out 내에서 입력 중이라면 line change 훅으로 맨 앞에 `>` 기호 자동으로 붙여주기
+
+- `<leader>cc`로 commitmsg 버퍼를 켜면 최종 버퍼의 포키싱 윈도우 범위가 바뀐다.(살짝 올라감)
+- auto-session 복구시 탭 이름도 복구 되도록
+- keymap: telescope 에서 <C-q>로 선택한 파일을 qf에 추가한다. 근데 이거 곧바로 qflist 버퍼를 띄우기보단 그냥 log만 남겨주는게 좋을듯
+- keymap: cmdwindow에서 normal mode <Esc> -> cmdline으로 이동하되, 현재 input내용 그대로 살려서
+- 문자 없이 빈 칸에서 `'`키 입력시 message 지우기
+
+- `Tab, S-Tab, g-Tab`으로 버퍼 순회할 때 현재 탭의 윈도우에 active인 것은 제외해도 되겠다. 그리고 이것이 시각적으 로표현되도록 하면 좋겠다.
+    [ref](https://www.youtube.com/watch?v=ST_DZ6yIiXY)
+
+- auto-session에서도 telescope로 ui-select
+
+- winbar의 활용
+
+- `/`에서 뭐 찾다가 그냥 `Esc`해보면 마지막에 찾은 문자열을 찾아간다. 매우 귀찮다.
+
+- `C-i`가 이상해졌다. 원래 `C-o`하고 번갈아가면서 전/후로 점프 했는데, `C-i`는 뭔가 이상하게 동작한다.
+  아마도 `B/Tab`을 버퍼 이동으로 수정한 뒤로 문제가 된듯? 언젠가 `C-i == Tab`이란 소리도 들어본듯 하다.
+
+- set winfixwidth, winfixheight라는 옵션이 있다. 현재 윈도우 사이즈를 고정하는 것인데, toggle가능하게 함수로 만들어서 사용하면 유용하겠다.
+  더불어, 모든 toggle은 동일한 형식의 keymap 규칙을 가지도록 점검해보자.
+
+- visual select에서 대문자 S 입력하면 이후 연속해서(sequence) 입력하는 문자에 따라 다양한 기능을 제공한다. 이게 뭔지 알아보자.
+
+#### 복잡
+
+- nvim-tree에서 지금 주황색으로 보여주고 표시하는건 loaded buffer인데, 현재탭의 active window만 보는것도 좋을것같다.    
+  정리해보면 not-loaded(기본 트리)/ loaded/ active(cucrent tab) / left(== inactive in current tab)을 한눈에 볼 파악할 수 있는 tree가 있다면 유용하겠다.(ex: avante.nvim selected file에 active 파일들을 모두 추가)
+
+- aerial.nvim에서,
+
+  - treesitter typescript post parse에서 커스텀으로 'type'도 구분하기, 현재는 variable과 동일한 취급
+  - function, variable, type의 아이콘을 보다 명확하게 변경하기
+
+- (avante 개선) Predefined Propmts [예시자료](https://github.com/yetone/avante.nvim/wiki/Recipe-and-Tricks)
+
+- 현재 tab에서 loaded / inactive / active 버퍼 리스트를 얻을 수 있는 나만의 utils를 만들어두면 좋겠다. 
+  -> scope.nvim
+
+### 버그
+
+- 가끔 색깔이 오락가락 한다. 특히 C-q에 맵핑한 플러그인이 실행될 때 증상이 거의 매번 나타난다. 희안하게도 nvim-tree를 껏다 켜거나, i3로 전체화면 전환해보면 괜찮아진다.
+- nvim-tree 외 단 1개의 버퍼만 있을 때 `:bd`로 닫으면, 버퍼가 종료되지 않고 빈 버퍼가 남아버린다.
+  현재는 이를 위한 대응을 버퍼 관리 기능들에 덕지덕지 붙여놨다. 이거 좀 개선할 필요가 있겠다.
+- 어떤 단위의 첫번째 라인 바로 아래에 코드를 붙여넣으면 refold 되어버린다. [이 사람도 같은 불편을 호소](https://www.reddit.com/r/neovim/comments/1e7tfw2/pasting_line_by_p_makes_refold/)
+- harpoon으로 열린 버퍼는 BufReadPost로 실행하고있는 :loadview가 제대로 안된다. cursor_position등 정보를 harpoon이 별도로 저장하고 사용해서 그런듯.
+
+- `<leader>gg`로 fugitive 진입 후 윈도우 종료하면 커서 위치가 이상해진다. 마지막 윈도우 커서 위치로 가는게 아니라 가장 왼쪽 윈도우로 이동한다.
+
+### Deprecated
+
+My "aha!" moment came when watching Josean Martinez' video "How to set up linting and formatting"
