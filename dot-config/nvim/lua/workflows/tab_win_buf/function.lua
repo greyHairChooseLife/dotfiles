@@ -29,24 +29,16 @@ function NavBuffAfterCleaning(direction)
 end
 
 function ManageBuffer_gq()
-	local win_count = vim.fn.winnr("$")
-	local tab_count = vim.fn.tabpagenr("$")
 	local bufnr = vim.fn.bufnr("%")
-
 	vim.cmd("q!")
-
-	if win_count == 1 and tab_count == 1 then
-	elseif win_count == 1 and tab_count > 1 then
-	elseif win_count == 2 and require("nvim-tree.view").is_visible() then
-	else
-	end
 
 	if
 		not utils.is_buffer_active_somewhere(bufnr)
 		and vim.api.nvim_buf_is_valid(bufnr)
-		and not vim.bo[bufnr].filetype == "help"
-		and not vim.fn.bufname(bufnr) == ""
+		and vim.bo[bufnr].filetype ~= "help"
+		and vim.fn.bufname(bufnr) ~= ""
 	then
+		print("condition passed .." .. bufnr)
 		vim.cmd.bdelete(bufnr)
 	end
 end
