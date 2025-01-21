@@ -220,6 +220,8 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 ### 버그
 
+- gq 명령이 이상하다. nvim-tree에는 제대로 표시되는데, telescope-buffer로 그대로 active 이다.
+
 - 가끔 색깔이 오락가락 한다. 특히 C-q에 맵핑한 플러그인이 실행될 때 증상이 거의 매번 나타난다. 희안하게도 nvim-tree를 껏다 켜거나, i3로 전체화면 전환해보면 괜찮아진다.
 - nvim-tree 외 단 1개의 버퍼만 있을 때 `:bd`로 닫으면, 버퍼가 종료되지 않고 빈 버퍼가 남아버린다.
   현재는 이를 위한 대응을 버퍼 관리 기능들에 덕지덕지 붙여놨다. 이거 좀 개선할 필요가 있겠다.
