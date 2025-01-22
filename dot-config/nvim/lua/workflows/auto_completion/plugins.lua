@@ -32,28 +32,32 @@ return {
 				-- disable a keymap from the preset
 				["<C-e>"] = {
 					function(cmp)
-						cmp_state.is_init = false -- 초기화
-						cmp.cancel()
+						if cmp.is_visible() then
+							cmp_state.is_init = false -- 초기화
+							cmp.cancel()
+							return true
+						end
 					end,
 					"fallback",
 				},
-
 				["<C-k>"] = { "select_prev", "fallback" },
 				["<C-j>"] = { "select_next", "fallback" },
-
 				["<A-k>"] = {
 					function(cmp)
-						cmp.scroll_documentation_up(2)
-						return true
+						if cmp.is_visible() then
+							cmp.scroll_documentation_up(2)
+							return true
+						end
 					end,
 				},
 				["<A-j>"] = {
 					function(cmp)
-						cmp.scroll_documentation_down(2)
-						return true
+						if cmp.is_visible() then
+							cmp.scroll_documentation_down(2)
+							return true
+						end
 					end,
 				},
-
 				-- control whether the next command will be run when using a function
 				["<C-n>"] = {
 					function(cmp)
@@ -86,43 +90,59 @@ return {
 					"fallback",
 				},
 
+				["<Enter>"] = {
+					function(cmp)
+						if cmp.snippet_active() then
+							cmp_state.is_init = false -- 초기화
+							return cmp.accept()
+						elseif cmp.is_visible() then
+							cmp_state.is_init = false -- 초기화
+							return cmp.select_and_accept()
+						end
+					end,
+					"fallback",
+				},
 				["<Tab>"] = {
 					function(cmp)
-						cmp_state.is_init = false -- 초기화
 						if cmp.snippet_active() then
+							cmp_state.is_init = false -- 초기화
 							return cmp.accept()
-						else
+						elseif cmp.is_visible() then
 							return cmp.select_and_accept()
 						end
 					end,
 					"snippet_forward",
 					"fallback",
 				},
+
 				["<S-Tab>"] = { "snippet_backward", "fallback" },
+
 				["<Esc>"] = {
 					function(cmp)
-						cmp_state.is_init = false -- 초기화
-						cmp.cancel()
+						if cmp.is_visible() then
+							cmp_state.is_init = false -- 초기화
+							cmp.cancel()
+							return true
+						end
 					end,
 					"fallback",
 				},
 
 				cmdline = {
 					-- preset = 'enter',
+					["<C-n>"] = { "show", "fallback" },
 					["<C-e>"] = { "cancel", "fallback" },
 					["<C-k>"] = { "select_prev", "fallback" },
 					["<C-j>"] = { "select_next", "fallback" },
 					["<Tab>"] = { "accept", "fallback" },
 					["<Enter>"] = {
-						-- BUG:: menu에서 고르다가 enter로 바로 실행하고싶은데, 그러면 자꾸 버퍼에서 선택한 커맨드가 '입력'된다. 답답~~
-						-- function (cmp)
-						--   cmp.select_and_accept({
-						--     callback = function()
-						--       vim.api.nvim_feedkeys('\n', 'n', true)
-						--     end
-						--   })
-						-- end,
-						"select_and_accept",
+						function(cmp)
+							return cmp.select_and_accept({
+								callback = function()
+									vim.api.nvim_feedkeys("\n", "n", true)
+								end,
+							})
+						end,
 						"fallback",
 					},
 				},
@@ -242,10 +262,11 @@ return {
 										},
 									}
 									if ctx.label_detail then
-										table.insert(
-											highlights,
-											{ #ctx.label, #ctx.label + #ctx.label_detail, group = "BlinkCmpLabelDetail" }
-										)
+										table.insert(highlights, {
+											#ctx.label,
+											#ctx.label + #ctx.label_detail,
+											group = "BlinkCmpLabelDetail",
+										})
 									end
 
 									-- characters matched on the label by the fuzzy matcher
@@ -311,7 +332,7 @@ return {
 				},
 				min_keyword_length = function(ctx)
 					if ctx.mode == "cmdline" then
-						return 2
+						return 1
 					end
 					return 1
 				end,
