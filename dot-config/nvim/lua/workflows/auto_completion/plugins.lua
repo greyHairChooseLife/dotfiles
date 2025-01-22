@@ -122,7 +122,7 @@ return {
 						if cmp.is_visible() then
 							cmp_state.is_init = false -- 초기화
 							cmp.cancel()
-							return true
+							-- return true (이렇게 해서) fallback으로 못넘어가면 insert mode 취소가 바로 안돼서 답답하다.
 						end
 					end,
 					"fallback",
