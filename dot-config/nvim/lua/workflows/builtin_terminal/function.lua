@@ -1,3 +1,5 @@
+local utils = require("utils")
+
 function OpenOrFocusTerm()
 	-- Step 0: 기존에 "Term: "으로 시작하는 이름을 가진 터미널 버퍼가 있다면 아래와 같이 Early Return
 	local CB = {} -- current buffer
@@ -9,9 +11,9 @@ function OpenOrFocusTerm()
 		local input = vim.fn.input("Change name: ")
 		if input ~= "" then
 			vim.api.nvim_buf_set_name(CB.number, "Term: " .. input)
-			PrintTime("Changed to: " .. input, 1.5)
+			utils.print_in_time("Changed to: " .. input, 1.5)
 		else
-			PrintTime("Canceled", 0.5)
+			utils.print_in_time("Canceled", 0.5)
 		end
 		return -- 입력값 없이 입력 또는 ESC를 누른 경우, 함수 종료
 	elseif CB.name:find("Term: ") and CB.info.variables and not CB.info.variables.terminal_job_id then
