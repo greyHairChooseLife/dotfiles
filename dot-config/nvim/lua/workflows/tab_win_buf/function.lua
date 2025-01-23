@@ -38,7 +38,6 @@ function ManageBuffer_gq()
 		and vim.bo[bufnr].filetype ~= "help"
 		and vim.fn.bufname(bufnr) ~= ""
 	then
-		print("condition passed .." .. bufnr)
 		vim.cmd.bdelete(bufnr)
 	end
 end
