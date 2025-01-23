@@ -465,6 +465,7 @@ return {
 				},
 				pickers = {
 					buffers = {
+						-- theme = "ivy",
 						mappings = {
 							n = {
 								["dd"] = "delete_buffer",
