@@ -298,7 +298,13 @@ return {
 				},
 
 				-- Show documentation when selecting a completion item
-				documentation = { auto_show = true, auto_show_delay_ms = 20 },
+				documentation = {
+					auto_show = true,
+					auto_show_delay_ms = 20,
+					window = {
+						border = require("utils").borders.documentation,
+					},
+				},
 
 				-- Display a preview of the selected item on the current line
 				ghost_text = { enabled = true },

@@ -19,7 +19,6 @@ vim.cmd([[
   highlight Folded guibg=#24283b guifg=#4d6652 gui=italic
   highlight StatusLine guibg=#24283b
   highlight StatusLineNC guibg=#24283b
-  highlight FloatBorder guifg=#000000 guibg=NONE
 
 
   " MEMO:: Outline
@@ -241,25 +240,35 @@ vim.cmd([[
   highlight AvantePopupHint guifg=#8b8378 guibg=#24283b gui=italic
   highlight AvanteThirdTitle guibg=#24283b
 
-  " TODO:: Blink.cmp에 맞는 이름으로 변경
   " MEMO:: Pmenu for completion
   highlight Pmenu guibg=#000000 guifg=#c8ccd4
-  highlight PmenuSel guibg=#000090 gui=bold
+  highlight PmenuSel guibg=#000080 gui=bold
   highlight PmenuSbar guibg=#000000 " scrollbar bg
   highlight PmenuThumb guibg=#4d6652
   highlight PmenuThumbSel guibg=#4d6652
   highlight PmenuMatch guifg=#FF4500
   highlight PmenuMatchSel guifg=#FF4500
-  highlight CmpItemAbbrMatchFuzzy guifg=#FF4500 gui=bold
-  highlight CmpItemAbbrMatchFuzzy guifg=#FF4500 gui=bold
 
-  highlight CmpDocBorder guifg=#24283b guibg=#000000
+  highlight BlinkCmpMenu guibg=#000000 guifg=#c8ccd4
+  highlight BlinkCmpLabelMatch guifg=#FF4500 gui=bold
+  highlight BlinkCmpSource guifg=#5f5f5f gui=italic
+
+  highlight BlinkCmpDoc guibg=#000000 guifg=#c8ccd4
+  highlight BlinkCmpDocSeparator guifg=#c8ccd4 guibg=#000000
+  highlight BlinkCmpDocBorder guifg=#5f52ff guibg=#000000
+
+
+  " MEMO:: Borders
+  " highlight FloatBorder guifg=#000000 guibg=#000000
+  highlight NormalFloat guifg=NONE guibg=#000000
+  highlight DiagnosticsBorder guifg=#FF4500 guibg=#000000
 
 
   " MEMO:: Lualine
   highlight CustomSeparator guifg=#98c379 guibg=NONE
 
 
+  " MEMO:: Indent Blank Line
   highlight @ibl.scope.underline.1 guifg=#Ff0000 guibg=#000000
 ]])
 
@@ -277,7 +286,7 @@ vim.cmd([[
 -- #24283b   #333342 이건 nvim-tree의 배경색
 -- #2CB67D   #98C379   #A1C98A
 -- #569CD6   #D16969   #2E2E2E
--- #DCDCAA   #6A9955   #FF4500
+-- #DCDCAA   #6A9955   #FF4500   #7f52ff
 -- #FF8C00   #32CD32   #FEAEAE
 -- #1E5631   #2F8132   #37D060   #98C379   #2CB67D   #A1C98A
 -- #004F4F   #007F7F   #00FFFF   #8FBC8F   #5F9EA0   #A0D9D9

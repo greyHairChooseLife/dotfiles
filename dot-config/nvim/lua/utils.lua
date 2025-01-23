@@ -128,6 +128,39 @@ M.close_FT_buffers = function(FT)
 	end
 end
 
+M.borders = {
+	diagnostics = {
+		{ "-", "DiagnosticsBorder" },
+		{ "-", "DiagnosticsBorder" },
+		{ "-", "DiagnosticsBorder" },
+		" ",
+		{ "-", "DiagnosticsBorder" },
+		{ "-", "DiagnosticsBorder" },
+		{ "-", "DiagnosticsBorder" },
+		" ",
+	},
+	documentation = {
+		{ "-", "BlinkCmpDocBorder" },
+		{ "-", "BlinkCmpDocBorder" },
+		{ "-", "BlinkCmpDocBorder" },
+		" ",
+		{ "-", "BlinkCmpDocBorder" },
+		{ "-", "BlinkCmpDocBorder" },
+		{ "-", "BlinkCmpDocBorder" },
+		" ",
+	},
+	full = {
+		"▄",
+		"▄",
+		"▄",
+		"█",
+		"▀",
+		"▀",
+		"▀",
+		"█",
+	},
+}
+
 M.icons = {
 	diagnostics = {
 		Error = " ",

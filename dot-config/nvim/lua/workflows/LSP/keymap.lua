@@ -67,22 +67,3 @@ map("n", "gO", function()
 end, opt)
 
 map("n", "<leader>d", ToggleVirtualText, opt)
-
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-	-- border = "none",
-	border = {
-		"▄",
-		"▄",
-		"▄",
-		"█",
-		"▀",
-		"▀",
-		"▀",
-		"█",
-	},
-	-- title = "Hover",
-	focusable = true, -- 포커스 비활성화
-	max_width = 150, -- 최대 너비 제한
-	max_height = 20, -- 최대 높이 제한
-})
--- vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })

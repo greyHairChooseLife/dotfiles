@@ -579,7 +579,7 @@ return {
 				-- https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/285
 				-- https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/873bdee
 				-- floating window에서의 기능 여부
-				buflisted = { [false] = { enabled = true } },
+				buflisted = { [false] = { enabled = false } },
 			},
 			-- Mapping from treesitter language to user defined handlers
 			-- See 'Custom Handlers' document for more info
