@@ -206,13 +206,17 @@ vim.api.nvim_create_autocmd("CmdwinEnter", {
 		vim.cmd("resize 20 | normal zb")
 
 		-- KEYMAP
+		local map = vim.keymap.set
 		local opts = { buffer = true }
-		vim.keymap.set("n", "gq", "<Cmd>q<CR>", opts)
-		vim.keymap.set("n", "gw", UpdateCommandWindowHistory, opts)
-		vim.keymap.set("n", "ge", function()
+		map("n", "gq", "<Cmd>q<CR>", opts)
+		map("n", "gw", UpdateCommandWindowHistory, opts)
+		map("n", "ge", function()
 			UpdateCommandWindowHistory()
 			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "n", true)
 		end, opts)
+
+		map("i", "gq", "<Cmd>stopinsert!<CR>", opts)
+		map("i", ";j<Space>", "<Cmd>stopinsert!<CR>", opts)
 	end,
 })
 

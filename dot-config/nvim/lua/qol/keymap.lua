@@ -49,10 +49,13 @@ end)
 
 -- TODO: <esc> 시뮬레이션 방법을 통일(검증 필요)하고, 함수로 만들어 재사용하자.
 -- Easy Escape
-map({ "i", "c", "t" }, ";j<Space>", function()
-	vim.api.nvim_input("<Esc>") -- 실제 <Esc> 입력을 강제 실행
+map({ "i", "c" }, ";j<Space>", function()
+	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
 end, { noremap = true })
-map({ "i", "c", "t" }, ";ㅓ<Space>", function()
+map({ "i", "c" }, "gq", function()
+	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
+end, { noremap = true })
+map({ "i", "c" }, ";ㅓ<Space>", function()
 	vim.api.nvim_input("<Esc>") -- 실제 <Esc> 입력을 강제 실행
 	os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
 end, { noremap = true })
