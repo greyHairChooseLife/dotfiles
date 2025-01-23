@@ -5,7 +5,6 @@ vim.g.mapleader = "\\" -- Set leader key
 local workflows = {
 	"qol",
 	"fuzzy_find",
-	"color",
 	"file_tree",
 	"builtin_terminal",
 	"tab_win_buf",

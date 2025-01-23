@@ -220,7 +220,10 @@ vim.api.nvim_create_autocmd("CmdwinLeave", {
 	callback = function()
 		-- vim.api.nvim_del_augroup_by_name("CmdwinEnter_GUI_KEYMAP")
 
-		vim.o.cmdheight = 1
+		-- DEPRECATED:: 2025-01-24
+		-- Noice.nvim 이후로 주석처리
+		-- vim.o.cmdheight = 1
+
 		vim.o.laststatus = 2
 	end,
 })

@@ -1,5 +1,57 @@
 return {
 	{
+		"folke/tokyonight.nvim",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			require("tokyonight").setup({
+				style = "storm", -- The theme comes in three styles, `storm`, a darker variant `night` and `day`
+				light_style = "day", -- The theme is used when the background is set to light
+				transparent = false, -- Enable this to disable setting the background color
+				terminal_colors = true, -- Configure the colors used when opening a `:terminal` in Neovim
+				styles = {
+					-- Style to be applied to different syntax groups
+					-- Value is any valid attr-list value for `:help nvim_set_hl`
+					comments = { italic = true },
+					keywords = { italic = true },
+					functions = {},
+					variables = {},
+					-- Background styles. Can be "dark", "transparent" or "normal"
+					sidebars = "dark", -- style for sidebars, see below
+					floats = "dark", -- style for floating windows
+				},
+				day_brightness = 0.3, -- Adjusts the brightness of the colors of the **Day** style. Number between 0 and 1, from dull to vibrant colors
+				dim_inactive = false, -- dims inactive windows
+				lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
+				--- You can override specific color groups to use other groups or a hex color
+				--- function will be called with a ColorScheme table
+				---@param colors ColorScheme
+				on_colors = function(colors) end,
+				--- You can override specific highlights to use other groups or a hex color
+				--- function will be called with a Highlights and ColorScheme table
+				---@param highlights tokyonight.Highlights
+				---@param colors ColorScheme
+				on_highlights = function(highlights, colors) end,
+				cache = true, -- When set to true, the theme will be cached for better performance
+				---@type table<string, boolean|{enabled:boolean}>
+				plugins = {
+					-- enable all plugins when not using lazy.nvim
+					-- set to false to manually enable/disable plugins
+					all = package.loaded.lazy == nil,
+					-- uses your plugin manager to automatically enable needed plugins
+					-- currently only lazy.nvim is supported
+					auto = true,
+					-- add any plugins here that you want to enable
+					-- for all possible plugins, see:
+					--   * https://github.com/folke/tokyonight.nvim/tree/main/lua/tokyonight/groups
+					-- telescope = true,
+				},
+			})
+
+			vim.cmd.colorscheme("tokyonight")
+		end,
+	},
+	{
 		"nvim-lualine/lualine.nvim",
 		lazy = false,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -517,9 +569,6 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		main = "ibl",
 		config = function()
-			vim.api.nvim_set_hl(0, "MyBG", { fg = "#24283b" })
-			vim.api.nvim_set_hl(0, "MyFG", { fg = "#7f52ff" })
-
 			-- https://github.com/lukas-reineke/indent-blankline.nvim?tab=readme-ov-file#scope
 			require("ibl").setup({
 				enabled = true,
@@ -527,18 +576,16 @@ return {
 					char = "▏",
 					smart_indent_cap = true,
 					repeat_linebreak = false,
-					highlight = { "MyBG" },
 				},
 				-- whitespace = { highlight = { "Whitespace", "NonText" } },
 				scope = {
 					enabled = true,
 					-- char = "▍",
 					char = "▏",
-					highlight = { "MyFG", "MyFG" },
 					show_start = true,
 					show_end = true,
 					injected_languages = true,
-					priority = 500,
+					priority = 1000,
 					-- exclude = { language = { "lua" } },
 				},
 				exclude = {
@@ -798,6 +845,61 @@ return {
 				-- see :help dressing_get_config
 				get_config = nil,
 			},
+		},
+	},
+
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		opts = {
+			lsp = {
+				-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+				override = {
+					["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+					["vim.lsp.util.stylize_markdown"] = true,
+				},
+			},
+			-- you can enable a preset for easier configuration
+			presets = {
+				bottom_search = true, -- use a classic bottom cmdline for search
+				command_palette = true, -- position the cmdline and popupmenu together
+				long_message_to_split = true, -- long messages will be sent to a split
+				inc_rename = false, -- enables an input dialog for inc-rename.nvim
+				lsp_doc_border = false, -- add a border to hover docs and signature help
+			},
+			messages = {
+				view = "mini",
+			},
+
+			views = {
+				cmdline_popup = {
+					position = {
+						row = "50%",
+						col = "50%",
+					},
+					size = {
+						width = 60,
+						height = "auto",
+					},
+					border = {
+						-- style = require("utils").borders.full,
+						style = "rounded",
+						padding = { 0, 0 },
+					},
+					filter_options = {},
+					win_options = {
+						-- winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
+					},
+				},
+			},
+		},
+		dependencies = {
+			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+			"MunifTanjim/nui.nvim",
+			-- OPTIONAL:
+			--   `nvim-notify` is only needed, if you want to use the notification view.
+			--   If not available, we use `mini` as the fallback
+			"rcarriga/nvim-notify",
 		},
 	},
 }

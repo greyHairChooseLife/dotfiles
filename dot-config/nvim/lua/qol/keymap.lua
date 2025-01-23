@@ -10,7 +10,6 @@ map("i", "<Space>", function()
 	end, 20)
 end, opt)
 
-
 map("n", "~", "<cmd>wincmd p<CR>") -- focus previous window & cursor position
 map("n", ",r", ReloadLayout) -- 창 크기 동일하게
 map("v", "p", '"_dP') -- paste without yanking in visual mode
@@ -42,10 +41,10 @@ map({ "n", "v", "i", "c" }, "<leader>t", "<cmd>TTimerlyToggle<cr>")
 map({ "n", "v" }, "<C-q>", "<Cmd>Focus<CR>")
 map("v", "<Space>", ":FocusHere<CR>", opt)
 map("n", ",<Space>", "<cmd>FocusClear<CR>", opt)
-map("n", "<Space>", BlinkCursorLine)
+map("n", "<Space><Space>", BlinkCursorLine)
 
-map("i", "cc<Enter>", function ()
-  vim.api.nvim_input("<Esc>cc")
+map("i", "cc<Enter>", function()
+	vim.api.nvim_input("<Esc>cc")
 end)
 
 -- TODO: <esc> 시뮬레이션 방법을 통일(검증 필요)하고, 함수로 만들어 재사용하자.
@@ -74,7 +73,6 @@ map("n", "ㅣ", function()
 	vim.api.nvim_input("l")
 end, opt)
 
-
 map({ "n", "v" }, "<C-e>", "2<C-e>")
 map({ "n", "v" }, "<C-y>", "2<C-y>")
 map("n", ",.<ESC>", "<Nop>") -- do nothing
@@ -100,7 +98,6 @@ map("n", "zR", "zR<cmd>mkview<CR>")
 map("n", "zf", "zf<cmd>mkview<CR>")
 map("n", "zd", "zd<cmd>mkview<CR>")
 
-
 -- TODO: tmux랑 겹친다. 새로운 keymap 또는 접근법을 찾아야한다.
 -- FOLD MOVE
 -- map({ "n", "v" }, "<C-j>", "zjw")
@@ -110,12 +107,10 @@ map("n", "zd", "zd<cmd>mkview<CR>")
 -- map({ "n", "v" }, "<C-n>", "%][%zz")
 -- map({ "n", "v" }, "<C-p>", "[]%zz")
 
-
 -- LEAP
 map({ "n", "v" }, ",l", "<Plug>(leap-forward)")
 map({ "n", "v" }, ",L", "<Plug>(leap-backward)")
 map({ "n" }, ",gl", "<Plug>(leap-from-window)")
-
 
 -- TODO:
 -- 	1.색깔이 똒바로 안돼.
@@ -123,25 +118,20 @@ map({ "n" }, ",gl", "<Plug>(leap-from-window)")
 -- INDENT-BLANKLINE
 map({ "n", "v" }, "<F2>", "<cmd>IBLToggle<CR>")
 
-
 -- TODO: 저장은 잘 되는데 자동으로 불러오는게 이상함.
 -- AUTO-SESSION
 map("n", "<leader><leader>s", "<cmd>SessionSave<CR>") -- save
 map("n", ",.S", "<cmd>SessionSearch<CR>", opt) -- search and load
-
-
 
 map("n", ",,q", QF_ToggleList, opt)
 map("n", ",q", "<cmd>copen<CR>", opt)
 map("n", "qn", QF_next, { buffer = false })
 map("n", "qp", QF_prev, { buffer = false })
 
-
 map("n", ",R", RunBufferWithSh, opt)
 map("n", ",cR", RunBufferWithShCover, opt)
 map("v", ",R", RunSelectedLinesWithSh, opt)
 map("v", ",cR", RunSelectedLinesWithShCover, opt)
-
 
 -- DEPRECATED:: 2024-01-17
 -- map({ "n" }, ",,p", '"*p') -- easy-paste system clipboard

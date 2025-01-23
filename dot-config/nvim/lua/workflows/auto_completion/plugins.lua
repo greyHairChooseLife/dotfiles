@@ -181,7 +181,7 @@ return {
 					-- min_width = 15,
 					max_height = 7,
 					border = "none",
-					winblend = 5,
+					winblend = 0,
 					winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
 					-- Keep the cursor X lines away from the top/bottom of the window
 					scrolloff = 1,
