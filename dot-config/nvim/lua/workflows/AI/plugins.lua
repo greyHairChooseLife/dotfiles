@@ -1,7 +1,21 @@
 return {
 	{
 		"github/copilot.vim",
-		event = "BufReadPre",
+		dependencies = {
+			"catppuccin/nvim",
+		},
+		cmd = {
+			-- enable 커맨드로는 안된다. restart, status 따위를 사용하자.
+			"Copilot",
+		},
+		-- event = "BufReadPre",
+		init = function()
+			vim.g.copilot_filetypes = {
+				markdown = true,
+				vimwiki = false,
+			}
+			vim.g.copilot_workspace_folders = { vim.fn.getcwd() }
+		end,
 	},
 
 	{
@@ -18,6 +32,7 @@ return {
 			"AvanteAsk",
 			"AvanteFocus",
 			"AvanteChat",
+			"AvanteToggle",
 		},
 		version = false,
 		BUILD_FROM_SOURCE = true,
