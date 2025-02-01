@@ -195,9 +195,6 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 - `/`에서 뭐 찾다가 그냥 `Esc`해보면 마지막에 찾은 문자열을 찾아간다. 매우 귀찮다.
 
-- `C-i`가 이상해졌다. 원래 `C-o`하고 번갈아가면서 전/후로 점프 했는데, `C-i`는 뭔가 이상하게 동작한다.
-  아마도 `B/Tab`을 버퍼 이동으로 수정한 뒤로 문제가 된듯? 언젠가 `C-i == Tab`이란 소리도 들어본듯 하다.
-
 - set winfixwidth, winfixheight라는 옵션이 있다. 현재 윈도우 사이즈를 고정하는 것인데, toggle가능하게 함수로 만들어서 사용하면 유용하겠다.
   더불어, 모든 toggle은 동일한 형식의 keymap 규칙을 가지도록 점검해보자.
 
