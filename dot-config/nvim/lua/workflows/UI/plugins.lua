@@ -106,6 +106,15 @@ return {
 				return " "
 			end
 
+			local function search_counter()
+				local sc = vim.fn.searchcount({ maxcount = 9999 })
+				-- 검색이 활성화(total > 0)되어 있고 하이라이트가 켜져있을 때만 표시합니다.
+				if sc.total > 0 and vim.v.hlsearch == 1 then
+					return string.format("search: %d/%d", sc.current, sc.total)
+				end
+				return ""
+			end
+
 			local function get_git_branch()
 				-- 현재 디렉토리가 Git 저장소인지 확인
 				local git_dir = vim.fn.finddir(".git", ".;")
@@ -355,7 +364,15 @@ return {
 						},
 					},
 					lualine_c = {},
-					lualine_x = {},
+					lualine_x = {
+						{
+							search_counter,
+							padding = { left = 2, right = 1 },
+							color = {
+								bg = colors.git_change,
+							},
+						},
+					},
 					lualine_y = {
 						{
 							"harpoon2",
@@ -369,8 +386,8 @@ return {
 						},
 					},
 					lualine_z = {
-						{ "location", padding = { left = 0, right = 1 } },
-						{ "progress", padding = { left = 1, right = 1 } },
+						{ "location", padding = { left = 1, right = 1 } },
+						{ "progress", padding = { left = 0, right = 1 } },
 					},
 				},
 				inactive_sections = {
@@ -434,6 +451,15 @@ return {
 								warn = utils.icons.diagnostics.Warn .. " ",
 								hint = utils.icons.diagnostics.Hint .. " ",
 								info = utils.icons.diagnostics.Info .. " ",
+							},
+						},
+					},
+					lualine_y = {
+						{
+							search_counter,
+							padding = { left = 2, right = 1 },
+							color = {
+								bg = colors.git_change,
 							},
 						},
 					},
@@ -853,6 +879,9 @@ return {
 		event = "VeryLazy",
 		opts = {
 			lsp = {
+				progress = {
+					enabled = false,
+				},
 				-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 				override = {
 					["vim.lsp.util.convert_input_to_markdown_lines"] = true,
@@ -867,10 +896,35 @@ return {
 				inc_rename = false, -- enables an input dialog for inc-rename.nvim
 				lsp_doc_border = false, -- add a border to hover docs and signature help
 			},
+			routes = {
+				{
+					filter = { event = "msg_show", kind = "search_count" },
+					opts = { skip = true },
+				},
+			},
+			cmdline = {
+				enabled = true, -- enables the Noice cmdline UI
+				view = "cmdline_popup", -- view for rendering the cmdline. Set `cmdline` to get a classic cmdline at the bottom or try 'cmdline_popup'
+				opts = {}, -- global options for the cmdline. See section on views
+				---@type table<string, CmdlineFormat>
+				format = {
+					-- conceal: (default=true) This will hide the text in the cmdline that matches the pattern.
+					-- view: (default is cmdline view)
+					-- opts: any options passed to the view
+					-- icon_hl_group: optional hl_group for the icon
+					-- title: set to anything or empty string to hide
+					-- ex)
+					-- cmdline = { pattern = "^:", icon = "", lang = "vim" },
+					-- search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex" },
+					-- search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex" },
+					cmdline = { lang = "vim", icon = "", conceal = false },
+					search_down = { kind = "search", icon = "", lang = "regex", conceal = false },
+					search_up = { kind = "search", icon = "", lang = "regex", conceal = false },
+				},
+			},
 			messages = {
 				view = "mini",
 			},
-
 			views = {
 				cmdline_popup = {
 					position = {
