@@ -90,9 +90,13 @@ bindsym $mod+Shift+p --release exec --no-startup-id i3-scrot -s
 bindsym $mod+Ctrl+x --release exec --no-startup-id xkill
 
 # 음량 조절
-bindsym $mod+Mod1+a exec pactl set-sink-volume @DEFAULT_SINK@ -5%
-bindsym $mod+Mod1+s exec pactl set-sink-volume @DEFAULT_SINK@ +5%
-bindsym $mod+Mod1+d exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym $mod+Mod1+a exec "pactl set-sink-volume @DEFAULT_SINK@ -5%; $HOME/.config/i3/script/notify_volume.sh DOWN"
+bindsym $mod+Mod1+s exec "pactl set-sink-volume @DEFAULT_SINK@ +5%; $HOME/.config/i3/script/notify_volume.sh UP"
+bindsym $mod+Mod1+d exec "pactl set-sink-mute @DEFAULT_SINK@ toggle; $HOME/.config/i3/script/notify_volume.sh 'MUTE TOGGLE'"
+
+# 밝기 조절
+bindsym $mod+Mod1+q exec "brightnessctl s 5%-; $HOME/.config/i3/script/notify_brightness.sh DOWN"
+bindsym $mod+Mod1+w exec "brightnessctl s +5%; $HOME/.config/i3/script/notify_brightness.sh UP"
 
 # focus_follows_mouse no
 
