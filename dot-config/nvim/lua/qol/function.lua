@@ -96,7 +96,7 @@ function ReloadLayout()
 		-- Check each window's buffer filetype
 		for _, win in ipairs(wins) do
 			local buf = vim.api.nvim_win_get_buf(win)
-      local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+			local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
 			if ft == "aerial" then
 				is_aerial_open = true
 			end
@@ -409,3 +409,21 @@ function QF_next()
 	end
 end
 --<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+-- 검색 결과가 존재하는지 확인하여, 없더라도 에러가 발생하지 않도록 한다.
+function Safe_search(direction)
+	local prev_cursor = vim.api.nvim_win_get_cursor(0) -- 현재 커서 위치 저장
+	local success, _ = pcall(function()
+		vim.cmd("normal! " .. direction)
+	end) -- 검색 실행
+
+	if success then
+		vim.cmd("normal! zz") -- 화면 중앙 정렬
+		-- vim.cmd("match Search /\\%#\\zs\\k\\+/") -- 검색 결과 강조
+		-- vim.defer_fn(function()
+		-- 	vim.cmd("match none")
+		-- end, 300) -- 0.3초 후 강조 해제
+	else
+		vim.api.nvim_win_set_cursor(0, prev_cursor) -- 실패 시 커서 원위치
+	end
+end

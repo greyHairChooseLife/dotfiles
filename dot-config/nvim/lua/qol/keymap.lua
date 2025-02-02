@@ -52,6 +52,12 @@ end)
 map({ "i", "c" }, ";j<Space>", function()
 	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
 end, { noremap = true })
+-- BUG:: 걍 안됨.
+-- map({ "c" }, "<Esc>", function()
+-- 	print("아니 왜안돼")
+-- 	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
+-- 	-- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-c>", true, false, true), "n", true)
+-- end, { noremap = false })
 map({ "i", "c" }, "gq", function()
 	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
 end, { noremap = true })
@@ -135,6 +141,13 @@ map("n", ",R", RunBufferWithSh, opt)
 map("n", ",cR", RunBufferWithShCover, opt)
 map("v", ",R", RunSelectedLinesWithSh, opt)
 map("v", ",cR", RunSelectedLinesWithShCover, opt)
+
+map("n", "n", function()
+	Safe_search("n")
+end, opt)
+map("n", "N", function()
+	Safe_search("N")
+end, opt)
 
 -- DEPRECATED:: 2024-01-17
 -- map({ "n" }, ",,p", '"*p') -- easy-paste system clipboard
