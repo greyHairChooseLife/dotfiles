@@ -10,7 +10,7 @@ map("n", "<leader>rs", "<cmd>LspRestart<CR>", opt)
 
 map("n", "dn", vim.diagnostic.goto_next, opt)
 map("n", "dp", vim.diagnostic.goto_prev, opt)
-map("n", "d<Space>", vim.diagnostic.open_float, opt)
+map("n", "dK", vim.diagnostic.open_float, opt)
 
 -- MEMO:: `<C-l>`: show autocompletion menu to prefilter (i.e. `:warning:`)
 map("n", ",.d", function()
@@ -66,4 +66,4 @@ map("n", "gO", function()
 	})
 end, opt)
 
-map("n", "<leader>d", ToggleVirtualText, opt)
+map("n", "d<Space>", ToggleVirtualText, opt)
