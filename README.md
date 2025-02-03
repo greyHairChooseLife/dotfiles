@@ -112,6 +112,7 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 >   end
 >   ```
 
+
 ## Todo - nvim
 
 
@@ -171,9 +172,16 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 - nvim-cmp
     https://github.com/gennaro-tedesco/dotfiles/blob/bc9acae08a4104ff5f1adbe8eef3ee58e11e1020/nvim/lua/plugins/cmp.lua#L95
 
-### 개선서항
+### 개선서항 [-]
 
 #### 간단
+
+- util함수에 디버깅용으로 print함수를 덮어씌우는데, 추가할 기능은 만약 목적 대상이 table일 경우 vim.inspect해주는 것이다.
+
+- blink.cmp
+  - cmdline에서는 `tab`키로 completion trigger도 가능하도록. 그리고 auto-compltion을 활성화 하자.
+
+- normal J를 확장: 윗 라인을 아래로, 아래 라인을 위로 sequancial mapping
 
 - render-markdown에서 'link' 항목 개선하자. 플러그인에서 기본 제공하는 링크 구분(github 등) 외에도 가장 기본 기능인 hyper link 기능을 구분하자.
   내가 앞으로 만드는 문서들은 본문급인 index.md가 있고, 본문에 첨부될 매우 구체적인 노트 조각들도 있다. 이 조각들과 본문을 구분하는건데, 앞의 아이콘을 이용하자.
@@ -198,7 +206,13 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 - set winfixwidth, winfixheight라는 옵션이 있다. 현재 윈도우 사이즈를 고정하는 것인데, toggle가능하게 함수로 만들어서 사용하면 유용하겠다.
   더불어, 모든 toggle은 동일한 형식의 keymap 규칙을 가지도록 점검해보자.
 
+  - 기존에 사용중인 `,r`의 경우 무조건 상하좌우 균일하게 배분한다. 근데 내가 임의로 고정해두고 싶은 경우도 있을 것이고, 임의로 여럿 고정했음에도 불구하고 그냥 상하좌우 균등 분배하고 싶을수도 있다.
+    이를 위하여 기존 `,r`에 더하여 임의고정 폭/높이를 존중하는 resize명령도 추가해보자.
+
+
 - visual select에서 대문자 S 입력하면 이후 연속해서(sequence) 입력하는 문자에 따라 다양한 기능을 제공한다. 이게 뭔지 알아보자.
+
+- nvim-tree에서 a키로 toggle: git stage / git unstage
 
 #### 복잡
 
