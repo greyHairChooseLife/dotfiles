@@ -5,7 +5,7 @@ local telescope = require("telescope.builtin")
 
 map("n", "K", vim.lsp.buf.hover, opt)
 map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opt)
-map("n", "<leader>re", vim.lsp.buf.rename, opt)
+map("n", "<leader>rr", vim.lsp.buf.rename, opt)
 map("n", "<leader>rs", "<cmd>LspRestart<CR>", opt)
 
 map("n", "dn", vim.diagnostic.goto_next, opt)
