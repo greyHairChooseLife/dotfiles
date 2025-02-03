@@ -47,6 +47,17 @@ require("lazy").setup({
 	defaults = {
 		lazy = true, -- 기본적으로 모든 플러그인을 지연 로드
 	},
+	git = {
+		log = { "-30" }, -- (L)og에서 몇개나 보여줄지
+	},
+	diff = {
+		cmd = "diffview.nvim",
+	},
+	change_detection = {
+		-- automatically check for config file changes and reload the ui
+		enabled = false,
+		notify = true, -- get a notification when changes are found
+	},
 	performance = {
 		rtp = {
 			disabled_plugins = { -- 기본 플러그인
@@ -55,6 +66,27 @@ require("lazy").setup({
 				"gzip",
 				"zipPlugin",
 				"tutor",
+			},
+		},
+	},
+	ui = {
+		custom_keys = {
+			["<localleader>i"] = false,
+			["<localleader>l"] = false,
+			["ya"] = {
+				function(plugin)
+					vim.fn.setreg("+", plugin.dir)
+					vim.notify("Copied plugin directory to clipboard: " .. plugin.dir)
+				end,
+				desc = "copy plugin path",
+			},
+			["<localleader>t"] = {
+				function(plugin)
+					require("lazy.util").float_term(nil, {
+						cwd = plugin.dir,
+					})
+				end,
+				desc = "Open terminal in plugin dir",
 			},
 		},
 	},

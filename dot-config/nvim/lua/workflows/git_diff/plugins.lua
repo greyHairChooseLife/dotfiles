@@ -16,6 +16,7 @@ return {
 		"sindrets/diffview.nvim",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
+			"lukas-reineke/indent-blankline.nvim",
 		},
 		cmd = { "DiffviewFileHistory", "DiffviewOpen" },
 		config = function()

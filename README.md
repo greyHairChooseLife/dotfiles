@@ -208,10 +208,6 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 - nvim-tree에서 a키로 toggle: git stage / git unstage
 
-- lazy.nvim
-  - 새 터미널을 켜고, 커서가 위치한 플러그인의 디렉토리로 이동
-  - L로 recent log를 보는데, 이것을 확장/축소하는 방법
-  - 기본적인 사용법을 좀 익혀보자
 
 #### 복잡
 
