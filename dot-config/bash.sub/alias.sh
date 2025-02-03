@@ -90,4 +90,5 @@ alias t='tmux attach \
 alias youtube-mp3="youtube-dl --extract-audio --audio-format mp3" # usage : youtube-mp3 url
 alias make-mp3="ffmpeg -i"                                        # usage : make-mp3 original-file.mp4 new-name.mp3
 alias py='python'
+alias y='yazi'
 # <<<
