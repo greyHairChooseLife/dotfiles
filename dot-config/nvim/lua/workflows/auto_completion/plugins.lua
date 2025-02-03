@@ -135,7 +135,7 @@ return {
 					["<C-e>"] = { "cancel", "fallback" },
 					["<C-k>"] = { "select_prev", "fallback" },
 					["<C-j>"] = { "select_next", "fallback" },
-					["<Tab>"] = { "accept", "fallback" },
+					["<Tab>"] = { "show", "accept", "fallback" },
 					["<Enter>"] = {
 						function(cmp)
 							return cmp.select_and_accept({

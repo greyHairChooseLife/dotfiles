@@ -169,24 +169,20 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 - 전반적으로
   https://patrick-f.tistory.com/36
 
-- nvim-cmp
-    https://github.com/gennaro-tedesco/dotfiles/blob/bc9acae08a4104ff5f1adbe8eef3ee58e11e1020/nvim/lua/plugins/cmp.lua#L95
-
 ### 개선서항 [-]
 
 #### 간단
 
-- util함수에 디버깅용으로 print함수를 덮어씌우는데, 추가할 기능은 만약 목적 대상이 table일 경우 vim.inspect해주는 것이다.
-
-- blink.cmp
-  - cmdline에서는 `tab`키로 completion trigger도 가능하도록. 그리고 auto-compltion을 활성화 하자.
+- neovim config debugging 전용
+  - util함수에 디버깅용으로 print함수를 덮어씌우는데, 추가할 기능은 만약 목적 대상이 table일 경우 vim.inspect해주는 것이다.
 
 - normal J를 확장: 윗 라인을 아래로, 아래 라인을 위로 sequancial mapping
 
-- render-markdown에서 'link' 항목 개선하자. 플러그인에서 기본 제공하는 링크 구분(github 등) 외에도 가장 기본 기능인 hyper link 기능을 구분하자.
-  내가 앞으로 만드는 문서들은 본문급인 index.md가 있고, 본문에 첨부될 매우 구체적인 노트 조각들도 있다. 이 조각들과 본문을 구분하는건데, 앞의 아이콘을 이용하자.
-  구분자로는 `path`가 "1.Project, 2.Area, 3.... "와 같은 문자로 시작되는지 보거나, 파일명이 index.md인지 아닌지만 봐도 좋을 것 같다.
-- render-markdown 관련, 만약 call-out 내에서 입력 중이라면 line change 훅으로 맨 앞에 `>` 기호 자동으로 붙여주기
+- render-markdown
+  - 'link' 항목 개선하자. 플러그인에서 기본 제공하는 링크 구분(github 등) 외에도 가장 기본 기능인 hyper link 기능을 구분하자.
+    내가 앞으로 만드는 문서들은 본문급인 index.md가 있고, 본문에 첨부될 매우 구체적인 노트 조각들도 있다. 이 조각들과 본문을 구분하는건데, 앞의 아이콘을 이용하자.
+    구분자로는 `path`가 "1.Project, 2.Area, 3.... "와 같은 문자로 시작되는지 보거나, 파일명이 index.md인지 아닌지만 봐도 좋을 것 같다.
+  - 만약 call-out 내에서 입력 중이라면 line change 훅으로 맨 앞에 `>` 기호 자동으로 붙여주기
 
 - `<leader>cc`로 commitmsg 버퍼를 켜면 최종 버퍼의 포키싱 윈도우 범위가 바뀐다.(살짝 올라감)
 - auto-session 복구시 탭 이름도 복구 되도록
@@ -201,8 +197,6 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 - winbar의 활용
 
-- `/`에서 뭐 찾다가 그냥 `Esc`해보면 마지막에 찾은 문자열을 찾아간다. 매우 귀찮다.
-
 - set winfixwidth, winfixheight라는 옵션이 있다. 현재 윈도우 사이즈를 고정하는 것인데, toggle가능하게 함수로 만들어서 사용하면 유용하겠다.
   더불어, 모든 toggle은 동일한 형식의 keymap 규칙을 가지도록 점검해보자.
 
@@ -213,6 +207,11 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 - visual select에서 대문자 S 입력하면 이후 연속해서(sequence) 입력하는 문자에 따라 다양한 기능을 제공한다. 이게 뭔지 알아보자.
 
 - nvim-tree에서 a키로 toggle: git stage / git unstage
+
+- lazy.nvim
+  - 새 터미널을 켜고, 커서가 위치한 플러그인의 디렉토리로 이동
+  - L로 recent log를 보는데, 이것을 확장/축소하는 방법
+  - 기본적인 사용법을 좀 익혀보자
 
 #### 복잡
 
@@ -237,7 +236,7 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 - 어떤 단위의 첫번째 라인 바로 아래에 코드를 붙여넣으면 refold 되어버린다. [이 사람도 같은 불편을 호소](https://www.reddit.com/r/neovim/comments/1e7tfw2/pasting_line_by_p_makes_refold/)
 - harpoon으로 열린 버퍼는 BufReadPost로 실행하고있는 :loadview가 제대로 안된다. cursor_position등 정보를 harpoon이 별도로 저장하고 사용해서 그런듯.
 
-- `<leader>gg`로 fugitive 진입 후 윈도우 종료하면 커서 위치가 이상해진다. 마지막 윈도우 커서 위치로 가는게 아니라 가장 왼쪽 윈도우로 이동한다.
+- fugitive 진입 후 윈도우 종료하면 커서 위치가 이상해진다. 마지막 윈도우 커서 위치로 가는게 아니라 가장 왼쪽 윈도우로 이동한다.
 
 ### Deprecated
 
