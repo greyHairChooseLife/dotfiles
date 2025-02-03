@@ -7,7 +7,7 @@ map("v", "<leader>y", Save_visual_selection_to_register_for_AI_prompt, opt)
 -- >>>>>>>>>>>>>>>>> context provider
 
 -- >>>>>>>>>>>>>>>>> Avante
-map("n", "<leader>aa", "<cmd>AvanteToggle<cr>", opt)
+map({ "n", "v" }, "<leader>aa", "<cmd>AvanteToggle<cr>", opt)
 map("n", "<leader>af", "<cmd>AvanteFocus<cr>", opt)
 -- >>>>>>>>>>>>>>>>> Avante
 
