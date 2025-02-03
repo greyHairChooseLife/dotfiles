@@ -590,6 +590,14 @@ return {
 				changedelete = { hl = "GitSignsTopdelete", text = "✔" },
 				untracked = { hl = "GitSignsUntracked", text = "✔" },
 			},
+			preview_config = {
+				-- Options passed to nvim_open_win
+				border = require("utils").borders.git_preview,
+				style = "minimal",
+				relative = "cursor",
+				row = 0,
+				col = 1,
+			},
 			on_attach = function()
 				local gs = package.loaded.gitsigns
 

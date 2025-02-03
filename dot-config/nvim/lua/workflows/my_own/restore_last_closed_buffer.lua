@@ -36,4 +36,4 @@ vim.api.nvim_create_autocmd("WinClosed", {
 })
 
 -- 키맵 설정: <leader>r 로 복구 실행
-vim.keymap.set("n", "<leader>r", restore_last_closed_buffer, { noremap = true })
+vim.keymap.set("n", "<leader><leader>r", restore_last_closed_buffer, { noremap = true })

@@ -258,13 +258,14 @@ vim.cmd([[
   highlight BlinkCmpDocSeparator guifg=#5f52ff guibg=#000000
   highlight BlinkCmpDocBorder guifg=#5f52ff guibg=#000000
   highlight BlinkCmpSignatureHelp guibg=#000000 guifg=#c8ccd4
-  highlight BlinkCmpSignatureHelpBorder guifg=#ffff00 guibg=#000000
 
 
   " MEMO:: Borders
-  " highlight FloatBorder guifg=#000000 guibg=#000000
+  highlight FloatBorder guifg=#98c379 guibg=#24283b
   highlight NormalFloat guifg=NONE guibg=#000000
   highlight DiagnosticsBorder guifg=#FF4500 guibg=#000000
+  highlight BlinkCmpSignatureHelpBorder guifg=#ffff00 guibg=#000000
+  highlight GitSignsPreviewBorder guifg=NONE guibg=#000000
 
 
   " MEMO:: Lualine

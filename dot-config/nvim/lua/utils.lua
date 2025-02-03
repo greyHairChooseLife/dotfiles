@@ -169,6 +169,17 @@ M.borders = {
 		{ "▌", "BlinkCmpSignatureHelpBorder" },
 		{ "▌", "BlinkCmpSignatureHelpBorder" },
 	},
+	git_preview = "single",
+	-- git_preview = {
+	-- 	{ "", "GitSignsPreviewBorder" },
+	-- 	{ "", "GitSignsPreviewBorder" },
+	-- 	{ "", "GitSignsPreviewBorder" },
+	-- 	{ " ", "GitSignsPreviewBorder" },
+	-- 	{ " ", "GitSignsPreviewBorder" },
+	-- 	{ " ", "GitSignsPreviewBorder" },
+	-- 	{ " ", "GitSignsPreviewBorder" },
+	-- 	{ " ", "GitSignsPreviewBorder" },
+	-- },
 	full = {
 		"▄",
 		"▄",
