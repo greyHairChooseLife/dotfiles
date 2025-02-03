@@ -114,6 +114,7 @@ vim.cmd([[
   highlight RenderMarkdownCode guibg=#181818 guifg=NONE
   highlight RenderMarkdownCodeInline guibg=#181818 guifg=NONE
   highlight RenderMarkdownCodeNofile guibg=#181818 guifg=NONE
+  highlight RenderMarkdownCodeAvante guibg=#000000 guifg=NONE
   highlight RenderMarkdownDash guifg=#FFFFFF
   highlight RenderMarkdownQuote guifg=#007F7F " #5F5F5F
   highlight RenderMarkdownBullet guifg=#007F7F gui=bold

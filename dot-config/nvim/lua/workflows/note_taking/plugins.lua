@@ -138,6 +138,7 @@ return {
 		lazy = false,
 		-- event = "BufEnter *.md",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
+		ft = { "markdown", "vimwiki", "Avante", "AvanteInput" },
 		---@module 'render-markdown'
 		---@type render.md.UserConfig
 		opts = {
@@ -196,7 +197,7 @@ return {
 			-- Only intended to be used for plugin development / debugging
 			log_level = "error",
 			-- Filetypes this plugin will run on
-			file_types = { "markdown", "vimwiki", "Avante" },
+			file_types = { "markdown", "vimwiki", "Avante", "AvanteInput" },
 			-- Vim modes that will show a rendered view of the markdown file
 			-- All other modes will be uneffected by this plugin
 			render_modes = { "n", "c", "i" },
@@ -555,11 +556,12 @@ return {
 			overrides = {
 				-- Overrides for different buftypes, see :h 'buftype'
 				buftype = {
+					-- 요놈은 hover document에 적용된다.
 					nofile = {
-						sign = { enabled = false },
+						-- enabled = false,
 						code = {
 							style = "full",
-							position = "left",
+							position = "right",
 							language_name = true,
 							language_pad = 0,
 							left_pad = 0,
@@ -568,8 +570,47 @@ return {
 							left_margin = 0,
 							min_width = 100,
 							width = "full",
-							border = "thin",
+							border = "thick",
 							highlight = "RenderMarkdownCodeNofile",
+						},
+					},
+				},
+				filetype = {
+					Avante = {
+						sign = { enabled = false },
+						code = {
+							style = "full",
+							position = "right",
+							language_name = true,
+							language_pad = 0,
+							left_pad = 2,
+							-- Amount of padding to add to the right of code blocks when width is 'block'
+							right_pad = 0,
+							left_margin = 0,
+							-- min_width = 100,
+							width = "full",
+							border = "thick",
+							highlight = "RenderMarkdownCodeAvante",
+						},
+						quote = {
+							repeat_linebreak = true,
+						},
+					},
+					AvanteInput = {
+						sign = { enabled = false },
+						code = {
+							style = "normal",
+							position = "left",
+							language_name = false,
+							language_pad = 0,
+							left_pad = 2,
+							-- Amount of padding to add to the right of code blocks when width is 'block'
+							right_pad = 0,
+							left_margin = 0,
+							min_width = 100,
+							width = "full",
+							border = "thin",
+							highlight = "RenderMarkdownCodeAvante",
 						},
 						quote = {
 							repeat_linebreak = true,
@@ -579,7 +620,7 @@ return {
 				-- https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/285
 				-- https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/873bdee
 				-- floating window에서의 기능 여부
-				buflisted = { [false] = { enabled = false } },
+				-- buflisted = { [false] = { enabled = false } },
 			},
 			-- Mapping from treesitter language to user defined handlers
 			-- See 'Custom Handlers' document for more info

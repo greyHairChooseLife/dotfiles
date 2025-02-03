@@ -35,4 +35,4 @@ opt.formatoptions:remove("f") -- Prevent auto-folding during formatting
 -- Session settings
 opt.sessionoptions = "globals,blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 
-vim.opt.completeopt = { "menu", "menuone", "noselect" }
+opt.completeopt = { "menu", "menuone", "noselect" }
