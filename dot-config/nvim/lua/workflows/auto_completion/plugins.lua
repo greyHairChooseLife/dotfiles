@@ -308,6 +308,9 @@ return {
 				},
 
 				-- Display a preview of the selected item on the current line
+				--
+				-- 이거 괜찮을수도? menu를 manual-mode로 사용하되, 첫번째 제안을 ghost_text로 보여주는 것
+				-- 4a380c1 feat(ghost_text): show_on_unselected (#965)
 				ghost_text = { enabled = true },
 			},
 
