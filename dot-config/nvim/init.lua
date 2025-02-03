@@ -61,20 +61,18 @@ require("lazy").setup({
 
 -- 워크플로우별 추가 설정 적용
 for _, workflow in ipairs(workflows) do
-	local safe_require = require("utils").safe_require
+	local base_path = workflow == "qol" and workflow or "workflows." .. workflow
+	local config_dir = vim.fn.stdpath("config") .. "/lua/" .. base_path:gsub("%.", "/")
 
-	-- 각 워크플로우의 키맵, 자동 명령 및 기타 설정 적용
-	local path = "workflows." .. workflow
-	if workflow == "qol" then
-		path = workflow
+	-- 디렉토리 내의 모든 .lua 파일을 찾아서 로드
+	if vim.fn.isdirectory(config_dir) == 1 then
+		local files = vim.fn.glob(config_dir .. "/*.lua")
+		for file in string.gmatch(files, "[^\n]+") do
+			-- plugins.lua는 이미 lazy.nvim에서 로드했으므로 제외
+			if not file:match("plugins.lua$") then
+				local module_name = vim.fn.fnamemodify(file, ":t:r") -- 파일 확장자 제거
+				require("utils").safe_require(base_path .. "." .. module_name)
+			end
+		end
 	end
-
-	safe_require(path .. ".highlights")
-	safe_require(path .. ".option")
-	safe_require(path .. ".function")
-	safe_require(path .. ".auto_cmd")
-	safe_require(path .. ".filetype")
-	safe_require(path .. ".ui")
-	safe_require(path .. ".snip")
-	safe_require(path .. ".keymap")
 end
