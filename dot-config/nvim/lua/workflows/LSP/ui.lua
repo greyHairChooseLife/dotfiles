@@ -26,11 +26,11 @@ end
 
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
 	-- border = "none",
-	border = utils.borders.documentation,
+	border = utils.borders.documentation_left,
 	-- title = "Hover",
 	focusable = true, -- 포커스 비활성화
 	max_width = 120, -- 최대 너비 제한
-	max_height = 20, -- 최대 높이 제한
+	max_height = 150, -- 최대 높이 제한
 })
 
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "none" })
+-- vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "none" }) -- blink.cmp에서 정의

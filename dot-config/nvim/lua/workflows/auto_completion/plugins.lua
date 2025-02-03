@@ -11,6 +11,7 @@ end
 
 return {
 	{
+		-- config ref https://cmp.saghen.dev/configuration/reference.html
 		"saghen/blink.cmp",
 		event = { "InsertEnter" },
 		-- optional: provides snippets for the snippet source
@@ -311,7 +312,6 @@ return {
 			},
 
 			fuzzy = {
-				use_typo_resistance = false,
 				use_frecency = true, -- Frecency tracks the most recently/frequently used items and boosts the score of the item
 				use_proximity = true, -- Proximity bonus boosts the score of items matching nearby words
 			},
@@ -352,7 +352,17 @@ return {
 
 			-- Experimental signature help support
 			-- https://cmp.saghen.dev/configuration/signature
-			signature = { enabled = true, window = { border = "single" } },
+			signature = {
+				enabled = true,
+				trigger = {
+					show_on_insert = true,
+				},
+				window = {
+					border = require("utils").borders.signature,
+					winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
+					show_documentation = false,
+				},
+			},
 		},
 	},
 }

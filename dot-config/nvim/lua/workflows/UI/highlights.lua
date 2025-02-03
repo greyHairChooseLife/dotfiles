@@ -240,6 +240,7 @@ vim.cmd([[
   highlight AvantePopupHint guifg=#8b8378 guibg=#24283b gui=italic
   highlight AvanteThirdTitle guibg=#24283b
 
+
   " MEMO:: Pmenu for completion
   highlight Pmenu guibg=#000000 guifg=#c8ccd4
   highlight PmenuSel guibg=#000080 gui=bold
@@ -254,8 +255,10 @@ vim.cmd([[
   highlight BlinkCmpSource guifg=#5f5f5f gui=italic
 
   highlight BlinkCmpDoc guibg=#000000 guifg=#c8ccd4
-  highlight BlinkCmpDocSeparator guifg=#c8ccd4 guibg=#000000
+  highlight BlinkCmpDocSeparator guifg=#5f52ff guibg=#000000
   highlight BlinkCmpDocBorder guifg=#5f52ff guibg=#000000
+  highlight BlinkCmpSignatureHelp guibg=#000000 guifg=#c8ccd4
+  highlight BlinkCmpSignatureHelpBorder guifg=#ffff00 guibg=#000000
 
 
   " MEMO:: Borders

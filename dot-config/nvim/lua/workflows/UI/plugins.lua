@@ -77,6 +77,7 @@ return {
 				active_oil = "#BDB80B",
 				purple1 = "#A020F0",
 				red2 = "#DC143C",
+				search = "#ffff00",
 			}
 
 			local my_theme = {
@@ -369,7 +370,7 @@ return {
 							search_counter,
 							padding = { left = 2, right = 1 },
 							color = {
-								bg = colors.git_change,
+								bg = colors.search,
 							},
 						},
 					},
@@ -459,7 +460,7 @@ return {
 							search_counter,
 							padding = { left = 2, right = 1 },
 							color = {
-								bg = colors.git_change,
+								bg = colors.search,
 							},
 						},
 					},
@@ -882,6 +883,7 @@ return {
 				progress = {
 					enabled = false,
 				},
+				signature = { auto_open = false },
 				-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 				override = {
 					["vim.lsp.util.convert_input_to_markdown_lines"] = true,
