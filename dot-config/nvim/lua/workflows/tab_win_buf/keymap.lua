@@ -11,7 +11,7 @@ map("n", "<S-Tab>", function()
 end, opt)
 map("n", "<C-i>", "<C-i>", opt)
 -- Quit
-map("n", "<leader>Q", "<cmd>qa!<CR>")
+map({ "n", "i" }, "<leader>Q", "<cmd>qa!<CR>")
 map("n", "qq", "<cmd>q<CR>") -- 버퍼를 남겨둘 필요가 있는 경우가 오히려 더 적다. 희안하게 !를 붙이면 hidden이 아니라 active상태다.
 map("n", "gq", ManageBuffer_gq)
 map("n", "gQ", ManageBuffer_gQ)
