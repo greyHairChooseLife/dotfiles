@@ -17,6 +17,7 @@ local workflows = {
 	"testing",
 	"UI",
 	"note_taking",
+	"my_own",
 }
 local specs = {}
 for _, workflow in ipairs(workflows) do
