@@ -256,4 +256,48 @@ M.icons = {
 	},
 }
 
+-- # 사용 방법
+-- 하나, $HOME/.config/nvim/lua/qol/plugins.lua에서 'which-key triggers'를 찾아 prefix에 해당하는 것을 등록한다.
+--   둘, 유틸 함수를 불러와 사용한다.
+--
+-- # 사용 예시
+-- local wk_map = require("utils.wk_map")
+-- wk_map({
+--     ["<leader>f"] = {
+--         group = "Find",
+--         ["f"] = { "<cmd>Telescope find_files<CR>", desc = "파일 찾기", mode = "n", silent = true, buffer = 0 },
+--         ["g"] = { "<cmd>Telescope live_grep<CR>", desc = "텍스트 검색", mode = "n" },
+--     }
+-- })
+--
+-- # 추가 옵션
+-- :help map-arguments
+--   "<buffer>", "<nowait>", "<silent>", "<script>", "<expr>" and
+--   "<unique>" can be used in any order.  They must appear right after the
+--   command, before any other arguments.
+M.wk_map = function(mappings)
+	local processed = {}
+	for group_prefix, group_mappings in pairs(mappings) do
+		-- Add group definition
+		processed[#processed + 1] = { group_prefix, group = group_mappings.group }
+
+		-- Process each mapping in the group
+		for key, mapping in pairs(group_mappings) do
+			if key ~= "group" then -- Skip the group name entry
+				local map = vim.deepcopy(mapping)
+				processed[#processed + 1] = {
+					group_prefix .. key,
+					map[1],
+					desc = "➜ " .. map.desc,
+					mode = map.mode,
+					silent = map.silent == nil and true or map.silent,
+					buffer = map.buffer == nil and false or map.buffer,
+					noremap = true,
+				}
+			end
+		end
+	end
+	require("which-key").add(processed)
+end
+
 return M
