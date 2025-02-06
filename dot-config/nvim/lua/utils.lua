@@ -265,6 +265,7 @@ M.icons = {
 -- wk_map({
 --     ["<leader>f"] = {
 --         group = "Find",
+--         order = { "f", "g" }, -- 순서 정의
 --         ["f"] = { "<cmd>Telescope find_files<CR>", desc = "파일 찾기", mode = "n", silent = true, buffer = 0 },
 --         ["g"] = { "<cmd>Telescope live_grep<CR>", desc = "텍스트 검색", mode = "n" },
 --     }
@@ -281,20 +282,40 @@ M.wk_map = function(mappings)
 		-- Add group definition
 		processed[#processed + 1] = { group_prefix, group = group_mappings.group }
 
-		-- Process each mapping in the group
+		-- Create ordered mappings array
+		local ordered_mappings = {}
 		for key, mapping in pairs(group_mappings) do
-			if key ~= "group" then -- Skip the group name entry
-				local map = vim.deepcopy(mapping)
-				processed[#processed + 1] = {
-					group_prefix .. key,
-					map[1],
-					desc = "➜ " .. map.desc,
-					mode = map.mode,
-					silent = map.silent == nil and true or map.silent,
-					buffer = map.buffer == nil and false or map.buffer,
-					noremap = true,
-				}
+			if key ~= "group" and key ~= "order" then
+				ordered_mappings[#ordered_mappings + 1] = { key = key, mapping = mapping }
 			end
+		end
+
+		-- Sort based on order if provided
+		if group_mappings.order then
+			local order_lookup = {}
+			for i, key in ipairs(group_mappings.order) do
+				order_lookup[key] = i
+			end
+
+			table.sort(ordered_mappings, function(a, b)
+				local a_order = order_lookup[a.key] or 999
+				local b_order = order_lookup[b.key] or 999
+				return a_order < b_order
+			end)
+		end
+
+		-- Process each mapping in order
+		for _, item in ipairs(ordered_mappings) do
+			local map = vim.deepcopy(item.mapping)
+			processed[#processed + 1] = {
+				group_prefix .. item.key,
+				map[1],
+				desc = "➜ " .. map.desc,
+				mode = map.mode,
+				silent = map.silent == nil and true or map.silent,
+				buffer = map.buffer == nil and false or map.buffer,
+				noremap = true,
+			}
 		end
 	end
 	require("which-key").add(processed)
