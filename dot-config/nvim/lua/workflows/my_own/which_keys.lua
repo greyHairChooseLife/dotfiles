@@ -181,11 +181,26 @@ local builtin = require("telescope.builtin")
 wk_map({
 	[",."] = {
 		group = "Telescope",
-		order = { "R", "H", "T", "N" },
+		order = { "R", "H", "N", "T" },
 		["R"] = { builtin.resume, desc = "resume", mode = "n" },
 		["H"] = { builtin.help_tags, desc = "help doc", mode = "n" },
-		["T"] = { "<cmd>TodoTelescope<CR>", desc = "todo Tags", mode = "n" },
 		["N"] = { "<cmd>Noice telescope<CR>", desc = "noice Log", mode = "n" },
+		["T"] = { "<cmd>TodoTelescope<CR>", desc = "todo Tags", mode = "n" },
+	},
+})
+wk_map({
+	[",.."] = {
+		group = "expand",
+		["T"] = {
+			function()
+				local dir_path = vim.fn.expand("%:p:h") -- 상대경로
+				local file_path = vim.fn.expand("%:t") -- 파일명
+				vim.cmd(string.format("TodoTelescope cwd=%s default_text=%s", dir_path, file_path))
+				vim.cmd("normal! a ")
+			end,
+			desc = "todo Tags current",
+			mode = "n",
+		},
 	},
 })
 
@@ -193,18 +208,21 @@ wk_map({
 wk_map({
 	[",w"] = {
 		group = "expand",
-		-- TODO:: winfix 커맨드 활용해서 적절한 기능으로 채우기
-		["f"] = { "window fix", desc = "window fix", mode = "n" },
-		["F"] = { "window fix all", desc = "window fix all", mode = "n" },
+		order = { "f", "u", "t", "a" },
+		["f"] = { FixWindowSize, desc = "window fix", mode = "n" },
+		["u"] = { UnfixWindowSize, desc = "window fix undo", mode = "n" },
+		["t"] = { ToggleWinFix, desc = "window fix toggle", mode = "n" },
+		["a"] = { ToggleAllWinFix, desc = "window fix all", mode = "n" },
 	},
 })
 wk_map({
 	[","] = {
 		order = { "r", "R", "C" },
-		-- TODO:: ReloadLayout/ReloadLayoutForce 기능 개선 및 만들기
 		["r"] = { ReloadLayout, desc = "reload layout", mode = "n" },
 		["R"] = {
-			"", -- ReloadLayoutForce
+			function()
+				ReloadLayout(true)
+			end,
 			desc = "reload layout force",
 			mode = "n",
 		},

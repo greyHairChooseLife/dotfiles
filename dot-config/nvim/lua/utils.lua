@@ -337,4 +337,33 @@ M.restore_cursor_position = function()
 	end
 end
 
+M.is_filetype_open = function(filetype)
+	-- Get all windows in current tab
+	local wins = vim.api.nvim_tabpage_list_wins(0)
+
+	-- Check each window's buffer filetype
+	for _, win in ipairs(wins) do
+		local buf = vim.api.nvim_win_get_buf(win)
+		local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+		if ft == filetype then
+			return true
+		end
+	end
+
+	return false
+end
+
+-- 사용법: local win, restore = get_window_preserver()
+M.get_window_preserver = function()
+	local win = vim.api.nvim_get_current_win()
+	local function restore()
+		vim.defer_fn(function()
+			if vim.api.nvim_win_is_valid(win) then
+				vim.api.nvim_set_current_win(win)
+			end
+		end, 1)
+	end
+	return win, restore
+end
+
 return M

@@ -67,8 +67,13 @@ function BlinkCursorLine(duration)
 	end, duration)
 end
 
-function ReloadLayout()
-	local curr_win = vim.api.nvim_get_current_win()
+function ReloadLayout(force)
+	local _, restore = utils.get_window_preserver()
+
+	if force then
+		UnfixAllWindows()
+	end
+
 	local win_count_curr_tab = #vim.api.nvim_tabpage_list_wins(0)
 	local is_tree_open = require("utils").tree:is_visible()
 
@@ -85,49 +90,17 @@ function ReloadLayout()
 		NvimTreeResetUI()
 	end
 
-	-- TODO: 이거 유틸 함수로 뺄 수 있겠다.
-	-- check FileType for: aerial, avante
-	local function is_ft_open()
-		-- Get all windows in current tab
-		local wins = vim.api.nvim_tabpage_list_wins(0)
-		local is_aerial_open = false
-		local is_avante_open = false
-
-		-- Check each window's buffer filetype
-		for _, win in ipairs(wins) do
-			local buf = vim.api.nvim_win_get_buf(win)
-			local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-			if ft == "aerial" then
-				is_aerial_open = true
-			end
-			if ft == "Avante" then
-				is_avante_open = true
-			end
-		end
-
-		return is_aerial_open, is_avante_open
-	end
-	local is_aerial_open, is_avante_open = is_ft_open()
-
-	if is_aerial_open then
+	if utils.is_filetype_open("aerial") then
 		vim.cmd("AerialToggle")
 		vim.cmd("AerialToggle")
 	end
 
-	if is_avante_open then
+	if utils.is_filetype_open("Avante") then
 		vim.cmd("AvanteToggle")
 		vim.cmd("AvanteToggle")
 	end
 
-	-- WARN:: 문제를 이르키는지 다시 살펴볼 필요가 있음
-	-- require('quicker').refresh()
-
-	-- focus origianal window
-	vim.defer_fn(function()
-		if vim.api.nvim_win_is_valid(curr_win) then -- avante window의 경우 항상 새로운 window가 생성되므로 에러를 이르킬 수 있다.
-			vim.api.nvim_set_current_win(curr_win)
-		end
-	end, 1)
+	restore()
 end
 
 function SearchWithBrowser()
@@ -427,3 +400,66 @@ function Safe_search(direction)
 		vim.api.nvim_win_set_cursor(0, prev_cursor) -- 실패 시 커서 원위치
 	end
 end
+
+function FixWindowSize()
+	vim.cmd("set winfixwidth winfixheight")
+end
+
+function UnfixWindowSize()
+	vim.cmd("set nowinfixwidth nowinfixheight")
+end
+
+function ToggleWinFix()
+	if vim.wo.winfixwidth and vim.wo.winfixheight then
+		UnfixWindowSize()
+	else
+		FixWindowSize()
+	end
+end
+
+function ToggleAllWinFix() -- 하나라도 not-fixed 상태라면 모두 all-fix
+	local _, restore = utils.get_window_preserver()
+	local all_fixed = true
+
+	-- 모든 창의 현재 상태 확인
+	for i = 1, vim.fn.winnr("$") do
+		vim.cmd(i .. "wincmd w")
+		if not vim.wo.winfixwidth or not vim.wo.winfixheight then
+			all_fixed = false
+			break
+		end
+	end
+
+	-- 모든 창의 상태 변경
+	for i = 1, vim.fn.winnr("$") do
+		vim.cmd(i .. "wincmd w")
+		if all_fixed then
+			UnfixWindowSize()
+		else
+			FixWindowSize()
+		end
+	end
+
+	if all_fixed then
+		vim.notify("All windows fix disabled")
+	else
+		vim.notify("All windows fix enabled")
+	end
+
+	restore()
+end
+
+function UnfixAllWindows()
+	local _, restore = utils.get_window_preserver()
+
+	-- 모든 창의 상태를 unfixed로 변경
+	for i = 1, vim.fn.winnr("$") do
+		vim.cmd(i .. "wincmd w")
+		UnfixWindowSize()
+	end
+
+	vim.notify("All windows unfixed")
+	restore()
+end
+
+-- TODO:: lualine에 고정 여부 표시하기
