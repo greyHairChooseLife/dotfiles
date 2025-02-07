@@ -6,10 +6,11 @@ map("n", "<leader>y", Save_entire_buffer_to_register_for_AI_prompt, opt)
 map("v", "<leader>y", Save_visual_selection_to_register_for_AI_prompt, opt)
 -- >>>>>>>>>>>>>>>>> context provider
 
--- >>>>>>>>>>>>>>>>> Avante
-map({ "n", "v" }, "<leader>aa", "<cmd>AvanteToggle<cr>", opt)
-map("n", "<leader>af", "<cmd>AvanteFocus<cr>", opt)
--- >>>>>>>>>>>>>>>>> Avante
+-- DEPRECATED:: 2025-02-04, which-key
+-- -- >>>>>>>>>>>>>>>>> Avante
+-- map({ "n", "v" }, "<leader>aa", "<cmd>AvanteToggle<cr>", opt)
+-- map("n", "<leader>af", "<cmd>AvanteFocus<cr>", opt)
+-- -- >>>>>>>>>>>>>>>>> Avante
 
 -- >>>>>>>>>>>>>>>>> Copilot
 map("i", "<A-Down>", "<Plug>(copilot-accept-line)", opt)

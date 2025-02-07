@@ -5,5 +5,6 @@ local opt = { noremap = true, silent = true }
 -- DEPRECATED:: 2025-02-03
 -- map("n", "<Space>n", "<cmd>NoiceDismiss<CR>")
 
-map("n", ",.N", "<cmd>Noice telescope<CR>") -- N for Noice
+-- DEPRECATED:: 2025-02-06, which-key
+-- map("n", ",.N", "<cmd>Noice telescope<CR>") -- N for Noice
 -- <<<<<<<<<<<<<<<<<<<<

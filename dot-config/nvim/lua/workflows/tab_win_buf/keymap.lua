@@ -67,24 +67,11 @@ map("n", "<A-S-Right>", "<cmd>vertical resize +8<CR>", {})
 map("n", "<A-S-Down>", "<cmd>horizontal resize -8<CR>", {})
 map("n", "<A-S-Up>", "<cmd>horizontal resize +8<CR>", {})
 -- Etc
-map("n", ",sx", "<cmd>sp | wincmd w<CR>") -- go to definition in splitted window (horizontal)
-map("n", ",sv", "<cmd>vs<CR>") -- go to definition in splitted window (vertical)
-map("n", ",st", function() -- Copy window to new tab
-	vim.cmd("split | wincmd T")
-	local tabnr = vim.fn.tabpagenr()
-	local filename = vim.fn.expand("%:t")
-	if filename ~= "" then
-		vim.fn.settabvar(tabnr, "tabname", " sp: " .. filename)
-	end
-end)
-map("n", ",mt", function() -- move window to tab
-	vim.cmd("wincmd T")
-	local tabnr = vim.fn.tabpagenr()
-	local filename = vim.fn.expand("%:t")
-	if filename ~= "" then
-		vim.fn.settabvar(tabnr, "tabname", " mv: " .. filename)
-	end
-end)
+-- DEPRECATED:: 2025-02-07, which-key
+-- map("n", ",sv", "<cmd>vs<CR>") -- go to definition in splitted window (vertical)
+-- map("n", ",sx", "<cmd>sp | wincmd w<CR>") -- go to definition in splitted window (horizontal)
+-- map("n", ",st", SplitTabModifyTabname) -- Copy window to new tab
+-- map("n", ",mt", MoveTabModifyTabname) -- move window to tab
 
 ---------------------------------------------------------------------------------------------------------------------------------- TABS
 -- New / Rename / Swap Position

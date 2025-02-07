@@ -22,16 +22,17 @@ map("n", ",..w", tele_func.live_grep_current_buffer)
 map("v", ",..w", tele_func.visual_live_grep_current_buffer)
 map("n", ",.c", builtin.grep_string)
 map("v", ",.c", tele_func.visual_grep_string)
-map("n", ",.m", builtin.marks)
 map("n", ",.b", tele_func.buffers_without_terminal)
 map("n", ",.z", builtin.current_buffer_fuzzy_find) -- Regex search current file
 
+-- DEPRECATED:: 2025-02-06, which-key
+-- map("n", ",.R", builtin.resume)
+-- map("n", ",.H", builtin.help_tags)
+-- map("n", ",.T", "<cmd>TodoTelescope<CR>")
+
 map("n", ",.q", builtin.quickfix)
 map({ "n", "i" }, ",.r", builtin.registers)
+map("n", ",.m", builtin.marks)
 map("n", ",.o", function()
 	builtin.oldfiles({ only_cwd = true })
 end)
-
-map("n", ",.R", builtin.resume)
-map("n", ",.H", builtin.help_tags)
-map("n", ",.T", "<cmd>TodoTelescope<CR>")

@@ -9,3 +9,12 @@ function NvimTreeResetUI()
 
 	ShowCursor()
 end
+
+function ToggleTree()
+	local tree_api = require("nvim-tree.api").tree
+
+	tree_api.toggle({ find_files = true, focus = false })
+	if tree_api.is_visible() then
+		ShowCursor()
+	end
+end

@@ -1,16 +1,10 @@
 local map = vim.keymap.set
 local opt = { noremap = true, silent = true }
 
+-- DEPRECATED:: 2025-02-06, which-key
 -- NVIM-TREE
-map("n", ",,d", function()
-	local tree_api = require("nvim-tree.api").tree
-
-	tree_api.toggle({ find_files = true, focus = false })
-	if tree_api.is_visible() then
-		ShowCursor()
-	end
-end)
-map("n", ",d", "<cmd>NvimTreeFocus<CR>") -- focus on nvim-tree right away  -> diffview 쪽이랑 통합했다. 조건부로 동작.
+-- map("n", ",,d", ToggleTree)
+-- map("n", ",d", "<cmd>NvimTreeFocus<CR>")
 
 local M = {}
 

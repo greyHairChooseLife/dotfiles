@@ -4,22 +4,20 @@ local opt = { noremap = true, silent = true }
 local telescope = require("telescope.builtin")
 
 map("n", "K", vim.lsp.buf.hover, opt)
-map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opt)
-map("n", "<leader>rr", vim.lsp.buf.rename, opt)
-map("n", "<leader>rs", "<cmd>LspRestart<CR>", opt)
 
 map("n", "dn", vim.diagnostic.goto_next, opt)
 map("n", "dp", vim.diagnostic.goto_prev, opt)
 map("n", "dK", vim.diagnostic.open_float, opt)
 
 -- MEMO:: `<C-l>`: show autocompletion menu to prefilter (i.e. `:warning:`)
-map("n", ",.d", function()
+
+map("n", ",..d", function()
 	telescope.diagnostics({
 		bufnr = 0, -- 현재 버퍼로 제한
 		line_width = 200, -- 어차피 현재 파일일이다.
 	})
 end, opt)
-map("n", ",.D", function()
+map("n", ",.d", function()
 	telescope.diagnostics({
 		bufnr = nil, -- 모든 버퍼
 		line_width = 0, -- diagnostic line은 필요 없고 파일만 구분되면 돼
@@ -66,4 +64,10 @@ map("n", "gO", function()
 	})
 end, opt)
 
-map("n", "d<Space>", ToggleVirtualText, opt)
+-- DEPRECATED:: 2025-02-04, which-key
+-- map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opt)
+-- map("n", "<leader>rr", vim.lsp.buf.rename, opt)
+-- map("n", "<leader>rs", "<cmd>LspRestart<CR>", opt)
+
+-- DEPRECATED:: 2025-02-06, which-key
+-- map("n", "d<Space>", ToggleVirtualText, opt)

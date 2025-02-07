@@ -1,0 +1,278 @@
+local wk_map = require("utils").wk_map
+
+-- MEMO:: All Groups
+wk_map({
+	["<leader>"] = {
+		group = "External",
+	},
+	["<leader>g"] = {
+		group = "Git",
+		["g"] = { "<cmd>G<CR>", desc = "fugitive", mode = "n" },
+	},
+	["<Space>"] = {
+		group = "Internal",
+	},
+	[","] = {
+		group = "on the fly",
+	},
+	[",c"] = {
+		group = "command",
+	},
+})
+
+-- MEMO:: Log (Git)
+wk_map({
+	["<leader>gl"] = {
+		group = "Log",
+		order = { "<Space>", "a", "r", "f" },
+		["<Space>"] = { "<cmd>GV<CR>", desc = "(default)", mode = "n" },
+		["a"] = { "<cmd>GV --all<CR>", desc = "all", mode = "n" },
+		["r"] = { "<cmd>GV reflog<CR>", desc = "reflog", mode = "n" },
+		["f"] = { "<cmd>GV!<CR>", desc = "current File", mode = "n" },
+	},
+})
+
+-- MEMO:: Review (Git)
+wk_map({
+	["<leader>gr"] = {
+		group = "Review",
+		order = { "w", "s", "<Space>", "f", "a", "F" },
+		["w"] = { "<cmd>DiffviewOpen<CR>", desc = "working on", mode = { "n" } },
+		["s"] = { "<cmd>DiffviewOpen --staged<CR>", desc = "staged", mode = { "n" } },
+		["<Space>"] = { "<cmd>DiffviewFileHistory<CR>", desc = "(default)", mode = { "n" } },
+		["f"] = { "<cmd>DiffviewFileHistory %<CR>", desc = "file", mode = { "n" } },
+		["a"] = { "<cmd>DiffviewFileHistory --all<CR>", desc = "all", mode = { "n" } },
+		["F"] = { "<cmd>DiffviewFileHistory --reverse --range=HEAD...FETCH_HEAD<CR>", desc = "fetched", mode = { "n" } },
+		["r"] = {
+			function()
+				vim.fn.feedkeys(":DiffviewFileHistory --range=", "n")
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "c", false)
+			end,
+			desc = "range select",
+			mode = { "n" },
+		},
+	},
+})
+wk_map({
+	["<leader>gr"] = {
+		group = "Review",
+		order = { "<Space>" },
+		["<Space>"] = { DiffviewOpenWithVisualHash, desc = "(default)", mode = { "v" } },
+	},
+})
+
+-- MEMO:: Session
+wk_map({
+	["<leader>s"] = {
+		group = "Session",
+		order = { "s", "l" },
+		["s"] = { "<cmd>SessionSave<CR>", desc = "session 저장", mode = "n" },
+		["l"] = { "<cmd>SessionSearch<CR>", desc = "session 불러오기", mode = "n" },
+	},
+})
+
+-- MEMO:: Avante.nvim
+wk_map({
+	["<leader>a"] = {
+		group = "Avante",
+		order = { "a", "c", "f", "t" },
+		["a"] = { "<cmd>AvanteAsk<CR>", desc = "ask", mode = { "n", "v" } },
+		["c"] = { "", desc = "current buffer(file) into/outof ctx", mode = { "n" } },
+		["t"] = { "<cmd>AvanteToggle<CR>", desc = "toggle", mode = { "n", "v" } },
+		["f"] = { "<cmd>AvanteFocus<CR>", desc = "focus", mode = { "n", "v" } },
+	},
+})
+wk_map({
+	["<leader>ae"] = {
+		group = "expand",
+		order = { "1", "2" },
+		-- TODO:: preset 명령 recipe 참고
+		["1"] = { "", desc = "저장된 명령 1", mode = { "n", "v" } },
+		["2"] = { "", desc = "저장된 명령 2", mode = { "n", "v" } },
+	},
+})
+
+-- MEMO:: Directory
+wk_map({
+	["<Space>d"] = {
+		group = "Directory  - NvimTree",
+		order = { "f", "t" },
+		["f"] = { "<cmd>NvimTreeFocus<CR>", desc = "focus", mode = "n" },
+		["t"] = { ToggleTree, desc = "toggle ", mode = "n" },
+	},
+})
+
+-- MEMO:: LSP
+wk_map({
+	["<Space>l"] = {
+		group = "LSP",
+		order = { "d", "D", "c", "v" },
+		["d"] = { require("workflows.LSP.function").diagnostic_local, desc = "diagnostic (local)", mode = { "n" } },
+		["D"] = { require("workflows.LSP.function").diagnostic_global, desc = "diagnostic (global)", mode = { "n" } },
+		["c"] = { vim.lsp.buf.code_action, desc = "code action", mode = { "n", "v" } },
+		["v"] = { ToggleVirtualText, desc = "virtual text toggle", mode = { "n" } },
+	},
+})
+wk_map({
+	["<Space>lr"] = {
+		group = "expand",
+		order = { "n", "e" },
+		["n"] = { vim.lsp.buf.rename, desc = "reName ", mode = "n" },
+		["e"] = { "<cmd>LspRestart<CR>", desc = "rEstart", mode = "n" },
+	},
+})
+
+-- MEMO:: (Syntax) Tree
+wk_map({
+	["<Space>t"] = {
+		group = "Tree       - Aerial",
+		order = { "f", "t" },
+		["f"] = {
+			function()
+				vim.cmd("norm ^ww")
+				vim.cmd("AerialOpen")
+			end,
+			desc = "focus",
+			mode = "n",
+		},
+		["t"] = {
+			function()
+				vim.cmd("AerialToggle")
+				vim.cmd("wincmd p")
+			end,
+			desc = "toggle ",
+			mode = "n",
+		},
+	},
+})
+
+-- MEMO:: QuickFix
+wk_map({
+	["<Space>q"] = {
+		group = "QuickFix",
+		order = { "f", "t", "n", "p" },
+		["f"] = { "<cmd>copen<CR>", desc = "focus", mode = "n" },
+		["t"] = { QF_ToggleList, desc = "toggle", mode = "n" },
+		["n"] = { QF_next, desc = "next", mode = "n" },
+		["p"] = { QF_prev, desc = "prev", mode = "n" },
+	},
+})
+
+-- MEMO:: UI
+wk_map({
+	["<Space>u"] = {
+		group = "UI",
+		order = { "i", "d" },
+		["i"] = { "<cmd>IBLToggle<CR>", desc = "IBL-toggle", mode = "n" },
+		["d"] = {
+			function()
+				vim.cmd("Gitsigns toggle_word_diff")
+				vim.cmd("Gitsigns toggle_linehl")
+			end,
+			desc = "diff preview",
+			mode = "n",
+		},
+		["v"] = { ToggleVirtualText, desc = "virtual text toggle", mode = { "n" } },
+	},
+})
+
+-- MEMO:: Telescope
+local builtin = require("telescope.builtin")
+wk_map({
+	[",."] = {
+		group = "Telescope",
+		order = { "R", "H", "T", "N" },
+		["R"] = { builtin.resume, desc = "resume", mode = "n" },
+		["H"] = { builtin.help_tags, desc = "help doc", mode = "n" },
+		["T"] = { "<cmd>TodoTelescope<CR>", desc = "todo Tags", mode = "n" },
+		["N"] = { "<cmd>Noice telescope<CR>", desc = "noice Log", mode = "n" },
+	},
+})
+
+-- MEMO:: On The Fly
+wk_map({
+	[",w"] = {
+		group = "expand",
+		-- TODO:: winfix 커맨드 활용해서 적절한 기능으로 채우기
+		["f"] = { "window fix", desc = "window fix", mode = "n" },
+		["F"] = { "window fix all", desc = "window fix all", mode = "n" },
+	},
+})
+wk_map({
+	[","] = {
+		order = { "r", "R", "C" },
+		-- TODO:: ReloadLayout/ReloadLayoutForce 기능 개선 및 만들기
+		["r"] = { ReloadLayout, desc = "reload layout", mode = "n" },
+		["R"] = {
+			"", -- ReloadLayoutForce
+			desc = "reload layout force",
+			mode = "n",
+		},
+		["C"] = {
+			function()
+				local word = vim.fn.expand("<cword>")
+				vim.api.nvim_feedkeys(":%s/" .. word .. "//g", "n", false)
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true), "n", false)
+			end,
+			desc = "change",
+			mode = "n",
+		},
+	},
+})
+wk_map({
+	[",v"] = {
+		group = "expand",
+		["d"] = { VDiffSplitOnTab, desc = "vertical diff", mode = "n" },
+	},
+})
+wk_map({
+	[",vf"] = {
+		group = "expand",
+		["d"] = {
+			function()
+				vim.fn.feedkeys(":vert diffsplit ", "n")
+			end,
+			desc = "vertical File diff",
+			mode = "n",
+		},
+	},
+})
+wk_map({
+	[",s"] = {
+		group = "expand",
+		order = { "v", "x", "t" },
+		["v"] = { "<cmd>vs<CR>", desc = "split vertical", mode = "n" },
+		["x"] = { "<cmd>sp | wincmd w<CR>", desc = "split horizontal", mode = "n" },
+		["t"] = { SplitTabModifyTabname, desc = "split tab", mode = "n" },
+	},
+})
+wk_map({
+	[",m"] = {
+		group = "expand",
+		["t"] = { MoveTabModifyTabname, desc = "move tab", mode = "n" },
+	},
+})
+wk_map({
+	[",c"] = {
+		group = "expand",
+		["r"] = { RunBufferWithSh, desc = "command run", mode = "n" },
+	},
+})
+wk_map({
+	[",cc"] = {
+		group = "expand",
+		["r"] = { RunBufferWithShCover, desc = "command cover run", mode = "n" },
+	},
+})
+wk_map({
+	[",c"] = {
+		group = "expand",
+		["r"] = { RunSelectedLinesWithSh, desc = "command run", mode = "v" },
+	},
+})
+wk_map({
+	[",cc"] = {
+		group = "expand",
+		["r"] = { RunSelectedLinesWithShCover, desc = "command cover run", mode = "v" },
+	},
+})

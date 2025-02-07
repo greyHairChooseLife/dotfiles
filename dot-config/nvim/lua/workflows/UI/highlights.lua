@@ -282,6 +282,11 @@ vim.cmd([[
   " MEMO:: Indent Blank Line
   highlight NoiceMini guifg=#BDB76B guibg=NONE
   highlight NoiceVirtualText guifg=#FFFF00 guibg=NONE gui=italic " highlight search
+
+
+  " MEMO:: WhichKey
+  highlight WhichKeyNormal guibg=#000000 guifg=#c8ccd4
+  highlight WhichKeyDesc gui=italic
 ]])
 
 --

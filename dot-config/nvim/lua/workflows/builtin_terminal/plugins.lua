@@ -29,7 +29,7 @@ return {
 				-- width = 150,
 				-- height = 50,
 				-- row = 5,
-				winblend = 35,
+				winblend = 25,
 				title_pos = "center",
 			},
 		},

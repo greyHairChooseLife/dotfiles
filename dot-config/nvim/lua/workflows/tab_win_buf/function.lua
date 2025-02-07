@@ -261,3 +261,21 @@ function MoveTabRight()
 		vim.cmd("tabmove 0")
 	end
 end
+
+function SplitTabModifyTabname()
+	vim.cmd("split | wincmd T")
+	local tabnr = vim.fn.tabpagenr()
+	local filename = vim.fn.expand("%:t")
+	if filename ~= "" then
+		vim.fn.settabvar(tabnr, "tabname", " sp: " .. filename)
+	end
+end
+
+function MoveTabModifyTabname()
+	vim.cmd("wincmd T")
+	local tabnr = vim.fn.tabpagenr()
+	local filename = vim.fn.expand("%:t")
+	if filename ~= "" then
+		vim.fn.settabvar(tabnr, "tabname", " mv: " .. filename)
+	end
+end

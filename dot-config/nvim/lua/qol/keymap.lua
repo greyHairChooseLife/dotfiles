@@ -11,11 +11,23 @@ map("i", "<Space>", function()
 end, opt)
 
 map("n", "~", "<cmd>wincmd p<CR>") -- focus previous window & cursor position
-map("n", ",r", ReloadLayout) -- 창 크기 동일하게
 map("v", "p", '"_dP') -- paste without yanking in visual mode
 map("v", "<leader>s", SearchWithBrowser, opt)
 
-map("n", ",C", [[:%s/<C-r><C-w>//g<Left><Left>]]) -- change word under cursor globally
+-- 앞글자 대문자로 변환
+map({ "n", "v" }, "gu", function()
+	require("utils").save_cursor_position()
+	vim.cmd("normal! lbvU")
+	require("utils").restore_cursor_position()
+end) -- CamelCase
+-- DEPRECATED:: 2025-02-07, which-key
+-- map("n", ",r", ReloadLayout) -- 창 크기 동일하게
+-- map("n", ",C", [[:%s/<C-r><C-w>//g<Left><Left>]]) -- change word under cursor globally
+-- map("n", ",R", RunBufferWithSh, opt)
+-- map("n", ",cR", RunBufferWithShCover, opt)
+-- map("v", ",R", RunSelectedLinesWithSh, opt)
+-- map("v", ",cR", RunSelectedLinesWithShCover, opt)
+
 map({ "n", "v" }, ";", ":")
 map({ "n", "v" }, ":", ";")
 map({ "n", "v" }, "Q", ",")
@@ -33,8 +45,6 @@ map("n", "k", [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
 
 map("n", "vv", "viw") -- easy visual block for word
 map("v", "v", "<Esc>")
-
-map({ "n", "v" }, ",U", "<Esc>bvU") -- CamelCase
 
 map({ "n", "v", "i", "c" }, "<leader>t", "<cmd>TTimerlyToggle<cr>")
 
@@ -90,6 +100,7 @@ map({ "n", "v" }, "<C-y>", "2<C-y>")
 map("n", ",.<ESC>", "<Nop>") -- do nothing
 
 -- 선택한 줄 이동
+-- TODO:: commandline 자꾸 깜빡이는게 거슬려
 map("x", "<A-k>", ":move '<-2<CR>gv-gv")
 map("x", "<A-j>", ":move '>+1<CR>gv-gv")
 map("v", "<A-h>", "<gv")
@@ -97,7 +108,7 @@ map("v", "<A-l>", ">gv")
 
 -- snippet
 map("i", "cl<cr>", Insert_console_log, opt)
-map("v", "cl<cr>", Insert_console_log_Visual, opt) -- DEPRECATED:: 2024-12-30, 한번 snippet으로 해보자
+map("v", "cl<cr>", Insert_console_log_Visual, opt)
 
 -- FOLD는 항상  mkview
 map("n", "zc", "zc<cmd>mkview<CR>")
@@ -122,28 +133,7 @@ map("n", "zd", "zd<cmd>mkview<CR>")
 -- LEAP
 map({ "n", "v" }, ",l", "<Plug>(leap-forward)")
 map({ "n", "v" }, ",L", "<Plug>(leap-backward)")
-map({ "n" }, ",gl", "<Plug>(leap-from-window)")
-
--- TODO:
--- 	1.색깔이 똒바로 안돼.
--- 	2.indent는 필요 없고 scope만 활성화
--- INDENT-BLANKLINE
-map({ "n", "v" }, "<F2>", "<cmd>IBLToggle<CR>")
-
--- TODO: 저장은 잘 되는데 자동으로 불러오는게 이상함.
--- AUTO-SESSION
-map("n", "<leader><leader>s", "<cmd>SessionSave<CR>") -- save
-map("n", ",.S", "<cmd>SessionSearch<CR>", opt) -- search and load
-
-map("n", ",,q", QF_ToggleList, opt)
-map("n", ",q", "<cmd>copen<CR>", opt)
-map("n", "qn", QF_next, { buffer = false })
-map("n", "qp", QF_prev, { buffer = false })
-
-map("n", ",R", RunBufferWithSh, opt)
-map("n", ",cR", RunBufferWithShCover, opt)
-map("v", ",R", RunSelectedLinesWithSh, opt)
-map("v", ",cR", RunSelectedLinesWithShCover, opt)
+map({ "n" }, ",,l", "<Plug>(leap-from-window)")
 
 map("n", "n", function()
 	Safe_search("n")
@@ -155,3 +145,14 @@ end, opt)
 -- DEPRECATED:: 2024-01-17
 -- map({ "n" }, ",,p", '"*p') -- easy-paste system clipboard
 -- map({ "n", "v" }, ",p", '"0p') -- paste last thing yanked, not deleted
+
+-- DEPRECATED:: 2025-02-04, which-key
+-- -- INDENT-BLANKLINE
+-- map({ "n", "v" }, "<F2>", "<cmd>IBLToggle<CR>")
+-- -- AUTO-SESSION
+-- map("n", "<leader><leader>s", "<cmd>SessionSave<CR>") -- save
+-- map("n", ",.S", "<cmd>SessionSearch<CR>", opt) -- search and load
+-- map("n", ",,q", QF_ToggleList, opt)
+-- map("n", ",q", "<cmd>copen<CR>", opt)
+-- map("n", "qn", QF_next, { buffer = false })
+-- map("n", "qp", QF_prev, { buffer = false })

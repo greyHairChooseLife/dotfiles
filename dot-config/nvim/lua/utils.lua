@@ -321,4 +321,20 @@ M.wk_map = function(mappings)
 	require("which-key").add(processed)
 end
 
+local saved_cursor = nil -- 커서 위치 저장 변수
+
+-- 현재 커서 위치 저장
+M.save_cursor_position = function()
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	saved_cursor = { row, col }
+	print("Cursor position saved: Line " .. row .. ", Column " .. col)
+end
+
+-- 저장된 위치로 이동
+M.restore_cursor_position = function()
+	if saved_cursor then
+		vim.api.nvim_win_set_cursor(0, saved_cursor)
+	end
+end
+
 return M
