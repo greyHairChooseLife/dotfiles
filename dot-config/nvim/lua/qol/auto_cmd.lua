@@ -146,7 +146,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 vim.api.nvim_create_autocmd("TextYankPost", {
 	pattern = "*",
 	callback = function()
-		vim.highlight.on_yank({ higroup = "Sneak", timeout = 100 })
+		vim.highlight.on_yank({ higroup = "Visual", timeout = 100 })
 	end,
 })
 
