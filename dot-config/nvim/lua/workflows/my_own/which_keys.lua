@@ -82,13 +82,18 @@ wk_map({
 		["f"] = { "<cmd>AvanteFocus<CR>", desc = "focus", mode = { "n", "v" } },
 	},
 })
+local apf = require("workflows.AI.avante_prefill_function")
 wk_map({
 	["<leader>ae"] = {
-		group = "expand",
-		order = { "1", "2" },
-		-- TODO:: preset 명령 recipe 참고
-		["1"] = { "", desc = "저장된 명령 1", mode = { "n", "v" } },
-		["2"] = { "", desc = "저장된 명령 2", mode = { "n", "v" } },
+		group = "Prefill",
+		order = { "1", "2", "3", "4", "5", "6" },
+		["1"] = { apf.prefill_3, desc = "diagnostics 설명", mode = { "n", "v" } },
+		["2"] = { apf.prefill_4, desc = "코드 설명", mode = { "n", "v" } },
+		["3"] = { apf.prefill_2, desc = "코드 최적화", mode = { "n", "v" } },
+		["4"] = { apf.prefill_1, desc = "가독성 검사", mode = { "n", "v" } },
+		["5"] = { apf.prefill_5, desc = "docstring 추가", mode = { "n", "v" } },
+		["6"] = { apf.prefill_6, desc = "버그 해결", mode = { "n", "v" } },
+		["7"] = { apf.prefill_7, desc = "테스트 작성", mode = { "n", "v" } },
 	},
 })
 
@@ -109,6 +114,7 @@ wk_map({
 		order = { "d", "D", "c", "v" },
 		["d"] = { require("workflows.LSP.function").diagnostic_local, desc = "diagnostic (local)", mode = { "n" } },
 		["D"] = { require("workflows.LSP.function").diagnostic_global, desc = "diagnostic (global)", mode = { "n" } },
+		["y"] = { CopyDiagnosticsAtLine, desc = "copy diagnostics at line", mode = { "n", "v" } },
 		["c"] = { vim.lsp.buf.code_action, desc = "code action", mode = { "n", "v" } },
 		["v"] = { ToggleVirtualText, desc = "virtual text toggle", mode = { "n" } },
 	},

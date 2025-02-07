@@ -197,13 +197,6 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 - winbar의 활용
 
-- set winfixwidth, winfixheight라는 옵션이 있다. 현재 윈도우 사이즈를 고정하는 것인데, toggle가능하게 함수로 만들어서 사용하면 유용하겠다.
-  더불어, 모든 toggle은 동일한 형식의 keymap 규칙을 가지도록 점검해보자.
-
-  - 기존에 사용중인 `,r`의 경우 무조건 상하좌우 균일하게 배분한다. 근데 내가 임의로 고정해두고 싶은 경우도 있을 것이고, 임의로 여럿 고정했음에도 불구하고 그냥 상하좌우 균등 분배하고 싶을수도 있다.
-    이를 위하여 기존 `,r`에 더하여 임의고정 폭/높이를 존중하는 resize명령도 추가해보자.
-
-
 - visual select에서 대문자 S 입력하면 이후 연속해서(sequence) 입력하는 문자에 따라 다양한 기능을 제공한다. 이게 뭔지 알아보자.
 
 - nvim-tree에서 a키로 toggle: git stage / git unstage
