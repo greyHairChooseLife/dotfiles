@@ -86,7 +86,7 @@ local apf = require("workflows.AI.avante_prefill_function")
 wk_map({
 	["<leader>ae"] = {
 		group = "Prefill",
-		order = { "1", "2", "3", "4", "5", "6" },
+		order = { "1", "2", "3", "4", "5", "6", "7" },
 		["1"] = { apf.prefill_3, desc = "diagnostics 설명", mode = { "n", "v" } },
 		["2"] = { apf.prefill_4, desc = "코드 설명", mode = { "n", "v" } },
 		["3"] = { apf.prefill_2, desc = "코드 최적화", mode = { "n", "v" } },
