@@ -19,25 +19,21 @@ return {
 	{
 		"rmagatti/auto-session",
 		cmd = { "SessionSearch", "SessionSave" },
-		config = function()
-			require("auto-session").setup({
-				log_level = "error",
-				auto_session_suppress_dirs = { "~/", "~/test", "~/Downloads", "/*" },
-				session_lens = {
-					buftypes_to_ignore = {}, -- list of buffer types what should not be deleted from current session
-					load_on_setup = true,
-					theme_conf = {
-						border = true,
-						layout_config = {
-							width = 1.8, -- Can set width and height as percent of window
-							height = 0.5,
-						},
-					},
-					previewer = false,
+		opts = {
+			log_level = "error",
+			auto_session_suppress_dirs = { "~/", "~/test", "~/Downloads", "/*" },
+			session_lens = {
+				buftypes_to_ignore = {}, -- list of buffer types what should not be deleted from current session
+				load_on_setup = true,
+				-- theme = "ivy", -- default is dropdown
+				theme_conf = {
+					border = true,
 				},
-				auto_save_enabled = false,
-			})
-		end,
+				previewer = false,
+				path_dispaly = { "shorten" },
+			},
+			auto_save_enabled = false,
+		},
 	},
 
 	{

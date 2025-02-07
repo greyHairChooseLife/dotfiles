@@ -66,8 +66,8 @@ wk_map({
 	["<leader>s"] = {
 		group = "Session",
 		order = { "s", "l" },
-		["s"] = { "<cmd>SessionSave<CR>", desc = "session 저장", mode = "n" },
-		["l"] = { "<cmd>SessionSearch<CR>", desc = "session 불러오기", mode = "n" },
+		["s"] = { "<cmd>SessionSave<CR>", desc = "save", mode = "n" },
+		["v"] = { "<cmd>SessionSearch<CR>", desc = "view", mode = "n" },
 	},
 })
 
