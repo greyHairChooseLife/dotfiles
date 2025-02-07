@@ -10,7 +10,7 @@ map("i", "<Space>", function()
 	end, 20)
 end, opt)
 
-map("n", "~", "<cmd>wincmd p<CR>") -- focus previous window & cursor position
+map("n", "`g", "<cmd>wincmd p<CR>") -- focus previous window & cursor position
 map("v", "p", '"_dP') -- paste without yanking in visual mode
 map("v", "<leader>s", SearchWithBrowser, opt)
 
