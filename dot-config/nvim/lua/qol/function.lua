@@ -461,5 +461,3 @@ function UnfixAllWindows()
 	vim.notify("All windows unfixed")
 	restore()
 end
-
--- TODO:: lualine에 고정 여부 표시하기

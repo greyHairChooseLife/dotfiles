@@ -222,9 +222,6 @@ function NewTabWithPrompt()
 	vim.fn.settabvar(tabnr, "tabname", tabname)
 end
 
--- TODO:
--- 	아래처럼 살펴보면 tabname이란 variable로 잘 등록되어 있다. 그러나 표시가 안된다. 이부분 개선 필요.
---	lua print(vim.inspect(vim.fn.gettabinfo(<tabnr>)))
 function RenameCurrentTab()
 	-- 현재 탭 번호를 가져옵니다
 	local tabnr = vim.fn.tabpagenr()

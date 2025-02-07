@@ -146,6 +146,14 @@ return {
 				end
 			end
 
+			local function winfix_status()
+				if vim.wo.winfixwidth and vim.wo.winfixheight then
+					return "  Fix" -- 🔒 고정 표시
+				else
+					return ""
+				end
+			end
+
 			-- 각종 컴포넌트 스니펫이다.
 			-- https://github.com/nvim-lualine/lualine.nvim/wiki/Component-snippets
 
@@ -367,6 +375,14 @@ return {
 					lualine_c = {},
 					lualine_x = {
 						{
+							winfix_status,
+							padding = { left = 1, right = 1 },
+							color = {
+								bg = colors.black,
+								fg = colors.wwhite,
+							},
+						},
+						{
 							search_counter,
 							padding = { left = 2, right = 1 },
 							color = {
@@ -456,6 +472,14 @@ return {
 						},
 					},
 					lualine_y = {
+						{
+							winfix_status,
+							padding = { left = 1, right = 1 },
+							color = {
+								bg = colors.black,
+								fg = colors.wwhite,
+							},
+						},
 						{
 							search_counter,
 							padding = { left = 2, right = 1 },
