@@ -231,7 +231,7 @@ return {
 				-- Amount of empty lines below LaTeX blocks
 				bottom_pad = 0,
 			},
-			heading = {
+			heading = { -- text-based로 동적 표현이 가능하다.  https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5c2440d
 				-- Turn on / off heading icon & background rendering
 				enabled = true,
 				-- Turn on / off any sign column related rendering
@@ -265,7 +265,8 @@ return {
 				-- icons = function(sections)
 				-- 	return table.concat(sections, ".") .. ". "
 				-- end,
-				icons = function(sections)
+				icons = function(ctx)
+					local sections = ctx.sections
 					table.remove(sections, 1)
 					if #sections > 0 then
 						if #sections == 3 then
