@@ -164,6 +164,12 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
   원래는 tab과 buffer는 별 관련이 없다. 근데 텝마다 별도의 buffer그룹을 가졌으면... 하고 생각할 때가 있다. 이런 아이디어를 구현한 플러그인
 
 
+- Aider plugins
+  https://github.com/GeorgesAlkhouri/nvim-aider
+  https://github.com/joshuavial/aider.nvim
+  https://github.com/aweis89/aider.nvim
+
+
 ### config 훔치기 [-]
 
 - 전반적으로

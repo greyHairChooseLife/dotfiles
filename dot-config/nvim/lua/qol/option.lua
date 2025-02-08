@@ -36,3 +36,5 @@ opt.formatoptions:remove("f") -- Prevent auto-folding during formatting
 opt.sessionoptions = "globals,blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 
 opt.completeopt = { "menu", "menuone", "noselect" }
+
+opt.diffopt = "internal,filler,closeoff,indent-heuristic,linematch:60,algorithm:histogram"
