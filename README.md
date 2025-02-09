@@ -120,6 +120,8 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 - new plugin: [gitgraph](https://github.com/isakbm/gitgraph.nvim)
 
+- image on buffer: [github 1](https://github.com/Toprun123/PicVim) & [github 2](https://github.com/Skardyy/neo-img)
+
 - `folke/trouble.nvim`
   coc.nvim과 함게는 쓰기 어렵고, 내장 lsp 매니저(?)로 전환할 때 활용하자
 

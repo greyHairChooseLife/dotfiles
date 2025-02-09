@@ -14,6 +14,7 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#24283B" })
 		vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#24283B" })
 		vim.opt.textwidth = 100
+		-- vim.opt.formatoptions:append("a") -- 붙여넣기 따위 시에도 최대 너비 존중
 
 		-- SNIPPET
 		vim.keymap.set("i", ",,h2", function()
