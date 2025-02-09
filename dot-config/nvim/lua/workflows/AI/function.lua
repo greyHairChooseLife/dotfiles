@@ -6,6 +6,7 @@ function Save_entire_buffer_to_register_for_AI_prompt()
 	local result = string.format("```%s\n## File Path: %s\n%s\n```", filetype, relative_path, content)
 
 	vim.fn.setreg("+", result)
+	print("copied entirely for AI!")
 end
 
 -- 비주얼 모드: 선택한 텍스트를 주석과 함께 md 코드블록 형식으로 레지스트리에 저장
@@ -27,5 +28,6 @@ function Save_visual_selection_to_register_for_AI_prompt()
 
 		-- 텍스트를 레지스트리에 저장
 		vim.fn.setreg("+", result)
+		print("copied selected for AI!")
 	end)
 end

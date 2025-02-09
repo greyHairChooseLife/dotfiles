@@ -1,4 +1,4 @@
-set colored-stats On
+# set colored-stats On  -- lsd같은 cli app과 겹치는듯
 set colored-completion-prefix On
 
 set show-all-if-ambiguous On
