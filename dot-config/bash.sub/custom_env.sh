@@ -21,3 +21,5 @@ export TMUX_RESURRECT_DIR="$HOME/.local/state/tmux-resurrects/"
 
 export MANPAGER='nvim +Man!'
 export MANWIDTH=999
+
+export LANG=en_US.UTF-8 # 이게 ssh servet-clinet간에 다르면 한글 랜더링 오류가 난다.

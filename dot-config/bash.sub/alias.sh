@@ -75,7 +75,8 @@ alias doc2='cd /home/sy/Documents/job-wiki && nvim -c "2VimwikiIndex"'
 
 
 # >>> AI
-alias ai='aider --chat-mode architect --code-theme monokai --analytics-disable'
+alias ai='aider --restore-chat-history --chat-mode architect --code-theme monokai --analytics-disable'
+alias ain='aider --chat-mode architect --code-theme monokai --analytics-disable'
 alias aiu='curl -LsSf https://aider.chat/install.sh | sh'
 alias air='aider --show-repo-map'
 # <<<
