@@ -118,6 +118,9 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 ### 관심있는 플러그인
 
+- [snacks.scope](https://github.com/folke/snacks.nvim/blob/main/docs/scope.md)
+  : 조건문, 반복문 등도 treesitter에 등록시켜주나? 그래서 aerial에서도 확인 할 수 있나?
+
 - new plugin: [gitgraph](https://github.com/isakbm/gitgraph.nvim)
 
 - image on buffer: [github 1](https://github.com/Toprun123/PicVim) & [github 2](https://github.com/Skardyy/neo-img)
