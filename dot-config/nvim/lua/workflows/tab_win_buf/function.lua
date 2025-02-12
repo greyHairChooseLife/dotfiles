@@ -214,7 +214,8 @@ function NewTabWithPrompt()
 	if tabname == "" then
 		-- tabname = 'Tab ' .. vim.fn.tabpagenr('$') + 1
 		-- 입력이 없거나 ESC를 누른 경우, 함수 종료
-		return
+		-- return
+		tabname = "no name"
 	end
 	-- 새로운 탭 생성 및 이름 설정
 	vim.cmd("tabnew")

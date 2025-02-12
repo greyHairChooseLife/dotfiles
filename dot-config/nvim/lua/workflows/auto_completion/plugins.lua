@@ -146,6 +146,12 @@ return {
 						end,
 						"fallback",
 					},
+					["<A-Enter>"] = {
+						function(cmp)
+							cmp.cancel()
+						end,
+						"fallback",
+					},
 				},
 			},
 

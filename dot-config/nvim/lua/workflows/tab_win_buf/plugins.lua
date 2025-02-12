@@ -1,3 +1,3 @@
-return {
-	{ "tiagovla/scope.nvim", lazy = false, config = true },
-}
+-- return {
+-- 	{ "tiagovla/scope.nvim", lazy = false, config = true },
+-- }
