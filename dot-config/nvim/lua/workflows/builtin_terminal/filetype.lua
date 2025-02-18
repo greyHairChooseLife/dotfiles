@@ -15,8 +15,8 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.keymap.set("t", "<A-v>", "<Cmd>vnew<CR>", { buffer = true })
 		vim.keymap.set("t", "<A-t>", NewTabWithPrompt, { buffer = true })
 		vim.keymap.set("t", "<A-r>", RenameCurrentTab, { buffer = true })
-		vim.keymap.set("t", "<A-.>", MoveTabRight, { buffer = true })
-		vim.keymap.set("t", "<A-,>", MoveTabLeft, { buffer = true })
+		vim.keymap.set("t", "<A-S-p>", MoveTabRight, { buffer = true })
+		vim.keymap.set("t", "<A-S-o>", MoveTabLeft, { buffer = true })
 		-- FOCUS TABS
 		vim.keymap.set("t", "<A-p>", [[<C-\><C-n>gt]], { noremap = true, silent = true, buffer = true })
 		vim.keymap.set("t", "<A-o>", [[<C-\><C-n>gT]], { noremap = true, silent = true, buffer = true })
