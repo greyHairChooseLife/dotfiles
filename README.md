@@ -12,28 +12,6 @@
   - 실행 결과를 현재 위치에 그대로 출력
   - buf.o.ft=markdown이라면 code-block으로 처리 및 pwd output과 실행한 커맨드도 상단 주석으로 추가
 
-#### aider model reselect
-
-a set of 
-  - deepseek-reasoner(aka. r1) architect
-  - deepseek-chat editor-model
-is fine.
-
-But,
-
-  - r1 architect
-  - sonet editor-model
-
-is strong & efficient!
-
-
-
-weak-model: deepseak chat
-
-
-
-Finally, deepseak-chat-v3 is better than sonnet-3.5 ...
-
 
 
 ## how to start?
