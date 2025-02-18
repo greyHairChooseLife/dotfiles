@@ -267,13 +267,13 @@ wk_map({
 		order = { "v", "x", "t" },
 		["v"] = { "<cmd>vs<CR>", desc = "split vertical", mode = "n" },
 		["x"] = { "<cmd>sp | wincmd w<CR>", desc = "split horizontal", mode = "n" },
-		["t"] = { SplitTabModifyTabname, desc = "split tab", mode = "n" },
+		["t"] = { SplitTabModifyTabname, desc = "split to tab", mode = "n" },
 	},
 })
 wk_map({
 	[",m"] = {
 		group = "expand",
-		["t"] = { MoveTabModifyTabname, desc = "move tab", mode = "n" },
+		["t"] = { MoveTabModifyTabname, desc = "move to tab", mode = "n" },
 	},
 })
 wk_map({
