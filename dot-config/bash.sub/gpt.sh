@@ -26,17 +26,17 @@ openSetOfChatGPT() {
 chatGPT_services() {
   local services choices browser_cmd
   declare -A services=(
+    ["tmp_(4o)"]="https://chatgpt.com/?temporary-chat=true&model=gpt-4o"
     ["1.Basic(o1-mini)"]="https://chatgpt.com/?model=o1-mini"
     ["2.Code"]="https://chatgpt.com/g/g-2DQzU5UZl-code-copilot"
     ["3.Youtube"]="https://chatgpt.com/g/g-4MDJvo2TJ-video-summarizer"
     ["4.Vim"]="https://chatgpt.com/g/g-zjT7l8NAz-neovim-navigator"
     ["5.AWS"]="https://chatgpt.com/g/g-CbdJhMyfi-aws-cloud-architect-developer"
     ["tmp_(o1-mini)"]="https://chatgpt.com/?temporary-chat=true&model=o1-mini"
-    ["tmp_(4o)"]="https://chatgpt.com/?temporary-chat=true&model=gpt-4o"
   )
 
   # 순서를 정의하는 인덱스 배열
-  local order=("1.Basic(o1-mini)" "2.Code" "3.Youtube" "4.Vim" "5.AWS" "tmp_(o1-mini)" "tmp_(4o)")
+  local order=("tmp_(4o)" "1.Basic(o1-mini)" "2.Code" "3.Youtube" "4.Vim" "5.AWS" "tmp_(o1-mini)")
 
   # fzf를 사용하여 서비스 선택
   choices=$(for i in "${order[@]}"; do echo "$i"; done | fzf --padding 20% --reverse --multi --bind 'tab:toggle-down' --bind 'shift-tab:toggle-up' --header='')
