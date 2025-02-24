@@ -14,6 +14,7 @@ return {
 				ensure_installed = {
 					"lua_ls",
 					"ts_ls",
+					"basedpyright",
 				},
 			})
 		end,
@@ -38,6 +39,7 @@ return {
 			servers = {
 				lua_ls = {},
 				ts_ls = {},
+				basedpyright = {},
 			},
 		},
 		config = function(_, opts)
