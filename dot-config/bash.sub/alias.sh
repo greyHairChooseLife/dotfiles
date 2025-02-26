@@ -94,4 +94,6 @@ alias youtube-mp3="youtube-dl --extract-audio --audio-format mp3" # usage : yout
 alias make-mp3="ffmpeg -i"                                        # usage : make-mp3 original-file.mp4 new-name.mp3
 alias py='python'
 alias y='yazi'
+alias conda='mamba'
+alias rconda='/opt/miniforge/bin/conda'  # 실제 conda 실행 가능하도록 백업
 # <<<
