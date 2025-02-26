@@ -19,6 +19,9 @@ if [ $answer != 'u' ]; then
     bash $0
 fi
 
+# .Xresources 파일이 있다면 먼저 삭제
+[ -f "$HOME/.Xresources" ] && rm "$HOME/.Xresources"
+
 # --dotfiles는 이름이 'dot-'으로 시작하는 것을 '.'으로 번역해준다. ed) `dot-config -> .config`
 stow --target $HOME --dotfiles -R .
 
