@@ -652,6 +652,14 @@ return {
 		"3rd/image.nvim",
 		dependencies = { "luarocks.nvim" },
 		lazy = false,
+		cond = function()
+			-- SSH 연결 여부 확인
+			local is_ssh = os.getenv("SSH_CLIENT") ~= nil
+				or os.getenv("SSH_TTY") ~= nil
+				or os.getenv("SSH_CONNECTION") ~= nil
+
+			return not is_ssh -- SSH가 아닐 때만 플러그인 로드
+		end,
 		opts = {
 			-- backend = "kitty", -- kitty 터미널로 실행하면 매우 잘 된다. 크기 변경 등 더 매끄럽다.
 			backend = "ueberzug",
