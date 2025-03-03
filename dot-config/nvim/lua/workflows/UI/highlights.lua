@@ -287,6 +287,14 @@ vim.cmd([[
   " MEMO:: WhichKey
   highlight WhichKeyNormal guibg=#000000 guifg=#c8ccd4
   highlight WhichKeyDesc gui=italic
+
+
+  " MEMO:: global-note
+  highlight NoteBackground guibg=#233342 guifg=NONE
+  highlight NoteBorder guibg=#233342 guifg=#233342
+  highlight NoteTitle guibg=#000000 guifg=#c8ccd4 gui=bold
+  highlight LocalNoteTitle guibg=#98c379 guifg=#c8ccd4 gui=bold
+  highlight NoteEOB guifg=#233342
 ]])
 
 --

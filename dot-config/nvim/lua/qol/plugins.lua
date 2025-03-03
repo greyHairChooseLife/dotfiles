@@ -398,4 +398,77 @@ return {
 			},
 		},
 	},
+
+	{
+		"backdround/global-note.nvim",
+		event = "VeryLazy",
+		opts = {},
+		config = function()
+			require("global-note").setup({
+				filename = "global-note.md",
+				directory = "~/Documents/global-note/",
+				title = "     Global     ",
+				command_name = "GlobalNote",
+
+				-- A nvim_open_win config to show float window.
+				-- table or fun(): table
+				window_config = function()
+					local window_height = vim.api.nvim_list_uis()[1].height
+					local window_width = vim.api.nvim_list_uis()[1].width
+					return {
+						relative = "editor",
+						border = require("utils").borders.full,
+						-- border = "double",
+						-- Can be one of the pre-defined styles: `"double"`, `"none"`, `"rounded"`, `"shadow"`, `"single"` or `"solid"`.
+						-- style = "minimal",
+						title_pos = "right",
+						width = math.floor(0.7 * window_width),
+						height = math.floor(0.85 * window_height),
+						row = math.floor(0.05 * window_height),
+						col = math.floor(0.15 * window_width),
+					}
+				end,
+
+				-- It's called after the window creation.
+				-- fun(buffer_id: number, window_id: number)
+				post_open = function(_, _)
+					-- 윈도우 옵션 설정
+					vim.wo.winhl =
+						"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB"
+					vim.wo.number = false
+					vim.wo.relativenumber = false
+					vim.wo.cursorline = false
+
+					vim.keymap.set({ "n", "i", "v" }, "<Space>n", "<cmd>q!<CR>", { buffer = true })
+					vim.keymap.set({ "n", "i", "v" }, "gq", "<cmd>q!<CR>", { buffer = true })
+
+					-- 버퍼 옵션 설정
+					vim.bo.filetype = "markdown"
+				end,
+
+				additional_presets = {
+					-- projects = {
+					-- 	filename = "projects-to-do.md",
+					-- 	title = "List of projects",
+					-- 	command_name = "ProjectsNote",
+					-- 	-- All not specified options are used from the root.
+					-- },
+					project_local = {
+						command_name = "LocalNote",
+						title = "     Local     ",
+						filename = function()
+							local project_name = require("utils").get_project_name_by_git()
+								or require("utils").get_project_name_by_cwd()
+							return project_name .. ".md"
+						end,
+
+						post_open = function(_, _)
+							vim.wo.winhl =
+								"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:LocalNoteTitle,EndOfBuffer:NoteEOB"
+						end,
+					},
+				},
+			})
+		end,
+	},
 }

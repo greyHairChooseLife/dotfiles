@@ -152,15 +152,13 @@ wk_map({
 	},
 })
 
--- MEMO:: QuickFix
+-- MEMO:: Global-Note
 wk_map({
-	["<Space>q"] = {
-		group = "QuickFix",
-		order = { "f", "t", "n", "p" },
-		["f"] = { "<cmd>copen<CR>", desc = "focus", mode = "n" },
-		["t"] = { QF_ToggleList, desc = "toggle", mode = "n" },
-		["n"] = { QF_next, desc = "next", mode = "n" },
-		["p"] = { QF_prev, desc = "prev", mode = "n" },
+	["<Space>n"] = {
+		group = "Global-Note",
+		order = { "g", "l" },
+		["g"] = { "<cmd>GlobalNote<CR>", desc = "open Global Note", mode = { "n", "v" } },
+		["l"] = { "<cmd>LocalNote<CR>", desc = "open Local Note", mode = { "n", "v" } },
 	},
 })
 
@@ -207,6 +205,18 @@ wk_map({
 			desc = "todo Tags current",
 			mode = "n",
 		},
+	},
+})
+
+-- MEMO:: QuickFix
+wk_map({
+	[",q"] = {
+		group = "QuickFix",
+		order = { "f", "t", "n", "p" },
+		["f"] = { "<cmd>copen<CR>", desc = "focus", mode = "n" },
+		["t"] = { QF_ToggleList, desc = "toggle", mode = "n" },
+		["n"] = { QF_next, desc = "next", mode = "n" },
+		["p"] = { QF_prev, desc = "prev", mode = "n" },
 	},
 })
 

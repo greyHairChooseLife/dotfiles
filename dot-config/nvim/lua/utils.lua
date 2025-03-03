@@ -366,4 +366,45 @@ M.get_window_preserver = function()
 	return win, restore
 end
 
+M.get_project_name_by_cwd = function()
+	local project_directory, err = vim.uv.cwd()
+	if project_directory == nil then
+		vim.notify(err or "Unknown error getting current directory", vim.log.levels.WARN)
+		return nil
+	end
+
+	local project_name = vim.fs.basename(project_directory)
+	if project_name == nil then
+		vim.notify("Unable to get the project name", vim.log.levels.WARN)
+		return nil
+	end
+
+	return project_name
+end
+
+M.get_project_name_by_git = function()
+	local result = vim.system({
+		"git",
+		"rev-parse",
+		"--show-toplevel",
+	}, {
+		text = true,
+	}):wait()
+
+	if result.stderr ~= "" then
+		vim.notify(result.stderr, vim.log.levels.WARN)
+		return nil
+	end
+
+	local project_directory = result.stdout:gsub("\n", "")
+
+	local project_name = vim.fs.basename(project_directory)
+	if project_name == nil then
+		vim.notify("Unable to get the project name", vim.log.levels.WARN)
+		return nil
+	end
+
+	return project_name
+end
+
 return M
