@@ -439,8 +439,8 @@ return {
 					vim.wo.relativenumber = false
 					vim.wo.cursorline = false
 
-					vim.keymap.set({ "n", "i", "v" }, "<Space>n", "<cmd>q!<CR>", { buffer = true })
-					vim.keymap.set({ "n", "i", "v" }, "gq", "<cmd>q!<CR>", { buffer = true })
+					vim.keymap.set({ "n", "v" }, "<Space>n", "<cmd>q!<CR>", { buffer = true })
+					vim.keymap.set({ "n", "v" }, "gq", "<cmd>q!<CR>", { buffer = true })
 
 					-- 버퍼 옵션 설정
 					vim.bo.filetype = "markdown"
