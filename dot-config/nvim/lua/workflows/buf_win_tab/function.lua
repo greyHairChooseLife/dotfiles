@@ -33,12 +33,23 @@ function ManageBuffer_gq()
 	vim.cmd("q!")
 
 	local excluded_filetypes = { "help", "copilot-chat" }
+	local excluded_buftypes = { "nofile" }
 
+	local is_buffer_valid = vim.api.nvim_buf_is_valid(bufnr)
+	local is_buflisted = vim.bo[bufnr].buflisted
+	local is_bufname_empty = vim.fn.bufname(bufnr) == ""
+	local is_buffer_active = utils.is_buffer_active_somewhere(bufnr)
+	local is_excluded_filetype = vim.tbl_contains(excluded_filetypes, vim.bo[bufnr].filetype)
+	local is_excluded_buftype = vim.tbl_contains(excluded_buftypes, vim.bo[bufnr].buftype)
+
+	-- 모든 조건을 통과해야만 버퍼를 메모리에서 삭제
 	if
-		not utils.is_buffer_active_somewhere(bufnr)
-		and vim.api.nvim_buf_is_valid(bufnr)
-		and not vim.tbl_contains(excluded_filetypes, vim.bo[bufnr].filetype)
-		and vim.fn.bufname(bufnr) ~= ""
+		is_buffer_valid
+		and is_buflisted
+		and not is_bufname_empty
+		and not is_buffer_active
+		and not is_excluded_filetype
+		and not is_excluded_buftype
 	then
 		vim.cmd.bdelete(bufnr)
 	end
