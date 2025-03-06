@@ -32,10 +32,12 @@ function ManageBuffer_gq()
 	local bufnr = vim.fn.bufnr("%")
 	vim.cmd("q!")
 
+	local excluded_filetypes = { "help", "copilot-chat" }
+
 	if
 		not utils.is_buffer_active_somewhere(bufnr)
 		and vim.api.nvim_buf_is_valid(bufnr)
-		and vim.bo[bufnr].filetype ~= "help"
+		and not vim.tbl_contains(excluded_filetypes, vim.bo[bufnr].filetype)
 		and vim.fn.bufname(bufnr) ~= ""
 	then
 		vim.cmd.bdelete(bufnr)
