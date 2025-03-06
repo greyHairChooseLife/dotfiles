@@ -7,7 +7,7 @@ local workflows = {
 	"fuzzy_find",
 	"file_tree",
 	"builtin_terminal",
-	"tab_win_buf",
+	"buf_win_tab",
 	"git_diff",
 	"syntax",
 	"LSP",
