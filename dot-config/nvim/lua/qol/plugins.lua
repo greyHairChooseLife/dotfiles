@@ -401,7 +401,7 @@ return {
 
 	{
 		"backdround/global-note.nvim",
-		event = "VeryLazy",
+		cmd = { "GlobalNote", "LocalNote" },
 		opts = {},
 		config = function()
 			require("global-note").setup({
