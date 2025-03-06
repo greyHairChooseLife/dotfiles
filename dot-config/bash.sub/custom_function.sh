@@ -156,7 +156,7 @@ btkb() {
 }
 
 # webm >> gif 만들기
-function webm2gif() {
+webm2gif() {
   ffmpeg -y -i "$1" -vf palettegen _tmp_palette.png
   ffmpeg -y -i "$1" -i _tmp_palette.png -filter_complex paletteuse -r 10 -loop 0 "${1%.webm}.gif"
   rm -f _tmp_palette.png
