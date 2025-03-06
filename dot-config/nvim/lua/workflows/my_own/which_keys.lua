@@ -155,7 +155,7 @@ wk_map({
 -- MEMO:: Global-Note
 wk_map({
 	["<Space>n"] = {
-		group = "Global-Note",
+		group = "Note",
 		order = { "g", "l" },
 		["g"] = { "<cmd>GlobalNote<CR>", desc = "open Global Note", mode = { "n", "v" } },
 		["l"] = { "<cmd>LocalNote<CR>", desc = "open Local Note", mode = { "n", "v" } },
