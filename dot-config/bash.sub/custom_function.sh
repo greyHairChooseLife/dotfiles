@@ -161,3 +161,11 @@ webm2gif() {
   ffmpeg -y -i "$1" -i _tmp_palette.png -filter_complex paletteuse -r 10 -loop 0 "${1%.webm}.gif"
   rm -f _tmp_palette.png
 }
+
+clear_only_screen() {
+  printf "\e[H\e[2J"
+}
+
+clear_screen_and_scrollback() {
+  printf "\e[H\e[3J"
+}
