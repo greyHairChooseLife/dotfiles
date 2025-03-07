@@ -100,6 +100,12 @@ M.nvim_tree_on_attach = function(bufnr)
 	vim.keymap.set("n", "ya", api.fs.copy.absolute_path, opts("Copy Absolute Path"))
 	vim.keymap.set("n", "yr", api.fs.copy.relative_path, opts("Copy Relative Path"))
 	vim.keymap.set("n", "yf", api.fs.copy.filename, opts("Copy Name"))
+	vim.keymap.set("n", "yp", function()
+		local node = api.tree.get_node_under_cursor()
+		local dir_path = node.absolute_path:match("(.*/)") or ""
+		vim.fn.system("echo -n '" .. dir_path .. "' | xclip -selection clipboard")
+		print("Copied " .. dir_path)
+	end, opts("Copy Dir-path"))
 	vim.keymap.set("n", ",r", function()
 		if
 			vim.bo.filetype == "NvimTree"
@@ -117,6 +123,43 @@ M.nvim_tree_on_attach = function(bufnr)
 			vim.cmd("wincmd = | echon | wincmd h")
 		end
 	end, opts("Refresh"))
+
+	-- MEMO:: git integration
+	vim.keymap.set("n", "a", function()
+		local node = api.tree.get_node_under_cursor()
+		local gs = node.git_status.file
+
+		-- not directory nor git working area
+		if gs == nil and node.git_status.dir == nil then
+			return
+		end
+
+		-- If the current node is a directory get children status
+		if gs == nil then
+			gs = (node.git_status.dir.direct ~= nil and node.git_status.dir.direct[1])
+				or (node.git_status.dir.indirect ~= nil and node.git_status.dir.indirect[1])
+		end
+
+		-- If the file is untracked, unstaged or partially staged, we stage it
+		if gs == "??" or gs == "MM" or gs == "AM" or gs == " M" then
+			vim.cmd("silent !git add " .. node.absolute_path)
+
+		-- If the file is staged, we unstage
+		elseif gs == "M " or gs == "A " then
+			vim.cmd("silent !git restore --staged " .. node.absolute_path)
+		else
+			return
+		end
+
+		api.tree.reload()
+	end, opts("Git Add"))
+
+	-- MEMO:: what does this do exactly?
+	-- local function change_root_to_global_cwd()
+	-- 	local global_cwd = vim.fn.getcwd(-1, -1)
+	-- 	api.tree.change_root(global_cwd)
+	-- end
+	-- vim.keymap.set("n", "H", change_root_to_global_cwd, opts("Change Root To Global CWD"))
 end
 
 return M
