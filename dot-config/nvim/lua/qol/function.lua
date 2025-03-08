@@ -461,3 +461,24 @@ function UnfixAllWindows()
 	vim.notify("All windows unfixed")
 	restore()
 end
+
+---Format the selected JSON text using the 'jq' command line tool
+---Replaces the current visual selection with properly formatted JSON
+---
+---Requirements:
+--- - 'jq' must be installed on the system
+--- - Text must be selected in visual mode
+--- - Selected text must be valid JSON
+---
+---@return nil
+---@error Will show error notification if JSON is invalid or jq fails
+function Format_json_with_jq()
+	-- Save the selected text to a temporary file
+	local temp_name = vim.fn.tempname()
+	vim.cmd("'<,'>write !jq '.' >" .. temp_name)
+
+	-- Replace the selected text with the formatted JSON
+	vim.cmd("'<,'>read " .. temp_name)
+	vim.cmd("'<,'>delete")
+	vim.fn.delete(temp_name)
+end

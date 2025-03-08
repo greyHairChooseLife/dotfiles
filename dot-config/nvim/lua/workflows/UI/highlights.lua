@@ -270,7 +270,8 @@ vim.cmd([[
 
 
   " MEMO:: Lualine
-  highlight CustomSeparator guifg=#98c379 guibg=NONE
+  " highlight CustomSeparator guifg=#98c379 guibg=NONE
+  highlight CustomSeparator guifg=#24283b guibg=NONE
 
 
   " MEMO:: Indent Blank Line

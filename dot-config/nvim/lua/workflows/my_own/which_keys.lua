@@ -109,11 +109,12 @@ wk_map({
 wk_map({
 	["<leader>c"] = {
 		group = "Copilot",
-		order = { "f", "t", "C", "p" },
+		order = { "f", "t", "C", "p", "m" },
 		["f"] = { ChatWithCopilotOpen_Buffer, desc = "focus buffer", mode = { "n" } },
 		["t"] = { Toggle_ChatWithCopilot, desc = "toggle", mode = { "n" } },
 		["C"] = { "<cmd>CopilotChatCommit<CR>", desc = "write commitm msg", mode = { "n" } },
 		["p"] = { "<cmd>CopilotChatPrompts<CR>", desc = "prompts", mode = { "n" } },
+		["m"] = { "<cmd>CopilotChatModels<CR>", desc = "select model", mode = { "n" } },
 	},
 })
 wk_map({

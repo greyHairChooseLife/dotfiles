@@ -55,7 +55,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		vim.api.nvim_set_hl(0, "ChatWithCopilot", { bg = "#242024" })
 		vim.api.nvim_set_hl(0, "ChatWithCopilotEOB", { fg = "#242024" })
 		vim.cmd(
-			"setlocal winhighlight=Normal:ChatWithCopilot,FoldColumn:ChatWithCopilot,SignColumn:ChatWithCopilot,EndOfBuffer:ChatWithCopilotEOB"
+			"setlocal winhighlight=Normal:ChatWithCopilot,FoldColumn:ChatWithCopilot,SignColumn:ChatWithCopilot,StatusLineNC:ChatWithCopilot,StatusLine:ChatWithCopilot,EndOfBuffer:ChatWithCopilotEOB"
 		)
 
 		-- Set buffer-local options
@@ -63,5 +63,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		vim.opt_local.number = false
 		vim.opt_local.conceallevel = 0
 		vim.opt_local.cursorline = false
+		vim.opt_local.statusline = "%!v:lua._G.status_line_copilot_chat()"
 	end,
 })

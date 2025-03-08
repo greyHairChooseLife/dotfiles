@@ -53,6 +53,7 @@ return {
 	},
 	{
 		"nvim-lualine/lualine.nvim",
+		-- enabled = false,
 		lazy = false,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
@@ -72,6 +73,7 @@ return {
 				black = "#000000",
 				grey = "#333342",
 				bg = "#24283b",
+				bg2 = "#242024",
 				active_qf = "#db4b4b",
 				nvimTree = "#333342",
 				active_oil = "#BDB80B",
@@ -152,6 +154,32 @@ return {
 				else
 					return ""
 				end
+			end
+
+			local function copilot_chat()
+				local ft = vim.bo.filetype
+				if ft ~= "copilot-chat" then
+					return ""
+				end
+
+				local async = require("plenary.async")
+				local chat = require("CopilotChat")
+				local config = chat.config
+				local model = config.model
+
+				async.run(function()
+					local resolved_model = chat.resolve_model()
+					if resolved_model then
+						model = resolved_model
+					end
+				end, function(_, _)
+					-- Nothing to do here since we're just updating a local variable
+				end)
+
+				return model
+
+				-- local status = { " Copilot", "%#StatusLine#", model }
+				-- return table.concat(status, " ")
 			end
 
 			-- 각종 컴포넌트 스니펫이다.
@@ -269,6 +297,30 @@ return {
 				},
 			}
 
+			local my_copilot_chat = {
+				filetypes = { "copilot-chat" },
+				sections = {
+					lualine_a = {
+						{
+							"filetype",
+							color = { bg = colors.bg2, fg = colors.bg2 },
+						},
+					},
+					-- lualine_y = { { empty, color = { bg = colors.grey } } },
+					-- lualine_z = { { copilot_chat, color = { bg = colors.grey } } },
+					lualine_z = { { copilot_chat, color = { fg = colors.orange, bg = colors.bg2 } } },
+				},
+				inactive_sections = {
+					-- lualine_a = { { this_is_fugitive, color = { bg = colors.bg2 } } },
+					-- lualine_a = { { this_is_space, color = { bg = colors.bg2 } } },
+					-- lualine_b = { { this_is_space, color = { bg = colors.bg2 } } },
+					-- lualine_c = { { this_is_space, color = { bg = colors.bg2 } } },
+					-- lualine_x = { { this_is_space, color = { bg = colors.bg2 } } },
+					-- lualine_y = { { this_is_space, color = { bg = colors.bg2 } } },
+					lualine_z = { { copilot_chat, color = { fg = colors.orange, bg = colors.bg2 } } },
+				},
+			}
+
 			-- vim.api.nvim_set_hl(0, "CustomSeparator", { fg = "#98c379", bg = "NONE" })
 			--
 			require("lualine").setup({
@@ -279,7 +331,7 @@ return {
 					-- section_separators = { left = '', right = '' },
 					-- component_separators = { left = ' 󰪍󰪍 ', right = '' },
 					-- section_separators = { left = '', right = '' },󰪍󰪍
-					component_separators = { left = "%#CustomSeparator#████", right = "" },
+					component_separators = { left = "%#CustomSeparator#█", right = "" },
 					section_separators = { left = "", right = " " },
 					disabled_filetypes = {
 						statusline = {
@@ -290,6 +342,8 @@ return {
 							"Avante",
 							"AvanteInput",
 							"AvanteSelectedFiles",
+							"copilot-chat",
+							"copilot-overlay",
 						},
 						-- winbar = {},
 					},
@@ -481,6 +535,13 @@ return {
 							},
 						},
 						{
+							copilot_chat,
+							padding = { left = 2, right = 1 },
+							color = {
+								bg = colors.search,
+							},
+						},
+						{
 							search_counter,
 							padding = { left = 2, right = 1 },
 							color = {
@@ -504,7 +565,7 @@ return {
 				tabline = {},
 				winbar = {},
 				inactive_winbar = {},
-				extensions = { "toggleterm", my_quickfix, my_nvimTree, my_fugitive, my_oil },
+				extensions = { "toggleterm", my_quickfix, my_nvimTree, my_fugitive, my_oil, my_copilot_chat },
 			})
 		end,
 	},

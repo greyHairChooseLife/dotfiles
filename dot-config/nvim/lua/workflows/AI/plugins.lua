@@ -183,9 +183,11 @@ return {
 			question_header = "  󰟷  ", -- Header to use for user questions
 			answer_header = "  󱞩 Copilot   ", -- Header to use for AI answers
 			separator = "", -- Separator to use in chat
-			error_header = "[!ERROR] Error",
+			error_header = "[!ERROR]  Error ",
 			references_display = "write",
 			show_help = false, -- Shows help message as virtual lines when waiting for user input
+			insert_at_end = true,
+			selection = false, -- Have no predefined context by default
 
 			-- providers = {
 			-- 	copilot = { "claude-3.7-sonnet" },
@@ -269,6 +271,9 @@ return {
 				},
 			},
 		},
-		-- See Commands section for default commands if you want to lazy load on them
+		-- config = function(_, opts)
+		-- 	local chat = require("CopilotChat")
+		-- 	chat.setup(opts)
+		-- end,
 	},
 }
