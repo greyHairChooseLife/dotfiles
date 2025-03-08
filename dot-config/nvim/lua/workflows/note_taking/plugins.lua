@@ -138,7 +138,7 @@ return {
 		lazy = false,
 		-- event = "BufEnter *.md",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
-		ft = { "markdown", "vimwiki", "Avante", "AvanteInput" },
+		ft = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat" },
 		---@module 'render-markdown'
 		---@type render.md.UserConfig
 		opts = {
@@ -197,7 +197,7 @@ return {
 			-- Only intended to be used for plugin development / debugging
 			log_level = "error",
 			-- Filetypes this plugin will run on
-			file_types = { "markdown", "vimwiki", "Avante", "AvanteInput" },
+			file_types = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat" },
 			-- Vim modes that will show a rendered view of the markdown file
 			-- All other modes will be uneffected by this plugin
 			render_modes = { "n", "c", "i" },
@@ -482,6 +482,7 @@ return {
 				bug = { raw = "[!BUG]", rendered = "󰨰 Bug", highlight = "RenderMarkdownError" },
 				example = { raw = "[!EXAMPLE]", rendered = "󰉹 Example", highlight = "RenderMarkdownHint" },
 				quote = { raw = "[!QUOTE]", rendered = "󱆨 Quote", highlight = "RenderMarkdownQuote" },
+				error = { raw = "[!ERROR]", rendered = " Error", highlight = "RenderMarkdownRed" },
 				-- My own
 				test = { raw = "[!ts]", rendered = "󰨸 TEST ", highlight = "RenderMarkdownMyTest" },
 				todo = { raw = "[!td]", rendered = "󰗕 TODO ", highlight = "RenderMarkdownMyTodo" },
@@ -615,6 +616,11 @@ return {
 						},
 						quote = {
 							repeat_linebreak = true,
+						},
+					},
+					["copilot-chat"] = {
+						heading = {
+							enabled = false,
 						},
 					},
 				},

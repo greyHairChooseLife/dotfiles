@@ -31,3 +31,25 @@ function Save_visual_selection_to_register_for_AI_prompt()
 		print("copied selected for AI!")
 	end)
 end
+
+function Toggle_ChatWithCopilot()
+	local chat = require("CopilotChat")
+
+	if chat.chat:visible() then
+		chat.chat:close()
+	else
+		require("utils").save_cursor_position()
+		chat.open()
+		require("utils").restore_cursor_position()
+	end
+end
+
+function ChatWithCopilotOpen_Buffer()
+	local chat = require("CopilotChat")
+	chat.open({ selection = require("CopilotChat.select").buffer })
+end
+
+function ChatWithCopilotOpen_Visual()
+	local chat = require("CopilotChat")
+	chat.open({ selection = require("CopilotChat.select").visual })
+end

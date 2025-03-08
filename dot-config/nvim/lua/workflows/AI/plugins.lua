@@ -1,3 +1,5 @@
+local IS_DEV = false
+
 return {
 	{
 		"github/copilot.vim",
@@ -19,13 +21,13 @@ return {
 	},
 
 	{
+		"yetone/avante.nvim",
 		-- MEMO:
 		--
 		-- HOW TO INSTALL
 		--  https://github.com/yetone/avante.nvim/issues/581#issuecomment-2394807552 packer 전용 플러그인 정의
 		--  https://github.com/yetone/avante.nvim/issues/612#issuecomment-2375729928 설치 후 build 방법
 		--  https://github.com/yetone/avante.nvim/issues/612#issuecomment-2401169692 config에 앞서 avante_lib을 불러와야한다.
-		"yetone/avante.nvim",
 		build = "make BUILD_FROM_SOURCE=true",
 		-- lazy = false,
 		cmd = {
@@ -143,6 +145,7 @@ return {
 	},
 
 	{
+		-- dir = IS_DEV and "~/research/CopilotChat.nvim" or nil,
 		"CopilotC-Nvim/CopilotChat.nvim",
 		cmd = {
 			"CopilotChat",
@@ -157,7 +160,13 @@ return {
 			"CopilotChatModels",
 			"CopilotChatAgents",
 			"CopilotChatCommit",
-			-- "CopilotChat<PromptName>"
+			"CopilotChatExplain",
+			"CopilotChatReview",
+			"CopilotChatFix",
+			"CopilotChatOptimize",
+			"CopilotChatDocs",
+			"CopilotChatTests",
+			"CopilotChatBetterNamings",
 		},
 		dependencies = {
 			{ "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
@@ -165,7 +174,100 @@ return {
 		},
 		build = "make tiktoken", -- Only on MacOS or Linux
 		opts = {
-			-- See Configuration section for options
+			model = "claude-3.7-sonnet",
+			agent = "copilot",
+			context = "#buffers",
+			-- sticky = "#buffers",
+
+			-- highlight_headers = true,
+			question_header = "  󰟷  ", -- Header to use for user questions
+			answer_header = "  󱞩 Copilot   ", -- Header to use for AI answers
+			separator = "", -- Separator to use in chat
+			error_header = "[!ERROR] Error",
+			references_display = "write",
+			show_help = false, -- Shows help message as virtual lines when waiting for user input
+
+			-- providers = {
+			-- 	copilot = { "claude-3.7-sonnet" },
+			-- 	github_models = {},
+			-- 	copilot_embeddings = {},
+			-- },
+
+			prompts = {
+				Explain = {
+					prompt = "Write an explanation for the selected code as paragraphs of text.",
+					system_prompt = "COPILOT_EXPLAIN",
+				},
+				Review = {
+					prompt = "Review the selected code.",
+					system_prompt = "COPILOT_REVIEW",
+				},
+				Fix = {
+					prompt = "There is a problem in this code. Identify the issues and rewrite the code with fixes. Explain what was wrong and how your changes address the problems.",
+				},
+				Optimize = {
+					prompt = "Optimize the selected code to improve performance and readability. Explain your optimization strategy and the benefits of your changes.",
+				},
+				Docs = {
+					prompt = "Please add documentation comments to the selected code.",
+				},
+				Tests = {
+					prompt = "Please generate tests for my code.",
+				},
+				Commit = {
+					prompt = "Write commit message for the change with commitizen convention. Keep the title under 50 characters and wrap message at 72 characters. Format as a gitcommit code block.",
+					context = "git:staged",
+				},
+				BetterNamings = {
+					prompt = "Please provide better names for the following variables and functions.",
+				},
+			},
+
+			mappings = {
+				complete = {
+					insert = "<Tab>",
+				},
+				close = {
+					normal = "gq",
+					insert = "<C-c>",
+				},
+				toggle_sticky = {
+					normal = ",st",
+				},
+				clear_stickies = {
+					normal = ",sc",
+				},
+				accept_diff = {
+					normal = "<C-y>",
+					insert = "<C-y>",
+				},
+				jump_to_diff = {
+					normal = "gj",
+				},
+				quickfix_answers = {
+					normal = ",qa",
+				},
+				quickfix_diffs = {
+					normal = ",qd",
+				},
+				yank_diff = {
+					normal = ",dy",
+					register = '"', -- Default register to use for yanking
+				},
+				show_diff = {
+					normal = ",dv",
+					full_diff = true, -- Show full diff instead of unified diff when showing diff window
+				},
+				show_info = {
+					normal = "gi",
+				},
+				show_context = {
+					normal = "gc",
+				},
+				show_help = {
+					normal = "?",
+				},
+			},
 		},
 		-- See Commands section for default commands if you want to lazy load on them
 	},

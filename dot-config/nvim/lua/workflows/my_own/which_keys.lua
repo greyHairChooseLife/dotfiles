@@ -78,7 +78,15 @@ wk_map({
 		order = { "a", "c", "f", "t" },
 		["a"] = { "<cmd>AvanteAsk<CR>", desc = "ask", mode = { "n", "v" } },
 		["c"] = { "", desc = "current buffer(file) into/outof ctx", mode = { "n" } },
-		["t"] = { "<cmd>AvanteToggle<CR>", desc = "toggle", mode = { "n", "v" } },
+		["t"] = {
+			function()
+				require("utils").save_cursor_position()
+				vim.cmd("AvanteToggle")
+				require("utils").restore_cursor_position()
+			end,
+			desc = "toggle",
+			mode = { "n", "v" },
+		},
 		["f"] = { "<cmd>AvanteFocus<CR>", desc = "focus", mode = { "n", "v" } },
 	},
 })
@@ -87,13 +95,45 @@ wk_map({
 	["<leader>ae"] = {
 		group = "Prefill",
 		order = { "1", "2", "3", "4", "5", "6", "7" },
-		["1"] = { apf.prefill_3, desc = "diagnostics 설명", mode = { "n", "v" } },
-		["2"] = { apf.prefill_4, desc = "코드 설명", mode = { "n", "v" } },
-		["3"] = { apf.prefill_2, desc = "코드 최적화", mode = { "n", "v" } },
-		["4"] = { apf.prefill_1, desc = "가독성 검사", mode = { "n", "v" } },
-		["5"] = { apf.prefill_5, desc = "docstring 추가", mode = { "n", "v" } },
-		["6"] = { apf.prefill_6, desc = "버그 해결", mode = { "n", "v" } },
+		["1"] = { apf.prefill_4, desc = "코드 설명", mode = { "n", "v" } },
+		["2"] = { apf.prefill_1, desc = "코드 리뷰", mode = { "n", "v" } },
+		["3"] = { apf.prefill_6, desc = "버그 해결", mode = { "n", "v" } },
+		["4"] = { apf.prefill_3, desc = "diagnostics 설명", mode = { "n", "v" } },
+		["5"] = { apf.prefill_2, desc = "코드 최적화", mode = { "n", "v" } },
+		["6"] = { apf.prefill_5, desc = "docstring 추가", mode = { "n", "v" } },
 		["7"] = { apf.prefill_7, desc = "테스트 작성", mode = { "n", "v" } },
+	},
+})
+
+-- MEMO:: Copilot
+wk_map({
+	["<leader>c"] = {
+		group = "Copilot",
+		order = { "f", "t", "C", "p" },
+		["f"] = { ChatWithCopilotOpen_Buffer, desc = "focus buffer", mode = { "n" } },
+		["t"] = { Toggle_ChatWithCopilot, desc = "toggle", mode = { "n" } },
+		["C"] = { "<cmd>CopilotChatCommit<CR>", desc = "write commitm msg", mode = { "n" } },
+		["p"] = { "<cmd>CopilotChatPrompts<CR>", desc = "prompts", mode = { "n" } },
+	},
+})
+wk_map({
+	["<leader>c"] = {
+		group = "Copilot..",
+		order = { "f" },
+		["f"] = { ChatWithCopilotOpen_Visual, desc = "focus visual", mode = { "v" } },
+	},
+})
+wk_map({
+	["<leader>ce"] = {
+		group = "Prefill",
+		order = { "1", "2", "3", "4", "5", "6", "7" },
+		["1"] = { "<cmd>CopilotChatExplain<CR>", desc = "코드 설명", mode = { "n", "v" } },
+		["2"] = { "<cmd>CopilotChatReview<CR>", desc = "코드 리뷰", mode = { "n", "v" } },
+		["3"] = { "<cmd>CopilotChatFix<CR>", desc = "버그 해결", mode = { "n", "v" } },
+		["4"] = { "<cmd>CopilotChatBetterNamings<CR>", desc = "변수명 개선", mode = { "n", "v" } },
+		["5"] = { "<cmd>CopilotChatOptimize<CR>", desc = "코드 최적화", mode = { "n", "v" } },
+		["6"] = { "<cmd>CopilotChatDocs<CR>", desc = "docstring 추가", mode = { "n", "v" } },
+		["7"] = { "<cmd>CopilotChatTests<CR>", desc = "테스트 작성", mode = { "n", "v" } },
 	},
 })
 

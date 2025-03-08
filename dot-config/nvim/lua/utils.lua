@@ -321,19 +321,39 @@ M.wk_map = function(mappings)
 	require("which-key").add(processed)
 end
 
-local saved_cursor = nil -- 커서 위치 저장 변수
+local saved_cursor = nil -- 커서 위치 및 윈도우 저장 변수
 
--- 현재 커서 위치 저장
+-- 현재 커서 위치와 윈도우 저장
 M.save_cursor_position = function()
-	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-	saved_cursor = { row, col }
-	print("Cursor position saved: Line " .. row .. ", Column " .. col)
+	local win = vim.api.nvim_get_current_win()
+	local buf = vim.api.nvim_win_get_buf(win)
+	local row, col = unpack(vim.api.nvim_win_get_cursor(win))
+	saved_cursor = { win = win, buf = buf, row = row, col = col }
+	-- print("Cursor position saved: Window " .. win .. ", Buffer " .. buf .. ", Line " .. row .. ", Column " .. col)
 end
 
 -- 저장된 위치로 이동
 M.restore_cursor_position = function()
 	if saved_cursor then
-		vim.api.nvim_win_set_cursor(0, saved_cursor)
+		-- 윈도우가 여전히 유효한지 확인
+		if vim.api.nvim_win_is_valid(saved_cursor.win) then
+			-- 먼저 해당 윈도우로 이동
+			vim.api.nvim_set_current_win(saved_cursor.win)
+
+			-- 버퍼가 변경되었는지 확인
+			local current_buf = vim.api.nvim_win_get_buf(saved_cursor.win)
+			if current_buf == saved_cursor.buf then
+				-- 저장된 커서 위치로 이동
+				vim.api.nvim_win_set_cursor(saved_cursor.win, { saved_cursor.row, saved_cursor.col })
+				-- print("Cursor position restored to Window " .. saved_cursor.win)
+			else
+				print("Buffer has changed in the target window")
+			end
+		else
+			print("Saved window is no longer valid")
+		end
+	else
+		print("No saved cursor position")
 	end
 end
 
