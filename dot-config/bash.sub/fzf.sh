@@ -28,10 +28,10 @@ fzf_find_file() {
   fd --type file \
     | sort \
     | fzf --prompt 'Files (--depth=end) & '${curr_dir}'> ' \
-      --header '<F1~3>: depth lvl, <Enter>: editr' \
-      --bind 'f1:change-prompt(Files (--depth=1) & '${curr_dir}'> )+reload(fd --type file --max-depth 1)' \
-      --bind 'f2:change-prompt(Files (--depth=2) & '${curr_dir}'> )+reload(fd --type file --max-depth 2)' \
-      --bind 'f3:change-prompt(Files (--depth=end) & '${curr_dir}'> )+reload(fd --type file)' \
+      --header '<Alt+1~3>: depth lvl, <Enter>: editr' \
+      --bind 'alt-1:change-prompt(Files (--depth=1) & '${curr_dir}'> )+reload(fd --type file --max-depth 1)' \
+      --bind 'alt-2:change-prompt(Files (--depth=2) & '${curr_dir}'> )+reload(fd --type file --max-depth 2)' \
+      --bind 'alt-3:change-prompt(Files (--depth=end) & '${curr_dir}'> )+reload(fd --type file)' \
       --bind 'enter:become(nvim {})' \
       --preview '[[ {} =~ ('.jpg'|'.JPG'|'.jpeg'|'.png'|'.PNG')$ ]] && catimg -r2 -w$COLUMNS {} || [[ $FZF_PROMPT =~ Files ]] && bat --color=always {} || tree -C {}'
 }
@@ -41,10 +41,10 @@ fzf_find_file_hidden() {
   fd --type file --hidden -I \
     | sort \
     | fzf --prompt '(+hidden) Files (--depth=end) & '${curr_dir}'> ' \
-      --header '<F1~3>: depth lvl, <Enter>: editr' \
-      --bind 'f1:change-prompt((+hidden) Files (--depth=1) & '${curr_dir}'> )+reload(fd --type file --hidden -I --max-depth 1)' \
-      --bind 'f2:change-prompt((+hidden) Files (--depth=2) & '${curr_dir}'> )+reload(fd --type file --hidden -I --max-depth 2)' \
-      --bind 'f3:change-prompt((+hidden) Files (--depth=end) & '${curr_dir}'> )+reload(fd --type file --hidden -I)' \
+      --header '<Alt+1~3>: depth lvl, <Enter>: editr' \
+      --bind 'alt-1:change-prompt((+hidden) Files (--depth=1) & '${curr_dir}'> )+reload(fd --type file --hidden -I --max-depth 1)' \
+      --bind 'alt-2:change-prompt((+hidden) Files (--depth=2) & '${curr_dir}'> )+reload(fd --type file --hidden -I --max-depth 2)' \
+      --bind 'alt-3:change-prompt((+hidden) Files (--depth=end) & '${curr_dir}'> )+reload(fd --type file --hidden -I)' \
       --bind 'enter:become(nvim {})' \
       --preview '[[ {} =~ ('.jpg'|'.JPG'|'.jpeg'|'.png'|'.PNG')$ ]] && catimg -r2 -w$COLUMNS {} || [[ $FZF_PROMPT =~ Files ]] && bat --color=always {} || tree -C {}'
 }
@@ -54,10 +54,10 @@ fzf_find_dir() {
   dir=$(fd --type d --max-depth 1 \
     | sort \
     | fzf --prompt 'Dir (--depth=1) & '${curr_dir}'> ' \
-      --header '<F1~3>: depth lvl, <Enter>: CD' \
-      --bind 'f1:change-prompt(Dir (--depth=1) & '${curr_dir}'> )+reload(fd --type d --max-depth 1)' \
-      --bind 'f2:change-prompt(Dir (--depth=2) & '${curr_dir}'> )+reload(fd --type d --max-depth 2)' \
-      --bind 'f3:change-prompt(Dir (--depth=end) & '${curr_dir}'> )+reload(fd --type d)' \
+      --header '<Alt+1~3>: depth lvl, <Enter>: CD' \
+      --bind 'alt-1:change-prompt(Dir (--depth=1) & '${curr_dir}'> )+reload(fd --type d --max-depth 1)' \
+      --bind 'alt-2:change-prompt(Dir (--depth=2) & '${curr_dir}'> )+reload(fd --type d --max-depth 2)' \
+      --bind 'alt-3:change-prompt(Dir (--depth=end) & '${curr_dir}'> )+reload(fd --type d)' \
       --preview 'tree --gitignore -dC -L 3 {}')
 
   if [ -n "$dir" ]; then
@@ -72,10 +72,10 @@ fzf_find_dir_hidden() {
   dir=$(fd --type d --hidden -I --max-depth 1 \
     | sort \
     | fzf --prompt '(+hidden) Dir (--depth=1) & '${curr_dir}'> ' \
-      --header '<F1~3>: depth lvl, <Enter>: CD' \
-      --bind 'f1:change-prompt((+hidden) Dir (--depth=1) & '${curr_dir}'> )+reload(fd --type d --hidden -I --max-depth 1)' \
-      --bind 'f2:change-prompt((+hidden) Dir (--depth=2) & '${curr_dir}'> )+reload(fd --type d --hidden -I --max-depth 2)' \
-      --bind 'f3:change-prompt((+hidden) Dir (--depth=end) & '${curr_dir}'> )+reload(fd --type d --hidden -I)' \
+      --header '<Alt+1~3>: depth lvl, <Enter>: CD' \
+      --bind 'alt-1:change-prompt((+hidden) Dir (--depth=1) & '${curr_dir}'> )+reload(fd --type d --hidden -I --max-depth 1)' \
+      --bind 'alt-2:change-prompt((+hidden) Dir (--depth=2) & '${curr_dir}'> )+reload(fd --type d --hidden -I --max-depth 2)' \
+      --bind 'alt-3:change-prompt((+hidden) Dir (--depth=end) & '${curr_dir}'> )+reload(fd --type d --hidden -I)' \
       --preview 'tree --gitignore -dC -L 3 {}')
 
   if [ -n "$dir" ]; then
