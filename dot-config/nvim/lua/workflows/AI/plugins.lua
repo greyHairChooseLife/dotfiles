@@ -218,12 +218,25 @@ return {
 					prompt = "Please generate tests for my code.",
 				},
 				Commit = {
-					prompt = "Write commit message for the change with commitizen convention. Keep the title under 50 characters and wrap message at 72 characters. Format as a gitcommit code block.",
+					prompt = " Write a commit message following the commitizen convention.  \
+- Title: Under 50 characters, in English  \
+- Body: In Korean, wrapped at 72 characters  \
+- Format as a `gitcommit` code block  \
+- Body should be concise, using bullet points with `-` icon  \
+- Avoid full sentences, use imperative and concise phrases ",
 					context = "git:staged",
 					model = "claude-3.5-sonnet",
 					callback = function(response)
-						vim.fn.setreg("+", response)
-						vim.notify("Copied plugin directory to clipboard: " .. response)
+						require("CopilotChat").close()
+						-- Extract just the commit message from inside the gitcommit code block
+						local commit_message = response:match("```gitcommit\n(.-)\n```") or response
+						vim.fn.setreg("+", commit_message)
+
+						vim.cmd("silent G commit")
+						-- Wait briefly for the commit buffer to open, then paste the response
+						vim.defer_fn(function()
+							vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("P", true, false, true), "n", false)
+						end, 100)
 					end,
 				},
 				BetterNamings = {
