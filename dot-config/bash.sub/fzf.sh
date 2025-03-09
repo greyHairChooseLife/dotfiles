@@ -61,7 +61,7 @@ fzf_find_dir() {
       --preview 'tree --gitignore -dC -L 3 {}')
 
   if [ -n "$dir" ]; then
-    cd "$dir" && if [ $(fd --type d --max-depth 1 | wc -l) -gt 0 ]; then
+    cd "$dir" && pwd && if [ $(fd --type d --max-depth 1 | wc -l) -gt 0 ]; then
       fzf_find_dir
     fi
   fi
@@ -79,7 +79,7 @@ fzf_find_dir_hidden() {
       --preview 'tree --gitignore -dC -L 3 {}')
 
   if [ -n "$dir" ]; then
-    cd "$dir" && if [ $(fd --type d --max-depth 1 --hidden -I | wc -l) -gt 0 ]; then
+    cd "$dir" && pwd && if [ $(fd --type d --max-depth 1 --hidden -I | wc -l) -gt 0 ]; then
       fzf_find_dir
     fi
   fi
