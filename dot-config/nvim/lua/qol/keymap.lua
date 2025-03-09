@@ -143,7 +143,7 @@ map("n", "N", function()
 end, opt)
 
 -- { 중괄호 }로 묶인 영역 통째로 복사
-map("n", "YY", "va{Vy", opt)
+map("n", "yY", "va{Vy", opt)
 
 -- DEPRECATED:: 2024-01-17
 -- map({ "n" }, ",,p", '"*p') -- easy-paste system clipboard
