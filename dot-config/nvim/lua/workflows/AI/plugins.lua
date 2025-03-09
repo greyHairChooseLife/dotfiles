@@ -186,7 +186,7 @@ return {
 			error_header = "[!ERROR]  Error ",
 			references_display = "write",
 			show_help = false, -- Shows help message as virtual lines when waiting for user input
-			insert_at_end = true,
+			insert_at_end = false,
 			selection = false, -- Have no predefined context by default
 
 			-- providers = {
@@ -212,6 +212,7 @@ return {
 				},
 				Docs = {
 					prompt = "Please add documentation comments to the selected code.",
+					model = "claude-3.5-sonnet",
 				},
 				Tests = {
 					prompt = "Please generate tests for my code.",
@@ -219,9 +220,15 @@ return {
 				Commit = {
 					prompt = "Write commit message for the change with commitizen convention. Keep the title under 50 characters and wrap message at 72 characters. Format as a gitcommit code block.",
 					context = "git:staged",
+					model = "claude-3.5-sonnet",
+					callback = function(response)
+						vim.fn.setreg("+", response)
+						vim.notify("Copied plugin directory to clipboard: " .. response)
+					end,
 				},
 				BetterNamings = {
 					prompt = "Please provide better names for the following variables and functions.",
+					model = "claude-3.5-sonnet",
 				},
 			},
 
