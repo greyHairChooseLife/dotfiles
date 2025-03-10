@@ -1,23 +1,68 @@
 local IS_DEV = false
 
 return {
+	-- {
+	-- 	"github/copilot.vim",
+	-- 	dependencies = {
+	-- 		"catppuccin/nvim",
+	-- 	},
+	-- 	cmd = {
+	-- 		-- enable 커맨드로는 안된다. restart, status 따위를 사용하자.
+	-- 		"Copilot",
+	-- 	},
+	-- 	-- event = "BufReadPre",
+	-- 	init = function()
+	-- 		vim.g.copilot_filetypes = {
+	-- 			["*"] = false,
+	-- 			["markdown"] = false,
+	-- 			["vimwiki"] = false,
+	-- 		}
+
+	-- 		vim.g.copilot_no_tab_map = true -- <A-k>
+	-- 		vim.g.copilot_workspace_folders = { vim.fn.getcwd() }
+	-- 	end,
+	-- },
+
 	{
-		"github/copilot.vim",
-		dependencies = {
-			"catppuccin/nvim",
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		event = { "InsertEnter", "VeryLazy" },
+		opts = {
+			panel = {
+				enabled = false,
+				auto_refresh = false,
+				keymap = {
+					jump_prev = "[[",
+					jump_next = "]]",
+					accept = "<CR>",
+					refresh = "gr",
+					open = "<M-CR>",
+				},
+				layout = {
+					position = "bottom", -- | top | left | right | horizontal | vertical
+					ratio = 0.4,
+				},
+			},
+			suggestion = {
+				enabled = true,
+				auto_trigger = false,
+				hide_during_completion = true,
+				debounce = 75,
+				keymap = {
+					accept = "<A-k>",
+					dismiss = "<A-h>",
+					accept_word = false, -- <A-l> 키맵
+					accept_line = "<A-j>",
+					prev = "<A-p>",
+					next = "<A-n>",
+				},
+			},
+			filetypes = {
+				["."] = false,
+			},
+			copilot_node_command = "node", -- Node.js version must be > 18.x
+			server_opts_overrides = {},
 		},
-		cmd = {
-			-- enable 커맨드로는 안된다. restart, status 따위를 사용하자.
-			"Copilot",
-		},
-		-- event = "BufReadPre",
-		init = function()
-			vim.g.copilot_filetypes = {
-				markdown = true,
-				vimwiki = false,
-			}
-			vim.g.copilot_workspace_folders = { vim.fn.getcwd() }
-		end,
 	},
 
 	{
@@ -169,7 +214,8 @@ return {
 			"CopilotChatBetterNamings",
 		},
 		dependencies = {
-			{ "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
+			-- { "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
+			{ "zbirenbaum/copilot.lua" },
 			{ "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
 		},
 		build = "make tiktoken", -- Only on MacOS or Linux

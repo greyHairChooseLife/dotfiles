@@ -50,6 +50,7 @@ return {
 							return true
 						end
 					end,
+					"fallback",
 				},
 				["<A-j>"] = {
 					function(cmp)
@@ -58,6 +59,7 @@ return {
 							return true
 						end
 					end,
+					"fallback",
 				},
 				-- control whether the next command will be run when using a function
 				["<C-n>"] = {
