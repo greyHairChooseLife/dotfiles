@@ -651,17 +651,18 @@ return {
 				dashboard.button(
 					"dpu",
 					"                           -  pull    ",
-					":cd ~/Documents/dev-wiki | :Git pull | :cd ~/Documents/job-wiki | :Git pull<CR>"
+					":cd ~/Documents/dev-wiki | :Git pull | :cd ~/Documents/job-wiki | :Git pull --ff-only<CR>"
 				),
 				dashboard.button("1", "dev", ":cd ~/Documents/dev-wiki | :VimwikiIndex<CR>"),
 				dashboard.button("2", "job", ":cd ~/Documents/job-wiki | :2VimwikiIndex<CR>"),
 				dashboard.button(".", "", ""),
 				dashboard.button("q", "                   ---------  configs   ", ":q<CR>"),
 				dashboard.button("lz", "󰂖 lazy plugins", ":Lazy<CR>"),
-				dashboard.button("i3", " i3", ":e ~/.config/i3/config<CR>"),
-				dashboard.button("te", " term", ":e ~/.config/alacritty/alacritty.toml<CR>"),
-				dashboard.button("vi", " vi", ":e ~/.config/nvim<CR>"),
-				dashboard.button("ba", " bash", ":e ~/.config/bash.sub/<CR>"),
+				dashboard.button("i3", " i3", ":cd ~/.config/i3 | e config<CR>"),
+				dashboard.button("te", " term", ":cd ~/.config/alacritty | e alacritty.toml<CR>"),
+				dashboard.button("tm", " tmux", ":cd ~/.config/tmux | e tmux.conf<CR>"),
+				dashboard.button("vi", " vi", ":cd ~/.config | e nvim<CR>"),
+				dashboard.button("ba", " bash", ":cd ~/.config | e bash.sub/<CR>"),
 				dashboard.button(".", "", ""),
 				dashboard.button("-", "                   ---------  sessions   ", ""),
 				dashboard.button("S", "Session", "<cmd>SessionSearch<CR>"),
