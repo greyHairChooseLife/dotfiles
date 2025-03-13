@@ -30,7 +30,9 @@
     { key = "v", mods = "Control|Alt", action = "Paste" },
     { key = "n", mods = "Control|Shift", action = "SpawnNewInstance" },
     { key = "i", mods = "Alt", action = "ToggleViMode" },
-    { key = "Space", mods = "Control", action = "ReceiveChar" }
+    { key = "Space", mods = "Control", action = "ReceiveChar" },
+    # { key = "[", mods = "Control", chars = "\u001b[" }
+  { key = "[", mods = "Control", chars = "\u001b[27;5;91~" }
   ]
 
 [cursor]
