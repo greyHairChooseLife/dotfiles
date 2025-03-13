@@ -402,7 +402,15 @@ M.get_project_name_by_cwd = function()
 	return project_name
 end
 
-M.get_project_name_by_git = function()
+---Gets the project name by finding the git root directory
+---@class GetProjectNameByGitOpts
+---@field print_errors? boolean Whether to print errors (defaults to true)
+---@param opts? GetProjectNameByGitOpts Optional configuration table
+---@return string|nil project_name Returns the project name or nil if not found
+M.get_project_name_by_git = function(opts)
+	opts = opts or {}
+	local print_errors = opts.print_errors ~= false
+
 	local result = vim.system({
 		"git",
 		"rev-parse",
@@ -412,7 +420,9 @@ M.get_project_name_by_git = function()
 	}):wait()
 
 	if result.stderr ~= "" then
-		vim.notify(result.stderr, vim.log.levels.WARN)
+		if print_errors then
+			vim.notify(result.stderr, vim.log.levels.WARN)
+		end
 		return nil
 	end
 
@@ -420,7 +430,9 @@ M.get_project_name_by_git = function()
 
 	local project_name = vim.fs.basename(project_directory)
 	if project_name == nil then
-		vim.notify("Unable to get the project name", vim.log.levels.WARN)
+		if print_errors then
+			vim.notify("Unable to get the project name", vim.log.levels.WARN)
+		end
 		return nil
 	end
 

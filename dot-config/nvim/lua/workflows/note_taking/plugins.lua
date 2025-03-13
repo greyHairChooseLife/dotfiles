@@ -646,6 +646,8 @@ return {
 	{
 		"greyhairchooselife/markdowny.nvim",
 		event = "BufEnter *.md",
+		-- BUG:: 왜 안돼??? 플러그인도 수정해서 파일 타입 추가해줬는데...
+		ft = { "copilot-chat", "AvanteInput" },
 	},
 	{
 		"vhyrro/luarocks.nvim",

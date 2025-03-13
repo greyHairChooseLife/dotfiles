@@ -417,11 +417,11 @@ return {
 					local window_width = vim.api.nvim_list_uis()[1].width
 					return {
 						relative = "editor",
-						border = require("utils").borders.full,
-						-- border = "double",
+						-- border = require("utils").borders.full,
+						border = "rounded",
 						-- Can be one of the pre-defined styles: `"double"`, `"none"`, `"rounded"`, `"shadow"`, `"single"` or `"solid"`.
 						-- style = "minimal",
-						title_pos = "right",
+						title_pos = "center",
 						width = math.floor(0.7 * window_width),
 						height = math.floor(0.85 * window_height),
 						row = math.floor(0.05 * window_height),
@@ -434,13 +434,12 @@ return {
 				post_open = function(_, _)
 					-- 윈도우 옵션 설정
 					vim.wo.winhl =
-						"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB"
+						"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
 					vim.wo.number = false
+					vim.wo.foldcolumn = "2"
 					vim.wo.relativenumber = false
 					vim.wo.cursorline = false
-
-					vim.keymap.set({ "n", "v" }, "<Space>n", "<cmd>q!<CR>", { buffer = true })
-					vim.keymap.set({ "n", "v" }, "gq", "<cmd>q!<CR>", { buffer = true })
+					vim.wo.signcolumn = "no"
 
 					-- 버퍼 옵션 설정
 					vim.bo.filetype = "markdown"
@@ -457,14 +456,19 @@ return {
 						command_name = "LocalNote",
 						title = "     Local     ",
 						filename = function()
-							local project_name = require("utils").get_project_name_by_git()
+							local project_name = require("utils").get_project_name_by_git({ print_errors = false })
 								or require("utils").get_project_name_by_cwd()
 							return project_name .. ".md"
 						end,
 
 						post_open = function(_, _)
 							vim.wo.winhl =
-								"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:LocalNoteTitle,EndOfBuffer:NoteEOB"
+								"Normal:NoteBackground,FloatBorder:LocalNoteBorder,FloatTitle:LocalNoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
+							vim.wo.number = false
+							vim.wo.foldcolumn = "2"
+							vim.wo.relativenumber = false
+							vim.wo.cursorline = false
+							vim.wo.signcolumn = "no"
 						end,
 					},
 				},

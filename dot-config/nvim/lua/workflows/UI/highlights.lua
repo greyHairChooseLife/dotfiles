@@ -291,11 +291,13 @@ vim.cmd([[
 
 
   " MEMO:: global-note
-  highlight NoteBackground guibg=#233342 guifg=NONE
-  highlight NoteBorder guibg=#233342 guifg=#233342
-  highlight NoteTitle guibg=#000000 guifg=#c8ccd4 gui=bold
-  highlight LocalNoteTitle guibg=#98c379 guifg=#c8ccd4 gui=bold
-  highlight NoteEOB guifg=#233342
+  highlight NoteBackground guibg=#24283b guifg=NONE
+  highlight NoteBorder guibg=#24283b guifg=#ff0000
+  highlight NoteTitle guibg=#ff0000 guifg=#000000 gui=bold
+  highlight LocalNoteBorder guibg=#24283b guifg=#98c379
+  highlight LocalNoteTitle guibg=#98c379 guifg=#000000 gui=bold
+  highlight NoteEOB guifg=#24283b
+  highlight NoteFoldColumn guifg=#24283b
 
   highlight CopilotChatHeader guifg=#4169E1 gui=italic
   highlight CopilotChatSeparator guifg=#4169E1
