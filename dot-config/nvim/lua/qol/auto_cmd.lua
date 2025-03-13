@@ -36,18 +36,6 @@ vim.api.nvim_create_autocmd("WinEnter", {
 	end,
 })
 
-local Cursor = {
-	show = function()
-		vim.cmd("hi Cursor blend=0")
-		vim.cmd("set guicursor-=a:Cursor/lCursor")
-	end,
-
-	hide = function()
-		vim.cmd("hi Cursor blend=100")
-		vim.cmd("set guicursor+=a:Cursor/lCursor")
-	end,
-}
-
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	callback = function()
 		if vim.bo.filetype == "NvimTree" then
@@ -59,7 +47,7 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 				api.tree.open()
 			end
 
-			Cursor.hide()
+			utils.cursor.hide()
 		end
 
 		if vim.bo.filetype == "Avante" then
@@ -73,14 +61,6 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 			vim.defer_fn(function()
 				-- os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
 			end, 200) -- 약간의 딜레이가 필요하다. 왜냐면 내가 <A-hjkl>로 이동할 때 Alt키를 약간 느리게 떼는 경향이 있는데, 그럼 <A-Esc>가 되어버린다. 그래서 Alt키에서 손을 뗄 때까지 약간의 시간을 기다리는 딜레이를 준다.
-		end
-	end,
-})
-
-vim.api.nvim_create_autocmd({ "BufLeave" }, {
-	callback = function()
-		if vim.bo.filetype == "NvimTree" then
-			Cursor.show()
 		end
 	end,
 })
@@ -167,7 +147,7 @@ vim.api.nvim_create_autocmd("CmdlineEnter", {
 		-- -- 명령줄 입력 시에만 활성화
 		-- GUI
 		-- vim.opt.cmdheight = 1
-		Cursor.show()
+		utils.cursor.show()
 
 		-- KEYMAP
 		vim.api.nvim_set_keymap(
@@ -187,7 +167,7 @@ vim.api.nvim_create_autocmd("CmdlineLeave", {
 		vim.schedule(function()
 			-- 이 시점에서는 일반 모드로 전환이 완료되어 버퍼/윈도우 관련 API를 안전하게 사용할 수 있음
 			if vim.bo.filetype == "NvimTree" then
-				Cursor.hide()
+				utils.cursor.hide()
 			end
 		end)
 	end,

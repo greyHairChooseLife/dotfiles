@@ -31,6 +31,9 @@ vim.cmd([[
   highlight fugitiveUntrackedHeading guifg=#7f52ff gui=bold
   highlight fugitiveUnstagedHeading guifg=#f1502f gui=bold
   highlight fugitiveStagedHeading guifg=#50cd5a gui=bold
+  highlight FugitiveNormal guibg=#242024
+  highlight FugitiveEOB guifg=#242024
+  highlight FugitiveFoldColumn guifg=#242024
 
 
   " MEMO:: NvimTree
@@ -55,6 +58,7 @@ vim.cmd([[
   highlight NvimTreeModifiedIcon guifg=#FF3000
   highlight NvimTreeOpenedHL guifg=#FF8C00 gui=italic,underline
   highlight NvimTreeIndentMarker guifg=#569CD6
+  highlight NvimTreeEOB guifg=#333342
 
 
   " MEMO:: Vimwiki
@@ -77,6 +81,7 @@ vim.cmd([[
   highlight VimwikiItalic guifg=#DCDCAA gui=italic
   " ToDo 항목 색상 설정
   highlight VimwikiTodo guifg=#000000 guibg=#87CEFA gui=bold
+  highlight VimwikiFoldColumn guifg=#24283B
 
 
   " MEMO:: GitSigns
@@ -200,10 +205,15 @@ vim.cmd([[
 
   " MEMO:: QuickFix
   highlight Delimiter guifg=#9ece6a
+  highlight QFBufferBG guibg=#201010
+  highlight QFBufferEOB guifg=#201010
 
 
   " MEMO:: Oil
   highlight OilDirIcon guifg=#ffcc00
+  highlight OilNormal guibg=#1A1601
+  highlight OilEOB guifg=#1A1601
+  highlight OilSignColumn guibg=#1A1601
 
 
   " MEMO:: Telescope
@@ -233,6 +243,9 @@ vim.cmd([[
   highlight AerialVariable guifg=#DCDCAA gui=italic
   highlight AerialVariableIcon guifg=#DCDCAA
   highlight AerialLine guibg=#4d6652
+  highlight AerialNormal guibg=#333342
+  highlight AerialEOB guifg=#333342
+  highlight AerialFoldColumn guifg=#333342
 
 
   " MEMO:: Avante
@@ -240,6 +253,9 @@ vim.cmd([[
   highlight AvanteConflictIncomingLabel guifg=#FFA500 guibg=#000000
   highlight AvantePopupHint guifg=#8b8378 guibg=#24283b gui=italic
   highlight AvanteThirdTitle guibg=#24283b
+  highlight AvanteNormal guibg=#242024
+  highlight AvanteSignColumn guibg=#242024
+  highlight AvanteSignEOB guifg=#242024
 
 
   " MEMO:: Pmenu for completion
@@ -306,6 +322,22 @@ vim.cmd([[
 " highlight CopilotChatKeyword - Keyword highlight in chat buffer (e.g. prompts, contexts)
 " highlight CopilotChatInput - Input highlight in chat buffer (for contexts)
 
+
+  " MEMO:: markdown
+  highlight MDFoldColumn guifg=#24283B
+  " highlight MDLineNrAbove guifg=#24283B
+  " highlight MDLineNrBelow guifg=#24283B
+
+
+  " MEMO:: Terminal
+  highlight TerminalNormal guibg=#0c0c0c
+  highlight TerminalEOB guifg=#0c0c0c
+  highlight TerminalSignColumn guibg=#0c0c0c
+
+
+  " MEMO:: ChatWithCopilot
+  highlight ChatWithCopilotNormal guibg=#242024
+  highlight ChatWithCopilotEOB guifg=#242024
 ]])
 
 --

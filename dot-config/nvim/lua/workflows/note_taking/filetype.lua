@@ -1,21 +1,6 @@
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "vimwiki",
 	callback = function()
-		-- UI
-		-- vim.cmd('IBLEnable')
-		require("gitsigns").toggle_signs(false)
-		vim.cmd("NvimTreeResize 100") -- require('nvim-tree.api').nvim-tree-api.tree.resize(100) 뭐야 외완되
-		vim.opt.number = false
-		-- vim.opt.foldlevelstart = 2
-		-- vim.opt.signcolumn = "no"
-		-- vim.opt.relativenumber = false
-		-- LineNr: 일반 줄 번호의 색상 설정
-		vim.api.nvim_set_hl(0, "LineNr", { fg = "#24283B" })
-		vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#24283B" })
-		vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#24283B" })
-		vim.opt.textwidth = 100
-		-- vim.opt.formatoptions:append("a") -- 붙여넣기 따위 시에도 최대 너비 존중
-
 		-- SNIPPET
 		vim.keymap.set("i", ",,h2", function()
 			vim.api.nvim_feedkeys("## ", "i", true)
@@ -186,12 +171,6 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "markdown",
 	callback = function()
-		-- GUI
-		-- vim.cmd('IBLEnable')
-		-- vim.api.nvim_set_hl(0, "LineNr", { fg = "#24283B" })
-		vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#24283B" })
-		vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#24283B" })
-
 		-- SNIPPET
 		vim.keymap.set("i", ",,h2", function()
 			vim.api.nvim_feedkeys("## ", "i", true)
@@ -208,10 +187,10 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.keymap.set("v", "i", "<ESC>i", { buffer = true })
 		vim.keymap.set("v", "a", "<ESC>a", { buffer = true })
 
-		vim.keymap.set("v", "<C-b>", ":lua require('markdowny').bold()<cr>", { buffer = 0 })
-		vim.keymap.set("v", "<C-i>", ":lua require('markdowny').italic()<cr>", { buffer = 0 })
-		vim.keymap.set("v", "<C-c>", ":lua require('markdowny').cancel()<cr>", { buffer = 0 })
-		vim.keymap.set("v", "<C-k>", ":lua require('markdowny').link()<cr>", { buffer = 0 })
-		vim.keymap.set("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = 0 })
+		vim.keymap.set("v", "<C-b>", ":lua require('markdowny').bold()<cr>", { buffer = true })
+		vim.keymap.set("v", "<C-i>", ":lua require('markdowny').italic()<cr>", { buffer = true })
+		vim.keymap.set("v", "<C-c>", ":lua require('markdowny').cancel()<cr>", { buffer = true })
+		vim.keymap.set("v", "<C-k>", ":lua require('markdowny').link()<cr>", { buffer = true })
+		vim.keymap.set("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = true })
 	end,
 })

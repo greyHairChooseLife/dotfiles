@@ -1,13 +1,6 @@
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "toggleterm",
 	callback = function()
-		-- gui
-		vim.api.nvim_set_hl(0, "TermBufferHighlight", { bg = "#0c0c0c" })
-		vim.api.nvim_set_hl(0, "TermBufferEOB", { fg = "#0c0c0c" })
-		vim.cmd(
-			"setlocal winhighlight=Normal:TermBufferHighlight,SignColumn:TermBufferHighlight,EndOfBuffer:TermBufferEOB"
-		)
-
 		-- keymap
 		vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], { buffer = true })
 		-- NEW WINDOW & TAB

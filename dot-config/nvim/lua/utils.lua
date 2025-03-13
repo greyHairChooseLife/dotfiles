@@ -439,4 +439,17 @@ M.get_project_name_by_git = function(opts)
 	return project_name
 end
 
+--- show/hide cursor
+M.cursor = {
+	show = function()
+		vim.cmd("hi Cursor blend=0")
+		vim.cmd("set guicursor-=a:Cursor/lCursor")
+	end,
+
+	hide = function()
+		vim.cmd("hi Cursor blend=100")
+		vim.cmd("set guicursor+=a:Cursor/lCursor")
+	end,
+}
+
 return M
