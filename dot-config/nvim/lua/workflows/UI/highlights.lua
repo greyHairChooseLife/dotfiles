@@ -315,13 +315,6 @@ vim.cmd([[
   highlight NoteEOB guifg=#24283b
   highlight NoteFoldColumn guifg=#24283b
 
-  highlight CopilotChatHeader guifg=#4169E1 gui=italic
-  highlight CopilotChatSeparator guifg=#4169E1
-" highlight CopilotChatStatus - Status and spinner in chat buffer
-" highlight CopilotChatHelp - Help messages in chat buffer (help, references)
-" highlight CopilotChatKeyword - Keyword highlight in chat buffer (e.g. prompts, contexts)
-" highlight CopilotChatInput - Input highlight in chat buffer (for contexts)
-
 
   " MEMO:: markdown
   highlight MDFoldColumn guifg=#24283B
@@ -338,6 +331,12 @@ vim.cmd([[
   " MEMO:: ChatWithCopilot
   highlight ChatWithCopilotNormal guibg=#242024
   highlight ChatWithCopilotEOB guifg=#242024
+  highlight CopilotChatHeader guifg=#4169E1 gui=italic
+  highlight CopilotChatSeparator guifg=#4169E1
+" highlight CopilotChatStatus - Status and spinner in chat buffer
+" highlight CopilotChatHelp - Help messages in chat buffer (help, references)
+" highlight CopilotChatKeyword - Keyword highlight in chat buffer (e.g. prompts, contexts)
+" highlight CopilotChatInput - Input highlight in chat buffer (for contexts)
 ]])
 
 --

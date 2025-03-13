@@ -26,6 +26,10 @@ vim.api.nvim_create_autocmd("FileType", {
 
 		-- options
 		setOpt("winhighlight", "FoldColumn:MDFoldColumn")
+		setOpt(
+			"winhighlight",
+			"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
+		)
 		setOpt("number", false)
 		setOpt("relativenumber", false)
 		setOpt("signcolumn", "no")

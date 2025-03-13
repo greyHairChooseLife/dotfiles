@@ -379,7 +379,7 @@ return {
 								if vim.bo.modified then
 									return "󰈸󰈸󰈸"
 								elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-									return " "
+									return " "
 								else
 									return " "
 								end
@@ -389,7 +389,7 @@ return {
 								if vim.bo.modified then
 									return { fg = colors.red2 }
 								elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-									return { fg = colors.purple1 }
+									return { fg = colors.red2 }
 								else
 									return {}
 								end
@@ -482,9 +482,9 @@ return {
 						{
 							function()
 								if vim.bo.modified then
-									return "󰈸"
+									return "󰈸󰈸󰈸"
 								elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-									return ""
+									return " "
 								else
 									return " "
 								end
