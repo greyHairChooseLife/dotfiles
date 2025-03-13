@@ -37,6 +37,7 @@ alias gco='git commit'
 alias gch='git checkout'
 alias gch!='git checkout $(git branch | fzf)'
 alias gp='git push'
+alias gt='git tag'
 
 alias gb='git branch'
 alias gs='git status'

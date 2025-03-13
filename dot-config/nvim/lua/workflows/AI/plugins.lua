@@ -234,6 +234,7 @@ return {
 			show_help = false, -- Shows help message as virtual lines when waiting for user input
 			insert_at_end = false,
 			selection = false, -- Have no predefined context by default
+			debug = false, -- Enable debug logging (same as 'log_level = 'debug')
 
 			-- providers = {
 			-- 	copilot = { "claude-3.7-sonnet" },

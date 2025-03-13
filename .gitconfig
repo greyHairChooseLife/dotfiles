@@ -68,3 +68,9 @@
 
 [commit]
     ; template = /home/etr/.gitmessage
+
+[merge]
+	ff = false
+
+[fetch]
+	tags = true

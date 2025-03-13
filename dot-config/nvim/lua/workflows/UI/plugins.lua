@@ -693,7 +693,7 @@ return {
 				-- char = "▍",
 				char = "▏",
 				show_start = false,
-				show_end = true,
+				show_end = false,
 				injected_languages = true,
 				priority = 1000,
 				-- exclude = { language = { "lua" } },
