@@ -651,7 +651,7 @@ return {
 				dashboard.button(
 					"dpu",
 					"                           -  pull    ",
-					":cd ~/Documents/dev-wiki | :Git pull | :cd ~/Documents/job-wiki | :Git pull --ff-only<CR>"
+					":cd ~/Documents/dev-wiki | :Git pull | :cd ~/Documents/job-wiki | :Git pull --ff<CR>"
 				),
 				dashboard.button("1", "dev", ":cd ~/Documents/dev-wiki | :VimwikiIndex<CR>"),
 				dashboard.button("2", "job", ":cd ~/Documents/job-wiki | :2VimwikiIndex<CR>"),
@@ -736,7 +736,7 @@ return {
 				-- height and width can be:
 				-- * an asbolute number of cells when > 1
 				-- * a percentage of the width / height of the editor when <= 1
-				width = 150, -- width of the focus window
+				width = 0.5, -- width of the focus window
 				height = 1, -- height of the focus window
 				-- by default, no options are changed in for the focus window
 				-- add any vim.wo options you want to apply
@@ -770,7 +770,12 @@ return {
 				-- todo = { enabled = false }, -- if set to "true", todo-comments.nvim highlights will be disabled
 			},
 			-- callback where you can add custom code when the focus window opens
-			on_open = function(_win) end,
+			on_open = function(_win)
+				require("utils").setOpt(
+					"winhighlight",
+					"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
+				)
+			end,
 			-- callback where you can add custom code when the focus window closes
 			on_close = function() end,
 		},

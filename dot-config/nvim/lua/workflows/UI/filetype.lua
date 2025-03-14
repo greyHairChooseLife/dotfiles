@@ -1,8 +1,5 @@
 local utils = require("utils")
-local function setOpt(option, value, opts)
-	opts = opts or { scope = "local" }
-	vim.api.nvim_set_option_value(option, value, opts)
-end
+local setOpt = utils.setOpt
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "qf",

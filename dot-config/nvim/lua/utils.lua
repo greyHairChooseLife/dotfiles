@@ -452,4 +452,14 @@ M.cursor = {
 	end,
 }
 
+---Sets a Neovim option value with the specified scope
+--->
+---@param option string The option name to set
+---@param value any The value to set the option to
+---@param opts? table Optional settings table with scope (defaults to {scope = "local"})
+M.setOpt = function(option, value, opts)
+	opts = opts or { scope = "local" }
+	vim.api.nvim_set_option_value(option, value, opts)
+end
+
 return M
