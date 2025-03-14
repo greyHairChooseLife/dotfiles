@@ -138,75 +138,44 @@ return {
 		lazy = false,
 		-- event = "BufEnter *.md",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
-		ft = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat" },
+		ft = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat", "gitcommit" },
 		---@module 'render-markdown'
 		---@type render.md.UserConfig
 		opts = {
 			-- Whether Markdown should be rendered by default or not
 			enabled = true,
+			-- Filetypes this plugin will run on
+			file_types = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat", "gitcommit" },
 			-- Maximum file size (in MB) that this plugin will attempt to render
 			-- Any file larger than this will effectively be ignored
 			max_file_size = 1.5,
 			-- Milliseconds that must pass before updating marks, updates occur
 			-- within the context of the visible window, not the entire buffer
 			debounce = 30,
-			-- Capture groups that get pulled from markdown
-			markdown_query = [[
-        (atx_heading [
-            (atx_h1_marker)
-            (atx_h2_marker)
-            (atx_h3_marker)
-            (atx_h4_marker)
-            (atx_h5_marker)
-            (atx_h6_marker)
-        ] @heading)
-
-        (thematic_break) @dash
-
-        (fenced_code_block) @code
-
-        [
-            (list_marker_plus)
-            (list_marker_minus)
-            (list_marker_star)
-        ] @list_marker
-
-        (task_list_marker_unchecked) @checkbox_unchecked
-        (task_list_marker_checked) @checkbox_checked
-
-        (block_quote) @quote
-
-        (pipe_table) @table
-    ]],
-			-- Capture groups that get pulled from quote nodes
-			markdown_quote_query = [[
-        [
-            (block_quote_marker)
-            (block_continuation)
-        ] @quote_marker
-    ]],
-			-- Capture groups that get pulled from inline markdown
-			inline_query = [[
-        (code_span) @code
-
-        (shortcut_link) @shortcut
-
-        [(inline_link) (full_reference_link) (image)] @link
-    ]],
 			-- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
 			-- Only intended to be used for plugin development / debugging
 			log_level = "error",
-			-- Filetypes this plugin will run on
-			file_types = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat" },
 			-- Vim modes that will show a rendered view of the markdown file
 			-- All other modes will be uneffected by this plugin
 			render_modes = { "n", "c", "i" },
+			on = {
+				-- Called when plugin initially attaches to a buffer.
+				attach = function() end,
+				-- Called after plugin renders a buffer.
+				render = function() end,
+				-- Called after plugin clears a buffer.
+				clear = function() end,
+			},
 			-- Set to avoid seeing warnings for conflicts in health check
 			acknowledge_conflicts = false,
 			anti_conceal = {
 				-- This enables hiding any added text on the line the cursor is on
 				-- This does have a performance penalty as we must listen to the 'CursorMoved' event
 				enabled = false,
+			},
+			padding = {
+				-- Highlight to use when adding whitespace, should match background.
+				highlight = "Normal",
 			},
 			paragraph = {
 				enabled = false,
@@ -215,9 +184,12 @@ return {
 			},
 			indent = {
 				-- 왠진 몰라도 켜면 들여쓰기 되지도 않으면서 테이블 UI 깨지는 버그만 있음
-				-- enabled = true,
+				enabled = false,
 				-- Amount of additional padding added for each heading level
-				-- per_level = 2,
+				per_level = 2,
+				skip_level = 1,
+				skip_heading = true,
+				icon = " ",
 			},
 			latex = {
 				-- Whether LaTeX should be rendered, mainly used for health check
@@ -245,9 +217,10 @@ return {
 				below = "",
 				-- ▁▂▃▅▔ (U+2581) Lower One Eighth Block
 				-- Determines how the icon fills the available space:
-				--  inline: underlying '#'s are concealed resulting in a left aligned icon
-				--  overlay: result is left padded with spaces to hide any additional '#'
-				position = "inline",
+				-- | right   | '#'s are concealed and icon is appended to right side                          |
+				-- | inline  | '#'s are concealed and icon is inlined on left side                            |
+				-- | overlay | icon is left padded with spaces and inserted on left hiding any additional '#' |
+				position = "overlay",
 				-- Replaces '#+' of 'atx_h._marker'
 				-- The number of '#' in the heading determines the 'level'
 				-- The 'level' is used to index into the array using a cycle
@@ -287,6 +260,9 @@ return {
 				width = { "block" },
 				left_margin = { 30, 0, 0, 0 },
 				left_pad = { 3, 80, 3, 0 },
+				-- START_debug:
+				-- left_pad = { 3, 80, 3, 50 },
+				-- END___debug:
 				right_pad = { 3, 2, 10, 1 },
 				min_width = { 70, 100, 50, 5 },
 				-- The 'level' is used to index into the array using a clamp
@@ -309,6 +285,14 @@ return {
 					"RenderMarkdownH5",
 					"RenderMarkdownH6",
 				},
+				-- Define custom heading patterns which allow you to override various properties based on
+				-- the contents of a heading.
+				-- The key is for healthcheck and to allow users to change its values, value type below.
+				-- | pattern    | matched against the heading text @see :h lua-pattern |
+				-- | icon       | optional override for the icon                       |
+				-- | background | optional override for the background                 |
+				-- | foreground | optional override for the foreground                 |
+				custom = {},
 			},
 			code = {
 				-- Turn on / off code block & inline code rendering
@@ -390,17 +374,19 @@ return {
 				enabled = true,
 				unchecked = {
 					-- Replaces '[ ]' of 'task_list_marker_unchecked'
-					icon = "[]",
-					-- icon = '[_]' ,󰄱
+					icon = "󰄱 ", --  ,󰄱
 					-- Highlight for the unchecked icon
 					highlight = "RenderMarkdownUnchecked",
+					-- Highlight for item associated with checked checkbox.
+					scope_highlight = nil,
 				},
 				checked = {
 					-- Replaces '[x]' of 'task_list_marker_checked'
-					-- icon = '󰡖',  󰗠󰗡󰬧   󰣪 󱌸 󰵿  󰈸
-					icon = "[]",
-					-- Highligh for the 󰄱checked icon
+					icon = "󰱒 ", -- '󰡖',  󰗠󰗡󰬧   󰣪 󱌸 󰵿  󰈸
+					-- Highligh for the checked icon
 					highlight = "RenderMarkdownChecked",
+					-- Highlight for item associated with checked checkbox.
+					scope_highlight = nil,
 				},
 				-- Define custom checkbox states, more involved as they are not part of the markdown grammar
 				-- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
@@ -410,10 +396,15 @@ return {
 				--   'rendered': Replaces the 'raw' value when rendering
 				--   'highlight': Highlight for the 'rendered' icon
 				custom = {
-					todo = { raw = "[-]", rendered = " 󰥔 TODO ", highlight = "RenderMarkdownMySimpleTodo" },
+					todo = {
+						raw = "[-]",
+						rendered = " 󰥔 TODO ",
+						highlight = "RenderMarkdownMySimpleTodo",
+						scope_highlight = nil,
+					},
 					done = { raw = "[x]", rendered = " 󰗠 DONE ", highlight = "RenderMarkdownMySimpleDone" },
 					cancel = { raw = "[c]", rendered = " 󰜺 cancel ", highlight = "RenderMarkdownMySimpleCancel" },
-					log = { raw = "[lg]", rendered = "작성:", highlight = "RenderMarkdownMyLog" },
+					-- log = { raw = "[lg]", rendered = "작성:", highlight = "RenderMarkdownMyLog" },
 					result = { raw = "[>]", rendered = "   So 󰜴 ", highlight = "RenderMarkdownResult" },
 				},
 			},
@@ -446,12 +437,12 @@ return {
     -- Characters used to replace table border
     -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
     -- stylua: ignore
-    border = {
-      '┌', '┬', '┐',
-      '├', '┼', '┤',
-      '└', '┴', '┘',
-      '│', '─',
-    },
+        border = {
+          '┌', '┬', '┐',
+          '├', '┼', '┤',
+          '└', '┴', '┘',
+          '│', '─',
+        },
 				-- Highlight for table heading, delimiter, and the line above
 				head = "RenderMarkdownTableHead",
 				-- Highlight for everything else, main table rows and the line below
@@ -462,9 +453,10 @@ return {
 			-- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
 			-- Can specify as many additional values as you like following the pattern from any below, such as 'note'
 			--   The key in this case 'note' is for healthcheck and to allow users to change its values
-			--   'raw': Matched against the raw text of a 'shortcut_link', case insensitive
-			--   'rendered': Replaces the 'raw' value when rendering
-			--   'highlight': Highlight for the 'rendered' text and quote markers
+			-- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
+			-- | rendered   | replaces the 'raw' value when rendering                             |
+			-- | highlight  | highlight for the 'rendered' text and quote markers                 |
+			-- | quote_icon | optional override for quote.icon value for individual callout       |
 			--  󰓛 󰄱    
 			--      󱓻강 sdf   sfd  󱓼  󰨔 󰴩     
 			callout = {
@@ -500,26 +492,39 @@ return {
 			link = {
 				-- Turn on / off inline link icon rendering
 				enabled = true,
-				-- Inlined with 'image' elements
+				-- Inlined with 'image' elements.
 				image = "󰥶 ",
-				-- Inlined with 'inline_link' elements
-				-- hyperlink = '  󰌹 ',
-				hyperlink = " ",
+				-- Inlined with 'email_autolink' elements.
+				email = "󰀓 ",
+				-- Fallback icon for 'inline_link' and 'uri_autolink' elements.
+				hyperlink = "󰌹 ", -- 
 				-- Applies to the inlined icon
 				highlight = "RenderMarkdownDocLink",
+				wiki = {
+					icon = "󱗖 ",
+					body = function()
+						return nil
+					end,
+					highlight = "RenderMarkdownYoutubeLink",
+				},
+				-- Define custom destination patterns so icons can quickly inform you of what a link
+				-- contains. Applies to 'inline_link', 'uri_autolink', and wikilink nodes. When multiple
+				-- patterns match a link the one with the longer pattern is used.
 				custom = {
-					-- web = { pattern = '^http[s]?://(?!www%.youtube%.com)(?!youtu%.be)', icon = '󰖟\'', highlight = 'RenderMarkdownWebLink' },
-					-- youtube = { pattern = '^http[s]?://(www%.)?youtube%.com/.*', icon = '\'', highlight = 'RenderMarkdownYoutubeLink' },
 					file = { pattern = "^file:", icon = " ", highlight = "RenderMarkdownFileLink" },
-					youtube = {
-						pattern = "^http[s]?://www%.youtube%.com/.*",
-						icon = " ",
-						highlight = "RenderMarkdownYoutubeLink",
-					},
-					web = { pattern = "^http[s]?://", icon = "󰖟 ", highlight = "RenderMarkdownWebLink" },
+					youtube = { pattern = "youtube%.com", icon = " ", highlight = "RenderMarkdownYoutubeLink" },
+					web = { pattern = "^http", icon = "󰖟 ", highlight = "RenderMarkdownWebLink" },
+					diary = { pattern = "^%d%d%d%d%-%d%d%-%d%d", icon = " ", highlight = "RenderMarkdownDiaryLink" },
+					discord = { pattern = "discord%.com", icon = "󰙯 " },
+					github = { pattern = "github%.com", icon = "󰊤 " },
+					gitlab = { pattern = "gitlab%.com", icon = "󰮠 " },
+					google = { pattern = "google%.com", icon = "󰊭 " },
+					neovim = { pattern = "neovim%.io", icon = " " },
+					reddit = { pattern = "reddit%.com", icon = "󰑍 " },
+					stackoverflow = { pattern = "stackoverflow%.com", icon = "󰓌 " },
+					wikipedia = { pattern = "wikipedia%.org", icon = "󰖬 " },
 					-- TODO:
 					-- today = { pattern = '^2024%-09%-12', icon = ' ', highlight = 'RenderMarkdownDiaryLink' }, -- today = os.date("%Y-%m-%d") 해서 사용하고싶은데 이게 안되네
-					diary = { pattern = "^%d%d%d%d%-%d%d%-%d%d", icon = " ", highlight = "RenderMarkdownDiaryLink" },
 				},
 			},
 			sign = {
@@ -579,6 +584,13 @@ return {
 				},
 				filetype = {
 					Avante = {
+						heading = {
+							width = { "full", "full", "block" },
+							left_margin = { 0, 0, 0, 0 },
+							left_pad = { 0, 0, 0, 0 },
+							right_pad = { 0, 0, 0, 0 },
+							min_width = { 0, 0, 0, 0 },
+						},
 						sign = { enabled = false },
 						code = {
 							style = "full",
@@ -599,6 +611,13 @@ return {
 						},
 					},
 					AvanteInput = {
+						heading = {
+							width = { "full", "full", "block" },
+							left_margin = { 0, 0, 0, 0 },
+							left_pad = { 0, 0, 0, 0 },
+							right_pad = { 0, 0, 0, 0 },
+							min_width = { 0, 0, 0, 0 },
+						},
 						sign = { enabled = false },
 						code = {
 							style = "normal",
@@ -620,7 +639,11 @@ return {
 					},
 					["copilot-chat"] = {
 						heading = {
-							enabled = false,
+							width = { "full", "full", "block" },
+							left_margin = { 0, 0, 0, 0 },
+							left_pad = { 0, 0, 0, 0 },
+							right_pad = { 0, 0, 0, 0 },
+							min_width = { 0, 0, 0, 0 },
 						},
 					},
 				},

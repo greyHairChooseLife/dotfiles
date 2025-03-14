@@ -47,7 +47,7 @@ vim.api.nvim_create_autocmd("FileType", {
 		setOpt("number", false)
 		setOpt("relativenumber", false)
 		setOpt("signcolumn", "no")
-		setOpt("foldcolumn", "2")
+		setOpt("foldcolumn", "5")
 		setOpt("textwidth", 100)
 	end,
 })

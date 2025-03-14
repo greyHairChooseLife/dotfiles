@@ -115,7 +115,6 @@ vim.cmd([[
 
 
   " MEMO:: render-markdown
-  "
   highlight RenderMarkdownCode guibg=#181818 guifg=NONE
   highlight RenderMarkdownCodeInline guibg=#181818 guifg=NONE
   highlight RenderMarkdownCodeNofile guibg=#181818 guifg=NONE
@@ -165,7 +164,7 @@ vim.cmd([[
   " markup highlight for TreeSitter
   highlight @markup.link guifg=#4169E1
   highlight @markup.link.label guifg=#DCDCAA "FFF500
-  highlight @markup.strong guibg=#007F7F gui=italic
+  highlight @markup.strong guifg=#007F7F gui=underline
   highlight @markup.italic guifg=#DCDCAA gui=italic
   highlight @markup guifg=#FFFFFF
   highlight @markup.heading.1.markdown guifg=#AF4500

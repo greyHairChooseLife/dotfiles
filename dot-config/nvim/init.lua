@@ -49,7 +49,7 @@ require("lazy").setup({
 		lazy = true, -- 기본적으로 모든 플러그인을 지연 로드
 	},
 	git = {
-		log = { "-100" }, -- (L)og에서 몇개나 보여줄지
+		log = { "-200" }, -- (L)og에서 몇개나 보여줄지
 	},
 	diff = {
 		cmd = "diffview.nvim",
