@@ -651,7 +651,7 @@ return {
 				dashboard.button(
 					"dpu",
 					"                           -  pull    ",
-					":cd ~/Documents/dev-wiki | :Git pull | :cd ~/Documents/job-wiki | :Git pull --ff<CR>"
+					":cd ~/Documents/dev-wiki | :Git pull --ff-only | :cd ~/Documents/job-wiki | :Git pull --ff-only<CR>"
 				),
 				dashboard.button("1", "dev", ":cd ~/Documents/dev-wiki | :VimwikiIndex<CR>"),
 				dashboard.button("2", "job", ":cd ~/Documents/job-wiki | :2VimwikiIndex<CR>"),
