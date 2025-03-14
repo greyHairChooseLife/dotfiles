@@ -77,16 +77,18 @@ return {
 						end
 					end
 
-					if not found_win then
+					if not found_win and buf ~= nil then
 						vim.api.nvim_set_current_buf(buf)
 					end
+					-- For already loaded buffers, don't change cursor position
 				else
 					actions.file_edit(prompt_bufnr)
-				end
 
-				vim.defer_fn(function()
-					vim.api.nvim_win_set_cursor(0, { lnum, lcol - 1 })
-				end, 20)
+					-- Only set cursor position for newly opened files
+					vim.defer_fn(function()
+						vim.api.nvim_win_set_cursor(0, { lnum, lcol - 1 })
+					end, 20)
+				end
 			end
 
 			local select_one_or_multi = function(prompt_bufnr, variant)
@@ -347,6 +349,16 @@ return {
 									vim.cmd("Git stash pop " .. selection.value)
 									actions.close(prompt_bufnr)
 								end,
+							},
+						},
+					},
+					help_tags = {
+						mappings = {
+							n = {
+								["<CR>"] = focus_or_open,
+							},
+							i = {
+								["<CR>"] = focus_or_open,
 							},
 						},
 					},
