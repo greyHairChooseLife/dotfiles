@@ -130,11 +130,6 @@ map("n", "zd", "zd<cmd>mkview<CR>")
 -- map({ "n", "v" }, "<C-n>", "%][%zz")
 -- map({ "n", "v" }, "<C-p>", "[]%zz")
 
--- LEAP
-map({ "n", "v" }, ",l", "<Plug>(leap-forward)")
-map({ "n", "v" }, ",L", "<Plug>(leap-backward)")
-map({ "n" }, ",,l", "<Plug>(leap-from-window)")
-
 map("n", "n", function()
 	Safe_search("n")
 end, opt)
