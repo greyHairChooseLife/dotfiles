@@ -143,8 +143,10 @@ vim.cmd([[
 
   highlight RenderMarkdownH1Bg guibg=#DCDCAA gui=bold,italic
   highlight RenderMarkdownH2Bg guibg=#1c2d5f gui=bold
-  highlight RenderMarkdownH3Bg guibg=#404000 gui=bold
-  highlight RenderMarkdownH4Bg guibg=NONE guifg=#4169E1 gui=bold,italic
+  " highlight RenderMarkdownH3Bg guibg=#404000 gui=bold
+  highlight RenderMarkdownH3Bg guibg=NONE guifg=#1e90ff gui=italic
+  highlight RenderMarkdownH4Bg guibg=NONE guifg=#e0af68 gui=italic
+  highlight RenderMarkdownH5Bg guibg=NONE guifg=#8b8378 gui=italic
   " highlight RenderMarkdownH5Bg guibg=#AF4500
   " highlight RenderMarkdownH6Bg guibg=#4e4451
 
@@ -164,7 +166,7 @@ vim.cmd([[
   " markup highlight for TreeSitter
   highlight @markup.link guifg=#4169E1
   highlight @markup.link.label guifg=#DCDCAA "FFF500
-  highlight @markup.strong guifg=#007F7F gui=underline
+  highlight @markup.strong guifg=#e0af68 gui=bold
   highlight @markup.italic guifg=#DCDCAA gui=italic
   highlight @markup guifg=#FFFFFF
   highlight @markup.heading.1.markdown guifg=#AF4500

@@ -89,6 +89,10 @@ return {
 						vim.api.nvim_win_set_cursor(0, { lnum, lcol - 1 })
 					end, 20)
 				end
+
+				vim.defer_fn(function()
+					vim.api.nvim_win_set_cursor(0, { lnum, lcol - 1 })
+				end, 20)
 			end
 
 			local select_one_or_multi = function(prompt_bufnr, variant)

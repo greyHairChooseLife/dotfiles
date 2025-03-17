@@ -184,12 +184,12 @@ return {
 			},
 			indent = {
 				-- 왠진 몰라도 켜면 들여쓰기 되지도 않으면서 테이블 UI 깨지는 버그만 있음
-				enabled = false,
+				enabled = true,
 				-- Amount of additional padding added for each heading level
-				per_level = 2,
-				skip_level = 1,
+				per_level = 3,
+				skip_level = 2,
 				skip_heading = true,
-				icon = " ",
+				icon = "┃",
 			},
 			latex = {
 				-- Whether LaTeX should be rendered, mainly used for health check
@@ -203,11 +203,9 @@ return {
 				-- Amount of empty lines below LaTeX blocks
 				bottom_pad = 0,
 			},
-			heading = { -- text-based로 동적 표현이 가능하다.  https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/5c2440d
+			heading = {
 				-- Turn on / off heading icon & background rendering
 				enabled = true,
-				-- Turn on / off any sign column related rendering
-				sign = true,
 				-- border = { false, true, true, false, false },
 				border = { false },
 				border_virtual = false,
@@ -234,7 +232,7 @@ return {
 				-- 	" ",
 				-- 	" ",
 				-- 	" ",
-				-- },
+				-- },
 				-- icons = function(sections)
 				-- 	return table.concat(sections, ".") .. ". "
 				-- end,
@@ -242,29 +240,41 @@ return {
 					local sections = ctx.sections
 					table.remove(sections, 1)
 					if #sections > 0 then
+						if #sections == 2 then
+							return "󰼏  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                             "
+								.. table.concat(sections, ".")
+								.. ". "
+						end
 						if #sections == 3 then
-							return " "
+							return "󰼐  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                      "
+								.. table.concat(sections, ".")
+								.. ". "
+						end
+						if #sections == 4 then
+							return "󰼑  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                        "
 								.. table.concat(sections, ".")
 								.. ". "
 						end
 						return table.concat(sections, ".") .. ". "
 					end
 				end,
-				--󰻃󰻂󰑊󰨑
+				-- Turn on / off any sign column related rendering
+				sign = false,
 				-- Added to the sign column if enabled
 				-- The 'level' is used to index into the array using a cycle
-				signs = { "", "", " 󱞩", " ", "", "" },
+				signs = { "", "", " 󱞩", " ", "", "" }, -- 󰻃󰻂󰑊󰨑
 				-- Width of the heading background:
 				--  block: width of the heading text
 				--  full: full width of the window
 				width = { "block" },
-				left_margin = { 30, 0, 0, 0 },
-				left_pad = { 3, 80, 3, 0 },
-				-- START_debug:
-				-- left_pad = { 3, 80, 3, 50 },
-				-- END___debug:
-				right_pad = { 3, 2, 10, 1 },
-				min_width = { 70, 100, 50, 5 },
+				-- left_margin = { 30, 0, 0, 0 },
+				-- left_pad = { 3, 80, 3, 0 },
+				-- right_pad = { 3, 2, 10, 1 },
+				-- min_width = { 70, 100, 50, 5 },
+				left_margin = { 30, 0, 0, 0, 0 },
+				left_pad = { 3, 80, 0, 0 },
+				right_pad = { 3, 2, 0, 0, 0 },
+				min_width = { 70, 100, 100, 100, 100 },
 				-- The 'level' is used to index into the array using a clamp
 				-- Highlight for the heading icon and extends through the entire line
 				backgrounds = {
@@ -414,7 +424,8 @@ return {
 				-- Replaces '>' of 'block_quote'
 				-- icon = '▋▍▏',
 				-- icon = '󰍬',
-				icon = "▐",
+				-- icon = "▐",
+				icon = "░",
 				repeat_linebreak = false,
 				-- Highlight for the quote icon
 				highlight = "RenderMarkdownQuote",
