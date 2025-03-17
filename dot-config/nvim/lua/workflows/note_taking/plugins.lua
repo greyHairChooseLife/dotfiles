@@ -35,6 +35,7 @@ return {
 
 			vim.g.vimwiki_create_link = 0
 
+			-- MEMO:: 모르겠다, 왜 lua로 안바꿔지냐?
 			-- 함수를 전역으로 등록
 			_G.vimwiki_fold_level_custom = function(lnum)
 				local prev_line = vim.fn.getline(lnum - 1) -- 헤더라인은 살려야지
@@ -62,7 +63,8 @@ return {
 				if string.match(curr_line, "^%s*$") and string.match(next_line, "^####%s") then
 					return "2"
 				end
-				if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next2_line, "^##%s") then
+				-- if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next2_line, "^##%s") then
+				if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next_line, "^##%s") then
 					return "0"
 				end
 
@@ -75,15 +77,19 @@ return {
 
 			-- autocmd를 Lua 방식으로 설정
 			vim.api.nvim_create_augroup("VimwikiFoldingGroup", { clear = true })
-
 			vim.api.nvim_create_autocmd("FileType", {
 				group = "VimwikiFoldingGroup",
 				pattern = "vimwiki",
 				callback = function()
 					vim.opt_local.foldmethod = "expr"
 					vim.opt_local.foldenable = true
-					vim.opt_local.foldexpr = "v:lua.vimwiki_fold_level_custom(v:lnum)"
-					vim.opt_local.foldtext = "v:lua.custom_fold_text()"
+					vim.opt_local.foldmethod = "expr"
+					vim.opt_local.foldenable = true
+					-- vim.opt_local.foldexpr = "v:lua.vimwiki_fold_level_custom(v:lnum)"
+					vim.opt_local.foldexpr =
+						"v:lua.require'workflows.UI.folding_styles'.markdown_fold_level_custom(v:lnum)"
+					vim.opt_local.foldtext =
+						"v:lua.require'workflows.UI.folding_styles'.markdown_fold(v:foldstart, v:foldend, v:foldlevel)"
 				end,
 			})
 
@@ -94,40 +100,15 @@ return {
 				callback = function()
 					vim.opt_local.foldmethod = "expr"
 					vim.opt_local.foldenable = true
-					vim.opt_local.foldexpr = "v:lua.vimwiki_fold_level_custom(v:lnum)"
-					vim.opt_local.foldtext = "v:lua.custom_fold_text()"
+					vim.opt_local.foldmethod = "expr"
+					vim.opt_local.foldenable = true
+					-- vim.opt_local.foldexpr = "v:lua.vimwiki_fold_level_custom(v:lnum)"
+					vim.opt_local.foldexpr =
+						"v:lua.require'workflows.UI.folding_styles'.markdown_fold_level_custom(v:lnum)"
+					vim.opt_local.foldtext =
+						"v:lua.require'workflows.UI.folding_styles'.markdown_fold(v:foldstart, v:foldend, v:foldlevel)"
 				end,
 			})
-
-			-- custom_fold_text 함수 정의
-			-- function custom_fold_text()
-			--   local line_count = vim.v.foldend - vim.v.foldstart + 1
-			--   local fold_text = " 󱞪 " .. line_count .. " "
-			--
-			--   -- 현재 윈도우의 너비를 가져와 남은 공간을 공백으로 채움
-			--   local win_width = vim.fn.winwidth(0)
-			--   local padding = string.rep(" ", win_width - #fold_text)
-			--
-			--   return fold_text .. padding
-			-- end
-
-			function custom_fold_text()
-				local line_start_icon = " 󱞪 "
-				local line_end_icon = ""
-				local line_icon = "░"
-				local total_width = 100
-				local line_icon_fill = string.rep(line_icon, total_width - #line_start_icon / 2)
-				local line_fill = line_start_icon .. line_icon_fill .. line_end_icon
-
-				local line_count = vim.v.foldend - vim.v.foldstart + 1
-				local count_text = " 󰜴 " .. line_count
-
-				local win_width = vim.fn.winwidth(0)
-				local padding = string.rep(" ", math.max(0, win_width - total_width))
-
-				-- 최종 폴드 텍스트 구성
-				return line_fill .. count_text .. padding
-			end
 
 			-- TODO: 편의기능 개선
 			-- 또한, 이외에도 static file의 주소를 가져온 뒤 손쉽게 하이퍼링크를 만들어주는 것도 해주자. 그림파일인지는 확장자를 통해 판단하면 되니 모든 종류의 스태틱 파일에 동일한 커맨드를 사용가능할듯.
@@ -207,13 +188,13 @@ return {
 				-- Turn on / off heading icon & background rendering
 				enabled = true,
 				-- border = { false, true, true, false, false },
-				border = { false },
-				border_virtual = false,
+				border = { false, true, false },
+				border_virtual = true,
 				border_prefix = false,
-				above = "▂",
+				above = "", -- ▂
 				-- Used below heading for border
-				below = "",
-				-- ▁▂▃▅▔ (U+2581) Lower One Eighth Block
+				below = "█", -- ▔
+				-- ▁▂▃▅ (U+2581) Lower One Eighth Block
 				-- Determines how the icon fills the available space:
 				-- | right   | '#'s are concealed and icon is appended to right side                          |
 				-- | inline  | '#'s are concealed and icon is inlined on left side                            |
@@ -241,17 +222,17 @@ return {
 					table.remove(sections, 1)
 					if #sections > 0 then
 						if #sections == 2 then
-							return "󰼏  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                             "
+							return "󰼏  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                              "
 								.. table.concat(sections, ".")
 								.. ". "
 						end
 						if #sections == 3 then
-							return "󰼐  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                      "
+							return "󰼐  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                       "
 								.. table.concat(sections, ".")
 								.. ". "
 						end
 						if #sections == 4 then
-							return "󰼑  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                        "
+							return "󰼑  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                         "
 								.. table.concat(sections, ".")
 								.. ". "
 						end
