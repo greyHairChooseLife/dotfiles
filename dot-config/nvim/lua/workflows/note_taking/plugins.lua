@@ -47,6 +47,7 @@ return {
 				local is_lv2_header = string.match(prev_line, "^##%s")
 				local is_lv3_header = string.match(prev_line, "^###%s")
 				local is_lv4_header = string.match(prev_line, "^####%s")
+				local is_lv5_header = string.match(prev_line, "^#####%s")
 
 				if is_lv2_header then
 					return "1"
@@ -57,11 +58,17 @@ return {
 				if is_lv4_header then
 					return "3"
 				end
+				if is_lv5_header then
+					return "4"
+				end
 				if string.match(curr_line, "^%s*$") and string.match(next_line, "^###%s") then
 					return "1"
 				end
 				if string.match(curr_line, "^%s*$") and string.match(next_line, "^####%s") then
 					return "2"
+				end
+				if string.match(curr_line, "^%s*$") and string.match(next_line, "^#####%s") then
+					return "3"
 				end
 				-- if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next2_line, "^##%s") then
 				if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next_line, "^##%s") then
@@ -170,7 +177,7 @@ return {
 				per_level = 3,
 				skip_level = 2,
 				skip_heading = true,
-				icon = "┃",
+				icon = " ",
 			},
 			latex = {
 				-- Whether LaTeX should be rendered, mainly used for health check
@@ -188,7 +195,8 @@ return {
 				-- Turn on / off heading icon & background rendering
 				enabled = true,
 				-- border = { false, true, true, false, false },
-				border = { false, true, false },
+				-- border = { false, true, false },
+				border = { false },
 				border_virtual = true,
 				border_prefix = false,
 				above = "", -- ▂
@@ -247,15 +255,15 @@ return {
 				-- Width of the heading background:
 				--  block: width of the heading text
 				--  full: full width of the window
-				width = { "block" },
+				width = { "block", "full", "block" },
 				-- left_margin = { 30, 0, 0, 0 },
 				-- left_pad = { 3, 80, 3, 0 },
 				-- right_pad = { 3, 2, 10, 1 },
 				-- min_width = { 70, 100, 50, 5 },
 				left_margin = { 30, 0, 0, 0, 0 },
-				left_pad = { 3, 80, 0, 0 },
+				left_pad = { 3, 101, 0, 0 },
 				right_pad = { 3, 2, 0, 0, 0 },
-				min_width = { 70, 100, 100, 100, 100 },
+				min_width = { 70, 140, 100, 100, 100 },
 				-- The 'level' is used to index into the array using a clamp
 				-- Highlight for the heading icon and extends through the entire line
 				backgrounds = {
@@ -308,9 +316,9 @@ return {
 				-- Amount of padding to add to the left of code blocks
 				left_pad = 2,
 				-- Amount of padding to add to the right of code blocks when width is 'block'
-				right_pad = 10,
+				right_pad = 5,
 				left_margin = 0,
-				min_width = 120,
+				min_width = 100,
 				-- Width of the code block background:
 				--  block: width of the code block
 				--  full: full width of the window

@@ -8,6 +8,8 @@ M.markdown_fold = function(foldstart, foldend, foldlevel)
 		line_start_icon = " 󱞪 "
 	elseif foldlevel == 3 then
 		line_start_icon = "    󱞪 "
+	elseif foldlevel == 4 then
+		line_start_icon = "       󱞪 "
 	end
 	local line_end_icon = ""
 	local line_icon = "░"
@@ -18,6 +20,8 @@ M.markdown_fold = function(foldstart, foldend, foldlevel)
 		total_width = 100
 	elseif foldlevel == 3 then
 		total_width = 99
+	elseif foldlevel == 4 then
+		total_width = 97
 	end
 	local line_icon_fill = string.rep(line_icon, total_width - #line_start_icon / 2)
 	local line_fill = line_start_icon .. line_icon_fill .. line_end_icon
@@ -44,6 +48,7 @@ M.markdown_fold_level_custom = function(lnum)
 	local is_lv2_header = string.match(prev_line, "^##%s")
 	local is_lv3_header = string.match(prev_line, "^###%s")
 	local is_lv4_header = string.match(prev_line, "^####%s")
+	local is_lv5_header = string.match(prev_line, "^#####%s")
 
 	if is_lv2_header then
 		return "1"
@@ -54,11 +59,17 @@ M.markdown_fold_level_custom = function(lnum)
 	if is_lv4_header then
 		return "3"
 	end
+	if is_lv5_header then
+		return "4"
+	end
 	if string.match(curr_line, "^%s*$") and string.match(next_line, "^###%s") then
 		return "1"
 	end
 	if string.match(curr_line, "^%s*$") and string.match(next_line, "^####%s") then
 		return "2"
+	end
+	if string.match(curr_line, "^%s*$") and string.match(next_line, "^#####%s") then
+		return "3"
 	end
 	if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next2_line, "^##%s") then
 		-- if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next_line, "^##%s") then
