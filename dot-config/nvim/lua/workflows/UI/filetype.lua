@@ -22,7 +22,7 @@ vim.api.nvim_create_autocmd("FileType", {
 		-- vim.cmd('IBLEnable')
 
 		-- options
-		setOpt("winhighlight", "FoldColumn:MDFoldColumn")
+		-- setOpt("winhighlight", "FoldColumn:MDFoldColumn")
 		setOpt(
 			"winhighlight",
 			"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"

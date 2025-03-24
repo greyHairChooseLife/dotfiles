@@ -161,9 +161,10 @@ return {
 				-- This does have a performance penalty as we must listen to the 'CursorMoved' event
 				enabled = false,
 			},
+			completions = { blink = { enabled = true } },
 			padding = {
 				-- Highlight to use when adding whitespace, should match background.
-				highlight = "Normal",
+				highlight = "NoteBackground",
 			},
 			paragraph = {
 				enabled = false,
