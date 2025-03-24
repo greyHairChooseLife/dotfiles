@@ -311,7 +311,7 @@ return {
 					insert = "<C-y>",
 				},
 				jump_to_diff = {
-					normal = "gj",
+					normal = "gJ",
 				},
 				quickfix_answers = {
 					normal = ",qa",

@@ -170,7 +170,7 @@ return {
 					lualine_c = {},
 					lualine_x = {
 						{
-							winfix_status,
+							lualine_components.winfix_status,
 							padding = { left = 1, right = 1 },
 							color = {
 								bg = colors.black,
@@ -178,7 +178,22 @@ return {
 							},
 						},
 						{
-							search_counter,
+							"lsp_status",
+							icon = "󰌚",
+							symbols = {
+								done = "󰞑",
+								-- Delimiter inserted between LSP names:
+								separator = " & ",
+							},
+							-- List of LSP names to ignore (e.g., `null-ls`):
+							ignore_lsp = { "copilot" },
+							color = {
+								bg = colors.greenbg,
+								fg = colors.black,
+							},
+						},
+						{
+							lualine_components.search_counter,
 							padding = { left = 2, right = 1 },
 							color = {
 								bg = colors.search,
@@ -268,7 +283,7 @@ return {
 					},
 					lualine_y = {
 						{
-							winfix_status,
+							lualine_components.winfix_status,
 							padding = { left = 1, right = 1 },
 							color = {
 								bg = colors.black,
@@ -276,14 +291,7 @@ return {
 							},
 						},
 						{
-							copilot_chat,
-							padding = { left = 2, right = 1 },
-							color = {
-								bg = colors.search,
-							},
-						},
-						{
-							search_counter,
+							lualine_components.search_counter,
 							padding = { left = 2, right = 1 },
 							color = {
 								bg = colors.search,
