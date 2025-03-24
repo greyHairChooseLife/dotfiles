@@ -103,6 +103,14 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "terminal",
+	callback = function()
+		-- options
+		setOpt("winhighlight", "Normal:TerminalNormal,SignColumn:TerminalSignColumn,EndOfBuffer:TerminalEOB")
+	end,
+})
+
 vim.api.nvim_create_autocmd("BufEnter", { -- 왠지 모르지만 BufEnter로 해야한다.
 	pattern = "copilot-*",
 	callback = function()

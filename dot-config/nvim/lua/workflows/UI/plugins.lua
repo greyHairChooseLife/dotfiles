@@ -71,6 +71,7 @@ return {
 				white = "#ffffff",
 				bblack = "#282c34",
 				black = "#000000",
+				terminal_bg = "#0c0c0c",
 				grey = "#333342",
 				bg = "#24283b",
 				bg2 = "#242024",
@@ -184,6 +185,28 @@ return {
 
 			-- 각종 컴포넌트 스니펫이다.
 			-- https://github.com/nvim-lualine/lualine.nvim/wiki/Component-snippets
+
+			local my_terminal = {
+				filetypes = { "terminal" },
+				sections = {
+					lualine_a = {
+						{
+							"filetype",
+							color = { bg = colors.white, fg = colors.terminal_bg, gui = "bold,italic" },
+							padding = { left = 1, right = 5 },
+						},
+					},
+				},
+				inactive_sections = {
+					lualine_a = {
+						{
+							"filetype",
+							color = { bg = colors.terminal_bg, fg = colors.white, gui = "italic" },
+							padding = { left = 1, right = 5 },
+						},
+					},
+				},
+			}
 
 			local my_quickfix = {
 				filetypes = { "qf" },
@@ -565,7 +588,15 @@ return {
 				tabline = {},
 				winbar = {},
 				inactive_winbar = {},
-				extensions = { "toggleterm", my_quickfix, my_nvimTree, my_fugitive, my_oil, my_copilot_chat },
+				extensions = {
+					"toggleterm",
+					my_quickfix,
+					my_nvimTree,
+					my_fugitive,
+					my_oil,
+					my_copilot_chat,
+					my_terminal,
+				},
 			})
 		end,
 	},
