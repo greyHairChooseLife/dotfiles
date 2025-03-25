@@ -211,6 +211,7 @@ return {
 			"CopilotChatOptimize",
 			"CopilotChatDocs",
 			"CopilotChatTests",
+			"CopilotChatReviewCommit",
 			"CopilotChatBetterNamings",
 		},
 		dependencies = {
@@ -265,7 +266,7 @@ return {
 					prompt = "Please generate tests for my code.",
 				},
 				Commit = {
-					prompt = " Write a commit message following the commitizen convention.  \
+					prompt = "Write a commit message following the commitizen convention.  \
 - Title: Under 50 characters, in English  \
 - Body: In Korean, wrapped at 72 characters  \
 - Format as a `gitcommit` code block  \
@@ -286,10 +287,37 @@ return {
 						end, 100)
 					end,
 				},
+				ReviewCommit = {
+					prompt = "Please read the provided Git diff and write a concise technical report in Korean, following the structure below. Respond only in Korean.\
+Structure:\
+- Title: One-line summary\
+- Summary of Changes\
+- Description of Functional or Behavioral Impact",
+					-- - Risks and Suggestions for Improvement\
+					-- - Areas That Require Testing or Verification",
+					context = {
+						"system:`git --no-pager log -p HEAD^..HEAD`",
+						"system:`git diff --name-only HEAD^..HEAD | xargs -I {} sh -c 'echo ===== {}; git show HEAD^:{}'`", -- full file contents related
+					},
+
+					-- model = "claude-3.5-sonnet",
+				},
 				BetterNamings = {
 					prompt = "Please provide better names for the following variables and functions.",
 					model = "claude-3.5-sonnet",
 				},
+			},
+
+			contexts = {
+				-- BUG:: WORK IN PROGRESS
+				-- chaged_files = {
+				-- 	resolve = function()
+				-- 		local get_context = require("workflows.AI.get_context")
+				-- 		local changed_list = get_context.get_changed_files()
+				-- 		local context = get_context.read_files(changed_list)
+				-- 		return context
+				-- 	end,
+				-- },
 			},
 
 			mappings = {

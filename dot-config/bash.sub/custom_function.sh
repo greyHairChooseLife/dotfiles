@@ -178,3 +178,24 @@ y() {
 	fi
 	rm -f -- "$tmp"
 }
+
+review() {
+  local url="$1"
+  local commit_hash repo_url repo_name tmp_dir
+
+  # Extract commit hash and repo info
+  commit_hash="${url##*/}"
+  repo_url="$(echo "$url" | sed -E 's|https://github.com/([^/]+/[^/]+)/commit/.*|\1|')"
+  repo_name="${repo_url##*/}"
+  tmp_dir="/tmp/${repo_name}-${commit_hash:0:7}"
+
+  # Clone into /tmp path
+  git clone "https://github.com/$repo_url.git" "$tmp_dir"
+
+  # Open Neovim in that dir and run Diffview
+  (
+    cd "$tmp_dir" || exit
+    git checkout $commit_hash
+    nvim -c "DiffviewOpen $commit_hash^..$commit_hash"
+  )
+}
