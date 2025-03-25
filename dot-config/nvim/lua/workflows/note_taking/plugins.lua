@@ -123,7 +123,10 @@ return {
 	},
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
-		lazy = false,
+		-- lazy = false,
+		-- BUG:: 이후 버전 고르면 `[-]` 이거 제대로 렌더링 안된다. `[-] `처럼 공백 있어야만 렌더링 됨.
+		-- 곧 업데이트 될텐데, 그때 가서 바꾸자.
+		commit = "5cec1bb5fb11079a88fd5b3abd9c94867aec5945",
 		-- event = "BufEnter *.md",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
 		ft = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat", "gitcommit" },
