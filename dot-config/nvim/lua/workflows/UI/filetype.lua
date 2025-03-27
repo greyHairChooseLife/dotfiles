@@ -107,7 +107,10 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = "terminal",
 	callback = function()
 		-- options
-		setOpt("winhighlight", "Normal:TerminalNormal,SignColumn:TerminalSignColumn,EndOfBuffer:TerminalEOB")
+		setOpt(
+			"winhighlight",
+			"Normal:TerminalNormal,FoldColumn:TerminalSignColumn,SignColumn:TerminalSignColumn,EndOfBuffer:TerminalEOB"
+		)
 	end,
 })
 
