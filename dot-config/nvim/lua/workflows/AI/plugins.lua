@@ -111,6 +111,7 @@ return {
 					auto_set_keymaps = true,
 					auto_apply_diff_after_generation = false,
 					support_paste_from_clipboard = false,
+					enable_claude_text_editor_tool_mode = true,
 				},
 				mappings = {
 					--- @class AvanteConflictMappings

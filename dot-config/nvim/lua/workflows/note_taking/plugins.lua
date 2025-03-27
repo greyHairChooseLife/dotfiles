@@ -259,7 +259,8 @@ return {
 				-- Width of the heading background:
 				--  block: width of the heading text
 				--  full: full width of the window
-				width = { "block", "full", "block" },
+				-- width = { "block", "full", "block" },
+				width = { "full" },
 				-- left_margin = { 30, 0, 0, 0 },
 				-- left_pad = { 3, 80, 3, 0 },
 				-- right_pad = { 3, 2, 10, 1 },
@@ -589,7 +590,7 @@ return {
 				filetype = {
 					Avante = {
 						heading = {
-							width = { "full", "full", "block" },
+							width = { "full", "full", "full" },
 							left_margin = { 0, 0, 0, 0 },
 							left_pad = { 0, 0, 0, 0 },
 							right_pad = { 0, 0, 0, 0 },
@@ -613,10 +614,11 @@ return {
 						quote = {
 							repeat_linebreak = true,
 						},
+						indent = { enabled = false },
 					},
 					AvanteInput = {
 						heading = {
-							width = { "full", "full", "block" },
+							width = { "full", "full", "full" },
 							left_margin = { 0, 0, 0, 0 },
 							left_pad = { 0, 0, 0, 0 },
 							right_pad = { 0, 0, 0, 0 },
@@ -640,15 +642,17 @@ return {
 						quote = {
 							repeat_linebreak = true,
 						},
+						indent = { enabled = false },
 					},
 					["copilot-chat"] = {
 						heading = {
-							width = { "full", "full", "block" },
+							width = { "full", "full", "full" },
 							left_margin = { 0, 0, 0, 0 },
 							left_pad = { 0, 0, 0, 0 },
 							right_pad = { 0, 0, 0, 0 },
 							min_width = { 0, 0, 0, 0 },
 						},
+						indent = { enabled = false },
 					},
 				},
 				-- https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/285

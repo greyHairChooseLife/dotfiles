@@ -96,7 +96,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = "Avante",
+	pattern = "Avante*",
 	callback = function()
 		-- options
 		setOpt("winhighlight", "Normal:AvanteNormal,SignColumn:AvanteSignColumn,EndOfBuffer:AvanteEOB")
