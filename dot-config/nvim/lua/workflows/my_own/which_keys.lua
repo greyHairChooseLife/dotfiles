@@ -127,15 +127,16 @@ wk_map({
 wk_map({
 	["<leader>ce"] = {
 		group = "Prefill",
-		order = { "1", "2", "3", "4", "5", "6", "7", "8" },
+		order = { "1", "2", "3", "4", "5", "6", "7", "r", "R" },
 		["1"] = { "<cmd>CopilotChatExplain<CR>", desc = "코드 설명", mode = { "n", "v" } },
 		["2"] = { "<cmd>CopilotChatReview<CR>", desc = "코드 리뷰", mode = { "n", "v" } },
-		["3"] = { "<cmd>CopilotChatReviewCommit<CR>", desc = "커밋 리뷰", mode = { "n", "v" } },
-		["4"] = { "<cmd>CopilotChatFix<CR>", desc = "버그 해결", mode = { "n", "v" } },
-		["5"] = { "<cmd>CopilotChatBetterNamings<CR>", desc = "변수명 개선", mode = { "n", "v" } },
-		["6"] = { "<cmd>CopilotChatOptimize<CR>", desc = "코드 최적화", mode = { "n", "v" } },
-		["7"] = { "<cmd>CopilotChatDocs<CR>", desc = "docstring 추가", mode = { "n", "v" } },
-		["8"] = { "<cmd>CopilotChatTests<CR>", desc = "테스트 작성", mode = { "n", "v" } },
+		["3"] = { "<cmd>CopilotChatFix<CR>", desc = "버그 해결", mode = { "n", "v" } },
+		["4"] = { "<cmd>CopilotChatBetterNamings<CR>", desc = "변수명 개선", mode = { "n", "v" } },
+		["5"] = { "<cmd>CopilotChatOptimize<CR>", desc = "코드 최적화", mode = { "n", "v" } },
+		["6"] = { "<cmd>CopilotChatDocs<CR>", desc = "docstring 추가", mode = { "n", "v" } },
+		["7"] = { "<cmd>CopilotChatTests<CR>", desc = "테스트 작성", mode = { "n", "v" } },
+		["r"] = { "<cmd>CopilotChatReviewCommit<CR>", desc = "커밋 리뷰", mode = { "n", "v" } },
+		["R"] = { "<cmd>CopilotChatReviewCommitDeep<CR>", desc = "커밋 리뷰 Deep", mode = { "n", "v" } },
 	},
 })
 

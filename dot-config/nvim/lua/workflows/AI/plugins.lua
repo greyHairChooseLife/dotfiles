@@ -212,6 +212,7 @@ return {
 			"CopilotChatDocs",
 			"CopilotChatTests",
 			"CopilotChatReviewCommit",
+			"CopilotChatReviewCommitDeep",
 			"CopilotChatBetterNamings",
 		},
 		dependencies = {
@@ -288,6 +289,18 @@ return {
 					end,
 				},
 				ReviewCommit = {
+					prompt = "Please read the provided Git diff and write a concise technical report in Korean, following the structure below. Respond only in Korean.\
+Structure:\
+- Title: One-line summary\
+- Summary of Changes\
+- Description of Functional or Behavioral Impact",
+					context = {
+						"system:`git --no-pager log -p HEAD^..HEAD`",
+					},
+
+					-- model = "claude-3.5-sonnet",
+				},
+				CopilotChatReviewCommitDeep = {
 					prompt = "Please read the provided Git diff and write a concise technical report in Korean, following the structure below. Respond only in Korean.\
 Structure:\
 - Title: One-line summary\
