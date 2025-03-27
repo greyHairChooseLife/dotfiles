@@ -293,7 +293,8 @@ return {
 Structure:\
 - Title: One-line summary\
 - Summary of Changes\
-- Description of Functional or Behavioral Impact",
+- Description of Functional or Behavioral Impact\
+- Examples in a format of 'as-is, to-be'",
 					context = {
 						"system:`git --no-pager log -p HEAD^..HEAD`",
 					},
@@ -305,7 +306,8 @@ Structure:\
 Structure:\
 - Title: One-line summary\
 - Summary of Changes\
-- Description of Functional or Behavioral Impact",
+- Description of Functional or Behavioral Impact\
+- Examples in a format of 'as-is, to-be'",
 					-- - Risks and Suggestions for Improvement\
 					-- - Areas That Require Testing or Verification",
 					context = {
