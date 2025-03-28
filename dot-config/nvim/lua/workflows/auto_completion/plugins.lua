@@ -15,10 +15,10 @@ return {
 		"saghen/blink.cmp",
 		event = { "InsertEnter" },
 		-- optional: provides snippets for the snippet source
-		dependencies = "rafamadriz/friendly-snippets",
+		dependencies = { "rafamadriz/friendly-snippets", "onsails/lspkind.nvim" },
 
 		-- use a release tag to download pre-built binaries
-		version = "v0.*",
+		version = "1.*",
 		-- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
 		-- build = 'cargo build --release',
 		-- If you use nix, you can build from source using latest nightly rust with:
@@ -41,8 +41,26 @@ return {
 					end,
 					"fallback",
 				},
-				["<C-k>"] = { "select_prev", "fallback" },
-				["<C-j>"] = { "select_next", "fallback" },
+				["<C-k>"] = {
+					function(cmp)
+						if not cmp.is_visible() then
+							cmp_state.is_init = true
+							return show_provider(cmp, "buffer")
+						end
+					end,
+					"select_prev",
+					"fallback",
+				},
+				["<C-j>"] = {
+					function(cmp)
+						if not cmp.is_visible() then
+							cmp_state.is_init = true
+							return show_provider(cmp, "lsp")
+						end
+					end,
+					"select_next",
+					"fallback",
+				},
 				["<A-k>"] = {
 					function(cmp)
 						if cmp.is_visible() then
@@ -70,26 +88,50 @@ return {
 						elseif cmp_state.sort == "lsp" then
 							return show_provider(cmp, "buffer")
 						elseif cmp_state.sort == "buffer" then
-							return show_provider(cmp, "snippets")
-						elseif cmp_state.sort == "snippets" then
 							return show_provider(cmp, "lsp")
 						end
 					end,
+					-- DEPRECATED:: 2025-03-28
+					-- lsp/buffer/snippets
+					-- function(cmp)
+					-- 	if not cmp_state.is_init then
+					-- 		cmp_state.is_init = true
+					-- 		return show_provider(cmp, "lsp")
+					-- 	elseif cmp_state.sort == "lsp" then
+					-- 		return show_provider(cmp, "buffer")
+					-- 	elseif cmp_state.sort == "buffer" then
+					-- 		return show_provider(cmp, "snippets")
+					-- 	elseif cmp_state.sort == "snippets" then
+					-- 		return show_provider(cmp, "lsp")
+					-- 	end
+					-- end,
 					"fallback",
 				},
 				["<C-p>"] = {
 					function(cmp)
 						if not cmp_state.is_init then
 							cmp_state.is_init = true
-							return show_provider(cmp, "snippets")
+							return show_provider(cmp, "buffer")
 						elseif cmp_state.sort == "buffer" then
 							return show_provider(cmp, "lsp")
 						elseif cmp_state.sort == "lsp" then
-							return show_provider(cmp, "snippets")
-						elseif cmp_state.sort == "snippets" then
 							return show_provider(cmp, "buffer")
 						end
 					end,
+					-- DEPRECATED:: 2025-03-28
+					-- lsp/buffer/snippets
+					-- function(cmp)
+					-- 	if not cmp_state.is_init then
+					-- 		cmp_state.is_init = true
+					-- 		return show_provider(cmp, "snippets")
+					-- 	elseif cmp_state.sort == "buffer" then
+					-- 		return show_provider(cmp, "lsp")
+					-- 	elseif cmp_state.sort == "lsp" then
+					-- 		return show_provider(cmp, "snippets")
+					-- 	elseif cmp_state.sort == "snippets" then
+					-- 		return show_provider(cmp, "buffer")
+					-- 	end
+					-- end,
 					"fallback",
 				},
 
@@ -125,14 +167,17 @@ return {
 						if cmp.is_visible() then
 							cmp_state.is_init = false -- 초기화
 							cmp.cancel()
-							-- return true (이렇게 해서) fallback으로 못넘어가면 insert mode 취소가 바로 안돼서 답답하다.
+							return true
 						end
 					end,
 					"fallback",
 				},
+			},
 
-				cmdline = {
+			cmdline = {
+				keymap = {
 					-- preset = 'enter',
+					["<C-space>"] = { "fallback" },
 					["<C-n>"] = { "show", "fallback" },
 					["<C-e>"] = { "cancel", "fallback" },
 					["<C-k>"] = { "select_prev", "fallback" },
@@ -175,9 +220,10 @@ return {
 						-- preselect = function(ctx) return ctx.mode ~= 'cmdline' end,
 						preselect = true,
 						-- auto_insert = false
-						auto_insert = function(ctx)
-							return ctx.mode == "cmdline"
-						end,
+						auto_insert = true,
+						-- auto_insert = function(ctx)
+						-- 	return ctx.mode == "cmdline"
+						-- end,
 					},
 				},
 
@@ -236,23 +282,19 @@ return {
 							kind_icon = {
 								ellipsis = false,
 								text = function(ctx)
-									return ctx.kind_icon .. ctx.icon_gap
-								end,
-								highlight = function(ctx)
-									return require("blink.cmp.completion.windows.render.tailwind").get_hl(ctx)
-										or "BlinkCmpKind" .. ctx.kind
-								end,
-							},
+									local icon = ctx.kind_icon
+									if vim.tbl_contains({ "Path" }, ctx.source_name) then
+										local dev_icon, _ = require("nvim-web-devicons").get_icon(ctx.label)
+										if dev_icon then
+											icon = dev_icon
+										end
+									else
+										icon = require("lspkind").symbolic(ctx.kind, {
+											mode = "symbol",
+										})
+									end
 
-							kind = {
-								ellipsis = false,
-								width = { fill = true },
-								text = function(ctx)
-									return ctx.kind
-								end,
-								highlight = function(ctx)
-									return require("blink.cmp.completion.windows.render.tailwind").get_hl(ctx)
-										or "BlinkCmpKind" .. ctx.kind
+									return icon .. ctx.icon_gap
 								end,
 							},
 
@@ -320,26 +362,35 @@ return {
 				-- 이거 괜찮을수도? menu를 manual-mode로 사용하되, 첫번째 제안을 ghost_text로 보여주는 것
 				-- 4a380c1 feat(ghost_text): show_on_unselected (#965)
 				ghost_text = { enabled = true },
+				trigger = {
+					-- show_on_keyword = false,
+				},
 			},
 
 			fuzzy = {
 				use_frecency = true, -- Frecency tracks the most recently/frequently used items and boosts the score of the item
 				use_proximity = true, -- Proximity bonus boosts the score of items matching nearby words
+				sorts = {
+					"exact",
+					-- defaults
+					"score",
+					"sort_text",
+				},
 			},
 
 			snippets = { preset = "default" },
 
 			sources = {
 				-- default = { 'lsp', 'path', 'snippets', 'buffer' },
-				default = { "lsp", "path", "buffer" },
+				default = { "lsp", "path" },
 				providers = {
 					buffer = {
 						-- min_keyword_length = 2,
-						max_items = 10, -- Maximum number of items to display in the menu
+						max_items = 5, -- Maximum number of items to display in the menu
 					},
 					lsp = {
 						-- min_keyword_length = 2,
-						max_items = 10, -- Maximum number of items to display in the menu
+						max_items = 15, -- Maximum number of items to display in the menu
 						timeout_ms = 1,
 					},
 					snippets = {
@@ -365,9 +416,9 @@ return {
 			-- https://cmp.saghen.dev/configuration/signature
 			signature = {
 				enabled = true,
-				trigger = {
-					show_on_insert = true,
-				},
+				-- trigger = {
+				-- 	show_on_insert = true,
+				-- },
 				window = {
 					border = require("utils").borders.signature,
 					winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
