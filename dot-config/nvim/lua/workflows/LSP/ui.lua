@@ -1,3 +1,6 @@
+-- REF: https://neovim.io/doc/user/deprecated.html
+-- TODO: deprecated 된것들 좀 바꾸자.
+
 local utils = require("utils")
 
 -- Diagnostic settings
@@ -9,7 +12,7 @@ vim.diagnostic.config({
 
 	underline = true,
 	signs = false, -- sign column에 아이콘 표시
-	update_in_insert = false, -- 입력 모드 중 업데이트 비활성화
+	update_in_insert = true, -- 입력 모드 중 업데이트 비활성화
 	severity_sort = true, -- 심각도에 따라 정렬
 	float = {
 		-- border = "single",

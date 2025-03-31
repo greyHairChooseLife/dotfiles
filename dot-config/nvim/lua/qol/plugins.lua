@@ -163,7 +163,8 @@ return {
 				WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
 				MEMO = { icon = "󱩼 ", color = "hint", alt = { "INFO" } },
 				PSEUDO_CODE = { icon = " ", color = "pseudo", alt = { "PSEUDO_CODE" } },
-				DEPRECATED = { icon = "", color = "depreacted", alt = { "DEPRECATED" } },
+				DEPRECATED = { icon = "", color = "deprecated", alt = { "DEPRECATED" } },
+				REFERENCE = { icon = "󰉢", color = "default", alt = { "REF" } },
 			},
 			gui_style = {
 				fg = "NONE", -- The gui style to use for the fg highlight group.
@@ -196,7 +197,7 @@ return {
 				default = { "Identifier", "#7C3AED" },
 				test = { "Identifier", "#FF00FF" },
 				pseudo = { "#37D060" },
-				depreacted = { "#9F9F9F" },
+				deprecated = { "#9F9F9F" },
 			},
 			search = {
 				command = "rg",

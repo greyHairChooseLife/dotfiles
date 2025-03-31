@@ -5,8 +5,12 @@ local telescope = require("telescope.builtin")
 
 map("n", "K", vim.lsp.buf.hover, opt)
 
-map("n", "dn", vim.diagnostic.goto_next, opt)
-map("n", "dp", vim.diagnostic.goto_prev, opt)
+map("n", "dn", function()
+	vim.diagnostic.jump({ count = 1, float = true })
+end, opt)
+map("n", "dp", function()
+	vim.diagnostic.jump({ count = -1, float = true })
+end, opt)
 map("n", "dK", vim.diagnostic.open_float, opt)
 
 -- MEMO:: `<C-l>`: show autocompletion menu to prefilter (i.e. `:warning:`)

@@ -166,8 +166,8 @@ return {
 					function(cmp)
 						if cmp.is_visible() then
 							cmp_state.is_init = false -- 초기화
-							cmp.cancel()
-							return true
+							cmp.hide()
+							-- return true
 						end
 					end,
 					"fallback",

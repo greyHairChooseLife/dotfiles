@@ -48,6 +48,36 @@ return {
 				config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)
 				lspconfig[server].setup(config)
 			end
+
+			-- REF: https://www.reddit.com/r/neovim/comments/1heow4i/why_are_not_all_basedpyright_features_working/
+			lspconfig.basedpyright.setup({
+				-- on_attach = function(client, bufnr)
+				-- 	client.server_capabilities.document_formatting = false
+				-- 	client.server_capabilities.semanticTokensProvider = nil
+				-- 	require("lsp.attach").on_attach(client, bufnr)
+				-- end,
+				settings = {
+					basedpyright = {
+						analysis = {
+							autoSearchPaths = true,
+							diagnosticMode = "openFilesOnly",
+							useLibraryCodeForTypes = true,
+							typeCheckingMode = "all",
+							diagnosticSeverityOverrides = {
+								reportAny = false,
+								reportMissingTypeArgument = false,
+								reportMissingTypeStubs = false,
+								reportUnknownArgumentType = false,
+								reportUnknownMemberType = false,
+								reportUnknownParameterType = false,
+								reportUnknownVariableType = false,
+								reportUnusedCallResult = false,
+							},
+						},
+					},
+					python = {},
+				},
+			})
 		end,
 	},
 }
