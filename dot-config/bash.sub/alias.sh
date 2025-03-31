@@ -45,13 +45,9 @@ alias gd='git --no-pager diff | delta --diff-so-fancy'
 alias gdn='git diff HEAD | diffnav'
 alias gst='git stash'
 
-alias gl='git log'
-alias glo='git log --oneline'
-alias glg='git log --oneline --graph --branches --pretty=medium'
-alias glgo='git log --oneline --graph --branches'
-alias glgr='git log --oneline --graph --remotes'
-alias glga='git log --oneline --graph --all'
-alias glgHEAD='git log --oneline --graph HEAD'
+alias glg='git log --oneline --graph --all --pretty=medium'
+alias glgo='git log --oneline --graph --all'
+alias glgH='git log --oneline --graph HEAD'
 alias glMM='git log --pretty=format:"COMMIT : %h%nTITLE  : %s%nMESSAGE: %b%n%cd==================================== %ae%n%n" --date=short'
 # <<<
 
