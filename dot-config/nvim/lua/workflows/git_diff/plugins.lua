@@ -570,7 +570,7 @@ return {
 			},
 			auto_attach = true,
 			attach_to_untracked = true,
-			sign_priority = 1, -- dignostics 보다 후순위로 해야
+			sign_priority = 20, -- dignostics 보다 후순위로 해야
 
 			signs = {
 				add = { text = "+" },

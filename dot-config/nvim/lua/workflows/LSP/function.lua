@@ -9,7 +9,9 @@ function ToggleVirtualText()
 		virtual_lines = virtual_lines_enabled,
 		underline = false,
 		-- signs = signs_enabled,
-		signs = true,
+		signs = {
+			priority = 1,
+		},
 		update_in_insert = true, -- 입력 모드 중 업데이트 비활성화
 		severity_sort = true, -- 심각도에 따라 정렬
 	})

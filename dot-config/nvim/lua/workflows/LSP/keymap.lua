@@ -2,8 +2,18 @@ local map = vim.keymap.set
 local opt = { noremap = true, silent = true }
 
 local telescope = require("telescope.builtin")
+local utils = require("utils")
 
-map("n", "K", vim.lsp.buf.hover, opt)
+map("n", "K", function()
+	vim.lsp.buf.hover({
+
+		border = utils.borders.documentation_left,
+		-- title = "Hover",
+		focusable = true,
+		max_width = 120, -- 최대 너비 제한
+		max_height = 200, -- 최대 높이 제한
+	})
+end, opt)
 
 map("n", "dn", function()
 	vim.diagnostic.jump({ count = 1, float = true })
