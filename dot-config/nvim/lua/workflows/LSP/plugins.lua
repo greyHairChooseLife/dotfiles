@@ -72,6 +72,8 @@ return {
 								reportUnknownParameterType = false,
 								reportUnknownVariableType = false,
 								reportUnusedCallResult = false,
+								reportUnusedVariable = "warning",
+								reportUnusedImport = "warning",
 							},
 						},
 					},
