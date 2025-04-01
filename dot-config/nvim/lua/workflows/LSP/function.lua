@@ -24,7 +24,7 @@ function CopyDiagnosticsAtLine()
 
 	if #diagnostics == 0 then
 		print("No diagnostics on current line")
-		return
+		return nil
 	end
 
 	-- 진단 정보를 lnum, col 순서로 정렬
@@ -43,8 +43,8 @@ function CopyDiagnosticsAtLine()
 	local all_messages = table.concat(messages, "\n")
 
 	-- 클립보드에 복사
-	vim.fn.setreg('"', all_messages)
-	-- print("Copied diagnostics for line " .. (line + 1) .. ":\n" .. all_messages)
+	vim.fn.setreg("+", all_messages)
+	print("Copied diagnostics for line " .. (line + 1) .. ":\n" .. all_messages)
 	return all_messages
 end
 
