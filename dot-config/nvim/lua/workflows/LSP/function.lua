@@ -1,16 +1,16 @@
-local virtual_text_config = {
-	prefix = " ",
-}
-local virtual_text_enabled = true
+local virtual_lines_enabled = false
+local signs_enabled = true
 
 function ToggleVirtualText()
-	virtual_text_enabled = not virtual_text_enabled
+	virtual_lines_enabled = not virtual_lines_enabled
+	signs_enabled = not signs_enabled
 
 	vim.diagnostic.config({
-		virtual_text = virtual_text_enabled and virtual_text_config or false,
-		underline = true,
-		signs = false, -- sign column에 아이콘 표시
-		update_in_insert = false, -- 입력 모드 중 업데이트 비활성화
+		virtual_lines = virtual_lines_enabled,
+		underline = false,
+		-- signs = signs_enabled,
+		signs = true,
+		update_in_insert = true, -- 입력 모드 중 업데이트 비활성화
 		severity_sort = true, -- 심각도에 따라 정렬
 	})
 end

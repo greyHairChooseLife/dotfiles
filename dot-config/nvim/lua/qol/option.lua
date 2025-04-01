@@ -16,7 +16,7 @@ opt.swapfile = false
 -- UI settings
 opt.number = false -- just leap & status-line
 opt.relativenumber = false -- just leap & status-line
-opt.signcolumn = "yes:1"
+opt.signcolumn = "yes:2"
 -- opt.foldcolumn = "2"
 opt.fillchars = "vert:┃"
 opt.splitright = true -- Open vertical splits to the right

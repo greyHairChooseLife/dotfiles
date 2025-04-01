@@ -68,10 +68,23 @@ map("n", "gO", function()
 	})
 end, opt)
 
--- DEPRECATED:: 2025-02-04, which-key
--- map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opt)
--- map("n", "<leader>rr", vim.lsp.buf.rename, opt)
--- map("n", "<leader>rs", "<cmd>LspRestart<CR>", opt)
-
--- DEPRECATED:: 2025-02-06, which-key
--- map("n", "d<Space>", ToggleVirtualText, opt)
+local wk_map = require("utils").wk_map
+wk_map({
+	["<Space>l"] = {
+		group = "LSP",
+		order = { "d", "D", "c", "v" },
+		["d"] = { require("workflows.LSP.function").diagnostic_local, desc = "diagnostic (local)", mode = { "n" } },
+		["D"] = { require("workflows.LSP.function").diagnostic_global, desc = "diagnostic (global)", mode = { "n" } },
+		["y"] = { CopyDiagnosticsAtLine, desc = "copy diagnostics at line", mode = { "n", "v" } },
+		["c"] = { vim.lsp.buf.code_action, desc = "code action", mode = { "n", "v" } },
+		["v"] = { ToggleVirtualText, desc = "virtual text toggle", mode = { "n" } },
+	},
+})
+wk_map({
+	["<Space>lr"] = {
+		group = "expand",
+		order = { "n", "e" },
+		["n"] = { vim.lsp.buf.rename, desc = "reName ", mode = "n" },
+		["e"] = { "<cmd>LspRestart<CR>", desc = "rEstart", mode = "n" },
+	},
+})

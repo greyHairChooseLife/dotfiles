@@ -5,13 +5,14 @@ local utils = require("utils")
 
 -- Diagnostic settings
 vim.diagnostic.config({
-	virtual_text = {
-		prefix = " ",
-	}, -- 진단 메시지를 줄 안에 표시
-	virtual_lines = true,
+	virtual_text = false,
+	-- virtual_text = {
+	-- 	prefix = " ",
+	-- },
+	virtual_lines = false,
+	signs = true, -- sign column에 아이콘 표시
 
-	underline = true,
-	signs = false, -- sign column에 아이콘 표시
+	underline = false,
 	update_in_insert = true, -- 입력 모드 중 업데이트 비활성화
 	severity_sort = true, -- 심각도에 따라 정렬
 	float = {
