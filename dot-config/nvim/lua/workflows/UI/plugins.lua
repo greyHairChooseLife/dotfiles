@@ -723,6 +723,14 @@ return {
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
+		dependencies = {
+			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+			"MunifTanjim/nui.nvim",
+			-- OPTIONAL:
+			--   `nvim-notify` is only needed, if you want to use the notification view.
+			--   If not available, we use `mini` as the fallback
+			"rcarriga/nvim-notify",
+		},
 		opts = {
 			lsp = {
 				progress = {
@@ -751,7 +759,7 @@ return {
 			},
 			cmdline = {
 				enabled = true, -- enables the Noice cmdline UI
-				view = "cmdline_popup", -- view for rendering the cmdline. Set `cmdline` to get a classic cmdline at the bottom or try 'cmdline_popup'
+				view = "cmdline", -- view for rendering the cmdline. Set `cmdline` to get a classic cmdline at the bottom or try 'cmdline_popup'
 				opts = {}, -- global options for the cmdline. See section on views
 				---@type table<string, CmdlineFormat>
 				format = {
@@ -793,14 +801,6 @@ return {
 					},
 				},
 			},
-		},
-		dependencies = {
-			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-			"MunifTanjim/nui.nvim",
-			-- OPTIONAL:
-			--   `nvim-notify` is only needed, if you want to use the notification view.
-			--   If not available, we use `mini` as the fallback
-			"rcarriga/nvim-notify",
 		},
 	},
 }
