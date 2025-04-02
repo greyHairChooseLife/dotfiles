@@ -98,15 +98,45 @@ for _, workflow in ipairs(workflows) do
 	local base_path = workflow == "qol" and workflow or "workflows." .. workflow
 	local config_dir = vim.fn.stdpath("config") .. "/lua/" .. base_path:gsub("%.", "/")
 
-	-- 디렉토리 내의 모든 .lua 파일을 찾아서 로드
-	if vim.fn.isdirectory(config_dir) == 1 then
-		local files = vim.fn.glob(config_dir .. "/*.lua")
-		for file in string.gmatch(files, "[^\n]+") do
-			-- plugins.lua는 이미 lazy.nvim에서 로드했으므로 제외
-			if not file:match("plugins.lua$") then
-				local module_name = vim.fn.fnamemodify(file, ":t:r") -- 파일 확장자 제거
-				require("utils").safe_require(base_path .. "." .. module_name)
+	-- Function to load modules from directory and its subdirectories
+	local function load_directory(dir_path, module_prefix)
+		-- 디렉토리 내의 모든 .lua 파일을 찾아서 로드
+		if vim.fn.isdirectory(dir_path) == 1 then
+			-- Load .lua files in the current directory
+			local files = vim.fn.glob(dir_path .. "/*.lua")
+			for file in string.gmatch(files, "[^\n]+") do
+				-- plugins.lua는 이미 lazy.nvim에서 로드했으므로 제외
+				if not file:match("plugins.lua$") then
+					local module_name = vim.fn.fnamemodify(file, ":t:r") -- 파일 확장자 제거
+					require("utils").safe_require(module_prefix .. "." .. module_name)
+				end
+			end
+
+			-- Find and process subdirectories
+			local subdirs = vim.fn.glob(dir_path .. "/*/")
+			for subdir in string.gmatch(subdirs, "[^\n]+") do
+				local subdir_name = vim.fn.fnamemodify(subdir:sub(1, -2), ":t") -- Remove trailing slash and get dir name
+
+				-- Always load 'function' directories first
+				if subdir_name == "function" then
+					local subdir_module_prefix = module_prefix .. "." .. subdir_name
+					print("function loaded " .. subdir_module_prefix)
+					load_directory(subdir, subdir_module_prefix)
+				end
+			end
+
+			-- Process other subdirectories (non-function ones)
+			for subdir in string.gmatch(subdirs, "[^\n]+") do
+				local subdir_name = vim.fn.fnamemodify(subdir:sub(1, -2), ":t") -- Remove trailing slash and get dir name
+				if subdir_name ~= "function" then
+					local subdir_module_prefix = module_prefix .. "." .. subdir_name
+					print("else loaded " .. subdir_module_prefix)
+					load_directory(subdir, subdir_module_prefix)
+				end
 			end
 		end
 	end
+
+	-- Start loading from the workflow directory
+	load_directory(config_dir, base_path)
 end

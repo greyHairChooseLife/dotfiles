@@ -244,16 +244,6 @@ wk_map({
 
 -- MEMO:: On The Fly
 wk_map({
-	[",w"] = {
-		group = "expand",
-		order = { "f", "u", "t", "a" },
-		["f"] = { FixWindowSize, desc = "window fix", mode = "n" },
-		["u"] = { UnfixWindowSize, desc = "window fix undo", mode = "n" },
-		["t"] = { ToggleWinFix, desc = "window fix toggle", mode = "n" },
-		["a"] = { ToggleAllWinFix, desc = "window fix all", mode = "n" },
-	},
-})
-wk_map({
 	[","] = {
 		order = { "r", "R", "C" },
 		["r"] = { ReloadLayout, desc = "reload layout", mode = "n" },
