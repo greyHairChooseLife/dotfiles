@@ -126,7 +126,7 @@ return {
 		-- lazy = false,
 		-- BUG:: 이후 버전 고르면 `[-]` 이거 제대로 렌더링 안된다. `[-] `처럼 공백 있어야만 렌더링 됨.
 		-- 곧 업데이트 될텐데, 그때 가서 바꾸자.
-		commit = "5cec1bb5fb11079a88fd5b3abd9c94867aec5945",
+		-- commit = "5cec1bb5fb11079a88fd5b3abd9c94867aec5945",
 		-- event = "BufEnter *.md",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
 		ft = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat", "gitcommit" },
@@ -198,6 +198,8 @@ return {
 			heading = {
 				-- Turn on / off heading icon & background rendering
 				enabled = true,
+				atx = true, -- ATX 제목(#으로 시작하는) 렌더링 제어
+				setext = false, -- Setext 제목(=== 또는 --- 밑줄이 있는) 렌더링 비활성화
 				-- border = { false, true, true, false, false },
 				-- border = { false, true, false },
 				border = { false },
@@ -376,6 +378,7 @@ return {
 			checkbox = {
 				-- Turn on / off checkbox state rendering
 				enabled = true,
+				right_pad = 1, -- 체크박스 오른쪽에 추가할 여백
 				unchecked = {
 					-- Replaces '[ ]' of 'task_list_marker_unchecked'
 					icon = "󰄱 ", --  ,󰄱
