@@ -6,14 +6,7 @@ function ToggleVirtualText()
 	signs_enabled = not signs_enabled
 
 	vim.diagnostic.config({
-		virtual_lines = virtual_lines_enabled,
-		underline = false,
-		-- signs = signs_enabled,
-		signs = {
-			priority = 1,
-		},
-		update_in_insert = true, -- 입력 모드 중 업데이트 비활성화
-		severity_sort = true, -- 심각도에 따라 정렬
+		virtual_lines = virtual_lines_enabled == true and { current_line = true } or false,
 	})
 end
 
