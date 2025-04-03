@@ -1,80 +1,67 @@
-local cmp_state = {
-	is_init = false,
-	sort = "lsp", -- 'buffer', 'lsp' or 'snippets', 어떤 completion이 로드되었는지 상태를 저장
-}
-local function show_provider(cmp, sort)
-	cmp.show({ providers = { sort } })
-	cmp_state.sort = sort
-	print(sort)
-	return true -- doesn't runs the next command in keymap setting
-end
+local bf = require("workflows.auto_completion.function.blink-function")
 
 return {
 	{
-		-- config ref https://cmp.saghen.dev/configuration/reference.html
 		"saghen/blink.cmp",
-		event = { "InsertEnter" },
-		-- optional: provides snippets for the snippet source
-		dependencies = { "rafamadriz/friendly-snippets", "onsails/lspkind.nvim" },
-
-		-- use a release tag to download pre-built binaries
 		version = "1.*",
-		-- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-		-- build = 'cargo build --release',
-		-- If you use nix, you can build from source using latest nightly rust with:
-		-- build = 'nix run .#build-plugin',
-
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config
+		event = { "InsertEnter" },
+		dependencies = { "onsails/lspkind.nvim" },
+
 		opts = {
 			keymap = {
 				preset = "none",
-
-				-- disable a keymap from the preset
 				["<C-e>"] = {
 					function(cmp)
-						if cmp.is_visible() then
-							cmp_state.is_init = false -- 초기화
-							cmp.cancel()
-							return true
-						end
+						return bf.cancel(cmp)
+					end,
+					"fallback",
+				},
+				["<Esc>"] = {
+					function(cmp)
+						bf.hide(cmp)
 					end,
 					"fallback",
 				},
 				["<C-k>"] = {
 					function(cmp)
-						if not cmp.is_visible() then
-							cmp_state.is_init = true
-							return show_provider(cmp, "buffer")
-						end
+						return bf.show(cmp, "buffer")
 					end,
 					"select_prev",
 					"fallback",
 				},
 				["<C-j>"] = {
 					function(cmp)
-						if not cmp.is_visible() then
-							cmp_state.is_init = true
-							return show_provider(cmp, "lsp")
-						end
+						return bf.show(cmp, "lsp")
 					end,
 					"select_next",
 					"fallback",
 				},
+				["<A-o>"] = {
+					function(cmp)
+						return bf.toggle_documentation(cmp)
+					end,
+					"show_signature",
+					"hide_signature",
+					"fallback",
+				},
 				["<A-k>"] = {
 					function(cmp)
-						if cmp.is_visible() then
-							cmp.scroll_documentation_up(2)
-							return true
+						if cmp.is_documentation_visible() then
+							return cmp.scroll_documentation_up(2)
+						else
+							return bf.toggle_documentation(cmp)
 						end
 					end,
 					"fallback",
 				},
 				["<A-j>"] = {
 					function(cmp)
-						if cmp.is_visible() then
-							cmp.scroll_documentation_down(2)
-							return true
+						if cmp.is_documentation_visible() then
+							return cmp.scroll_documentation_down(2)
+						else
+							return bf.toggle_documentation(cmp)
 						end
 					end,
 					"fallback",
@@ -82,96 +69,25 @@ return {
 				-- control whether the next command will be run when using a function
 				["<C-n>"] = {
 					function(cmp)
-						if not cmp_state.is_init then
-							cmp_state.is_init = true
-							return show_provider(cmp, "lsp")
-						elseif cmp_state.sort == "lsp" then
-							return show_provider(cmp, "buffer")
-						elseif cmp_state.sort == "buffer" then
-							return show_provider(cmp, "lsp")
-						end
+						return bf.next_provider(cmp)
 					end,
-					-- DEPRECATED:: 2025-03-28
-					-- lsp/buffer/snippets
-					-- function(cmp)
-					-- 	if not cmp_state.is_init then
-					-- 		cmp_state.is_init = true
-					-- 		return show_provider(cmp, "lsp")
-					-- 	elseif cmp_state.sort == "lsp" then
-					-- 		return show_provider(cmp, "buffer")
-					-- 	elseif cmp_state.sort == "buffer" then
-					-- 		return show_provider(cmp, "snippets")
-					-- 	elseif cmp_state.sort == "snippets" then
-					-- 		return show_provider(cmp, "lsp")
-					-- 	end
-					-- end,
 					"fallback",
 				},
 				["<C-p>"] = {
 					function(cmp)
-						if not cmp_state.is_init then
-							cmp_state.is_init = true
-							return show_provider(cmp, "buffer")
-						elseif cmp_state.sort == "buffer" then
-							return show_provider(cmp, "lsp")
-						elseif cmp_state.sort == "lsp" then
-							return show_provider(cmp, "buffer")
-						end
-					end,
-					-- DEPRECATED:: 2025-03-28
-					-- lsp/buffer/snippets
-					-- function(cmp)
-					-- 	if not cmp_state.is_init then
-					-- 		cmp_state.is_init = true
-					-- 		return show_provider(cmp, "snippets")
-					-- 	elseif cmp_state.sort == "buffer" then
-					-- 		return show_provider(cmp, "lsp")
-					-- 	elseif cmp_state.sort == "lsp" then
-					-- 		return show_provider(cmp, "snippets")
-					-- 	elseif cmp_state.sort == "snippets" then
-					-- 		return show_provider(cmp, "buffer")
-					-- 	end
-					-- end,
-					"fallback",
-				},
-
-				["<Enter>"] = {
-					function(cmp)
-						if cmp.snippet_active() then
-							cmp_state.is_init = false -- 초기화
-							return cmp.accept()
-						elseif cmp.is_visible() then
-							cmp_state.is_init = false -- 초기화
-							return cmp.select_and_accept()
-						end
+						return bf.prev_provider(cmp)
 					end,
 					"fallback",
 				},
+				-- ["<Enter>"] = { },
 				["<Tab>"] = {
 					function(cmp)
-						if cmp.snippet_active() then
-							cmp_state.is_init = false -- 초기화
-							return cmp.accept()
-						elseif cmp.is_visible() then
-							return cmp.select_and_accept()
-						end
+						return bf.super_tab(cmp)
 					end,
 					"snippet_forward",
 					"fallback",
 				},
-
 				["<S-Tab>"] = { "snippet_backward", "fallback" },
-
-				["<Esc>"] = {
-					function(cmp)
-						if cmp.is_visible() then
-							cmp_state.is_init = false -- 초기화
-							cmp.hide()
-							-- return true
-						end
-					end,
-					"fallback",
-				},
 			},
 
 			cmdline = {
@@ -183,16 +99,7 @@ return {
 					["<C-k>"] = { "select_prev", "fallback" },
 					["<C-j>"] = { "select_next", "fallback" },
 					["<Tab>"] = { "show", "accept", "fallback" },
-					["<Enter>"] = {
-						function(cmp)
-							return cmp.select_and_accept({
-								callback = function()
-									vim.api.nvim_feedkeys("\n", "n", true)
-								end,
-							})
-						end,
-						"fallback",
-					},
+					["<Enter>"] = { "select_accept_and_enter", "fallback" },
 					["<A-Enter>"] = {
 						function(cmp)
 							cmp.cancel()
@@ -200,39 +107,24 @@ return {
 						"fallback",
 					},
 				},
+				completion = {
+					menu = {
+						auto_show = function()
+							return vim.fn.getcmdtype() == ":" -- Only for command mode, not search
+						end,
+					},
+				},
 			},
 
 			appearance = {
-				-- Sets the fallback highlight groups to nvim-cmp's highlight groups
-				-- Useful for when your theme doesn't support blink.cmp
-				-- Will be removed in a future release
-				use_nvim_cmp_as_default = true,
-				-- Set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+				-- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
 				-- Adjusts spacing to ensure icons are aligned
 				nerd_font_variant = "mono",
 			},
 
 			completion = {
-				keyword = { range = "full" },
-				list = {
-					max_items = 15,
-					selection = {
-						-- preselect = function(ctx) return ctx.mode ~= 'cmdline' end,
-						preselect = true,
-						-- auto_insert = false
-						auto_insert = true,
-						-- auto_insert = function(ctx)
-						-- 	return ctx.mode == "cmdline"
-						-- end,
-					},
-				},
-
-				-- Disable auto brackets
-				-- NOTE: some LSPs may add auto brackets themselves anyway
-				accept = { auto_brackets = { enabled = true } },
-
 				menu = {
-					enabled = true,
+					auto_show = false,
 					-- min_width = 15,
 					max_height = 7,
 					border = "none",
@@ -242,14 +134,7 @@ return {
 					scrolloff = 1,
 					-- Note that the gutter will be disabled when border ~= 'none'
 					scrollbar = true,
-					-- Which directions to show the window,
-					-- falling back to the next direction when there's not enough space
 					direction_priority = { "s", "n" },
-
-					-- Whether to automatically show the window when new completion items are available
-					auto_show = true,
-
-					-- Screen coordinates of the command line
 					cmdline_position = function()
 						if vim.g.ui_cmdline_pos ~= nil then
 							local pos = vim.g.ui_cmdline_pos -- (1, 0)-indexed
@@ -258,8 +143,6 @@ return {
 						local height = (vim.o.cmdheight == 0) and 1 or vim.o.cmdheight
 						return { vim.o.lines - height, 0 }
 					end,
-
-					-- Controls how the completion items are rendered on the popup window
 					draw = {
 						-- Aligns the keyword you've typed to a component in the menu
 						align_to = "label", -- or 'none' to disable, or 'cursor' to align to the cursor
@@ -347,27 +230,76 @@ return {
 						},
 					},
 				},
-
-				-- Show documentation when selecting a completion item
 				documentation = {
-					auto_show = true,
+					auto_show = false,
 					auto_show_delay_ms = 20,
 					window = {
 						border = require("utils").borders.documentation,
 					},
 				},
-
-				-- Display a preview of the selected item on the current line
-				--
-				-- 이거 괜찮을수도? menu를 manual-mode로 사용하되, 첫번째 제안을 ghost_text로 보여주는 것
-				-- 4a380c1 feat(ghost_text): show_on_unselected (#965)
-				ghost_text = { enabled = true },
-				trigger = {
-					-- show_on_keyword = false,
+				keyword = { range = "prefix" },
+				list = {
+					max_items = 25,
+					selection = {
+						-- preselect = function(ctx) return ctx.mode ~= 'cmdline' end,
+						preselect = true,
+						-- auto_insert = false
+						auto_insert = true,
+						-- auto_insert = function(ctx)
+						-- 	return ctx.mode == "cmdline"
+						-- end,
+					},
+				},
+				-- NOTE: some LSPs may add auto brackets themselves anyway
+				accept = { auto_brackets = { enabled = true } },
+				ghost_text = { enabled = false },
+			},
+			-- Default list of enabled providers defined so that you can extend it
+			-- elsewhere in your config, without redefining it, due to `opts_extend`
+			sources = {
+				default = { "lsp", "path" },
+				min_keyword_length = function()
+					return vim.bo.filetype == "markdown" and 2 or 1
+				end,
+				providers = {
+					path = {
+						opts = {
+							get_cwd = function(_)
+								return vim.fn.getcwd()
+							end,
+						},
+					},
+					buffer = {
+						max_items = 5, -- Maximum number of items to display in the menu
+						opts = {
+							-- -- get all buffers, even ones like neo-tree
+							-- get_bufnrs = vim.api.nvim_list_bufs
+							-- or (RECOMMENDED) filter to only "normal" buffers
+							get_bufnrs = function()
+								return vim.tbl_filter(function(bufnr)
+									return vim.bo[bufnr].buftype == ""
+								end, vim.api.nvim_list_bufs())
+							end,
+						},
+					},
+					lsp = {
+						-- min_keyword_length = 2,
+						-- max_items = 15, -- Maximum number of items to display in the menu
+						-- timeout_ms = 1,
+					},
+					cmdline = {
+						-- ignores cmdline completions when executing shell commands
+						enabled = function()
+							return vim.fn.getcmdtype() ~= ":" or not vim.fn.getcmdline():match("^[%%0-9,'<>%-]*!")
+						end,
+					},
+				},
+				per_filetype = {
+					codecompanion = { "codecompanion" },
 				},
 			},
-
 			fuzzy = {
+				implementation = "prefer_rust_with_warning",
 				use_frecency = true, -- Frecency tracks the most recently/frequently used items and boosts the score of the item
 				use_proximity = true, -- Proximity bonus boosts the score of items matching nearby words
 				sorts = {
@@ -378,53 +310,25 @@ return {
 				},
 			},
 
-			snippets = { preset = "default" },
-
-			sources = {
-				-- default = { 'lsp', 'path', 'snippets', 'buffer' },
-				default = { "lsp", "path" },
-				providers = {
-					buffer = {
-						-- min_keyword_length = 2,
-						max_items = 5, -- Maximum number of items to display in the menu
-					},
-					lsp = {
-						-- min_keyword_length = 2,
-						max_items = 15, -- Maximum number of items to display in the menu
-						timeout_ms = 1,
-					},
-					snippets = {
-						min_keyword_length = 2,
-						max_items = 5, -- Maximum number of items to display in the menu
-					},
-				},
-				min_keyword_length = function(ctx)
-					if ctx.mode == "cmdline" then
-						return 1
-					end
-					return 1
-				end,
-				-- no snippets ever
-				-- transform_items = function(_, items)
-				--   return vim.tbl_filter(function(item)
-				--     return item.kind ~= require('blink.cmp.types').CompletionItemKind.Snippet
-				--   end, items)
-				-- end
-			},
-
-			-- Experimental signature help support
-			-- https://cmp.saghen.dev/configuration/signature
 			signature = {
 				enabled = true,
-				-- trigger = {
-				-- 	show_on_insert = true,
-				-- },
+				trigger = {
+					-- Show the signature help automatically
+					enabled = true,
+					-- Show the signature help window after typing a trigger character
+					show_on_trigger_character = false,
+					-- Show the signature help window when entering insert mode
+					show_on_insert = false,
+					-- Show the signature help window when the cursor comes after a trigger character when entering insert mode
+					show_on_insert_on_trigger_character = false,
+				},
 				window = {
 					border = require("utils").borders.signature,
 					winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
-					show_documentation = false,
+					show_documentation = true,
 				},
 			},
 		},
+		opts_extend = { "sources.default" },
 	},
 }
