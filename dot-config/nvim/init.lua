@@ -120,7 +120,6 @@ for _, workflow in ipairs(workflows) do
 				-- Always load 'function' directories first
 				if subdir_name == "function" then
 					local subdir_module_prefix = module_prefix .. "." .. subdir_name
-					print("function loaded " .. subdir_module_prefix)
 					load_directory(subdir, subdir_module_prefix)
 				end
 			end
@@ -130,7 +129,6 @@ for _, workflow in ipairs(workflows) do
 				local subdir_name = vim.fn.fnamemodify(subdir:sub(1, -2), ":t") -- Remove trailing slash and get dir name
 				if subdir_name ~= "function" then
 					local subdir_module_prefix = module_prefix .. "." .. subdir_name
-					print("else loaded " .. subdir_module_prefix)
 					load_directory(subdir, subdir_module_prefix)
 				end
 			end
