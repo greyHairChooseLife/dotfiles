@@ -26,14 +26,14 @@ return {
 				},
 				["<C-k>"] = {
 					function(cmp)
-						return bf.show(cmp, "buffer")
+						return bf.show(cmp, "buffer", true)
 					end,
 					"select_prev",
 					"fallback",
 				},
 				["<C-j>"] = {
 					function(cmp)
-						return bf.show(cmp, "lsp")
+						return bf.show(cmp, "lsp", true)
 					end,
 					"select_next",
 					"fallback",
@@ -113,6 +113,7 @@ return {
 							return vim.fn.getcmdtype() == ":" -- Only for command mode, not search
 						end,
 					},
+					ghost_text = { enabled = false },
 				},
 			},
 

@@ -46,8 +46,24 @@ local cmp_state = {
 	sort = "lsp", -- 'buffer', 'lsp' or 'snippets', 어떤 completion이 로드되었는지 상태를 저장
 }
 
-local function show_provider(cmp, sort)
-	cmp.show({ providers = { sort } })
+---Shows completion items from specified provider
+---@param cmp table The completion engine instance
+---@param sort string The provider to sort by ("lsp", "buffer", etc.)
+---@param initial_select boolean|nil Whether to select the first item automatically (defaults to false)
+---@return boolean Always returns true to prevent executing the next command in keymap chain
+local function show_provider(cmp, sort, initial_select)
+	initial_select = initial_select or false
+	if sort == "lsp" then
+		cmp.show({
+			providers = { sort, "path" },
+			initial_selected_item_idx = initial_select == true and 1 or nil,
+		})
+	else
+		cmp.show({
+			providers = { sort },
+			initial_selected_item_idx = initial_select == true and 1 or nil,
+		})
+	end
 	cmp_state.sort = sort
 	print(sort)
 	return true -- doesn't runs the next command in keymap setting
@@ -67,10 +83,16 @@ M.hide = function(cmp)
 	end
 end
 
-M.show = function(cmp, provider)
+--- Shows the completion menu for a specific provider
+--- @param cmp table The completion engine instance
+--- @param provider string The name of the completion provider to use
+--- @param initial_select boolean Whether to select the first item automatically (defaults to false)
+--- @return any Result from show_provider if menu isn't already visible
+M.show = function(cmp, provider, initial_select)
+	initial_select = initial_select or false
 	if not cmp.is_menu_visible() then
 		cmp_state.is_init = true
-		return show_provider(cmp, provider)
+		return show_provider(cmp, provider, initial_select)
 	end
 end
 
