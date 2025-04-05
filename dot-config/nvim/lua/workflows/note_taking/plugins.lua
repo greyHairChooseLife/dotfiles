@@ -419,12 +419,14 @@ return {
 				--   'raw': Matched against the raw text of a 'shortcut_link'
 				--   'rendered': Replaces the 'raw' value when rendering
 				--   'highlight': Highlight for the 'rendered' icon
+				-- BUG:: 우측에 공백이 하나 있어야만 렌더링이 된다.
 				custom = {
 					todo = {
 						raw = "[-]",
 						rendered = " 󰥔 TODO ",
 						highlight = "RenderMarkdownMySimpleTodo",
-						scope_highlight = nil,
+						-- TODO:: What is this??
+						scope_highlight = "RenderMarkdownMySimpleTodo",
 					},
 					done = { raw = "[x]", rendered = " 󰗠 DONE ", highlight = "RenderMarkdownMySimpleDone" },
 					cancel = { raw = "[c]", rendered = " 󰜺 cancel ", highlight = "RenderMarkdownMySimpleCancel" },
@@ -459,9 +461,9 @@ return {
 				cell = "padded",
 				-- Gets placed in delimiter row for each column, position is based on alignmnet
 				alignment_indicator = "━",
-    -- Characters used to replace table border
-    -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
-    -- stylua: ignore
+        -- Characters used to replace table border
+        -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
+        -- stylua: ignore
         border = {
           '┌', '┬', '┐',
           '├', '┼', '┤',
@@ -690,10 +692,10 @@ return {
 							backgrounds = {
 								"CodeCompanionH1Bg",
 								"CodeCompanionH2Bg",
-								"RenderMarkdownH3Bg",
-								"RenderMarkdownH4Bg",
-								"RenderMarkdownH5Bg",
-								"RenderMarkdownH6Bg",
+								"CodeCompanionH3Bg",
+								"CodeCompanionH4Bg",
+								"CodeCompanionH5Bg",
+								"CodeCompanionH6Bg",
 							},
 
 							icons = function(ctx)
@@ -701,13 +703,19 @@ return {
 								table.remove(sections, 1)
 								if #sections > 0 then
 									if #sections == 1 then
-										return "󰼏  "
+										return "󰯆 󰯆 󰯆  DO NOT use this header. (msg under this wouldn't send to LLM.) 󰯆 󰯆 󰯆                             "
 									end
 									if #sections == 2 then
-										return "  󰼐  "
+										return "󰼏  "
 									end
 									if #sections == 3 then
+										return "  󰼐  "
+									end
+									if #sections == 4 then
 										return "    󰼑  "
+									end
+									if #sections == 5 then
+										return "      󰼒  "
 									end
 									return table.concat(sections, ".")
 								end
