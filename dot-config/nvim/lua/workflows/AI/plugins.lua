@@ -387,4 +387,112 @@ Structure:\
 		-- 	chat.setup(opts)
 		-- end,
 	},
+	{
+		"olimorris/codecompanion.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		opts = {
+			display = {
+				chat = {
+					intro_message = "",
+					show_header_separator = false, -- Show header separators in the chat buffer? Set this to false if you're using an external markdown formatting plugin
+					separator = "=", -- The separator between the different messages in the chat buffer
+					show_references = true, -- Show references (from slash commands and variables) in the chat buffer?
+					show_settings = false, -- Show LLM settings at the top of the chat buffer?
+					show_token_count = true, -- Show the token count for each response?
+					start_in_insert_mode = false, -- Open the chat buffer in insert mode?
+					icons = {
+						pinned_buffer = " ",
+						watched_buffer = "󰴅 ",
+					},
+				},
+				action_palette = {
+					width = 95,
+					height = 10,
+					prompt = "Prompt ", -- Prompt used for interactive LLM calls
+					provider = "telescope", -- default|telescope|mini_pick
+					opts = {
+						show_default_actions = true, -- Show the default actions in the action palette?
+						show_default_prompt_library = true, -- Show the default prompt library in the action palette?
+					},
+				},
+			},
+			adapters = {
+				opts = {
+					show_defaults = false,
+				},
+				copilot = function()
+					return require("codecompanion.adapters").extend("copilot", {
+						schema = {
+							model = {
+								default = "claude-3.7-sonnet",
+								-- default = "claude-3.7-sonnet-thought",
+							},
+						},
+					})
+				end,
+				anthropic = function()
+					return require("codecompanion.adapters").extend("anthropic", {})
+				end,
+			},
+			strategies = {
+				chat = {
+					roles = {
+						---The header name for the LLM's messages
+						---@type string|fun(adapter: CodeCompanion.Adapter): string
+						llm = function(adapter)
+							return " 󱞩   _" .. adapter.formatted_name
+						end,
+
+						---The header name for your messages
+						---@type string
+						user = " 󰟷",
+					},
+					keymaps = {
+						close = { modes = { n = "gq", i = "<C-c>" } },
+						send = { modes = { i = { "<C-s>", "<A-Enter>" } } },
+						pin = { modes = { n = "grp" } },
+						watch = { modes = { n = "grw" } },
+						clear = { modes = { n = "gX" } },
+						previous_header = { modes = { n = "<C-p>" } },
+						next_header = { modes = { n = "<C-n>" } },
+						previous_chat = { modes = { n = "<C-[>" } },
+						next_chat = { modes = { n = "<C-]>" } },
+					},
+					adapter = "copilot",
+					slash_commands = {
+						["better_commit"] = require("workflows.AI.function.codecompanion-better_commit"),
+					},
+				},
+				inline = {
+					adapter = "copilot",
+					keymaps = {
+						accept_change = { modes = { n = "ca" } },
+						reject_change = { modes = { n = "cr" } },
+					},
+				},
+			},
+			prompt_library = {
+				["reviewCommit"] = require("workflows.AI.function.codecompanion-review_commit"),
+				["Generate a Commit Message"] = { opts = { is_slash_cmd = false } },
+				["Explain LSP Diagnostics"] = {
+					strategy = "chat",
+					description = "Explain the LSP diagnostics for the selected code",
+					opts = {
+						-- index = 9,
+						is_default = false,
+						-- is_slash_cmd = false,
+						-- modes = { "v" },
+						-- short_name = "llsp",
+						-- auto_submit = true,
+						user_prompt = true,
+						-- stop_context_insertion = true,
+					},
+				},
+			},
+		},
+	},
 }

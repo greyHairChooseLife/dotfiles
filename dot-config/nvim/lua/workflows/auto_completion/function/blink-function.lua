@@ -55,7 +55,7 @@ local function show_provider(cmp, sort, initial_select)
 	initial_select = initial_select or false
 	if sort == "lsp" then
 		cmp.show({
-			providers = { sort, "path" },
+			providers = { sort, "path", "codecompanion" },
 			initial_selected_item_idx = initial_select == true and 1 or nil,
 		})
 	else
@@ -125,6 +125,20 @@ M.super_tab = function(cmp)
 	elseif cmp.is_menu_visible() then
 		cmp_state.is_init = false -- 초기화
 		return cmp.select_and_accept()
+	end
+end
+
+M.accept_and_enter = function(cmp)
+	if cmp.snippet_active() then
+		cmp_state.is_init = false -- 초기화
+		return cmp.accept()
+	elseif cmp.is_menu_visible() then
+		cmp_state.is_init = false -- 초기화
+		cmp.select_and_accept()
+		vim.schedule(function()
+			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "t", false)
+		end)
+		return true
 	end
 end
 
