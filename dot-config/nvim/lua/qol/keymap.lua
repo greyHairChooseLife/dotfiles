@@ -34,6 +34,7 @@ map({ "n", "v" }, "Q", ",")
 
 map({ "n", "v" }, "zo", "za") -- toggle fold uni-key
 map({ "n", "v" }, "zz", "zz5<C-e>") -- toggle fold uni-key
+map({ "n", "v" }, "zZ", "zz", { noremap = true }) -- toggle fold uni-key
 map({ "n", "v" }, "gH", "0") -- move cursor
 map({ "n", "v" }, "gh", "^") -- move cursor
 map({ "n", "v" }, "gl", "$") -- move cursor
