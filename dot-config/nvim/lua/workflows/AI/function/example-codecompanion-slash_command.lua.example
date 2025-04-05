@@ -135,10 +135,6 @@ return {
 	description = "Generate git commit message",
 	callback = callback,
 	opts = {
-		adapter = {
-			name = "copilot",
-			model = "claude-3.5-sonnet",
-		},
 		contains_code = true,
 	},
 }
