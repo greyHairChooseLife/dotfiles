@@ -1,28 +1,6 @@
 local IS_DEV = false
 
 return {
-	-- {
-	-- 	"github/copilot.vim",
-	-- 	dependencies = {
-	-- 		"catppuccin/nvim",
-	-- 	},
-	-- 	cmd = {
-	-- 		-- enable 커맨드로는 안된다. restart, status 따위를 사용하자.
-	-- 		"Copilot",
-	-- 	},
-	-- 	-- event = "BufReadPre",
-	-- 	init = function()
-	-- 		vim.g.copilot_filetypes = {
-	-- 			["*"] = false,
-	-- 			["markdown"] = false,
-	-- 			["vimwiki"] = false,
-	-- 		}
-
-	-- 		vim.g.copilot_no_tab_map = true -- <A-k>
-	-- 		vim.g.copilot_workspace_folders = { vim.fn.getcwd() }
-	-- 	end,
-	-- },
-
 	{
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
@@ -408,6 +386,10 @@ Structure:\
 						pinned_buffer = " ",
 						watched_buffer = "󰴅 ",
 					},
+					window = {
+						height = 0.8,
+						width = math.min(math.floor(0.45 * vim.o.columns), 135),
+					},
 				},
 				action_palette = {
 					width = 95,
@@ -415,8 +397,8 @@ Structure:\
 					prompt = "Prompt ", -- Prompt used for interactive LLM calls
 					provider = "telescope", -- default|telescope|mini_pick
 					opts = {
-						show_default_actions = true, -- Show the default actions in the action palette?
-						show_default_prompt_library = true, -- Show the default prompt library in the action palette?
+						show_default_actions = false, -- Show the default actions in the action palette?
+						show_default_prompt_library = false, -- Show the default prompt library in the action palette?
 					},
 				},
 			},
@@ -464,7 +446,7 @@ Structure:\
 					},
 					adapter = "copilot",
 					slash_commands = {
-						["better_commit"] = require("workflows.AI.function.codecompanion-better_commit"),
+						-- ["better_commit"] = require("workflows.AI.function.codecompanion-better_commit"),
 					},
 				},
 				inline = {
@@ -476,22 +458,14 @@ Structure:\
 				},
 			},
 			prompt_library = {
-				["reviewCommit"] = require("workflows.AI.function.codecompanion-review_commit"),
-				["Generate a Commit Message"] = { opts = { is_slash_cmd = false } },
-				["Explain LSP Diagnostics"] = {
-					strategy = "chat",
-					description = "Explain the LSP diagnostics for the selected code",
-					opts = {
-						-- index = 9,
-						is_default = false,
-						-- is_slash_cmd = false,
-						-- modes = { "v" },
-						-- short_name = "llsp",
-						-- auto_submit = true,
-						user_prompt = true,
-						-- stop_context_insertion = true,
-					},
-				},
+				-- touch default
+				["Generate a Commit Message"] = { opts = { is_slash_cmd = false, short_name = "[deprecated] commit" } },
+				-- custom
+				["Generate CommitMsg"] = require("workflows.AI.function.codecompanion-generate_commit"),
+				["Review Commit"] = require("workflows.AI.function.codecompanion-review_commit"),
+				["Load Full-context of the Commit Related"] = require(
+					"workflows.AI.function.codecompanion-get_full_commit_reference"
+				),
 			},
 		},
 	},

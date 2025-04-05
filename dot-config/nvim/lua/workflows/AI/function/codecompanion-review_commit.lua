@@ -1,147 +1,89 @@
-local function generate_review_message()
-	local handle_diff = io.popen("git --no-pager log -p HEAD^..HEAD")
+-- REF:: context
+--  {
+--    bufnr = 7,
+--    buftype = "",
+--    filename = "/home/sy/dotfiles/dot-config/tmux/tmux.conf",
+--    filetype = "lua",
+--    is_normal = false,
+--    is_visual = true,
+--    mode = "v",
+--    start_line = 8,
+--    end_line = 10,
+--    line_count = 3,
+--    start_col = 1,
+--    end_col = 3,
+--    cursor_pos = { 10, 3 },
+--    lines = { "content of line 8", 'content of line 9', "end" },
+--    winnr = 1000
+--  }
 
-	if handle_diff == nil then
-		return nil
-	end
+local system_role_content = [[
+Instruction: Please read the provided Git log with diff. Then write a concise technical report in Korean, following the structure below. Respond only in Korean.
 
-	local diff = ""
-	if handle_diff ~= nil then
-		diff = handle_diff:read("*a")
-		handle_diff:close()
-	end
+Output:
+> commit_hash_short
+> **One-line summary**
+### Summary of Changes
+### Description of Functional or Behavioral Impact
+### Examples in a format of 'as-is, to-be'
 
-	local content = [[
-Please read the provided Git diff and write a concise technical report in Korean, following the structure below. Respond only in Korean.
+Warning: Never use markdown headers `#`, `##`. Only use others like `###`, `####`, `#####`, `######`.
 
-Structure:
-- Title: One-line summary
-- Summary of Changes
-- Description of Functional or Behavioral Impact
-- Examples in a format of 'as-is, to-be'",
-
-### Git-diff
-
+Notice: Before you answer, if full of related files contents might be needed for enough understanding, don't hesitate to request.
 ]]
-	if #diff > 0 then
-		content = content
-			.. "== Diff Start(`git --no-pager log -p HEAD^..HEAD`) ==\n```diff\n"
-			.. diff
-			.. "\n```\n== Diff End(`git --no-pager log -p HEAD^..HEAD`) ==\n\n"
-	end
 
-	return content
-end
-
----@param chat CodeCompanion.Chat
-local function callback(chat)
-	local content = generate_review_message()
-	if content == nil then
-		vim.notify("No git diff available", vim.log.levels.INFO, { title = "CodeCompanion" })
-		return
-	end
-	chat:add_buf_message({
-		role = "user",
-		content = content,
-	})
-end
-
--- return {
--- 	description = "ReviewCommit",
--- 	callback = callback,
--- 	opts = {
--- 		contains_code = true,
--- 		short_name = "wtf",
--- 	},
--- }
-
-local fmt = string.format
-
-local constants = {
-	LLM_ROLE = "llm",
-	USER_ROLE = "user",
-	SYSTEM_ROLE = "system",
-}
 return {
 	strategy = "chat",
-	description = "Explain the LSP diagnostics for the selected code",
+	description = "Review commit with only changed code.",
 	opts = {
-		index = 9,
-		is_default = true,
+		modes = { "n", "v" },
 		is_slash_cmd = false,
-		modes = { "v" },
-		short_name = "wtf",
+		short_name = "review_commit",
 		auto_submit = true,
 		user_prompt = false,
+		ignore_system_prompt = true,
 		stop_context_insertion = true,
+		adapter = {
+			-- name = "anthropic",
+			-- model = "claude-3-7-sonnet-20250219", -- think
+			-- model = "claude-3-5-sonnet-20241022", -- thinkless
+			name = "copilot",
+			model = "claude-3.7-sonnet",
+		},
 	},
 	prompts = {
 		{
-			role = constants.SYSTEM_ROLE,
-			content = [[You are an expert coder and helpful assistant who can help debug code diagnostics, such as warning and error messages. When appropriate, give solutions with code snippets as fenced codeblocks with a language identifier to enable syntax highlighting.]],
-			opts = {
-				visible = false,
-			},
+			role = "system",
+			opts = { visible = false },
+			content = system_role_content,
 		},
 		{
-			role = constants.USER_ROLE,
+			role = "user",
+			opts = { contains_code = true },
 			content = function(context)
-				local diagnostics = require("codecompanion.helpers.actions").get_diagnostics(
-					context.start_line,
-					context.end_line,
-					context.bufnr
-				)
+				local commit_hash = context.is_visual and context.lines[1] or "HEAD"
 
-				local concatenated_diagnostics = ""
-				for i, diagnostic in ipairs(diagnostics) do
-					concatenated_diagnostics = concatenated_diagnostics
-						.. i
-						.. ". Issue "
-						.. i
-						.. "\n  - Location: Line "
-						.. diagnostic.line_number
-						.. "\n  - Buffer: "
-						.. context.bufnr
-						.. "\n  - Severity: "
-						.. diagnostic.severity
-						.. "\n  - Message: "
-						.. diagnostic.message
-						.. "\n"
-				end
+				local log_cmd = "git --no-pager log --no-ext-diff --format='%H%nAuthor: %an <%ae>%nDate: %ad%n%n    %s%n%n    %b' "
+					.. commit_hash
+					.. "^.."
+					.. commit_hash
+				local log_output = vim.fn.system(log_cmd)
+				local log_block = "```gitcommit\n" .. log_output .. "```"
 
-				return fmt(
-					[[The programming language is %s. This is a list of the diagnostic messages:
+				local diff_cmd = "git --no-pager diff --no-ext-diff " .. commit_hash .. "^.." .. commit_hash
+				local diff_output = vim.fn.system(diff_cmd)
+				local diff_block = "```diff\n" .. diff_output .. "```"
 
-%s
-]],
-					context.filetype,
-					concatenated_diagnostics
-				)
+				return "### Here is git log (`"
+					.. log_cmd
+					.. "`)\n"
+					.. log_block
+					.. "\n\n### Here is git diff (`"
+					.. diff_cmd
+					.. "`)\n"
+					.. diff_block
+					.. "\n\n"
 			end,
-		},
-		{
-			role = constants.USER_ROLE,
-			content = function(context)
-				local code = require("codecompanion.helpers.actions").get_code(
-					context.start_line,
-					context.end_line,
-					{ show_line_numbers = true }
-				)
-				return fmt(
-					[[
-This is the code, for context:
-
-```%s
-%s
-```
-]],
-					context.filetype,
-					code
-				)
-			end,
-			opts = {
-				contains_code = true,
-			},
 		},
 	},
 }
