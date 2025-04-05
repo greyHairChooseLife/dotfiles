@@ -462,4 +462,31 @@ M.setOpt = function(option, value, opts)
 	vim.api.nvim_set_option_value(option, value, opts)
 end
 
+---Temporarily highlight a range of text in the current buffer
+---@param start_line number The first line to highlight (1-indexed)
+---@param end_line number The last line to highlight (1-indexed)
+---@param highlight_group string|nil The highlight group to use (default: "Visual")
+---@param duration_ms number|nil Duration in milliseconds before the highlight disappears (default: 100)
+---@return nil
+M.highlight_text_temporarily = function(start_line, end_line, highlight_group, duration_ms)
+	-- Set defaults
+	highlight_group = highlight_group or "Visual"
+	duration_ms = duration_ms or 100
+
+	local ns_id = vim.api.nvim_create_namespace("temp_highlight")
+
+	-- Clear any existing highlights
+	vim.api.nvim_buf_clear_namespace(0, ns_id, 0, -1)
+
+	-- Highlight the specified lines
+	for i = start_line, end_line do
+		vim.highlight.range(0, ns_id, highlight_group, { i - 1, 0 }, { i - 1, -1 }, {})
+	end
+
+	-- Clear the highlight after the specified duration
+	vim.defer_fn(function()
+		vim.api.nvim_buf_clear_namespace(0, ns_id, 0, -1)
+	end, duration_ms)
+end
+
 return M

@@ -344,8 +344,11 @@ vim.cmd([[
   highlight CodeCompanionMeHeader guibg=#A1C98A guifg=#000080
   highlight CodeCompanionCopilotHeader guibg=#000080 guifg=#DCDCAA
   highlight CodeCompanionH1Bg guibg=NONE guifg=#FFFFFF gui=italic,bold
-  highlight CodeCompanionH2Bg guibg=NONE guifg=#007F7F gui=bold
-
+  highlight CodeCompanionH2Bg guibg=#FF3000 guifg=#FFFF0a gui=bold,italic
+  highlight CodeCompanionH3Bg guibg=NONE guifg=#1e90ff gui=bold
+  highlight CodeCompanionH4Bg guibg=NONE guifg=#e0af68 gui=bold
+  highlight CodeCompanionH5Bg guibg=NONE guifg=#8b8378 gui=bold
+  highlight CodeCompanionH6Bg guibg=NONE guifg=#B0C4DE gui=bold
 ]])
 
 --

@@ -13,12 +13,12 @@ local wk_map = require("utils").wk_map
 wk_map({
 	[",w"] = {
 		group = "Window Size",
-		order = { "t", "A", "U" },
-		["t"] = {
+		order = { "f", "A", "U" },
+		["f"] = {
 			function()
 				ToggleWinFix()
 			end,
-			desc = "toggle fix",
+			desc = "fix (toggle)",
 			mode = "n",
 		},
 		["A"] = {
