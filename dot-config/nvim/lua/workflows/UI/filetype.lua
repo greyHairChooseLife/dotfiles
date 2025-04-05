@@ -104,6 +104,15 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
+	pattern = "codecompanion",
+	callback = function()
+		print("hihihi")
+		-- options
+		setOpt("winhighlight", "Normal:AvanteNormal,SignColumn:AvanteSignColumn,EndOfBuffer:AvanteEOB")
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
 	pattern = "terminal",
 	callback = function()
 		-- options

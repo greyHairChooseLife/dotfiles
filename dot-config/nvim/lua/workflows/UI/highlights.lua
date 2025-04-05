@@ -338,6 +338,14 @@ vim.cmd([[
 " highlight CopilotChatHelp - Help messages in chat buffer (help, references)
 " highlight CopilotChatKeyword - Keyword highlight in chat buffer (e.g. prompts, contexts)
 " highlight CopilotChatInput - Input highlight in chat buffer (for contexts)
+
+
+  " MEMO:: CodeCompanion
+  highlight CodeCompanionMeHeader guibg=#A1C98A guifg=#000080
+  highlight CodeCompanionCopilotHeader guibg=#000080 guifg=#DCDCAA
+  highlight CodeCompanionH1Bg guibg=NONE guifg=#FFFFFF gui=italic,bold
+  highlight CodeCompanionH2Bg guibg=NONE guifg=#007F7F gui=bold
+
 ]])
 
 --
