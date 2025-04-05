@@ -224,18 +224,25 @@ function FocusFloatingWindow()
 end
 
 function NewTabWithPrompt()
-	-- 입력 프롬프트 표시
-	local tabname = vim.fn.input("Enter tab name: ")
-	if tabname == "" then
-		-- tabname = 'Tab ' .. vim.fn.tabpagenr('$') + 1
-		-- 입력이 없거나 ESC를 누른 경우, 함수 종료
-		-- return
-		tabname = "no name"
+	local callback = function(tabname)
+		-- BUG::
+		-- If input is nil, it means the user pressed <Esc>, <C-c>, <gq>
+		-- But not working as expected with <Esc>
+		if tabname == nil then
+			return
+		elseif tabname == "" then
+			tabname = "no name"
+		end
+
+		-- Create new tab and set name
+		vim.cmd("tabnew")
+		local tabnr = vim.fn.tabpagenr()
+		vim.fn.settabvar(tabnr, "tabname", tabname)
 	end
-	-- 새로운 탭 생성 및 이름 설정
-	vim.cmd("tabnew")
-	local tabnr = vim.fn.tabpagenr()
-	vim.fn.settabvar(tabnr, "tabname", tabname)
+
+	vim.ui.input({
+		prompt = "Enter tab name: ",
+	}, callback)
 end
 
 function RenameCurrentTab()
