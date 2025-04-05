@@ -15,7 +15,7 @@ vim.api.nvim_create_autocmd({ "User" }, {
 	pattern = "CodeCompanionRequest*",
 	group = group,
 	callback = function(request)
-		if request.match == "CodeCompanionRequestFinished" then
+		if request.match == "CodeCompanionRequestStarted" then
 			vim.cmd("stopinsert")
 		end
 	end,
