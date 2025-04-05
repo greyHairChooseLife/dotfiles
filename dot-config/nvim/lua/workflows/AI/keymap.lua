@@ -4,6 +4,7 @@ local opt = { noremap = true, silent = true }
 -- >>>>>>>>>>>>>>>>> context provider
 map("n", ",y", Save_entire_buffer_to_register_for_AI_prompt, opt)
 map("v", ",y", Save_visual_selection_to_register_for_AI_prompt, opt)
+map("v", ",r", Save_buf_ref_of_visual_selection_to_register_for_AI_prompt, opt)
 -- >>>>>>>>>>>>>>>>> context provider
 
 -- DEPRECATED:: 2025-02-04, which-key
