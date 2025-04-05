@@ -79,7 +79,13 @@ return {
 					end,
 					"fallback",
 				},
-				-- ["<Enter>"] = { },
+				["<Enter>"] = {
+					function(cmp)
+						return bf.accept_and_enter(cmp)
+					end,
+					"snippet_forward",
+					"fallback",
+				},
 				["<Tab>"] = {
 					function(cmp)
 						return bf.super_tab(cmp)
@@ -94,7 +100,7 @@ return {
 				keymap = {
 					-- preset = 'enter',
 					["<C-space>"] = { "fallback" },
-					["<C-n>"] = { "show", "fallback" },
+					-- ["<C-n>"] = { "show", "fallback" },
 					["<C-e>"] = { "cancel", "fallback" },
 					["<C-k>"] = { "select_prev", "fallback" },
 					["<C-j>"] = { "select_next", "fallback" },
@@ -125,7 +131,10 @@ return {
 
 			completion = {
 				menu = {
-					auto_show = false,
+					-- auto_show = false,
+					auto_show = function()
+						return vim.bo.filetype == "codecompanion" and true or false
+					end,
 					-- min_width = 15,
 					max_height = 7,
 					border = "none",
@@ -258,9 +267,9 @@ return {
 			-- Default list of enabled providers defined so that you can extend it
 			-- elsewhere in your config, without redefining it, due to `opts_extend`
 			sources = {
-				default = { "lsp", "path" },
+				default = { "lsp", "path", "codecompanion" },
 				min_keyword_length = function()
-					return vim.bo.filetype == "markdown" and 2 or 1
+					return vim.bo.filetype == "markdown" and 2 or 0
 				end,
 				providers = {
 					path = {
@@ -286,7 +295,6 @@ return {
 					lsp = {
 						-- min_keyword_length = 2,
 						-- max_items = 15, -- Maximum number of items to display in the menu
-						-- timeout_ms = 1,
 					},
 					cmdline = {
 						-- ignores cmdline completions when executing shell commands

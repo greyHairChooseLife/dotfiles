@@ -129,14 +129,22 @@ return {
 		-- commit = "5cec1bb5fb11079a88fd5b3abd9c94867aec5945",
 		-- event = "BufEnter *.md",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
-		ft = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat", "gitcommit" },
+		ft = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat", "gitcommit", "codecompanion" },
 		---@module 'render-markdown'
 		---@type render.md.UserConfig
 		opts = {
 			-- Whether Markdown should be rendered by default or not
 			enabled = true,
 			-- Filetypes this plugin will run on
-			file_types = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat", "gitcommit" },
+			file_types = {
+				"markdown",
+				"vimwiki",
+				"Avante",
+				"AvanteInput",
+				"copilot-chat",
+				"gitcommit",
+				"codecompanion",
+			},
 			-- Maximum file size (in MB) that this plugin will attempt to render
 			-- Any file larger than this will effectively be ignored
 			max_file_size = 1.5,
@@ -298,7 +306,16 @@ return {
 				-- | icon       | optional override for the icon                       |
 				-- | background | optional override for the background                 |
 				-- | foreground | optional override for the foreground                 |
-				custom = {},
+				custom = {
+					TODO = {
+						pattern = "TODO",
+						background = "RenderMarkdownMyTodo",
+					},
+					REFERENCE = {
+						pattern = "REFERENCE",
+						background = "RenderMarkdownMyReference",
+					},
+				},
 			},
 			code = {
 				-- Turn on / off code block & inline code rendering
@@ -319,7 +336,7 @@ return {
 				position = "right",
 				-- An array of language names for which background highlighting will be disabled
 				-- Likely because that language has background highlights itself
-				disable_background = {}, -- "diff"
+				disable_background = { "markdown", "md" }, -- "diff"
 				-- Amount of padding to add to the left of code blocks
 				left_pad = 2,
 				-- Amount of padding to add to the right of code blocks when width is 'block'
@@ -657,11 +674,84 @@ return {
 						},
 						indent = { enabled = false },
 					},
+					codecompanion = {
+						heading = {
+							width = { "full", "full", "full" },
+							left_margin = { 0, 0, 0, 0 },
+							left_pad = { 0, 0, 0, 0 },
+							right_pad = { 0, 0, 0, 0 },
+							min_width = { 0, 0, 0, 0 },
+							border = { false, false, true },
+							border_virtual = false,
+							border_prefix = false,
+							above = "", -- ▂
+							-- Used below heading for border
+							below = " ", -- ▔▀
+							backgrounds = {
+								"CodeCompanionH1Bg",
+								"CodeCompanionH2Bg",
+								"RenderMarkdownH3Bg",
+								"RenderMarkdownH4Bg",
+								"RenderMarkdownH5Bg",
+								"RenderMarkdownH6Bg",
+							},
+
+							icons = function(ctx)
+								local sections = ctx.sections
+								table.remove(sections, 1)
+								if #sections > 0 then
+									if #sections == 1 then
+										return "󰼏  "
+									end
+									if #sections == 2 then
+										return "  󰼐  "
+									end
+									if #sections == 3 then
+										return "    󰼑  "
+									end
+									return table.concat(sections, ".")
+								end
+							end,
+							custom = {
+								Me = {
+									pattern = " 󰟷",
+									icon = "", -- Example icon
+									background = "CodeCompanionMeHeader",
+									-- foreground = "RenderMarkdownH1",
+								},
+								Copilot = {
+									pattern = "󱞩  ",
+									icon = "", -- Example icon
+									background = "CodeCompanionCopilotHeader",
+								},
+							},
+						},
+						sign = { enabled = false },
+						code = {
+							style = "full",
+							position = "right",
+							language_name = true,
+							language_pad = 0,
+							left_pad = 2,
+							-- Amount of padding to add to the right of code blocks when width is 'block'
+							right_pad = 0,
+							left_margin = 0,
+							-- min_width = 100,
+							width = "block",
+							border = "thick",
+							highlight = "RenderMarkdownCodeAvante",
+							highlight_border = "RenderMarkdownCodeAvante",
+						},
+						quote = {
+							repeat_linebreak = true,
+						},
+						indent = { enabled = false },
+					},
 				},
 				-- https://github.com/MeanderingProgrammer/render-markdown.nvim/discussions/285
 				-- https://github.com/MeanderingProgrammer/render-markdown.nvim/commit/873bdee
 				-- floating window에서의 기능 여부
-				-- buflisted = { [false] = { enabled = false } },
+				-- buflisted = { [false] = { enabled = vim.bo.filetype == "codecompanion" and false or true } },
 			},
 			-- Mapping from treesitter language to user defined handlers
 			-- See 'Custom Handlers' document for more info
@@ -681,7 +771,7 @@ return {
 		"greyhairchooselife/markdowny.nvim",
 		event = "BufEnter *.md",
 		-- BUG:: 왜 안돼??? 플러그인도 수정해서 파일 타입 추가해줬는데...
-		ft = { "copilot-chat", "AvanteInput" },
+		ft = { "copilot-chat", "AvanteInput", "codecompanion" },
 	},
 	{
 		"vhyrro/luarocks.nvim",
@@ -753,7 +843,7 @@ return {
 					return {
 						relative = "editor",
 						-- border = require("utils").borders.full,
-						border = "rounded",
+						border = "double",
 						-- Can be one of the pre-defined styles: `"double"`, `"none"`, `"rounded"`, `"shadow"`, `"single"` or `"solid"`.
 						-- style = "minimal",
 						title_pos = "center",
