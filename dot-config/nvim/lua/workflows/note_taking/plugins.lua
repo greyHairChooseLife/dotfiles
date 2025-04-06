@@ -35,85 +35,17 @@ return {
 
 			vim.g.vimwiki_create_link = 0
 
-			-- MEMO:: 모르겠다, 왜 lua로 안바꿔지냐?
-			-- 함수를 전역으로 등록
-			_G.vimwiki_fold_level_custom = function(lnum)
-				local prev_line = vim.fn.getline(lnum - 1) -- 헤더라인은 살려야지
-				local curr_line = vim.fn.getline(lnum)
-				local next_line = vim.fn.getline(lnum + 1)
-				local next2_line = vim.fn.getline(lnum + 2)
-				local last_line = vim.fn.line("$")
-
-				local is_lv2_header = string.match(prev_line, "^##%s")
-				local is_lv3_header = string.match(prev_line, "^###%s")
-				local is_lv4_header = string.match(prev_line, "^####%s")
-				local is_lv5_header = string.match(prev_line, "^#####%s")
-
-				if is_lv2_header then
-					return "1"
-				end
-				if is_lv3_header then
-					return "2"
-				end
-				if is_lv4_header then
-					return "3"
-				end
-				if is_lv5_header then
-					return "4"
-				end
-				if string.match(curr_line, "^%s*$") and string.match(next_line, "^###%s") then
-					return "1"
-				end
-				if string.match(curr_line, "^%s*$") and string.match(next_line, "^####%s") then
-					return "2"
-				end
-				if string.match(curr_line, "^%s*$") and string.match(next_line, "^#####%s") then
-					return "3"
-				end
-				-- if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next2_line, "^##%s") then
-				if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next_line, "^##%s") then
-					return "0"
-				end
-
-				-- 무엇에도 해당하지 않는 경우 prev_line의 foldlevel을 그대로 사용
-				return "="
-			end
-
-			-- Vimwiki의 폴딩 방식을 'custom'으로 설정
 			vim.g.vimwiki_folding = "custom"
 
-			-- autocmd를 Lua 방식으로 설정
-			vim.api.nvim_create_augroup("VimwikiFoldingGroup", { clear = true })
-			vim.api.nvim_create_autocmd("FileType", {
-				group = "VimwikiFoldingGroup",
-				pattern = "vimwiki",
+			vim.api.nvim_create_autocmd("BufWinEnter", {
+				pattern = "*",
 				callback = function()
-					vim.opt_local.foldmethod = "expr"
-					vim.opt_local.foldenable = true
-					vim.opt_local.foldmethod = "expr"
-					vim.opt_local.foldenable = true
-					-- vim.opt_local.foldexpr = "v:lua.vimwiki_fold_level_custom(v:lnum)"
-					vim.opt_local.foldexpr =
-						"v:lua.require'workflows.UI.folding_styles'.markdown_fold_level_custom(v:lnum)"
-					vim.opt_local.foldtext =
-						"v:lua.require'workflows.UI.folding_styles'.markdown_fold(v:foldstart, v:foldend, v:foldlevel)"
-				end,
-			})
-
-			vim.api.nvim_create_augroup("MarkdownFoldingGroup", { clear = true })
-			vim.api.nvim_create_autocmd("FileType", {
-				group = "MarkdownFoldingGroup",
-				pattern = "markdown",
-				callback = function()
-					vim.opt_local.foldmethod = "expr"
-					vim.opt_local.foldenable = true
-					vim.opt_local.foldmethod = "expr"
-					vim.opt_local.foldenable = true
-					-- vim.opt_local.foldexpr = "v:lua.vimwiki_fold_level_custom(v:lnum)"
-					vim.opt_local.foldexpr =
-						"v:lua.require'workflows.UI.folding_styles'.markdown_fold_level_custom(v:lnum)"
-					vim.opt_local.foldtext =
-						"v:lua.require'workflows.UI.folding_styles'.markdown_fold(v:foldstart, v:foldend, v:foldlevel)"
+					if vim.tbl_contains({ "markdown", "md", "vimwiki" }, vim.bo.filetype) then
+						vim.opt_local.foldmethod = "expr"
+						vim.opt_local.foldenable = true
+						vim.opt_local.foldtext = "v:lua.markdown_fold_text(v:foldstart, v:foldend, v:foldlevel)"
+						vim.opt_local.foldexpr = "v:lua.markdown_fold_expr(v:lnum)"
+					end
 				end,
 			})
 
@@ -432,6 +364,23 @@ return {
 					cancel = { raw = "[c]", rendered = " 󰜺 cancel ", highlight = "RenderMarkdownMySimpleCancel" },
 					-- log = { raw = "[lg]", rendered = "작성:", highlight = "RenderMarkdownMyLog" },
 					result = { raw = "[>]", rendered = "   So 󰜴 ", highlight = "RenderMarkdownResult" },
+				},
+			},
+			html = {
+				enabled = true,
+				render_modes = false,
+				comment = {
+					-- Turn on / off HTML comment concealing.
+					conceal = true,
+					-- Optional text to inline before the concealed comment.
+					text = nil,
+					-- Highlight for the inlined text.
+					highlight = "RenderMarkdownHtmlComment",
+				},
+				tag = {
+					url = { icon = "󰖟 ", highlight = "RenderMarkdownWebLink" },
+					buf = { icon = " ", highlight = "RenderMarkdownHtmlBUF" },
+					file = { icon = " ", highlight = "RenderMarkdownFileLink" },
 				},
 			},
 			quote = {
