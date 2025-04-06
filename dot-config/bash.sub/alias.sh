@@ -47,7 +47,9 @@ alias gst='git stash'
 
 alias glg='git log --oneline --graph --all --pretty=medium'
 alias glgo='git log --oneline --graph --all'
-alias glgH='git log --oneline --graph HEAD'
+alias glgH='git log --oneline --graph HEAD' # check under local HEAD
+alias glgF='git log --all --pretty=medium --reverse HEAD..' # check fetched
+alias glgP='git log --all --pretty=medium --reverse origin/HEAD..' # check to be pushed
 alias glMM='git log --pretty=format:"COMMIT : %h%nTITLE  : %s%nMESSAGE: %b%n%cd==================================== %ae%n%n" --date=short'
 # <<<
 
