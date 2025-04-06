@@ -388,7 +388,7 @@ Structure:\
 					},
 					window = {
 						height = 0.8,
-						width = math.min(math.floor(0.45 * vim.o.columns), 135),
+						width = math.max(math.min(math.floor(0.45 * vim.o.columns), 135), 100), -- 최대 135, 최소 100
 					},
 				},
 				action_palette = {

@@ -120,7 +120,7 @@ vim.cmd([[
   highlight RenderMarkdownCodeNofile guibg=#181818 guifg=NONE
   highlight RenderMarkdownCodeAvante guibg=#000000 guifg=NONE
   highlight RenderMarkdownDash guifg=#FFFFFF
-  highlight RenderMarkdownQuote guifg=#007F7F " #5F5F5F
+  highlight RenderMarkdownQuote guifg=#5F5F5F
   highlight RenderMarkdownBullet guifg=#007F7F gui=bold
   highlight RenderMarkdownUnchecked guifg=#CA4500
   highlight RenderMarkdownChecked guifg=#32CD32
@@ -140,6 +140,8 @@ vim.cmd([[
   highlight RenderMarkdownBlue   guifg=#4169E1 gui=bold
   highlight RenderMarkdownGreen  guifg=#32CD32 gui=bold
   highlight RenderMarkdownYellow guifg=#FFBF00 gui=bold
+
+  highlight RenderMarkdownHtmlBUF guifg=#CA4500
 
   highlight RenderMarkdownH1Bg guibg=#DCDCAA gui=bold,italic
   highlight RenderMarkdownH2Bg guibg=#1c2d5f guifg=#FFFF00 gui=bold
@@ -343,6 +345,10 @@ vim.cmd([[
   " MEMO:: CodeCompanion
   highlight CodeCompanionMeHeader guibg=#A1C98A guifg=#000080
   highlight CodeCompanionCopilotHeader guibg=#000080 guifg=#DCDCAA
+  highlight CodeCompanionNormal guibg=#242024 guifg=NONE
+  highlight CodeCompanionSignColumn guibg=#242024  guifg=NONE
+  highlight CodeCompanionEOB  guibg=NONE guifg=#242024
+  highlight CodeCompanionFolded guibg=#242024 guifg=#8b8378 gui=italic
   highlight CodeCompanionH1Bg guibg=NONE guifg=#FFFFFF gui=italic,bold
   highlight CodeCompanionH2Bg guibg=#FF3000 guifg=#FFFF0a gui=bold,italic
   highlight CodeCompanionH3Bg guibg=NONE guifg=#1e90ff gui=bold
