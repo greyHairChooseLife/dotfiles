@@ -179,8 +179,30 @@ wk_map({
 	["<Space>n"] = {
 		group = "Note",
 		order = { "g", "l" },
-		["g"] = { "<cmd>GlobalNote<CR>", desc = "open Global Note", mode = { "n", "v" } },
-		["l"] = { "<cmd>LocalNote<CR>", desc = "open Local Note", mode = { "n", "v" } },
+		["g"] = {
+			function()
+				local gn = require("global-note")
+
+				if gn.is_note_open("project_local") then
+					gn.toggle_note("project_local")
+				end
+				gn.toggle_note() -- default_note aka. global
+			end,
+			desc = "open Local Note",
+			mode = { "n", "v" },
+		},
+		["l"] = {
+			function()
+				local gn = require("global-note")
+
+				if gn.is_note_open() then
+					gn.toggle_note()
+				end
+				gn.toggle_note("project_local")
+			end,
+			desc = "open Local Note",
+			mode = { "n", "v" },
+		},
 	},
 })
 

@@ -833,80 +833,88 @@ return {
 	},
 
 	{
-		"backdround/global-note.nvim",
+		"greyhairchooselife/global-note.nvim",
+		-- dir = "/home/sy/global-note.nvim/",
 		cmd = { "GlobalNote", "LocalNote" },
-		opts = {},
-		config = function()
-			require("global-note").setup({
-				filename = "global-note.md",
-				directory = "~/Documents/global-note/",
-				title = "     Global     ",
-				command_name = "GlobalNote",
+		opts = {
+			-- NOTE:
+			-- -- Check if the default note is open
+			-- local is_default_open = require("global-note").is_note_open()
+			-- -- Check if a specific preset is open
+			-- local is_todo_open = require("global-note").is_note_open("todo")
+			-- -- Get a list of all open notes
+			-- local open_notes = require("global-note").get_open_notes()
+			-- -- Get the window ID for a specific note
+			-- local window_id = require("global-note").get_note_window("todo")
 
-				-- A nvim_open_win config to show float window.
-				-- table or fun(): table
-				window_config = function()
-					local window_height = vim.api.nvim_list_uis()[1].height
-					local window_width = vim.api.nvim_list_uis()[1].width
-					return {
-						relative = "editor",
-						-- border = require("utils").borders.full,
-						border = "double",
-						-- Can be one of the pre-defined styles: `"double"`, `"none"`, `"rounded"`, `"shadow"`, `"single"` or `"solid"`.
-						-- style = "minimal",
-						title_pos = "center",
-						width = math.floor(0.7 * window_width),
-						height = math.floor(0.85 * window_height),
-						row = math.floor(0.05 * window_height),
-						col = math.floor(0.15 * window_width),
-					}
-				end,
+			filename = "global-note.md",
+			directory = "~/Documents/global-note/",
+			title = "     Global     ",
+			command_name = "GlobalNote",
 
-				-- It's called after the window creation.
-				-- fun(buffer_id: number, window_id: number)
-				post_open = function(_, _)
-					-- 윈도우 옵션 설정
-					-- vim.wo.winhl =
-					-- 	"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
+			-- A nvim_open_win config to show float window.
+			-- table or fun(): table
+			window_config = function()
+				local window_height = vim.api.nvim_list_uis()[1].height
+				local window_width = vim.api.nvim_list_uis()[1].width
+				return {
+					relative = "editor",
+					-- border = require("utils").borders.full,
+					border = "double",
+					-- Can be one of the pre-defined styles: `"double"`, `"none"`, `"rounded"`, `"shadow"`, `"single"` or `"solid"`.
+					-- style = "minimal",
+					title_pos = "right",
+					width = math.floor(0.7 * window_width),
+					height = math.floor(0.85 * window_height),
+					row = math.floor(0.05 * window_height),
+					col = math.floor(0.15 * window_width),
+				}
+			end,
 
-					-- vim.wo.number = false
-					-- vim.wo.foldcolumn = "2"
-					-- vim.wo.relativenumber = false
-					-- vim.wo.cursorline = false
-					-- vim.wo.signcolumn = "no"
+			-- It's called after the window creation.
+			-- fun(buffer_id: number, window_id: number)
+			post_open = function(_, _)
+				-- 윈도우 옵션 설정
+				-- vim.wo.winhl =
+				-- 	"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
 
-					-- 버퍼 옵션 설정
-					vim.bo.filetype = "markdown"
-				end,
+				-- vim.wo.number = false
+				-- vim.wo.foldcolumn = "2"
+				-- vim.wo.relativenumber = false
+				-- vim.wo.cursorline = false
+				-- vim.wo.signcolumn = "no"
 
-				additional_presets = {
-					-- projects = {
-					-- 	filename = "projects-to-do.md",
-					-- 	title = "List of projects",
-					-- 	command_name = "ProjectsNote",
-					-- 	-- All not specified options are used from the root.
-					-- },
-					project_local = {
-						command_name = "LocalNote",
-						title = "     Local     ",
-						filename = function()
-							local project_name = require("utils").get_project_name_by_git({ print_errors = false })
-								or require("utils").get_project_name_by_cwd()
-							return project_name .. ".md"
-						end,
+				-- 버퍼 옵션 설정
+				vim.bo.filetype = "markdown"
+			end,
 
-						post_open = function(_, _)
-							vim.wo.winhl =
-								"Normal:NoteBackground,FloatBorder:LocalNoteBorder,FloatTitle:LocalNoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
-							vim.wo.number = false
-							vim.wo.foldcolumn = "2"
-							vim.wo.relativenumber = false
-							vim.wo.cursorline = false
-							vim.wo.signcolumn = "no"
-						end,
-					},
+			additional_presets = {
+				-- projects = {
+				-- 	filename = "projects-to-do.md",
+				-- 	title = "List of projects",
+				-- 	command_name = "ProjectsNote",
+				-- 	-- All not specified options are used from the root.
+				-- },
+				project_local = {
+					command_name = "LocalNote",
+					title = "     Local     ",
+					filename = function()
+						local project_name = require("utils").get_project_name_by_git({ print_errors = false })
+							or require("utils").get_project_name_by_cwd()
+						return project_name .. ".md"
+					end,
+
+					post_open = function(_, _)
+						vim.wo.winhl =
+							"Normal:NoteBackground,FloatBorder:LocalNoteBorder,FloatTitle:LocalNoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
+						vim.wo.number = false
+						vim.wo.foldcolumn = "2"
+						vim.wo.relativenumber = false
+						vim.wo.cursorline = false
+						vim.wo.signcolumn = "no"
+					end,
 				},
-			})
-		end,
+			},
+		},
 	},
 }
