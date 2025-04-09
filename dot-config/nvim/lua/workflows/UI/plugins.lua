@@ -167,7 +167,16 @@ return {
 							},
 						},
 					},
-					lualine_c = {},
+					lualine_c = {
+						{
+							lualine_components.register_recording,
+							padding = { left = 1, right = 1 },
+							color = {
+								bg = colors.white,
+								fg = colors.black,
+							},
+						},
+					},
 					lualine_x = {
 						{
 							lualine_components.winfix_status,
@@ -213,6 +222,11 @@ return {
 						},
 					},
 					lualine_z = {
+						{
+							"selectioncount",
+							padding = { left = 1, right = 1 },
+							color = { bg = colors.purple, fg = colors.black, gui = "bold" },
+						},
 						{ "location", padding = { left = 1, right = 1 } },
 						{ "progress", padding = { left = 0, right = 1 } },
 					},
@@ -321,6 +335,7 @@ return {
 					lualine_components.my_fugitive,
 					lualine_components.my_oil,
 					lualine_components.my_copilot_chat,
+					lualine_components.my_codecompanion,
 				},
 			})
 		end,
@@ -492,7 +507,7 @@ return {
 				-- height and width can be:
 				-- * an asbolute number of cells when > 1
 				-- * a percentage of the width / height of the editor when <= 1
-				width = 0.5, -- width of the focus window
+				width = math.max(math.floor(0.5 * vim.o.columns), 200),
 				height = 1, -- height of the focus window
 				-- by default, no options are changed in for the focus window
 				-- add any vim.wo options you want to apply

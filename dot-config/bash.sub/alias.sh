@@ -96,4 +96,5 @@ alias make-mp3="ffmpeg -i"                                        # usage : make
 alias py='python'
 alias conda='mamba'
 alias rconda='/opt/miniforge/bin/conda'  # 실제 conda 실행 가능하도록 백업
+alias b='btop'
 # <<<
