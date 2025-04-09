@@ -339,7 +339,7 @@ M.my_codecompanion = {
 			{
 				codecompanion_adapter_name,
 				color = { fg = M.colors.orange_deep, bg = M.colors.bg2, gui = "italic" },
-				padding = { left = 1, right = 7 },
+				padding = { left = 1, right = 5 },
 			},
 			{
 				require("workflows.AI.codecompanion_lualine_active_component"),
@@ -357,7 +357,7 @@ M.my_codecompanion = {
 			{
 				codecompanion_adapter_name,
 				color = { fg = M.colors.orange_deep, bg = M.colors.bg2, gui = "italic" },
-				padding = { left = 1, right = 7 },
+				padding = { left = 1, right = 5 },
 			},
 			{
 				require("workflows.AI.codecompanion_lualine_inactive_component"),
