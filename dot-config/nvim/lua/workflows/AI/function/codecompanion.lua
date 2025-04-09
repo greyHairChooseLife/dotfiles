@@ -242,7 +242,7 @@ M.add_buffer_reference = function()
 		if chat then
 			for _, msg in ipairs(chat.references.Chat.agents.messages) do
 				if msg.content == formatted_content then
-					vim.notify("Already in reference!", vim.log.levels.WARN)
+					vim.notify("Already in reference!", vim.log.levels.INFO)
 					return false
 				end
 			end
@@ -283,6 +283,95 @@ M.add_buffer_reference = function()
 		end
 
 		add_selected_to_last_chat()
+	end
+
+	-- UI redraw
+	vim.schedule(function()
+		require("utils").save_cursor_position()
+		M.focus_last_chat()
+		require("utils").restore_cursor_position()
+	end)
+end
+
+-- 현재 탭의 모든 버퍼를 컨텍스트로 추가하는 함수
+M.add_tab_buffers_reference = function()
+	local chat = cdc.last_chat()
+	if not chat or not chat.ui:is_visible() then
+		M.toggle_last_chat()
+		chat = cdc.last_chat()
+	end
+
+	-- 현재 탭의 모든 버퍼를 가져옴
+	local current_tab = vim.api.nvim_get_current_tabpage()
+	local buffers = vim.api.nvim_tabpage_list_wins(current_tab)
+	local added_buffers = {}
+	local skipped_buffers = {}
+
+	for _, win in ipairs(buffers) do
+		local bufnr = vim.api.nvim_win_get_buf(win)
+		-- local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+		local buftype = vim.bo[bufnr].buftype
+		local path = vim.api.nvim_buf_get_name(bufnr)
+
+		-- 일반 파일 버퍼만 처리 (특수 버퍼는 제외)
+		if buftype == "" and path ~= "" then
+			local content = require("codecompanion.utils.buffers").format_with_line_numbers(bufnr)
+			local message = "Here is the content from"
+			local name = chat.references:make_id_from_buf(bufnr)
+
+			if name == "" then
+				name = "Buffer " .. bufnr
+			end
+			local id = "<buf>" .. name .. "</buf>"
+
+			local formatted_content = string.format(
+				"%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
+				message,
+				vim.fn.fnamemodify(path, ":t"),
+				bufnr,
+				path,
+				content
+			)
+
+			-- 중복 체크
+			local is_duplicate = false
+			for _, msg in ipairs(chat.references.Chat.agents.messages) do
+				if msg.content == formatted_content then
+					is_duplicate = true
+					table.insert(skipped_buffers, vim.fn.fnamemodify(path, ":t"))
+					break
+				end
+			end
+
+			-- 중복이 아니면 추가
+			if not is_duplicate then
+				chat:add_message({
+					role = "user",
+					content = formatted_content,
+				}, { reference = id, visible = false })
+
+				chat.references:add({
+					bufnr = bufnr,
+					id = id,
+					path = path,
+					source = "codecompanion.strategies.chat.slash_commands.buffer",
+					opts = {},
+				})
+
+				table.insert(added_buffers, vim.fn.fnamemodify(path, ":t"))
+			end
+		end
+	end
+
+	-- 결과 알림
+	if #added_buffers > 0 then
+		local added_msg = "Added: " .. table.concat(added_buffers, ", ")
+		chat.ui:set_virtual_text(added_msg)
+		vim.notify(added_msg, vim.log.levels.INFO)
+	end
+
+	if #skipped_buffers > 0 then
+		vim.notify("Skipped (already in context): " .. table.concat(skipped_buffers, ", "), vim.log.levels.INFO)
 	end
 
 	-- UI redraw
