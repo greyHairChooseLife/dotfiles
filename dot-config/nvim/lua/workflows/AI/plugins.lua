@@ -397,7 +397,7 @@ Structure:\
 					prompt = "Prompt ", -- Prompt used for interactive LLM calls
 					provider = "telescope", -- default|telescope|mini_pick
 					opts = {
-						show_default_actions = false, -- Show the default actions in the action palette?
+						show_default_actions = true, -- Show the default actions in the action palette?
 						show_default_prompt_library = false, -- Show the default prompt library in the action palette?
 					},
 				},
@@ -434,8 +434,9 @@ Structure:\
 						user = " 󰟷",
 					},
 					keymaps = {
-						close = { modes = { n = "gq", i = "<C-c>" } },
+						close = { modes = { n = "<C-c>", i = "<C-c>" } },
 						send = { modes = { i = { "<C-s>", "<A-Enter>" } } },
+						stop = { modes = { n = "gs" } },
 						pin = { modes = { n = "grp" } },
 						watch = { modes = { n = "grw" } },
 						clear = { modes = { n = "gX" } },
@@ -443,6 +444,8 @@ Structure:\
 						next_header = { modes = { n = "<C-n>" } },
 						previous_chat = { modes = { n = "<C-[>" } },
 						next_chat = { modes = { n = "<C-]>" } },
+						system_prompt = { modes = { n = "gts" } }, -- toggle system prompts
+						regenerate = { modes = { n = "gR" } },
 					},
 					adapter = "copilot",
 					slash_commands = {
@@ -461,12 +464,85 @@ Structure:\
 				-- touch default
 				["Generate a Commit Message"] = { opts = { is_slash_cmd = false, short_name = "[deprecated] commit" } },
 				-- custom
-				["Generate CommitMsg"] = require("workflows.AI.function.codecompanion-generate_commit"),
 				["Review Commit"] = require("workflows.AI.function.codecompanion-review_commit"),
-				["Load Full-context of the Commit Related"] = require(
-					"workflows.AI.function.codecompanion-get_full_commit_reference"
+				["Generate CommitMsg"] = require("workflows.AI.function.codecompanion-generate_commit_msg"),
+				["Analyze Git Status for branching commits"] = require(
+					"workflows.AI.function.codecompanion-analyze_git_status"
+				),
+				["Load Full-context of the git status"] = require(
+					"workflows.AI.function.codecompanion-get_full_git_status_reference"
 				),
 			},
+		},
+		keys = {
+			-- {
+			-- 	"<leader>ic",
+			-- 	"<cmd>CodeCompanionToggle<CR>",
+			-- 	desc = "A[I] [C]hat",
+			-- 	mode = { "n", "v" },
+			-- },
+			-- {
+			-- 	"<leader>ia",
+			-- 	desc = "A[I] [A]sk",
+			-- },
+			-- {
+			-- 	"<leader>iae",
+			-- 	"<cmd>CodeCompanion /explain<CR>",
+			-- 	desc = "A[I] [A]sk to [E]xplain",
+			-- 	mode = { "n", "v" },
+			-- },
+			-- {
+			-- 	"<leader>iaf",
+			-- 	"<cmd>CodeCompanion /fix<CR>",
+			-- 	desc = "A[I] [A]sk to [F]ix",
+			-- 	mode = { "n", "v" },
+			-- },
+			-- {
+			-- 	"<leader>iat",
+			-- 	"<cmd>CodeCompanion /tests<CR>",
+			-- 	desc = "A[I] [A]sk to create [T]tests",
+			-- 	mode = { "n", "v" },
+			-- },
+			-- {
+			-- 	"<leader>iad",
+			-- 	function()
+			-- 		vim.ui.input({ prompt = "what do you ask" }, function(input)
+			-- 			vim.cmd("CodeCompanion /buffer " .. input)
+			-- 		end)
+			-- 	end,
+			-- 	desc = "A[I] [A]sk to [D]o with a prompt [ga accept|gr reject]",
+			-- 	mode = { "n", "v" },
+			-- },
+			-- {
+			-- 	"<leader>ial",
+			-- 	"<cmd>CodeCompanion /lsp<CR>",
+			-- 	desc = "A[I] [A]sk to explain [L]sp diagnostics",
+			-- 	mode = { "n", "v" },
+			-- },
+			-- {
+			-- 	"<leader>ial",
+			-- 	"<cmd>CodeCompanion /commit<CR>",
+			-- 	desc = "A[I] [A]sk to generate a [C]ommit message",
+			-- 	mode = { "n", "v" },
+			-- },
+			-- -- /explain - Explain how selected code in a buffer works
+			-- -- /tests - Generate unit tests for selected code
+			-- -- /fix - Fix the selected code
+			-- -- /buffer - Send the current buffer to the LLM alongside a prompt
+			-- -- /lsp - Explain the LSP diagnostics for the selected code
+			-- -- /commit - Generate a commit message
+			-- {
+			-- 	"<leader>il",
+			-- 	"<cmd>CodeCompanionActions<CR>",
+			-- 	desc = "A[I] [L]ist of actions",
+			-- 	mode = { "n", "v" },
+			-- },
+			-- {
+			-- 	"<leader>il",
+			-- 	"<cmd>CodeCompanionAdd<CR>",
+			-- 	desc = "A[I] [I]ntegrate chat",
+			-- 	mode = { "v" },
+			-- },
 		},
 	},
 }
