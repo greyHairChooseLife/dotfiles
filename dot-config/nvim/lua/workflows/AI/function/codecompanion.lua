@@ -219,15 +219,18 @@ M.add_buffer_reference = function()
 		end)
 	end
 
-	local is_id_found = function(msg_tbl, target_id)
+	local is_content_found = function(msg_tbl, target_content)
+		-- REF:
+		-- cdc.last_chat():check_references(),
+		-- 같은 버퍼 여럿 넣으면 id 동일하다.
 		for _, msg in ipairs(msg_tbl) do
-			if msg.id == target_id then
+			if msg.content == target_content then
 				return true
 			end
 		end
 		return nil -- 없으면 nil 반환
 	end
-	local add_buf_to_last_chat = function()
+	local add_buf_to_last_chat = function(return_only)
 		local bufnr = vim.api.nvim_get_current_buf()
 
 		local content = require("codecompanion.utils.buffers").format_with_line_numbers(bufnr)
@@ -242,16 +245,22 @@ M.add_buffer_reference = function()
 		local path = vim.api.nvim_buf_get_name(bufnr)
 		local message = "Here is the content from"
 
+		content = string.format(
+			"%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
+			message,
+			vim.fn.fnamemodify(path, ":t"),
+			bufnr,
+			path,
+			content
+		)
+
+		if return_only then
+			return content
+		end
+
 		cdc.last_chat():add_message({
 			role = "user",
-			content = string.format(
-				"%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
-				message,
-				vim.fn.fnamemodify(path, ":t"),
-				bufnr,
-				path,
-				content
-			),
+			content = content,
 		}, { reference = id, visible = false })
 
 		cdc.last_chat().references:add({
@@ -273,15 +282,16 @@ M.add_buffer_reference = function()
 		end
 
 		-- TODO: CHECK IF SAME ID IS NOT BEING IN THE REF TABLE ON THE CHAT
-		--
-		-- local msg_tbl = chat.references.Chat.agents.messages
-		--
-		-- if msg_tbl then
-		--   if is_id_found(msg, )
-		-- end
-		--
-		-- cdc.last_chat():check_references(),
-		-- 같은 버퍼 여럿 넣으면 id 동일하다.
+
+		local msg_tbl = {}
+		if chat then
+			msg_tbl = chat.references.Chat.agents.messages
+			local content = add_buf_to_last_chat(true)
+
+			if is_content_found(msg_tbl, content) then
+				return vim.notify("Already in reference!", vim.log.levels.WARN)
+			end
+		end
 
 		add_buf_to_last_chat()
 	else
