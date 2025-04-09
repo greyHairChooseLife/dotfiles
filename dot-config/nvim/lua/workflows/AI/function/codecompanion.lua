@@ -307,9 +307,11 @@ M.add_buffer_reference = function()
 	end
 
 	-- UI redraw
-	require("utils").save_cursor_position()
-	M.focus_last_chat()
-	require("utils").restore_cursor_position()
+	vim.schedule(function()
+		require("utils").save_cursor_position()
+		M.focus_last_chat()
+		require("utils").restore_cursor_position()
+	end)
 end
 
 return M
