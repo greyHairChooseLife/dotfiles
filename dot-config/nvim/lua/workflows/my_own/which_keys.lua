@@ -107,8 +107,8 @@ wk_map({
 
 -- MEMO:: Copilot
 wk_map({
-	["<leader>c"] = {
-		group = "Copilot",
+	["<leader>C"] = {
+		group = "[deprecated]Copilot",
 		order = { "f", "t", "C", "p", "m" },
 		["f"] = { ChatWithCopilotOpen_Buffer, desc = "focus buffer", mode = { "n" } },
 		["t"] = { Toggle_ChatWithCopilot, desc = "toggle", mode = { "n" } },
@@ -118,14 +118,14 @@ wk_map({
 	},
 })
 wk_map({
-	["<leader>c"] = {
-		group = "Copilot..",
+	["<leader>C"] = {
+		group = "[deprecated]Copilot..",
 		order = { "f" },
 		["f"] = { ChatWithCopilotOpen_Visual, desc = "focus visual", mode = { "v" } },
 	},
 })
 wk_map({
-	["<leader>ce"] = {
+	["<leader>Ce"] = {
 		group = "Prefill",
 		order = { "1", "2", "3", "4", "5", "6", "7", "r", "R" },
 		["1"] = { "<cmd>CopilotChatExplain<CR>", desc = "코드 설명", mode = { "n", "v" } },
