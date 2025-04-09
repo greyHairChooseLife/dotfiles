@@ -9,6 +9,7 @@ M.colors = {
 	greenbg = "#98c379",
 	purple = "#c678dd",
 	orange = "#FF8C00",
+	orange_deep = "#cd853f",
 	wwhite = "#abb2bf",
 	white = "#ffffff",
 	bblack = "#282c34",
@@ -16,11 +17,12 @@ M.colors = {
 	terminal_bg = "#0c0c0c",
 	grey = "#333342",
 	bg = "#24283b",
-	bg2 = "#242024",
+	bg2 = "#242024", -- this is note bg color
 	active_qf = "#db4b4b",
 	qf_bg = "#201010",
 	nvimTree = "#333342",
 	active_oil = "#BDB80B",
+	oil_bg = "#1A1601",
 	purple1 = "#A020F0",
 	red2 = "#DC143C",
 	search = "#ffff00",
@@ -51,7 +53,7 @@ function M.empty()
 end
 
 function M.this_is_space()
-	return " "
+	return "                                                                                                     "
 end
 
 function M.search_counter()
@@ -133,6 +135,27 @@ function M.copilot_chat()
 	return model
 end
 
+function M.register_recording()
+	local register = vim.fn.reg_recording()
+	if #register > 0 then
+		return "<rec> ... @" .. register
+	else
+		return ""
+	end
+end
+
+function M.fill_color(color)
+	return {
+		{
+			function()
+				return ""
+			end,
+			draw_empty = true,
+			color = { bg = color },
+		},
+	}
+end
+
 -- Custom sections for different filetypes
 M.my_terminal = {
 	filetypes = { "terminal" },
@@ -171,10 +194,11 @@ M.my_quickfix = {
 		lualine_a = {
 			{
 				"filetype",
-				color = { bg = M.colors.qf_bg, fg = M.colors.white, gui = "bold,italic" },
+				color = { bg = M.colors.active_qf, fg = M.colors.white, gui = "bold,italic" },
 				padding = { left = 3, right = 5 },
 			},
 		},
+		lualine_b = M.fill_color(M.colors.qf_bg),
 	},
 }
 
@@ -228,11 +252,12 @@ M.my_fugitive = {
 		lualine_a = {
 			{
 				M.get_git_branch,
-				color = { bg = M.colors.bg2, fg = M.colors.orange, gui = "bold" },
+				color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
 				padding = { left = 1, right = 5 },
 				-- separator = { right = "" },
 			},
 		},
+		lualine_b = M.fill_color("#242024"),
 	},
 }
 
@@ -256,8 +281,7 @@ M.my_oil = {
 				-- separator = { right = " " },
 			},
 		},
-		lualine_b = { { M.empty, color = { bg = M.colors.grey } } },
-		lualine_z = { { M.this_is_space, color = { bg = M.colors.grey } } },
+		lualine_b = M.fill_color(M.colors.oil_bg),
 	},
 }
 
@@ -277,4 +301,69 @@ M.my_copilot_chat = {
 	},
 }
 
+local function codecompanion_adapter_name()
+	local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
+	if not chat then
+		return nil
+	end
+
+	-- REF: for debugging
+	-- print(vim.inspect(chat))
+
+	local win_len = vim.api.nvim_win_get_width(0)
+	local spinner_len = 24
+	local adapter_name = chat.adapter.formatted_name
+	local model_name = chat.settings.model
+
+	local padding_len = win_len - #adapter_name - #model_name - spinner_len - 15
+
+	return "(" .. adapter_name .. ")" .. string.rep(" ", padding_len)
+end
+local function codecompanion_current_model_name()
+	local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
+	if not chat then
+		return nil
+	end
+
+	return chat.settings.model
+end
+M.my_codecompanion = {
+	filetypes = { "codecompanion" },
+	sections = {
+		lualine_a = {
+			{
+				codecompanion_current_model_name,
+				color = { fg = M.colors.orange, bg = M.colors.bg2, gui = "italic" },
+				padding = { left = 2, right = 0 },
+			},
+			{
+				codecompanion_adapter_name,
+				color = { fg = M.colors.orange_deep, bg = M.colors.bg2, gui = "italic" },
+				padding = { left = 1, right = 7 },
+			},
+			{
+				require("workflows.AI.codecompanion_lualine_active_component"),
+				color = { fg = M.colors.orange, bg = M.colors.bg2 },
+			},
+		},
+	},
+	inactive_sections = {
+		lualine_a = {
+			{
+				codecompanion_current_model_name,
+				color = { fg = M.colors.orange, bg = M.colors.bg2, gui = "italic" },
+				padding = { left = 2, right = 0 },
+			},
+			{
+				codecompanion_adapter_name,
+				color = { fg = M.colors.orange_deep, bg = M.colors.bg2, gui = "italic" },
+				padding = { left = 1, right = 7 },
+			},
+			{
+				require("workflows.AI.codecompanion_lualine_inactive_component"),
+				color = { fg = M.colors.orange, bg = M.colors.bg2 },
+			},
+		},
+	},
+}
 return M
