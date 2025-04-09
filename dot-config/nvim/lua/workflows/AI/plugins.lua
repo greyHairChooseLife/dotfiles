@@ -544,5 +544,9 @@ Structure:\
 			-- 	mode = { "v" },
 			-- },
 		},
+		init = function()
+			vim.cmd([[cab ccc CodeCompanionCmd]])
+			vim.cmd([[cab cci CodeCompanion]])
+		end,
 	},
 }

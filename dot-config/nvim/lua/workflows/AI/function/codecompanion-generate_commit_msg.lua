@@ -48,7 +48,7 @@ return {
 	opts = {
 		is_slash_cmd = false,
 		-- modes = { "v" },
-		short_name = "analyze_git_staged_and_generate_commit_msg",
+		short_name = "generate_commit_msg",
 		auto_submit = true,
 		user_prompt = false,
 		ignore_system_prompt = true,
