@@ -295,6 +295,11 @@ M.add_buffer_reference = function()
 
 		add_selected_to_last_chat()
 	end
+
+	-- UI redraw
+	require("utils").save_cursor_position()
+	M.focus_last_chat()
+	require("utils").restore_cursor_position()
 end
 
 return M
