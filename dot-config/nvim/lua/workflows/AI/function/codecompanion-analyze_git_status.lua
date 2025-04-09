@@ -24,8 +24,8 @@ You are a commit assistant.
 - Commit message style
   - Title: concise, imperative English, under 50 characters
   - Body: Korean, 72-character line width
-  - Use `-` bullet points
   - Avoid full sentences, use concise phrases
+  - Use `-` bullet points and don't make empty line between those bullet points.
 
 - Output
   - In case of commit message, provide the message inside a ```gitcommit code block.
@@ -41,7 +41,7 @@ You are a commit assistant.
    - (in Korean)change 2
 
    _recommand_
-   `git add --patch <somefile> # startLN:endLN, startLN:endLN`
+   `git add <somefile>`
 
 2. fix: something
    - change 1
@@ -60,13 +60,13 @@ return {
 		is_slash_cmd = false,
 		-- modes = { "v" },
 		short_name = "analyze_git_status_for_commits",
-		auto_submit = true,
+		auto_submit = false,
 		user_prompt = false,
 		ignore_system_prompt = true,
 		stop_context_insertion = true,
 		adapter = {
 			name = "copilot",
-			model = "claude-3.5-sonnet",
+			model = "claude-3.7-sonnet",
 		},
 	},
 	prompts = {

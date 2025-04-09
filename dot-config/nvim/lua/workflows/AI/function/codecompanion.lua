@@ -108,6 +108,7 @@ M.inspect = function()
 	-- 	require("utils").restore_cursor_position()
 	-- end
 end
+
 M.test = function()
 	-- 	chat.add({
 	--   })
@@ -127,11 +128,6 @@ M.create_new = function()
 end
 
 M.toggle_last_chat = function()
-	-- local chat = cdc.last_chat()
-	-- print(chat.ui:is_visible())
-	-- print(chat.ui:is_active())
-	-- chat.ui:open()
-
 	require("utils").save_cursor_position()
 	cdc.toggle()
 	require("utils").restore_cursor_position()
@@ -182,26 +178,27 @@ M.add_buffer_reference = function()
 			local path = vim.api.nvim_buf_get_name(bufnr)
 			local message = "Here is the content from"
 
+			-- NOTE: 레퍼런스까지 넣어주는게 의미 있을까? 넣을거라면 차라리 해당 버퍼(파일) 전체를 넣어주는게 좋지 않을까?
 			-- 레퍼런스로 넣어주기
-			cdc.last_chat():add_message({
-				role = "user",
-				content = string.format(
-					"%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
-					message,
-					vim.fn.fnamemodify(path, ":t"),
-					bufnr,
-					path,
-					formatted_content_with_line_numbers
-				),
-			}, { reference = id, visible = false })
+			-- cdc.last_chat():add_message({
+			-- 	role = "user",
+			-- 	content = string.format(
+			-- 		"%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
+			-- 		message,
+			-- 		vim.fn.fnamemodify(path, ":t"),
+			-- 		bufnr,
+			-- 		path,
+			-- 		formatted_content_with_line_numbers
+			-- 	),
+			-- }, { reference = id, visible = false })
 
-			cdc.last_chat().references:add({
-				bufnr = bufnr,
-				id = id,
-				path = path,
-				source = "codecompanion.strategies.chat.slash_commands.buffer",
-				opts = {},
-			})
+			-- cdc.last_chat().references:add({
+			-- 	bufnr = bufnr,
+			-- 	id = id,
+			-- 	path = path,
+			-- 	source = "codecompanion.strategies.chat.slash_commands.buffer",
+			-- 	opts = {},
+			-- })
 
 			-- 채팅 버퍼에도 간단히 표시
 			local formatted_content = require("codecompanion.utils.buffers").format(bufnr, { start_line - 1, end_line })

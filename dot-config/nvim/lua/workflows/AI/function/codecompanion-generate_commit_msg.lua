@@ -37,7 +37,7 @@ You are a commit assistant.
 
           (if needed)
           _recommand_
-          `git add --patch <somefile> # startLN:endLN, startLN:endLN`
+          `git add <somefile>`
           `git reset --soft <somefile>`
           ````
 ]]

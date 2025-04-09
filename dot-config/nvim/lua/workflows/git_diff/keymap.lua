@@ -10,8 +10,8 @@ local opt = { noremap = true, silent = true }
 
 -- git status 관리
 map("n", ",g", "<cmd>G<CR>") -- shortcut
-map("n", "<leader>cc", "<cmd>silent G commit<CR>", { silent = true }) -- 즉시 커밋, 버퍼가 상단이 아니라 우측에서 열리도록 하고 view는 유지
-map("n", "<leader>ca", "<cmd>silent G commit --amend<CR>", { silent = true })
+map("n", "<leader>gc", "<cmd>silent G commit<CR>", { silent = true }) -- 즉시 커밋, 버퍼가 상단이 아니라 우측에서 열리도록 하고 view는 유지
+map("n", "<leader>ga", "<cmd>silent G commit --amend<CR>", { silent = true })
 
 -- DEPRECATED:: 2025-02-07, which-key
 -- map("n", ",vfd", ":vert diffsplit ") -- 파일 비교
