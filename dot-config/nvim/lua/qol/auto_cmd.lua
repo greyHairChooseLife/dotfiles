@@ -278,3 +278,22 @@ vim.api.nvim_create_autocmd("VimEnter", {
 		pcall(vim.keymap.del, "i", "<C-G>S")
 	end,
 })
+
+-- Make <Esc> behave like <C-c> when in search command line mode
+vim.api.nvim_create_augroup("SearchKeySwap", { clear = true })
+
+vim.api.nvim_create_autocmd("CmdlineEnter", {
+	group = "SearchKeySwap",
+	pattern = "/",
+	callback = function()
+		vim.api.nvim_buf_set_keymap(0, "c", "<Esc>", "<C-c>", { noremap = true })
+	end,
+})
+
+vim.api.nvim_create_autocmd("CmdlineLeave", {
+	group = "SearchKeySwap",
+	pattern = "/",
+	callback = function()
+		vim.api.nvim_buf_del_keymap(0, "c", "<Esc>")
+	end,
+})
