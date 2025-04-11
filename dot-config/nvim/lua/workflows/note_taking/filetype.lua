@@ -2,15 +2,10 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = "vimwiki",
 	callback = function()
 		-- SNIPPET
-		vim.keymap.set("i", ",,h2", function()
-			vim.api.nvim_feedkeys("## ", "i", true)
-		end)
-		vim.keymap.set("i", ",,h3", function()
-			vim.api.nvim_feedkeys("### ", "i", true)
-		end)
-		vim.keymap.set("i", ",,h4", function()
-			vim.api.nvim_feedkeys("#### ", "i", true)
-		end)
+		-- DEPRECATED:: 2025-04-12
+		-- vim.keymap.set("i", ",,h2", function()
+		-- 	vim.api.nvim_feedkeys("## ", "i", true)
+		-- end)
 
 		-- callouts
 		vim.keymap.set("i", ",,qt", function()
@@ -55,12 +50,6 @@ vim.api.nvim_create_autocmd("FileType", {
 		-- callout: 개념정리
 		vim.keymap.set("i", ",,cn", function()
 			vim.api.nvim_put({ "> [!cn] 개념정리", "> ", "> " }, "c", false, true)
-		end)
-
-		vim.keymap.set("n", "<leader>w", function()
-			vim.cmd("wa")
-			-- vim.notify('Saved all buffers', 3, { render = 'minimal' })
-			vim.notify("Saved all buffers", 3)
 		end)
 
 		vim.keymap.set("n", "<leader><leader>w", "<cmd>VimwikiIndex<CR>")
@@ -169,24 +158,9 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = "markdown",
+	pattern = { "markdown", "codecompanion" },
 	callback = function()
-		-- SNIPPET
-		vim.keymap.set("i", ",,h2", function()
-			vim.api.nvim_feedkeys("## ", "i", true)
-		end)
-		vim.keymap.set("i", ",,h3", function()
-			vim.api.nvim_feedkeys("### ", "i", true)
-		end)
-		vim.keymap.set("i", ",,h4", function()
-			vim.api.nvim_feedkeys("#### ", "i", true)
-		end)
-
 		-- KEYMAPS
-		vim.keymap.set("n", "PP", "<cmd>MarkdownPreview<CR>", { buffer = true })
-		vim.keymap.set("v", "i", "<ESC>i", { buffer = true })
-		vim.keymap.set("v", "a", "<ESC>a", { buffer = true })
-
 		vim.keymap.set("v", "<C-b>", ":lua require('markdowny').bold()<cr>", { buffer = true })
 		vim.keymap.set("v", "<C-i>", ":lua require('markdowny').italic()<cr>", { buffer = true })
 		vim.keymap.set("v", "<C-c>", ":lua require('markdowny').cancel()<cr>", { buffer = true })
