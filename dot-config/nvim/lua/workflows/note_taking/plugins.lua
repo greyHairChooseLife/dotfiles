@@ -806,7 +806,7 @@ return {
 			-- local window_id = require("global-note").get_note_window("todo")
 
 			filename = "global-note.md",
-			directory = "~/Documents/global-note/",
+			directory = "~/Documents/",
 			title = "     Global     ",
 			command_name = "GlobalNote",
 
@@ -847,19 +847,34 @@ return {
 			end,
 
 			additional_presets = {
-				-- projects = {
-				-- 	filename = "projects-to-do.md",
-				-- 	title = "List of projects",
-				-- 	command_name = "ProjectsNote",
-				-- 	-- All not specified options are used from the root.
-				-- },
 				project_local = {
 					command_name = "LocalNote",
-					title = "     Local     ",
+					title = "     README     ",
+					directory = function()
+						-- Try to get git root directory first
+						local git_root = vim.system({
+							"git",
+							"rev-parse",
+							"--show-toplevel",
+						}, {
+							text = true,
+						}):wait()
+
+						if git_root.code == 0 then
+							-- Remove trailing newline and return the git root
+							return git_root.stdout:gsub("\n", "") .. "/"
+						else
+							-- Fall back to current working directory
+							local cwd, err = vim.uv.cwd()
+							if cwd == nil then
+								vim.notify(err or "Unknown error getting current directory", vim.log.levels.WARN)
+								return "~/Documents/notes/" -- Fallback directory if cwd fails
+							end
+							return cwd .. "/"
+						end
+					end,
 					filename = function()
-						local project_name = require("utils").get_project_name_by_git({ print_errors = false })
-							or require("utils").get_project_name_by_cwd()
-						return project_name .. ".md"
+						return "README.md"
 					end,
 
 					post_open = function(_, _)
