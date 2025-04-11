@@ -42,511 +42,202 @@ return {
 			server_opts_overrides = {},
 		},
 	},
-
-	{
-		"yetone/avante.nvim",
-		-- MEMO:
-		--
-		-- HOW TO INSTALL
-		--  https://github.com/yetone/avante.nvim/issues/581#issuecomment-2394807552 packer 전용 플러그인 정의
-		--  https://github.com/yetone/avante.nvim/issues/612#issuecomment-2375729928 설치 후 build 방법
-		--  https://github.com/yetone/avante.nvim/issues/612#issuecomment-2401169692 config에 앞서 avante_lib을 불러와야한다.
-		build = "make BUILD_FROM_SOURCE=true",
-		-- lazy = false,
-		cmd = {
-			"AvanteAsk",
-			"AvanteFocus",
-			"AvanteChat",
-			"AvanteToggle",
-		},
-		version = false,
-		BUILD_FROM_SOURCE = true,
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"stevearc/dressing.nvim",
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			--- The below dependencies are optional,
-			"nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-			-- "HakonHarnes/img-clip.nvim",
-		},
-		config = function()
-			require("avante_lib").load()
-			require("avante").setup({
-				---@alias Provider "claude" | "openai" | "azure" | "gemini" | "cohere" | "copilot" | string
-				provider = "claude", -- Recommend using Claude
-				auto_suggestions_provider = "claude", -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
-				-- claude = {
-				--   endpoint = "https://api.anthropic.com",
-				--   model = "claude-3-5-sonnet-latest",
-				--   -- model = "claude-3-5-haiku-20241022", -- yet no supported
-				--   temperature = 0,
-				--   max_tokens = 4096,
-				-- },
-				behaviour = {
-					auto_suggestions = false, -- Experimental stage
-					auto_set_highlight_group = true,
-					auto_set_keymaps = true,
-					auto_apply_diff_after_generation = false,
-					support_paste_from_clipboard = false,
-					enable_claude_text_editor_tool_mode = true,
-				},
-				mappings = {
-					--- @class AvanteConflictMappings
-					diff = {
-						ours = "co",
-						theirs = "cu",
-						all_theirs = "ca",
-						both = "cb",
-						cursor = "c<Space>",
-						next = "]x",
-						prev = "[x",
-					},
-					suggestion = {
-						accept = "<M-l>",
-						next = "<M-]>",
-						prev = "<M-[>",
-						dismiss = "<C-]>",
-					},
-					jump = {
-						next = "cn",
-						prev = "cp",
-					},
-					submit = {
-						normal = "<CR>",
-						insert = "<C-s>",
-					},
-					sidebar = {
-						apply_all = "A",
-						apply_cursor = "a",
-						switch_windows = "<Tab>",
-						reverse_switch_windows = "<S-Tab>",
-					},
-				},
-				hints = { enabled = false },
-				windows = {
-					---@type "right" | "left" | "top" | "bottom"
-					position = "right", -- the position of the sidebar
-					wrap = true, -- similar to vim.o.wrap
-					width = 50, -- default % based on available width
-					sidebar_header = {
-						align = "right", -- left, center, right for title
-						rounded = false,
-					},
-					ask = {
-						start_insert = false,
-					},
-				},
-				highlights = {
-					---@type AvanteConflictHighlights
-					diff = {
-						current = "DiffDelete",
-						incoming = "DiffAdd",
-					},
-				},
-				--- @class AvanteConflictUserConfig
-				diff = {
-					autojump = true,
-					---@type string | fun(): any
-					-- list_opener = "copen",
-				},
-				--- @class AvanteRepoMapConfig
-				repo_map = {
-					ignore_patterns = { "%.git", "%.worktree", "__pycache__", "node_modules" }, -- ignore files matching these
-				},
-				--- https://github.com/yetone/avante.nvim/commit/a1da070
-				--- @class AvanteFileSelectorConfig
-				--- @field provider "native" | "fzf" | "telescope"
-				file_selector = {
-					-- e.g native, fzf, telescope
-					-- native for vim.ui.select
-					provider = "telescope",
-					-- Options override for custom providers
-					provider_opts = {},
-				},
-			})
-		end,
-	},
-
-	{
-		-- dir = IS_DEV and "~/research/CopilotChat.nvim" or nil,
-		"CopilotC-Nvim/CopilotChat.nvim",
-		cmd = {
-			"CopilotChat",
-			"CopilotChatOpen",
-			"CopilotChatClose",
-			"CopilotChatToggle",
-			"CopilotChatStop",
-			"CopilotChatReset",
-			"CopilotChatSave",
-			"CopilotChatLoad",
-			"CopilotChatPrompts",
-			"CopilotChatModels",
-			"CopilotChatAgents",
-			"CopilotChatCommit",
-			"CopilotChatExplain",
-			"CopilotChatReview",
-			"CopilotChatFix",
-			"CopilotChatOptimize",
-			"CopilotChatDocs",
-			"CopilotChatTests",
-			"CopilotChatReviewCommit",
-			"CopilotChatReviewCommitDeep",
-			"CopilotChatBetterNamings",
-		},
-		dependencies = {
-			-- { "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
-			{ "zbirenbaum/copilot.lua" },
-			{ "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
-		},
-		build = "make tiktoken", -- Only on MacOS or Linux
-		opts = {
-			model = "claude-3.7-sonnet",
-			agent = "copilot",
-			context = "#buffers",
-			-- sticky = "#buffers",
-
-			-- highlight_headers = true,
-			question_header = "  󰟷  ", -- Header to use for user questions
-			answer_header = "  󱞩 Copilot   ", -- Header to use for AI answers
-			separator = "", -- Separator to use in chat
-			error_header = "[!ERROR]  Error ",
-			references_display = "write",
-			show_help = false, -- Shows help message as virtual lines when waiting for user input
-			insert_at_end = false,
-			selection = false, -- Have no predefined context by default
-			debug = false, -- Enable debug logging (same as 'log_level = 'debug')
-
-			-- providers = {
-			-- 	copilot = { "claude-3.7-sonnet" },
-			-- 	github_models = {},
-			-- 	copilot_embeddings = {},
-			-- },
-
-			prompts = {
-				Explain = {
-					prompt = "Write an explanation for the selected code as paragraphs of text.",
-					system_prompt = "COPILOT_EXPLAIN",
-				},
-				Review = {
-					prompt = "Review the selected code.",
-					system_prompt = "COPILOT_REVIEW",
-				},
-				Fix = {
-					prompt = "There is a problem in this code. Identify the issues and rewrite the code with fixes. Explain what was wrong and how your changes address the problems.",
-				},
-				Optimize = {
-					prompt = "Optimize the selected code to improve performance and readability. Explain your optimization strategy and the benefits of your changes.",
-				},
-				Docs = {
-					prompt = "Please add documentation comments to the selected code.",
-					model = "claude-3.5-sonnet",
-				},
-				Tests = {
-					prompt = "Please generate tests for my code.",
-				},
-				Commit = {
-					prompt = "Write a commit message following the commitizen convention.  \
-- Title: Under 50 characters, in English  \
-- Body: In Korean, wrapped at 72 characters  \
-- Format as a `gitcommit` code block  \
-- Body should be concise, using bullet points with `-` icon  \
-- Avoid full sentences, use imperative and concise phrases ",
-					context = "git:staged",
-					model = "claude-3.5-sonnet",
-					callback = function(response)
-						require("CopilotChat").close()
-						-- Extract just the commit message from inside the gitcommit code block
-						local commit_message = response:match("```gitcommit\n(.-)\n```") or response
-						vim.fn.setreg("+", commit_message)
-
-						vim.cmd("silent G commit")
-						-- Wait briefly for the commit buffer to open, then paste the response
-						vim.defer_fn(function()
-							vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("P", true, false, true), "n", false)
-						end, 100)
-					end,
-				},
-				ReviewCommit = {
-					prompt = "Please read the provided Git diff and write a concise technical report in Korean, following the structure below. Respond only in Korean.\
-Structure:\
-- Title: One-line summary\
-- Summary of Changes\
-- Description of Functional or Behavioral Impact\
-- Examples in a format of 'as-is, to-be'",
-					context = {
-						"system:`git --no-pager log -p HEAD^..HEAD`",
-					},
-
-					-- model = "claude-3.5-sonnet",
-				},
-				CopilotChatReviewCommitDeep = {
-					prompt = "Please read the provided Git diff and write a concise technical report in Korean, following the structure below. Respond only in Korean.\
-Structure:\
-- Title: One-line summary\
-- Summary of Changes\
-- Description of Functional or Behavioral Impact\
-- Examples in a format of 'as-is, to-be'",
-					-- - Risks and Suggestions for Improvement\
-					-- - Areas That Require Testing or Verification",
-					context = {
-						"system:`git --no-pager log -p HEAD^..HEAD`",
-						"system:`git diff --name-only HEAD^..HEAD | xargs -I {} sh -c 'echo ===== {}; git show HEAD^:{}'`", -- full file contents related
-					},
-
-					-- model = "claude-3.5-sonnet",
-				},
-				BetterNamings = {
-					prompt = "Please provide better names for the following variables and functions.",
-					model = "claude-3.5-sonnet",
-				},
-			},
-
-			contexts = {
-				-- BUG:: WORK IN PROGRESS
-				-- chaged_files = {
-				-- 	resolve = function()
-				-- 		local get_context = require("workflows.AI.get_context")
-				-- 		local changed_list = get_context.get_changed_files()
-				-- 		local context = get_context.read_files(changed_list)
-				-- 		return context
-				-- 	end,
-				-- },
-			},
-
-			mappings = {
-				complete = {
-					insert = "<Tab>",
-				},
-				close = {
-					normal = "gq",
-					insert = "<C-c>",
-				},
-				toggle_sticky = {
-					normal = ",st",
-				},
-				clear_stickies = {
-					normal = ",sc",
-				},
-				accept_diff = {
-					normal = "<C-y>",
-					insert = "<C-y>",
-				},
-				jump_to_diff = {
-					normal = "gJ",
-				},
-				quickfix_answers = {
-					normal = ",qa",
-				},
-				quickfix_diffs = {
-					normal = ",qd",
-				},
-				yank_diff = {
-					normal = ",dy",
-					register = '"', -- Default register to use for yanking
-				},
-				show_diff = {
-					normal = ",dv",
-					full_diff = true, -- Show full diff instead of unified diff when showing diff window
-				},
-				show_info = {
-					normal = "gi",
-				},
-				show_context = {
-					normal = "gc",
-				},
-				show_help = {
-					normal = "?",
-				},
-			},
-		},
-		-- config = function(_, opts)
-		-- 	local chat = require("CopilotChat")
-		-- 	chat.setup(opts)
-		-- end,
-	},
 	{
 		"olimorris/codecompanion.nvim",
 		event = "VeryLazy",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
-		},
-		opts = {
-			display = {
-				chat = {
-					intro_message = "",
-					show_header_separator = false, -- Show header separators in the chat buffer? Set this to false if you're using an external markdown formatting plugin
-					separator = "=", -- The separator between the different messages in the chat buffer
-					show_references = true, -- Show references (from slash commands and variables) in the chat buffer?
-					show_settings = false, -- Show LLM settings at the top of the chat buffer?
-					show_token_count = true, -- Show the token count for each response?
-					start_in_insert_mode = false, -- Open the chat buffer in insert mode?
-					icons = {
-						pinned_buffer = " ",
-						watched_buffer = "󰴅 ",
-					},
-					window = {
-						height = 0.8,
-						width = math.max(math.min(math.floor(0.45 * vim.o.columns), 135), 100), -- 최대 135, 최소 100
-					},
-				},
-				action_palette = {
-					width = 95,
-					height = 10,
-					prompt = "Prompt ", -- Prompt used for interactive LLM calls
-					provider = "telescope", -- default|telescope|mini_pick
-					opts = {
-						show_default_actions = true, -- Show the default actions in the action palette?
-						show_default_prompt_library = false, -- Show the default prompt library in the action palette?
-					},
-				},
-			},
-			adapters = {
-				opts = {
-					show_defaults = false,
-				},
-				copilot = function()
-					return require("codecompanion.adapters").extend("copilot", {
-						schema = {
-							model = {
-								default = "claude-3.7-sonnet",
-								-- default = "claude-3.7-sonnet-thought",
-							},
-						},
-					})
-				end,
-				anthropic = function()
-					return require("codecompanion.adapters").extend("anthropic", {})
-				end,
-			},
-			strategies = {
-				chat = {
-					roles = {
-						---The header name for the LLM's messages
-						---@type string|fun(adapter: CodeCompanion.Adapter): string
-						llm = function(adapter)
-							return " 󱞩   _" .. adapter.formatted_name
-						end,
-
-						---The header name for your messages
-						---@type string
-						user = " 󰟷",
-					},
-					keymaps = {
-						close = { modes = { n = "<C-c>", i = "<C-c>" } },
-						send = { modes = { i = { "<C-s>", "<A-Enter>" } } },
-						stop = { modes = { n = "gs" } },
-						pin = { modes = { n = "grp" } },
-						watch = { modes = { n = "grw" } },
-						clear = { modes = { n = "gX" } },
-						previous_header = { modes = { n = "<C-p>" } },
-						next_header = { modes = { n = "<C-n>" } },
-						previous_chat = { modes = { n = "<C-[>" } },
-						next_chat = { modes = { n = "<C-]>" } },
-						system_prompt = { modes = { n = "gts" } }, -- toggle system prompts
-						regenerate = { modes = { n = "gR" } },
-					},
-					adapter = "copilot",
-					slash_commands = {
-						-- ["better_commit"] = require("workflows.AI.function.codecompanion-better_commit"),
-					},
-				},
-				inline = {
-					adapter = "copilot",
-					keymaps = {
-						accept_change = { modes = { n = "ca" } },
-						reject_change = { modes = { n = "cr" } },
-					},
-				},
-			},
-			prompt_library = {
-				-- touch default
-				["Generate a Commit Message"] = { opts = { is_slash_cmd = false, short_name = "[deprecated] commit" } },
-				-- custom
-				["Review Commit"] = require("workflows.AI.function.codecompanion-review_commit"),
-				["Generate CommitMsg"] = require("workflows.AI.function.codecompanion-generate_commit_msg"),
-				["Analyze Git Status for branching commits"] = require(
-					"workflows.AI.function.codecompanion-analyze_git_status"
-				),
-				["Load Full-context of the git status"] = require(
-					"workflows.AI.function.codecompanion-get_full_git_status_reference"
-				),
-			},
-		},
-		keys = {
-			-- {
-			-- 	"<leader>ic",
-			-- 	"<cmd>CodeCompanionToggle<CR>",
-			-- 	desc = "A[I] [C]hat",
-			-- 	mode = { "n", "v" },
-			-- },
-			-- {
-			-- 	"<leader>ia",
-			-- 	desc = "A[I] [A]sk",
-			-- },
-			-- {
-			-- 	"<leader>iae",
-			-- 	"<cmd>CodeCompanion /explain<CR>",
-			-- 	desc = "A[I] [A]sk to [E]xplain",
-			-- 	mode = { "n", "v" },
-			-- },
-			-- {
-			-- 	"<leader>iaf",
-			-- 	"<cmd>CodeCompanion /fix<CR>",
-			-- 	desc = "A[I] [A]sk to [F]ix",
-			-- 	mode = { "n", "v" },
-			-- },
-			-- {
-			-- 	"<leader>iat",
-			-- 	"<cmd>CodeCompanion /tests<CR>",
-			-- 	desc = "A[I] [A]sk to create [T]tests",
-			-- 	mode = { "n", "v" },
-			-- },
-			-- {
-			-- 	"<leader>iad",
-			-- 	function()
-			-- 		vim.ui.input({ prompt = "what do you ask" }, function(input)
-			-- 			vim.cmd("CodeCompanion /buffer " .. input)
-			-- 		end)
-			-- 	end,
-			-- 	desc = "A[I] [A]sk to [D]o with a prompt [ga accept|gr reject]",
-			-- 	mode = { "n", "v" },
-			-- },
-			-- {
-			-- 	"<leader>ial",
-			-- 	"<cmd>CodeCompanion /lsp<CR>",
-			-- 	desc = "A[I] [A]sk to explain [L]sp diagnostics",
-			-- 	mode = { "n", "v" },
-			-- },
-			-- {
-			-- 	"<leader>ial",
-			-- 	"<cmd>CodeCompanion /commit<CR>",
-			-- 	desc = "A[I] [A]sk to generate a [C]ommit message",
-			-- 	mode = { "n", "v" },
-			-- },
-			-- -- /explain - Explain how selected code in a buffer works
-			-- -- /tests - Generate unit tests for selected code
-			-- -- /fix - Fix the selected code
-			-- -- /buffer - Send the current buffer to the LLM alongside a prompt
-			-- -- /lsp - Explain the LSP diagnostics for the selected code
-			-- -- /commit - Generate a commit message
-			-- {
-			-- 	"<leader>il",
-			-- 	"<cmd>CodeCompanionActions<CR>",
-			-- 	desc = "A[I] [L]ist of actions",
-			-- 	mode = { "n", "v" },
-			-- },
-			-- {
-			-- 	"<leader>il",
-			-- 	"<cmd>CodeCompanionAdd<CR>",
-			-- 	desc = "A[I] [I]ntegrate chat",
-			-- 	mode = { "v" },
-			-- },
+			-- "ravitemer/mcphub.nvim",
+			-- "j-hui/fidget.nvim",
+			"echasnovski/mini.diff",
 		},
 		init = function()
 			vim.cmd([[cab ccc CodeCompanionCmd]])
 			vim.cmd([[cab cci CodeCompanion]])
+		end,
+		config = function()
+			local codecompanion = require("codecompanion")
+			-- Set up function to sync mini.diff highlights with current colorscheme
+			local function sync_diff_highlights()
+				-- Link the MiniDiff's custom highlights to the default diff highlights
+				-- Set highlight color for added lines to match the default DiffAdd highlight
+				vim.api.nvim_set_hl(0, "MiniDiffOverAdd", { link = "DiffAdd" })
+				-- Set highlight color for deleted lines to match the default DiffDelete highlight
+				vim.api.nvim_set_hl(0, "MiniDiffOverDelete", { link = "DiffDelete" })
+				-- Set highlight color for changed lines to match the default DiffChange highlight
+				vim.api.nvim_set_hl(0, "MiniDiffOverChange", { link = "DiffChange" })
+				-- Set highlight color for context lines to match the default DiffText highlight
+				vim.api.nvim_set_hl(0, "MiniDiffOverContext", { link = "DiffText" })
+			end
+
+			-- Initial highlight setup
+			sync_diff_highlights()
+
+			-- Update highlights when colorscheme changes
+			vim.api.nvim_create_autocmd("ColorScheme", {
+				callback = sync_diff_highlights,
+				group = vim.api.nvim_create_augroup("CodeCompanionDiffHighlights", {}),
+			})
+
+			require("codecompanion").setup({
+				display = {
+					chat = {
+						intro_message = "",
+						show_header_separator = false, -- Show header separators in the chat buffer? Set this to false if you're using an external markdown formatting plugin
+						separator = "=", -- The separator between the different messages in the chat buffer
+						show_references = true, -- Show references (from slash commands and variables) in the chat buffer?
+						show_settings = false, -- Show LLM settings at the top of the chat buffer?
+						show_token_count = true, -- Show the token count for each response?
+						start_in_insert_mode = false, -- Open the chat buffer in insert mode?
+						icons = {
+							pinned_buffer = " ",
+							watched_buffer = "󰴅 ",
+						},
+						window = {
+							height = 0.8,
+							width = math.max(math.min(math.floor(0.45 * vim.o.columns), 135), 100), -- 최대 135, 최소 100
+						},
+					},
+					action_palette = {
+						width = 95,
+						height = 10,
+						prompt = "Prompt ", -- Prompt used for interactive LLM calls
+						provider = "telescope", -- default|telescope|mini_pick
+						opts = {
+							show_default_actions = true, -- Show the default actions in the action palette?
+							show_default_prompt_library = false, -- Show the default prompt library in the action palette?
+						},
+					},
+					diff = {
+						enabled = true,
+						close_chat_at = 1,
+						provider = "mini_diff",
+						opts = { "internal", "filler", "closeoff", "algorithm:patience", "followwrap", "linematch:120" },
+					},
+				},
+				adapters = {
+					opts = {
+						show_defaults = false,
+					},
+					copilot = function()
+						return require("codecompanion.adapters").extend("copilot", {
+							schema = {
+								model = {
+									default = "claude-3.7-sonnet",
+									-- default = "claude-3.7-sonnet-thought",
+								},
+							},
+						})
+					end,
+					anthropic = function()
+						return require("codecompanion.adapters").extend("anthropic", {})
+					end,
+				},
+				strategies = {
+					chat = {
+						roles = {
+							---The header name for the LLM's messages
+							---@type string|fun(adapter: CodeCompanion.Adapter): string
+							llm = function(adapter)
+								return " 󱞩   _" .. adapter.formatted_name
+							end,
+
+							---The header name for your messages
+							---@type string
+							user = " 󰟷",
+						},
+						keymaps = {
+							close = { modes = { n = "<C-c>", i = "<C-c>" } },
+							send = { modes = { i = { "<C-s>", "<A-Enter>" } } },
+							stop = { modes = { n = "gs" } },
+							pin = { modes = { n = "grp" } },
+							watch = { modes = { n = "grw" } },
+							clear = { modes = { n = "gX" } },
+							previous_header = { modes = { n = "<C-p>" } },
+							next_header = { modes = { n = "<C-n>" } },
+							previous_chat = { modes = { n = "]]" } },
+							next_chat = { modes = { n = "[[" } },
+							system_prompt = { modes = { n = "gts" } }, -- toggle system prompts
+							regenerate = { modes = { n = "gR" } },
+						},
+						adapter = "copilot",
+						slash_commands = require("workflows.AI.codecompanion.slash_commands"),
+						-- tools = require("workflows.AI.codecompanion.tools"),
+						-- variables = {},
+					},
+					inline = {
+						adapter = "copilot",
+						keymaps = {
+							accept_change = { modes = { n = "ca" } },
+							reject_change = { modes = { n = "cr" } },
+						},
+					},
+				},
+				prompt_library = {
+					-- touch default
+					["Generate a Commit Message"] = {
+						opts = { is_slash_cmd = false, short_name = "[deprecated] commit" },
+					},
+					-- custom
+					["Review Commit"] = require("workflows.AI.function.codecompanion-review_commit"),
+					["Generate CommitMsg"] = require("workflows.AI.function.codecompanion-generate_commit_msg"),
+					["Analyze Git Status for branching commits"] = require(
+						"workflows.AI.function.codecompanion-analyze_git_status"
+					),
+					["Load Full-context of the git status"] = require(
+						"workflows.AI.function.codecompanion-get_full_git_status_reference"
+					),
+				},
+				opts = {
+					-- system_prompt = require("workflows.AI.codecompanion.system_prompt"),
+				},
+			})
+
+			-- START_debug:
+			-- local function compact_reference(messages)
+			-- 	local refs = {}
+			-- 	local result = {}
+
+			-- 	-- First loop to find last occurrence of each reference
+			-- 	for i, msg in ipairs(messages) do
+			-- 		if msg.opts and msg.opts.reference then
+			-- 			refs[msg.opts.reference] = i
+			-- 		end
+			-- 	end
+
+			-- 	-- Second loop to keep messages with unique references
+			-- 	for i, msg in ipairs(messages) do
+			-- 		local ref = msg.opts and msg.opts.reference
+			-- 		if not ref or refs[ref] == i then
+			-- 			table.insert(result, msg)
+			-- 		end
+			-- 	end
+
+			-- 	return result
+			-- end
+
+			-- vim.api.nvim_create_autocmd({ "User" }, {
+			-- 	pattern = "CodeCompanionRequestFinished",
+			-- 	callback = function(request)
+			-- 		if request.data.strategy ~= "chat" then
+			-- 			return
+			-- 		end
+			-- 		local current_chat = codecompanion.last_chat()
+			-- 		if not current_chat then
+			-- 			return
+			-- 		end
+			-- 		-- local config = require("codecompanion.config")
+			-- 		-- local add_reference = require("workflows.AI.codecompanion.utils.add_reference")
+			-- 		--
+			-- 		-- add_reference(current_chat, {
+			-- 		--   role = config.constants.USER_ROLE,
+			-- 		--   content = string.format("# Environment\n- Current Time: %s\n", os.date("%c")),
+			-- 		-- }, "system_prompt", "environment")
+			-- 		current_chat.messages = compact_reference(current_chat.messages)
+			-- 	end,
+			-- })
+			-- END___debug:
 		end,
 	},
 }

@@ -55,11 +55,12 @@ return {
 			},
 			incremental_selection = {
 				enable = true,
+				disable = { "markdown" }, -- vimwiki로는 지정이 안된다..
 				keymaps = {
-					init_selection = "<C-space>",
-					node_incremental = "<C-space>",
-					scope_incremental = false,
-					node_decremental = "<bs>",
+					init_selection = "<CR>",
+					scope_incremental = "<CR>",
+					node_incremental = "<TAB>",
+					node_decremental = "<S-TAB>",
 				},
 			},
 			textobjects = {

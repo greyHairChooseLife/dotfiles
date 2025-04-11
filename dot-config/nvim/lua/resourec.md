@@ -36,6 +36,9 @@
   vim.cmd([[cab cc CodeCompanion]])
   ```
 
+## best practice
+
+- https://github.com/yingmanwumen/nvim
 
 
 ## plugin config example 
@@ -329,3 +332,5 @@
     },
   }
   ```
+
+

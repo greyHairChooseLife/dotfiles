@@ -128,8 +128,61 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 ## Todo - nvim
 
+### TODO
 
-### 관심있는 플러그인
+#### 읽을것 읽기
+
+5개 링크
+
+- https://github.com/jmacadie/telescope-hierarchy.nvim
+- https://www.reddit.com/r/neovim/comments/1h25lal/what_are_your_favorite_underappreciated_neovim/
+- https://github.com/rachartier/tiny-inline-diagnostic.nvim
+- https://github.com/Wansmer/treesj
+- https://www.google.com/search?q=codecompanion%20vs%20avante%20vs%20copilotchat
+
+
+#### neovim-config
+
+##### global
+
+- lua-ls에서 emptyline info는 제거하기
+
+- vimwiki, 저장 시 공백 모두 제거하는 autocmd 제거
+
+- 블록 지정한 요소로 바로 커밋 메시지 쏴버리는 함수 및 키맵도 만들자.
+
+- block 지정한 코드라인을 현재 cwd에서 실행하는 기능.  현재도 `,cr` 및 `,ccr`로
+  하고있지만, 불완전한 기능이고 또 즉시 실행 및 현재 위치에 결과 로드 등도
+  필요하다.
+  - 관련된 플러그인도 있을만한데?
+  - normal 모드에서 현재 라인을 실행
+
+
+- local-note에서 project-note는 각 레포지토리에 저장하도록 하자.
+
+- vimwiki(markdown)에서 text-object 지정하는거 예외로 만든 keymap은 쓸모 없는듯 하다. 제거하자. `ex> viw`
+
+- message window에도 eof 및 highlight가 불안정하다.
+
+- revive last closed buffer 기능이 망가졌다. 되살아나지 않거나, 현재 커서가 위치한 버퍼가 또 켜질 뿐이다.
+
+- nvim-tree에서 특정 파일을 floating으로 켜지게 하는 키맵도 있으면 좋겠다.
+
+
+- 그.. dn, dp로 navigate 할시 under_lines가 뜨고 open_float는 dK로만 작동하기.
+  - 디테일을 추가하자면 이때 under_lines는 toggle 아니고 한번만 뜨도록.
+
+
+- <CR> 가지고 visual selection 만드는거 (tree-sitter), vimwiki에선 제외해야한다.
+
+
+
+##### codecompanion
+
+- /workspace with vectorcode plugin [ref](https://codecompanion.olimorris.dev/extending/workspace.html)
+- mcp!
+
+##### 관심있는 플러그인
 
 - [snacks.scope](https://github.com/folke/snacks.nvim/blob/main/docs/scope.md)
   : 조건문, 반복문 등도 treesitter에 등록시켜주나? 그래서 aerial에서도 확인 할 수 있나?

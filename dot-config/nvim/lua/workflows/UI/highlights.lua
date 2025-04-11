@@ -123,7 +123,11 @@ vim.cmd([[
   highlight RenderMarkdownQuote guifg=#5F5F5F
   highlight RenderMarkdownBullet guifg=#007F7F gui=bold
   highlight RenderMarkdownUnchecked guifg=#CA4500
+  highlight RenderMarkdownUncheckedScope guifg=#f08080
   highlight RenderMarkdownChecked guifg=#32CD32
+  highlight RenderMarkdownCheckedScope guifg=#98C379
+  highlight RenderMarkdownCancel guifg=#8b8378
+  highlight RenderMarkdownCancelScope guifg=#8b8378 gui=strikethrough
 
   highlight RenderMarkdownMyTodo guifg=#CA4500 gui=bold,italic
   highlight RenderMarkdownMyTodoFin guifg=#1e6e40 gui=bold,italic

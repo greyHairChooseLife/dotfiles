@@ -28,8 +28,13 @@ function NavBuffAfterCleaning(direction)
 	utils.print_in_time("  Buffers .. [" .. current_buf_index .. "/" .. #filtered_buffers .. "]", 2)
 end
 
+-- TODO:: Not deleteing buffer properly
 function ManageBuffer_gq()
 	local bufnr = vim.fn.bufnr("%")
+
+	if vim.bo[bufnr].filetype == "codecompanion" then
+		return vim.cmd("q")
+	end
 
 	local excluded_filetypes = { "help", "copilot-chat", "gitcommit" }
 	local excluded_buftypes = { "nofile" }

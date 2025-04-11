@@ -77,6 +77,10 @@ return {
 				"gitcommit",
 				"codecompanion",
 			},
+			-- Takes buffer as input, if it returns true this plugin will not attach to the buffer
+			ignore = function()
+				return false
+			end,
 			-- Maximum file size (in MB) that this plugin will attempt to render
 			-- Any file larger than this will effectively be ignored
 			max_file_size = 1.5,
@@ -88,7 +92,7 @@ return {
 			log_level = "error",
 			-- Vim modes that will show a rendered view of the markdown file
 			-- All other modes will be uneffected by this plugin
-			render_modes = { "n", "c", "i" },
+			render_modes = { "n", "v", "V", "c", "i" },
 			on = {
 				-- Called when plugin initially attaches to a buffer.
 				attach = function() end,
@@ -330,19 +334,19 @@ return {
 				right_pad = 1, -- 체크박스 오른쪽에 추가할 여백
 				unchecked = {
 					-- Replaces '[ ]' of 'task_list_marker_unchecked'
-					icon = "󰄱 ", --  ,󰄱
+					icon = "󰄱", --  ,󰄱
 					-- Highlight for the unchecked icon
 					highlight = "RenderMarkdownUnchecked",
 					-- Highlight for item associated with checked checkbox.
-					scope_highlight = nil,
+					scope_highlight = "RenderMarkdownUncheckedScope",
 				},
 				checked = {
 					-- Replaces '[x]' of 'task_list_marker_checked'
-					icon = "󰱒 ", -- '󰡖',  󰗠󰗡󰬧   󰣪 󱌸 󰵿  󰈸
+					icon = "󰱒", -- '󰡖',  󰗠󰗡󰬧   󰣪 󱌸 󰵿  󰈸
 					-- Highligh for the checked icon
 					highlight = "RenderMarkdownChecked",
 					-- Highlight for item associated with checked checkbox.
-					scope_highlight = nil,
+					scope_highlight = "RenderMarkdownCheckedScope",
 				},
 				-- Define custom checkbox states, more involved as they are not part of the markdown grammar
 				-- As a result this requires neovim >= 0.10.0 since it relies on 'inline' extmarks
@@ -357,13 +361,18 @@ return {
 						raw = "[-]",
 						rendered = " 󰥔 TODO ",
 						highlight = "RenderMarkdownMySimpleTodo",
-						-- TODO:: What is this??
-						scope_highlight = "RenderMarkdownMySimpleTodo",
+						scope_highlight = nil,
 					},
 					done = { raw = "[x]", rendered = " 󰗠 DONE ", highlight = "RenderMarkdownMySimpleDone" },
 					cancel = { raw = "[c]", rendered = " 󰜺 cancel ", highlight = "RenderMarkdownMySimpleCancel" },
+					checkbox_cancel = {
+						raw = "[n]",
+						rendered = "",
+						highlight = "RenderMarkdownCancel",
+						scope_highlight = "RenderMarkdownCancelScope",
+					},
 					-- log = { raw = "[lg]", rendered = "작성:", highlight = "RenderMarkdownMyLog" },
-					result = { raw = "[>]", rendered = "   So 󰜴 ", highlight = "RenderMarkdownResult" },
+					result = { raw = "[>]", rendered = " 󰜴 ", highlight = "RenderMarkdownResult" },
 				},
 			},
 			html = {

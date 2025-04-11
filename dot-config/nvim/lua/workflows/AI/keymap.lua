@@ -111,9 +111,9 @@ wk_map({
 		group = "Prefill",
 		order = { "d", "e", "l", "f", "g", "n", "i", "I", "c", "R" },
 
-		["e"] = { gen_command("pre", chat.explain), desc = "explain", mode = { "v" } },
-		["l"] = { gen_command("pre", chat.lsp), desc = "lsp", mode = { "v" } },
-		["f"] = { gen_command("pre", chat.fix), desc = "fix", mode = { "v" } },
+		["e"] = { gen_command("pre", predefined.explain), desc = "explain", mode = { "v" } },
+		["l"] = { gen_command("pre", predefined.lsp), desc = "lsp", mode = { "v" } },
+		["f"] = { gen_command("pre", predefined.fix), desc = "fix", mode = { "v" } },
 		["g"] = { gen_command("pre", predefined.code_workflow), desc = "generate code(workflow)", mode = { "n" } },
 		["c"] = { gen_command("pre", predefined.agsfc), desc = "analyze: staged/unstaged/untracked", mode = { "n" } },
 		["R"] = { gen_command("pre", predefined.review_commit), desc = "커밋 리뷰", mode = { "n", "v" } },
