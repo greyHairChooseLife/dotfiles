@@ -792,7 +792,7 @@ return {
 
 	{
 		"greyhairchooselife/global-note.nvim",
-		-- dir = "/home/sy/global-note.nvim/",
+		-- dir = "/home/sy/neovim-plugin/global-note.nvim",
 		cmd = { "GlobalNote", "LocalNote" },
 		opts = {
 			-- NOTE:
@@ -831,7 +831,7 @@ return {
 
 			-- It's called after the window creation.
 			-- fun(buffer_id: number, window_id: number)
-			post_open = function(_, _)
+			post_open = function(bufnr, _)
 				-- 윈도우 옵션 설정
 				-- vim.wo.winhl =
 				-- 	"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
@@ -844,6 +844,12 @@ return {
 
 				-- 버퍼 옵션 설정
 				vim.bo.filetype = "markdown"
+				local function close_note()
+					local gn = require("global-note")
+					gn.close_all_notes()
+				end
+				vim.keymap.set("n", "gq", close_note, { buffer = bufnr })
+				vim.keymap.set("n", "qq", close_note, { buffer = bufnr })
 			end,
 
 			additional_presets = {

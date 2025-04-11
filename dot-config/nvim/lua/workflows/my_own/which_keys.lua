@@ -184,10 +184,7 @@ wk_map({
 		["g"] = {
 			function()
 				local gn = require("global-note")
-
-				if gn.is_note_open("project_local") then
-					gn.toggle_note("project_local")
-				end
+				gn.close_all_notes()
 				gn.toggle_note() -- default_note aka. global
 			end,
 			desc = "open Local Note",
@@ -196,10 +193,7 @@ wk_map({
 		["l"] = {
 			function()
 				local gn = require("global-note")
-
-				if gn.is_note_open() then
-					gn.toggle_note()
-				end
+				gn.close_all_notes()
 				gn.toggle_note("project_local")
 			end,
 			desc = "open Local Note",
