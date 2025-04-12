@@ -85,6 +85,7 @@ return {
 							"AvanteSelectedFiles",
 							"copilot-chat",
 							"copilot-overlay",
+							"noice",
 						},
 						-- winbar = {},
 					},

@@ -55,7 +55,9 @@ return {
 			},
 			incremental_selection = {
 				enable = true,
-				disable = { "markdown" }, -- vimwiki로는 지정이 안된다..
+				-- "vimwiki"는 안되지만 "markdown"으로 둘 다 커버된다.
+				-- "vim"은 CmdWindow에서 커맨드 즉시 실행하기 위한것
+				disable = { "markdown", "vim" },
 				keymaps = {
 					init_selection = "<CR>",
 					scope_incremental = "<CR>",

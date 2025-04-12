@@ -23,3 +23,19 @@ vim.api.nvim_create_autocmd({ "VimResized" }, {
 		ReloadLayout()
 	end,
 })
+
+vim.api.nvim_create_autocmd("CmdlineLeave", {
+	callback = function()
+		-- Get/Check the command that was just executed
+		local cmd = vim.fn.getcmdline()
+		if cmd == "messages" then
+			vim.defer_fn(function()
+				local setOpt = utils.setOpt
+				setOpt("winhighlight", "Normal:CodeCompanionNormal,EndOfBuffer:CodeCompanionEOB")
+				setOpt("number", true)
+				setOpt("relativenumber", true)
+				setOpt("signcolumn", "no")
+			end, 100)
+		end
+	end,
+})
