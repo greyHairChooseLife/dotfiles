@@ -1,39 +1,128 @@
-local last_closed_buffer = nil
+-- 최근 닫힌 버퍼들의 스택 (최대 10개 저장)
+local closed_buffers_stack = {}
+local MAX_HISTORY = 10
 
--- 윈도우가 종료될 때 실행되는 함수
-local function save_last_closed_buffer()
-	local buf = vim.api.nvim_get_current_buf() -- 현재 버퍼 ID 가져오기
-	local bufname = vim.api.nvim_buf_get_name(buf) -- 현재 버퍼의 파일 경로 가져오기
-	local buftype = vim.bo[buf].buftype -- 버퍼 타입 확인
+-- 버퍼가 닫힐 때 실행되는 함수
+local function save_closed_buffer(event)
+	-- 닫히는 버퍼의 ID를 이벤트에서 가져옴
+	local buf = event.buf
 
-	-- 버퍼가 정상적인 파일을 나타내는 경우만 저장
+	-- 닫히는 버퍼의 정보 수집
+	local bufname = vim.api.nvim_buf_get_name(buf)
+	local buftype = vim.bo[buf].buftype
+
+	-- 정상적인 파일 버퍼만 저장 (빈 이름이 아니고 일반 버퍼 타입일 때)
 	if bufname ~= "" and buftype == "" then
-		last_closed_buffer = bufname
-	else
-		last_closed_buffer = nil
-	end
-end
+		-- 실제 파일이 존재하는지 확인
+		if vim.fn.filereadable(bufname) == 1 then
+			-- 스택에 동일한 버퍼가 있으면 제거 (중복 방지)
+			for i, path in ipairs(closed_buffers_stack) do
+				if path == bufname then
+					table.remove(closed_buffers_stack, i)
+					break
+				end
+			end
 
--- 마지막 저장된 버퍼를 새 창에서 열기
-local function restore_last_closed_buffer()
-	if last_closed_buffer then
-		vim.cmd("vnew " .. vim.fn.fnameescape(last_closed_buffer)) -- `:vnew`로 복구
+			-- 스택 맨 앞에 추가
+			table.insert(closed_buffers_stack, 1, bufname)
 
-		-- 만약 현재 탭에 두개의 윈도우만 있다면 print로 알림
-		if #vim.api.nvim_list_wins() == 2 then
-			ReloadLayout()
+			-- 최대 저장 개수 유지
+			if #closed_buffers_stack > MAX_HISTORY then
+				table.remove(closed_buffers_stack)
+			end
 		end
-
-		last_closed_buffer = nil -- 복구 후 저장된 버퍼 초기화
-	else
-		print("🚫 저장된 종료 버퍼가 없습니다.")
 	end
 end
 
--- 오토커맨드 설정: 윈도우가 닫힐 때 실행
-vim.api.nvim_create_autocmd("WinClosed", {
-	callback = save_last_closed_buffer,
+-- 마지막으로 닫힌 버퍼를 복원하는 함수
+local function restore_last_closed_buffer()
+	if #closed_buffers_stack > 0 then
+		local last_buffer = closed_buffers_stack[1]
+
+		-- 안전하게 명령 실행
+		local status, error = pcall(function()
+			vim.cmd("vnew " .. vim.fn.fnameescape(last_buffer))
+		end)
+
+		if status then
+			-- 첫 번째 항목 제거 (복원 후)
+			table.remove(closed_buffers_stack, 1)
+
+			-- 레이아웃 재설정 함수가 존재하는지 확인 후 실행
+			if #vim.api.nvim_list_wins() == 2 and type(_G.ReloadLayout) == "function" then
+				_G.ReloadLayout()
+			end
+		else
+			vim.notify("버퍼 복원 실패: " .. error, vim.log.levels.ERROR)
+		end
+	else
+		vim.notify("🚫 복원할 버퍼 기록이 없습니다.", vim.log.levels.INFO)
+	end
+end
+
+-- 버퍼 기록 목록 표시 함수
+local function show_closed_buffer_history()
+	if #closed_buffers_stack == 0 then
+		vim.notify("🚫 저장된 버퍼 기록이 없습니다.", vim.log.levels.INFO)
+		return
+	end
+
+	print("최근 닫힌 버퍼 목록:")
+	for i, path in ipairs(closed_buffers_stack) do
+		-- 파일명만 추출하여 표시
+		local filename = vim.fn.fnamemodify(path, ":t")
+		print(string.format("%d: %s", i, filename))
+	end
+end
+
+-- 특정 번호의 버퍼 복원 함수
+local function restore_buffer_by_index(index)
+	if not index or index < 1 or index > #closed_buffers_stack then
+		vim.notify("🚫 유효한 버퍼 번호가 아닙니다.", vim.log.levels.WARN)
+		return
+	end
+
+	local buffer_to_restore = closed_buffers_stack[index]
+
+	-- 안전하게 명령 실행
+	local status, error = pcall(function()
+		vim.cmd("vnew " .. vim.fn.fnameescape(buffer_to_restore))
+	end)
+
+	if status then
+		-- 복원한 버퍼를 기록에서 제거
+		table.remove(closed_buffers_stack, index)
+
+		-- 레이아웃 재설정 함수가 존재하는지 확인 후 실행
+		if #vim.api.nvim_list_wins() == 2 and type(_G.ReloadLayout) == "function" then
+			_G.ReloadLayout()
+		end
+	else
+		vim.notify("버퍼 복원 실패: " .. error, vim.log.levels.ERROR)
+	end
+end
+
+-- 오토커맨드 설정: 버퍼가 삭제될 때 실행 (윈도우가 아닌 버퍼 이벤트 사용)
+vim.api.nvim_create_autocmd("BufDelete", {
+	callback = save_closed_buffer,
 })
 
--- 키맵 설정: <leader>r 로 복구 실행
-vim.keymap.set("n", "<leader><leader>r", restore_last_closed_buffer, { noremap = true })
+-- 키매핑 설정
+vim.keymap.set(
+	"n",
+	"<leader><leader>r",
+	restore_last_closed_buffer,
+	{ noremap = true, desc = "최근 닫은 버퍼 복원" }
+)
+vim.keymap.set(
+	"n",
+	"<leader><leader>h",
+	show_closed_buffer_history,
+	{ noremap = true, desc = "닫은 버퍼 기록 보기" }
+)
+
+-- 숫자로 특정 버퍼 복원하는 명령어 추가
+vim.api.nvim_create_user_command("RestoreBuffer", function(opts)
+	local index = tonumber(opts.args)
+	restore_buffer_by_index(index)
+end, { nargs = 1, desc = "인덱스로 닫은 버퍼 복원" })
