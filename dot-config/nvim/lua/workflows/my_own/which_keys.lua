@@ -5,18 +5,11 @@ wk_map({
 	["<leader>"] = {
 		group = "External",
 	},
-	["<leader>g"] = {
-		group = "Git",
-		["g"] = { "<cmd>G<CR>", desc = "fugitive", mode = "n" },
-	},
 	["<Space>"] = {
 		group = "Internal",
 	},
 	[","] = {
 		group = "on the fly",
-	},
-	[",c"] = {
-		group = "command",
 	},
 })
 
@@ -68,6 +61,45 @@ wk_map({
 		order = { "s", "l" },
 		["s"] = { "<cmd>SessionSave<CR>", desc = "save", mode = "n" },
 		["v"] = { "<cmd>SessionSearch<CR>", desc = "view", mode = "n" },
+	},
+})
+
+-- MEMO:: Run Command
+wk_map({
+	["<leader>r"] = {
+		group = "Run Command",
+		order = { "r", "R", "u" },
+		["u"] = {
+			function()
+				RunBufferWithSh({ selected = true, underline = true })
+			end,
+			desc = "underline",
+			mode = "v",
+		},
+		["r"] = {
+			function()
+				local mode = vim.api.nvim_get_mode().mode
+				if mode == "n" then
+					RunBufferWithSh()
+				else
+					RunBufferWithSh({ selected = true })
+				end
+			end,
+			desc = "run on buffer",
+			mode = { "n", "v" },
+		},
+		["R"] = {
+			function()
+				local mode = vim.api.nvim_get_mode().mode
+				if mode == "n" then
+					RunBufferWithSh({ cover = true })
+				else
+					RunBufferWithSh({ selected = true, cover = true })
+				end
+			end,
+			desc = "run on buffer and cover ",
+			mode = { "n", "v" },
+		},
 	},
 })
 
@@ -315,53 +347,5 @@ wk_map({
 	[",m"] = {
 		group = "expand",
 		["t"] = { MoveTabModifyTabname, desc = "move to tab", mode = "n" },
-	},
-})
-wk_map({
-	[",c"] = {
-		group = "expand",
-		["r"] = {
-			function()
-				RunBufferWithSh()
-			end,
-			desc = "command run",
-			mode = "n",
-		},
-	},
-})
-wk_map({
-	[",cc"] = {
-		group = "expand",
-		["r"] = {
-			function()
-				RunBufferWithSh({ cover = true })
-			end,
-			desc = "command cover run",
-			mode = "n",
-		},
-	},
-})
-wk_map({
-	[",c"] = {
-		group = "expand",
-		["r"] = {
-			function()
-				RunBufferWithSh({ selected = true })
-			end,
-			desc = "command run",
-			mode = "v",
-		},
-	},
-})
-wk_map({
-	[",cc"] = {
-		group = "expand",
-		["r"] = {
-			function()
-				RunBufferWithSh({ selected = true, cover = true })
-			end,
-			desc = "command cover run",
-			mode = "v",
-		},
 	},
 })
