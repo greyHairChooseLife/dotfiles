@@ -162,12 +162,21 @@ end
 ---@class RunBufferOptions
 ---@field cover? boolean Whether to cover right-side window with result (default: false)
 ---@field selected? boolean Whether to run selected lines or full buffer (default: false)
+---@field underline? boolean Whether to leave result under executed commands (default: false)
 ---@param opt? RunBufferOptions Table of options
 function RunBufferWithSh(opt)
+	require("utils").save_cursor_position()
 	-- 옵션 기본값 설정
 	opt = opt or {}
 	local cover = opt.cover or false
 	local selected = opt.selected or false
+	local underline = opt.underline or false
+
+	if selected and underline then
+		local cmd = require("utils").get_visual_text()
+		vim.api.nvim_command("silent! read !" .. cmd)
+		return
+	end
 
 	--  임시 파일 생성
 	local temp_file = vim.fn.tempname()
@@ -180,8 +189,6 @@ function RunBufferWithSh(opt)
 	else
 		vim.api.nvim_command("silent! write! " .. temp_file)
 	end
-
-	vim.api.nvim_command("setlocal buftype=nofile")
 
 	-- 현재 윈도우의 id와 우측 포커싱 후 id 확인
 	local current_win = vim.api.nvim_get_current_win()
@@ -208,7 +215,7 @@ function RunBufferWithSh(opt)
 	vim.api.nvim_command("setlocal buftype=nofile | silent! read !sh " .. temp_file)
 
 	vim.fn.delete(temp_file)
-	vim.api.nvim_set_current_win(current_win)
+	require("utils").restore_cursor_position()
 end
 --<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
