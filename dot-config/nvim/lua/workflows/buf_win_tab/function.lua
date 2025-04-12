@@ -28,7 +28,6 @@ function NavBuffAfterCleaning(direction)
 	utils.print_in_time("  Buffers .. [" .. current_buf_index .. "/" .. #filtered_buffers .. "]", 2)
 end
 
--- TODO:: Not deleteing buffer properly
 function ManageBuffer_gq()
 	local bufnr = vim.fn.bufnr("%")
 
@@ -46,8 +45,6 @@ function ManageBuffer_gq()
 	local is_excluded_filetype = vim.tbl_contains(excluded_filetypes, vim.bo[bufnr].filetype)
 	local is_excluded_buftype = vim.tbl_contains(excluded_buftypes, vim.bo[bufnr].buftype)
 
-	vim.cmd("q!")
-
 	-- 모든 조건을 통과해야만 버퍼를 메모리에서 삭제
 	if
 		is_buffer_valid
@@ -57,8 +54,9 @@ function ManageBuffer_gq()
 		and not is_excluded_filetype
 		and not is_excluded_buftype
 	then
-		print("got you")
 		vim.cmd.bdelete(bufnr)
+	else
+		vim.cmd("q!")
 	end
 end
 
