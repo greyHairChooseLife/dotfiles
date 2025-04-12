@@ -302,3 +302,107 @@ function MoveTabModifyTabname()
 		vim.fn.settabvar(tabnr, "tabname", " mv: " .. filename)
 	end
 end
+
+---@class FloatWindowOpts
+---@field filepath string? File path to open in the window
+---@field content string[]? Content to display (string or table of lines)
+---@field width number? Window width (default: 90% of screen)
+---@field height number? Window height (default: 80% of screen)
+---@field col number? Window X position (default: centered)
+---@field row number? Window Y position (default: centered)
+---@field relative string? Position reference ('editor'|'win'|'cursor', default: 'editor')
+---@field style string? Window style (default: 'minimal')
+---@field border string? Border style (default: 'rounded')
+--- 플로팅 윈도우를 생성하는 함수
+---@param opts FloatWindowOpts? 플로팅 윈도우 생성 옵션
+---@return number win 생성된 윈도우의 ID
+---@return number buf 생성된 버퍼의 ID
+function OpenFloatWindow(opts)
+	opts = opts or {}
+
+	-- 버퍼 생성
+	local buf = vim.api.nvim_create_buf(false, true)
+
+	-- 입력 소스 처리
+	if opts.filepath then
+		-- Check if the file is already open in another buffer
+		local existing_bufnr = -1
+		for _, bufid in ipairs(vim.api.nvim_list_bufs()) do
+			local bufname = vim.api.nvim_buf_get_name(bufid)
+			if bufname == opts.filepath then
+				existing_bufnr = bufid
+				break
+			end
+		end
+
+		if existing_bufnr ~= -1 then
+			-- Use existing buffer's content instead of creating a new one
+			vim.api.nvim_buf_delete(buf, { force = true })
+			buf = existing_bufnr
+		else
+			-- Read the file content without affecting the current buffer
+			local lines = {}
+			local file = io.open(opts.filepath, "r")
+			if file then
+				for line in file:lines() do
+					table.insert(lines, line)
+				end
+				file:close()
+				vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
+
+				-- Set the buffer's name/path but don't change nvim-tree's buffer
+				-- Use pcall to handle potential errors when setting buffer name
+				pcall(vim.api.nvim_buf_set_name, buf, opts.filepath)
+
+				-- Make the buffer a proper file buffer
+				vim.bo[buf].buftype = ""
+				vim.bo[buf].modifiable = true
+
+				-- Set filetype based on file extension
+				local filetype = vim.filetype.match({ filename = opts.filepath })
+				if filetype then
+					vim.bo[buf].filetype = filetype
+				end
+			else
+				vim.api.nvim_buf_set_lines(buf, 0, -1, true, { "Could not open file: " .. opts.filepath })
+			end
+		end
+	elseif opts.content then
+		-- 내용 직접 설정
+		local lines = type(opts.content) == "table" and opts.content or { opts.content }
+		vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
+	else
+		-- 기본 내용
+		vim.api.nvim_buf_set_lines(buf, 0, -1, true, { "Empty floating window" })
+	end
+
+	-- 윈도우 크기 계산 (기본값: 너비 90%, 높이 80%)
+	local width = opts.width or math.floor(vim.o.columns * 0.7)
+	local height = opts.height or math.floor(vim.o.lines * 0.8)
+
+	-- 중앙 정렬을 위한 위치 계산
+	-- local col = opts.col or math.floor((vim.o.columns - width) / 2)
+	local col = opts.col or 45
+	local row = opts.row or math.floor((vim.o.lines - height) / 4)
+
+	-- 윈도우 옵션
+	local win_opts = {
+		relative = opts.relative or "editor", -- 'editor', 'win', 'cursor'
+		width = width,
+		height = height,
+		col = col,
+		row = row,
+		style = opts.style or "minimal",
+		border = opts.border or "single",
+	}
+
+	-- 윈도우 열기 & 옵션 세팅
+	local win = vim.api.nvim_open_win(buf, true, win_opts)
+	local setOpt = utils.setOpt
+	setOpt("winhighlight", "Normal:Normal,EndOfBuffer:EndOfBuffer")
+	setOpt("number", true)
+	setOpt("relativenumber", true)
+	setOpt("signcolumn", "no")
+
+	return win, buf
+end

@@ -154,12 +154,12 @@ M.nvim_tree_on_attach = function(bufnr)
 		api.tree.reload()
 	end, opts("Git Add"))
 
-	-- MEMO:: what does this do exactly?
-	-- local function change_root_to_global_cwd()
-	-- 	local global_cwd = vim.fn.getcwd(-1, -1)
-	-- 	api.tree.change_root(global_cwd)
-	-- end
-	-- vim.keymap.set("n", "H", change_root_to_global_cwd, opts("Change Root To Global CWD"))
+	vim.keymap.set("n", "F", function()
+		local node = api.tree.get_node_under_cursor()
+		OpenFloatWindow({
+			filepath = node.absolute_path,
+		})
+	end, opts("Open Float"))
 end
 
 return M
