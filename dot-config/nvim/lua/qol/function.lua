@@ -173,10 +173,9 @@ function RunBufferWithSh(opt)
 	local temp_file = vim.fn.tempname()
 
 	if selected then
-		local start_pos = vim.fn.getpos("'<")
-		local end_pos = vim.fn.getpos("'>")
-		local start_line = start_pos[2]
-		local end_line = end_pos[2]
+		vim.cmd("normal! gv")
+		local start_line = vim.fn.line("'<")
+		local end_line = vim.fn.line("'>")
 		vim.api.nvim_command("silent! " .. start_line .. "," .. end_line .. "write! " .. temp_file)
 	else
 		vim.api.nvim_command("silent! write! " .. temp_file)
