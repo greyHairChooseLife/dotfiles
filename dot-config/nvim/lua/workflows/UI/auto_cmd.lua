@@ -30,11 +30,13 @@ vim.api.nvim_create_autocmd("CmdlineLeave", {
 		local cmd = vim.fn.getcmdline()
 		if cmd == "messages" then
 			vim.defer_fn(function()
-				local setOpt = utils.setOpt
-				setOpt("winhighlight", "Normal:CodeCompanionNormal,EndOfBuffer:CodeCompanionEOB")
-				setOpt("number", true)
-				setOpt("relativenumber", true)
-				setOpt("signcolumn", "no")
+				if vim.bo.filetype == "noice" then
+					local setOpt = utils.setOpt
+					setOpt("winhighlight", "Normal:CodeCompanionNormal,EndOfBuffer:CodeCompanionEOB")
+					setOpt("number", true)
+					setOpt("relativenumber", true)
+					setOpt("signcolumn", "no")
+				end
 			end, 100)
 		end
 	end,
