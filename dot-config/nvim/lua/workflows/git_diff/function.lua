@@ -37,3 +37,14 @@ function Visual_reset()
 	-- Switch back to normal mode, there may be a cleaner way to do this
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "t", false)
 end
+
+function Commit_with_selected()
+	local commit_message = require("utils").get_visual_text(true)
+	vim.fn.setreg("+", commit_message)
+
+	vim.cmd("silent G commit")
+	-- Wait briefly for the commit buffer to open, then paste the response
+	vim.defer_fn(function()
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("P", true, false, true), "n", false)
+	end, 100)
+end

@@ -31,16 +31,21 @@ M.url_encode = function(str)
 	return str
 end
 
-M.get_visual_text = function()
+---@param include_linebreak boolean|nil 기본적으로는 줄바꿈을 다 없앤다. `string.gsub(text, "\n", "")`
+---@return string|nil
+M.get_visual_text = function(include_linebreak)
 	vim.cmd('noau normal! "vy"')
 	local text = vim.fn.getreg("v")
 	vim.fn.setreg("v", {})
 
-	text = string.gsub(text, "\n", "")
+	if include_linebreak == false then
+		-- 이게 왜 필요했던건지 모르겠지만 일단...
+		text = string.gsub(text, "\n", "")
+	end
 	if #text > 0 then
 		return text
 	else
-		return ""
+		return nil
 	end
 end
 
