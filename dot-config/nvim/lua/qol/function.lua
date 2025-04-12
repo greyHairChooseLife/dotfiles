@@ -158,9 +158,30 @@ end
 -->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- Shell command insdie Vim Buffer
 -->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-function RunBufferWithSh()
+
+---@class RunBufferOptions
+---@field cover? boolean Whether to cover right-side window with result (default: false)
+---@field selected? boolean Whether to run selected lines or full buffer (default: false)
+---@param opt? RunBufferOptions Table of options
+function RunBufferWithSh(opt)
+	-- 옵션 기본값 설정
+	opt = opt or {}
+	local cover = opt.cover or false
+	local selected = opt.selected or false
+
+	--  임시 파일 생성
 	local temp_file = vim.fn.tempname()
-	vim.api.nvim_command("silent! write! " .. temp_file)
+
+	if selected then
+		local start_pos = vim.fn.getpos("'<")
+		local end_pos = vim.fn.getpos("'>")
+		local start_line = start_pos[2]
+		local end_line = end_pos[2]
+		vim.api.nvim_command("silent! " .. start_line .. "," .. end_line .. "write! " .. temp_file)
+	else
+		vim.api.nvim_command("silent! write! " .. temp_file)
+	end
+
 	vim.api.nvim_command("setlocal buftype=nofile")
 
 	-- 현재 윈도우의 id와 우측 포커싱 후 id 확인
@@ -173,7 +194,13 @@ function RunBufferWithSh()
 		vim.api.nvim_command("vert belowright new")
 	else
 		vim.api.nvim_set_current_win(current_win)
-		vim.api.nvim_command("wincmd l | new")
+		if cover then
+			-- 우측 윈도우 덮어쓰기
+			vim.api.nvim_command("wincmd l | %delete")
+		else
+			-- 우측에 새로운 윈도우
+			vim.api.nvim_command("wincmd l | new")
+		end
 	end
 
 	vim.api.nvim_command(
@@ -183,93 +210,6 @@ function RunBufferWithSh()
 
 	vim.fn.delete(temp_file)
 	vim.api.nvim_set_current_win(current_win)
-end
-
-function RunBufferWithShCover()
-	local temp_file = vim.fn.tempname()
-	vim.api.nvim_command("silent! write! " .. temp_file)
-	vim.api.nvim_command("setlocal buftype=nofile")
-
-	-- 현재 윈도우의 id와 우측 포커싱 후 id 확인
-	local current_win = vim.api.nvim_get_current_win()
-	vim.api.nvim_command("wincmd l")
-	local new_win = vim.api.nvim_get_current_win()
-
-	-- 포커스가 바뀌지 않았다면, 현재 우측 끝임
-	if current_win == new_win then
-		vim.api.nvim_command("vert belowright new")
-	else
-		vim.api.nvim_set_current_win(current_win)
-		vim.api.nvim_command("wincmd l | %delete")
-	end
-
-	vim.api.nvim_command(
-		[[r !date "+\%T" | awk '{line="=========================="; print line "\n===== time: " $1 " =====\n" line}']]
-	)
-	vim.api.nvim_command("setlocal buftype=nofile | silent! read !sh " .. temp_file)
-
-	vim.api.nvim_set_current_win(current_win)
-	vim.fn.delete(temp_file)
-end
-
-function RunSelectedLinesWithSh()
-	local start_pos = vim.fn.getpos("'<")
-	local end_pos = vim.fn.getpos("'>")
-	local start_line = start_pos[2]
-	local end_line = end_pos[2]
-	local temp_file = vim.fn.tempname()
-	vim.api.nvim_command("silent! " .. start_line .. "," .. end_line .. "write! " .. temp_file)
-
-	-- 현재 윈도우의 id와 우측 포커싱 후 id 확인
-	local current_win = vim.api.nvim_get_current_win()
-	vim.api.nvim_command("wincmd l")
-	local new_win = vim.api.nvim_get_current_win()
-
-	-- 포커스가 바뀌지 않았다면, 현재 우측 끝임
-	if current_win == new_win then
-		vim.api.nvim_command("vert belowright new")
-	else
-		vim.api.nvim_set_current_win(current_win)
-		vim.api.nvim_command("wincmd l | new")
-	end
-
-	vim.api.nvim_command(
-		[[r !date "+\%T" | awk '{line="=========================="; print line "\n===== time: " $1 " =====\n" line}']]
-	)
-	vim.api.nvim_command("setlocal buftype=nofile | silent! read !sh " .. temp_file)
-
-	vim.api.nvim_set_current_win(current_win)
-	vim.fn.delete(temp_file)
-end
-
-function RunSelectedLinesWithShCover()
-	local start_pos = vim.fn.getpos("'<")
-	local end_pos = vim.fn.getpos("'>")
-	local start_line = start_pos[2]
-	local end_line = end_pos[2]
-	local temp_file = vim.fn.tempname()
-	vim.api.nvim_command("silent! " .. start_line .. "," .. end_line .. "write! " .. temp_file)
-
-	-- 현재 윈도우의 id와 우측 포커싱 후 id 확인
-	local current_win = vim.api.nvim_get_current_win()
-	vim.api.nvim_command("wincmd l")
-	local new_win = vim.api.nvim_get_current_win()
-
-	-- 포커스가 바뀌지 않았다면, 현재 우측 끝임
-	if current_win == new_win then
-		vim.api.nvim_command("vert belowright new")
-	else
-		vim.api.nvim_set_current_win(current_win)
-		vim.api.nvim_command("wincmd l | %delete")
-	end
-
-	vim.api.nvim_command(
-		[[r !date "+\%T" | awk '{line="=========================="; print line "\n===== time: " $1 " =====\n" line}']]
-	)
-	vim.api.nvim_command("setlocal buftype=nofile | silent! read !sh " .. temp_file)
-
-	vim.api.nvim_set_current_win(current_win)
-	vim.fn.delete(temp_file)
 end
 --<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

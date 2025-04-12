@@ -320,24 +320,48 @@ wk_map({
 wk_map({
 	[",c"] = {
 		group = "expand",
-		["r"] = { RunBufferWithSh, desc = "command run", mode = "n" },
+		["r"] = {
+			function()
+				RunBufferWithSh()
+			end,
+			desc = "command run",
+			mode = "n",
+		},
 	},
 })
 wk_map({
 	[",cc"] = {
 		group = "expand",
-		["r"] = { RunBufferWithShCover, desc = "command cover run", mode = "n" },
+		["r"] = {
+			function()
+				RunBufferWithSh({ cover = true })
+			end,
+			desc = "command cover run",
+			mode = "n",
+		},
 	},
 })
 wk_map({
 	[",c"] = {
 		group = "expand",
-		["r"] = { RunSelectedLinesWithSh, desc = "command run", mode = "v" },
+		["r"] = {
+			function()
+				RunBufferWithSh({ selected = true })
+			end,
+			desc = "command run",
+			mode = "v",
+		},
 	},
 })
 wk_map({
 	[",cc"] = {
 		group = "expand",
-		["r"] = { RunSelectedLinesWithShCover, desc = "command cover run", mode = "v" },
+		["r"] = {
+			function()
+				RunBufferWithSh({ selected = true, cover = true })
+			end,
+			desc = "command cover run",
+			mode = "v",
+		},
 	},
 })
