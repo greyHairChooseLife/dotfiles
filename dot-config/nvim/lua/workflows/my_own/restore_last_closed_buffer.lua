@@ -111,7 +111,7 @@ local wk_map = require("utils").wk_map
 wk_map({
 	["<leader>b"] = {
 		order = { "r", "h" },
-		group = "Buffer",
+		group = "  Buffer",
 		["r"] = { restore_last_closed_buffer, desc = "revive", mode = "n" },
 		["h"] = { show_closed_buffer_history, desc = "history", mode = "n" },
 	},

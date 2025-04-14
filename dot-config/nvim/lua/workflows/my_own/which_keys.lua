@@ -13,8 +13,10 @@ wk_map({
 	},
 })
 
--- MEMO:: Log (Git)
+-- MEMO:: Git
+wk_map({ ["<leader>g"] = { group = "󰊢  Git" } })
 wk_map({
+	-- git log
 	["<leader>gl"] = {
 		group = "Log",
 		order = { "<Space>", "a", "r", "f" },
@@ -24,15 +26,25 @@ wk_map({
 		["f"] = { "<cmd>GV!<CR>", desc = "current File", mode = "n" },
 	},
 })
-
--- MEMO:: Review (Git)
 wk_map({
+	-- git review
 	["<leader>gr"] = {
 		group = "Review",
 		order = { "w", "s", "<Space>", "f", "a", "F" },
 		["w"] = { "<cmd>DiffviewOpen<CR>", desc = "working on", mode = { "n" } },
 		["s"] = { "<cmd>DiffviewOpen --staged<CR>", desc = "staged", mode = { "n" } },
-		["<Space>"] = { "<cmd>DiffviewFileHistory<CR>", desc = "(default)", mode = { "n" } },
+		["<Space>"] = {
+			function()
+				local mode = vim.fn.mode()
+				if mode == "n" then
+					vim.cmd("DiffviewFileHistory")
+				else
+					DiffviewOpenWithVisualHash()
+				end
+			end,
+			desc = "normal or visual-selected",
+			mode = { "n", "v" },
+		},
 		["f"] = { "<cmd>DiffviewFileHistory %<CR>", desc = "file", mode = { "n" } },
 		["a"] = { "<cmd>DiffviewFileHistory --all<CR>", desc = "all", mode = { "n" } },
 		["F"] = { "<cmd>DiffviewFileHistory --reverse --range=HEAD...FETCH_HEAD<CR>", desc = "fetched", mode = { "n" } },
@@ -46,18 +58,11 @@ wk_map({
 		},
 	},
 })
-wk_map({
-	["<leader>gr"] = {
-		group = "Review",
-		order = { "<Space>" },
-		["<Space>"] = { DiffviewOpenWithVisualHash, desc = "(default)", mode = { "v" } },
-	},
-})
 
 -- MEMO:: Session
 wk_map({
 	["<leader>s"] = {
-		group = "Session",
+		group = "󱫥  Session",
 		order = { "s", "l" },
 		["s"] = { "<cmd>SessionSave<CR>", desc = "save", mode = "n" },
 		["v"] = { "<cmd>SessionSearch<CR>", desc = "view", mode = "n" },
@@ -67,7 +72,7 @@ wk_map({
 -- MEMO:: Run Command
 wk_map({
 	["<leader>r"] = {
-		group = "Run Command",
+		group = "  Run Command",
 		order = { "r", "R", "u" },
 		["u"] = {
 			function()
