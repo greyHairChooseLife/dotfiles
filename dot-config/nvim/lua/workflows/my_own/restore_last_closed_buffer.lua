@@ -107,19 +107,15 @@ vim.api.nvim_create_autocmd("BufDelete", {
 	callback = save_closed_buffer,
 })
 
--- 키매핑 설정
-vim.keymap.set(
-	"n",
-	"<leader><leader>r",
-	restore_last_closed_buffer,
-	{ noremap = true, desc = "최근 닫은 버퍼 복원" }
-)
-vim.keymap.set(
-	"n",
-	"<leader><leader>h",
-	show_closed_buffer_history,
-	{ noremap = true, desc = "닫은 버퍼 기록 보기" }
-)
+local wk_map = require("utils").wk_map
+wk_map({
+	["<leader>b"] = {
+		order = { "r", "h" },
+		group = "Buffer",
+		["r"] = { restore_last_closed_buffer, desc = "revive", mode = "n" },
+		["h"] = { show_closed_buffer_history, desc = "history", mode = "n" },
+	},
+})
 
 -- 숫자로 특정 버퍼 복원하는 명령어 추가
 vim.api.nvim_create_user_command("RestoreBuffer", function(opts)
