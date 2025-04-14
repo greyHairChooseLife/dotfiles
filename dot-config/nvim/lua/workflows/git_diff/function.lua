@@ -45,6 +45,6 @@ function Commit_with_selected()
 	vim.cmd("silent G commit")
 	-- Wait briefly for the commit buffer to open, then paste the response
 	vim.defer_fn(function()
-		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("P", true, false, true), "n", false)
+		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("VggP", true, false, true), "n", false)
 	end, 100)
 end
