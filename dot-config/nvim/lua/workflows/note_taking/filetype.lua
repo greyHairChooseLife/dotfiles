@@ -63,7 +63,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 			local header_pattern = "^#+%s"
 			local link_pattern = "%[%s*.+%]%(.+%)"
-			local unchecked_pattern = " %[%-%]$"
+			local unchecked_pattern = " %[%-%] $"
 			local unchecked_inline = "%[%-%]"
 			local checked_pattern = "%[x%]"
 
@@ -72,14 +72,14 @@ vim.api.nvim_create_autocmd("FileType", {
 				if string.match(line, unchecked_pattern) then
 					line = string.gsub(line, unchecked_pattern, "")
 				else
-					line = line .. " [-]"
+					line = line .. " [-] "
 				end
 			else
 				-- 2. 라인에 '[-]'가 있는지 확인
 				if string.match(line, unchecked_inline) then
-					line = string.gsub(line, unchecked_inline, "[x]")
+					line = string.gsub(line, unchecked_inline, "[x] ")
 				elseif string.match(line, checked_pattern) then
-					line = string.gsub(line, checked_pattern, "[-]")
+					line = string.gsub(line, checked_pattern, "[-] ")
 				else
 					local before_cursor = string.sub(line, 1, col_num)
 					local after_cursor = string.sub(line, col_num + 1)
