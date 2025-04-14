@@ -1,30 +1,3 @@
-function Toggle_ChatWithCopilot()
-	local chat = require("CopilotChat")
-
-	if chat.chat:visible() then
-		chat.chat:close()
-	else
-		require("utils").save_cursor_position()
-		chat.open()
-		require("utils").restore_cursor_position()
-	end
-end
-
-function ChatWithCopilotOpen_Buffer()
-	local chat = require("CopilotChat")
-	chat.open({ selection = require("CopilotChat.select").buffer })
-end
-
-function ChatWithCopilotOpen_Visual()
-	local chat = require("CopilotChat")
-	chat.open({ selection = require("CopilotChat.select").visual })
-end
-
--- MEMO:: 여기서부터  코ㄷ컴패니언
--- MEMO:: 여기서부터  코ㄷ컴패니언
--- MEMO:: 여기서부터  코ㄷ컴패니언
--- MEMO:: 여기서부터  코ㄷ컴패니언
-
 local M = {}
 
 local cdc = require("codecompanion")
@@ -289,7 +262,9 @@ M.add_buffer_reference = function()
 	vim.schedule(function()
 		require("utils").save_cursor_position()
 		M.focus_last_chat()
-		require("utils").restore_cursor_position()
+		if mode == "n" then
+			require("utils").restore_cursor_position()
+		end
 	end)
 end
 

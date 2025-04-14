@@ -43,7 +43,19 @@ wk_map({
 		-- ["u"] = { cdc_func.test, desc = "test", mode = { "n", "v" } },
 		["c"] = { cdc_func.create_new, desc = "create new", mode = { "n" } },
 		["t"] = { cdc_func.toggle_last_chat, desc = "toggle", mode = { "n", "v" } },
-		["f"] = { cdc_func.focus_last_chat, desc = "focus", mode = { "n" } },
+		["f"] = {
+			function()
+				local mode = vim.fn.mode()
+				if mode == "n" then
+					cdc_func.focus_last_chat()
+				else
+					cdc_func.create_new() -- 새로운 채팅에서 visual 레퍼런스 가지고 시작
+					-- cdc_func.add_buffer_reference() -- 마지막 채팅에서 visual 레퍼런스 가지고 시작
+				end
+			end,
+			desc = "focus",
+			mode = { "n", "v" },
+		},
 		["a"] = { cdc_func.add_buffer_reference, desc = "add buffer reference", mode = { "n", "v" } },
 		["A"] = { cdc_func.add_tab_buffers_reference, desc = "add All buffers in Tab reference", mode = { "n", "v" } },
 
