@@ -1,7 +1,19 @@
 local virtual_lines_enabled = false
 local signs_enabled = true
 
-function ToggleVirtualText()
+---@class Opts
+---@field force "on" | "off" toggle 대신 무조건 켜기
+---@param opts Opts? 옵션 지정
+function ToggleVirtualText(opts)
+	opts = opts or {}
+	local force = opts.force or false
+
+	if force == "on" then
+		return vim.diagnostic.config({ virtual_lines = true })
+	elseif force == "off" then
+		return vim.diagnostic.config({ virtual_lines = false })
+	end
+
 	virtual_lines_enabled = not virtual_lines_enabled
 	signs_enabled = not signs_enabled
 

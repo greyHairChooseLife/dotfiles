@@ -17,9 +17,11 @@ end, opt)
 
 map("n", "dn", function()
 	vim.diagnostic.jump({ count = 1, float = false })
+	ToggleVirtualText({ force = "on" })
 end, opt)
 map("n", "dp", function()
 	vim.diagnostic.jump({ count = -1, float = false })
+	ToggleVirtualText({ force = "on" })
 end, opt)
 map("n", "dK", vim.diagnostic.open_float, opt)
 
