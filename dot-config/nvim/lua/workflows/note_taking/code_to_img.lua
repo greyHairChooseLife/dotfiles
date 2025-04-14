@@ -1,3 +1,4 @@
+-- MEMO:: UI config
 local font = "D2 Coding" -- defaults to guifont
 local foreground_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).fg)
 local background_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).bg)
@@ -7,17 +8,18 @@ local bodyStyle = "body { margin: 0; color: " .. foreground_color .. "; }"
 local containerStyle = ".container { background-color: " .. outline_color .. "; padding: 2%; }"
 local preStyle = "pre { background-color: " .. background_color .. "; }"
 
+-- MEMO:: function
 local convert = function(range, opts)
 	opts = opts or {}
 	local save_to_file = opts.save_to_file or false
 	local format = opts.format or "png" -- png or pdf
-	local save_path = opts.save_path or vim.fn.getcwd() -- Default to current working directory
+	local save_path = opts.save_path or "~" -- Default to home directory
+	local filename = opts.filename or "you gotta fix this line"
 
 	local html = require("tohtml").tohtml(0, { range = range, font = font })
 
 	for i, line in pairs(html) do
 		if line:match("^%s*body") then
-			-- html[i] = bodyStyle .. preStyle
 			html[i] = bodyStyle .. containerStyle .. preStyle
 		end
 
@@ -36,19 +38,17 @@ local convert = function(range, opts)
 	end
 
 	if save_to_file then
-		local timestamp = os.date("%Y%m%d_%H%M%S")
-		local filename = "code_snippet_" .. timestamp .. "." .. format
-		local full_path = save_path .. "/" .. filename
+		-- Extract just the directory part from save_path & Make sure the directory exists
+		local dir_path = vim.fn.fnamemodify(save_path, ":h")
+		vim.fn.mkdir(dir_path, "p")
 
-		-- Make sure the directory exists
-		vim.fn.mkdir(save_path, "p")
-
-		table.insert(wk_args, full_path)
+		table.insert(wk_args, save_path)
 
 		local out = vim.system(wk_args, { stdin = html }):wait()
 		-- Check if the conversion was successful
 		if out.code == 0 then
-			return full_path
+			local format_show = format == "pdf" and "( pdf)" or "( image)"
+			vim.notify("Saved" .. format_show .. ", named: " .. filename .. "." .. format)
 		else
 			vim.notify("Failed to save image: " .. (out.stderr or "Unknown error"), vim.log.levels.ERROR)
 			return nil
@@ -62,35 +62,71 @@ local convert = function(range, opts)
 	end
 end
 
+-- MEMO:: function
 local visual_convert = function(opts)
 	opts = opts or {}
 	local save_to_file = opts.save_to_file or false
 	local format = opts.format or "png" -- png or pdf
-	local save_path = opts.save_path or vim.fn.expand("~/Documents/html_to_img")
+	local timestamp = os.date("%Y%m%d_%H%M%S")
+	local root_path = require("utils").get_project_name_by_git() or require("utils").get_project_name_by_cwd()
+	local filename = opts.filename or (root_path .. "_" .. timestamp)
+	local save_path = opts.save_path or vim.fn.expand("~/Documents/html_to_img") .. "/" .. filename .. "." .. format
 
 	local range = { vim.fn.getpos("v")[2], vim.fn.getpos(".")[2] }
 	-- sort the range
 	local line1 = math.min(range[1], range[2])
 	local line2 = math.max(range[1], range[2])
 
-	convert({ line1, line2 }, { save_to_file = save_to_file, format = format, save_path = save_path })
+	local mode = vim.api.nvim_get_mode().mode
+	if mode == "n" then
+		convert(nil, { save_to_file = save_to_file, format = format, save_path = save_path, filename = filename })
+	else
+		convert(
+			{ line1, line2 },
+			{ save_to_file = save_to_file, format = format, save_path = save_path, filename = filename }
+		)
+	end
 end
 
-vim.keymap.set("v", "<leader>dc", function()
-	visual_convert()
-	vim.notify("copied!")
-end)
-
-vim.keymap.set("v", "<leader>dsi", function()
-	local filename = visual_convert({ save_to_file = true, format = "png" })
-	if filename then
-		vim.notify("Saved as " .. filename)
-	end
-end)
-
-vim.keymap.set("v", "<leader>dsp", function()
-	local filename = visual_convert({ save_to_file = true, format = "pdf" })
-	if filename then
-		vim.notify("Saved as " .. filename)
-	end
-end)
+-- MEMO:: keymap
+local wk_map = require("utils").wk_map
+wk_map({
+	["<leader>"] = { group = "document" },
+})
+wk_map({
+	["<leader>d"] = {
+		group = "document",
+		order = { "c", "s" },
+		["c"] = {
+			function()
+				visual_convert()
+				vim.notify("copied!")
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+			end,
+			desc = "copy to clipboard (xclip)",
+			mode = { "n", "v" },
+		},
+		["s"] = {
+			function()
+				local callback1 = function(format)
+					local callback2 = function(filename)
+						visual_convert({
+							save_to_file = true,
+							filename = filename ~= "" and filename or nil,
+							format = format,
+						})
+						vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+					end
+					vim.ui.input({
+						prompt = "Name: ",
+					}, callback2)
+				end
+				vim.ui.input({
+					prompt = "Format(png/pdf): ",
+				}, callback1)
+			end,
+			desc = "IMG",
+			mode = { "n", "v" },
+		},
+	},
+})
