@@ -126,10 +126,32 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 
 
+### etc
+
+
+- <leader>s로 검색하는 기능의 확장으로,
+  papago api따위를 활용하여 번역 후 결과를 작은 floating window로 띄우기
+
+- <leader>lv 이거 현재 상태 읽어서 뒤집도록 해야한다. jump()로 이동후
+  켜진것을 감안해서 toggle하지 못하고 있다.
+  
+
+- 코드 비교를 위해 visual_selected를 즉시 정해진 위치(/tmp)에 넣는 기능이
+  필요하겠다. 두 개를 각각 선택 및 A/B파일로 저장하고, 또한 단축키로 이들
+  파일을 불러와 diff 해주면 아주 좋을 듯. 파일 타입도 현재 버퍼의 파일타입을
+  취해서 알아서 넣어주고.
+
+
 ### codecompanion
 
+- voice control for input
+
 - /workspace with vectorcode plugin [ref](https://codecompanion.olimorris.dev/extending/workspace.html)
+
 - mcp!
+
+- commit review cli_command를 CopilotChat -> CodeCompanion으로 개선된 버전에
+  맞춰 업그레이드
 
 ### 관심있는 플러그인
 
