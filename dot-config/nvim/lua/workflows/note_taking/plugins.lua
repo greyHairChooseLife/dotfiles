@@ -56,8 +56,6 @@ return {
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
 		-- lazy = false,
-		-- BUG:: 이후 버전 고르면 `[-]` 이거 제대로 렌더링 안된다. `[-] `처럼 공백 있어야만 렌더링 됨.
-		-- 곧 업데이트 될텐데, 그때 가서 바꾸자.
 		-- commit = "5cec1bb5fb11079a88fd5b3abd9c94867aec5945",
 		-- event = "BufEnter *.md",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
@@ -435,16 +433,15 @@ return {
 				-- Highlight for inline padding used to add back concealed space
 				filler = "RenderMarkdownTableFill",
 			},
-			-- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
-			-- Can specify as many additional values as you like following the pattern from any below, such as 'note'
-			--   The key in this case 'note' is for healthcheck and to allow users to change its values
-			-- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
-			-- | rendered   | replaces the 'raw' value when rendering                             |
-			-- | highlight  | highlight for the 'rendered' text and quote markers                 |
-			-- | quote_icon | optional override for quote.icon value for individual callout       |
-			--  󰓛 󰄱    
-			--      󱓻강 sdf   sfd  󱓼  󰨔 󰴩     
 			callout = {
+				-- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'
+				-- Can specify as many additional values as you like following the pattern from any below, such as 'note'
+				--   The key in this case 'note' is for healthcheck and to allow users to change its values
+				-- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
+				-- | rendered   | replaces the 'raw' value when rendering                             |
+				-- | highlight  | highlight for the 'rendered' text and quote markers                 |
+				-- | quote_icon | optional override for quote.icon value for individual callout       |
+				--  󰓛 󰄱        󱓻강 sdf   sfd  󱓼  󰨔 󰴩     
 				note = { raw = "[!NOTE]", rendered = "󰋽 Note", highlight = "Re,derMarkdownInfo" },
 				tip = { raw = "[!TIP]", rendered = "󰌶 Tip", highlight = "RenderMarkdownSuccess" },
 				important = { raw = "[!IMPORTANT]", rendered = "󰅾 Important", highlight = "RenderMarkdownHint" },
@@ -518,8 +515,19 @@ return {
 				-- Applies to background of sign text
 				highlight = "RenderMarkdownSign",
 			},
-			-- Window options to use that change between rendered and raw view
+			document = {
+				enabled = false,
+				-- 숨기기 기능
+				conceal = {
+					char_patterns = { ":%S-:%s" },
+					line_patterns = {
+						"^%-%-%-\n.-\n%-%-%-\n", -- 시작 부분 메타데이터
+						"\n%-%-%-\n.-\n%-%-%-\n", -- 중간 부분 메타데이터
+					},
+				},
+			},
 			win_options = {
+				-- Window options to use that change between rendered and raw view
 				-- See :h 'conceallevel'
 				conceallevel = {
 					-- Used when not being rendered, get user setting
@@ -540,16 +548,16 @@ return {
 				breakindent = { default = vim.api.nvim_get_option_value("breakindent", {}), rendered = false },
 				breakindentopt = { default = vim.api.nvim_get_option_value("breakindentopt", {}), rendered = "" },
 			},
-			-- More granular configuration mechanism, allows different aspects of buffers
-			-- to have their own behavior. Values default to the top level configuration
-			-- if no override is provided. Supports the following fields:
-			--   enabled, max_file_size, debounce, render_modes, anti_conceal, heading, code,
-			--   dash, bullet, checkbox, quote, pipe_table, callout, link, sign, win_options
 			overrides = {
-				-- Overrides for different buftypes, see :h 'buftype'
+				-- More granular configuration mechanism, allows different aspects of buffers
+				-- to have their own behavior. Values default to the top level configuration
+				-- if no override is provided. Supports the following fields:
+				--   enabled, max_file_size, debounce, render_modes, anti_conceal, heading, code,
+				--   dash, bullet, checkbox, quote, pipe_table, callout, link, sign, win_options
 				buftype = {
-					-- 요놈은 hover document에 적용된다.
+					-- Overrides for different buftypes, see :h 'buftype'
 					nofile = {
+						-- 요놈은 hover document에 적용된다.
 						-- enabled = false,
 						code = {
 							style = "full",
@@ -719,9 +727,10 @@ return {
 				-- floating window에서의 기능 여부
 				-- buflisted = { [false] = { enabled = vim.bo.filetype == "codecompanion" and false or true } },
 			},
-			-- Mapping from treesitter language to user defined handlers
-			-- See 'Custom Handlers' document for more info
-			custom_handlers = {},
+			custom_handlers = {
+				-- Mapping from treesitter language to user defined handlers
+				-- See 'Custom Handlers' document for more info
+			},
 		},
 	},
 
