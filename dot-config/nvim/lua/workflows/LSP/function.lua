@@ -1,5 +1,4 @@
-local virtual_lines_enabled = false
-local signs_enabled = true
+local current_line_enabled = false
 
 ---@class Opts
 ---@field force "on" | "off" toggle 대신 무조건 켜기
@@ -9,16 +8,16 @@ function ToggleVirtualText(opts)
 	local force = opts.force or false
 
 	if force == "on" then
-		return vim.diagnostic.config({ virtual_lines = true })
+		current_line_enabled = true
+		return vim.diagnostic.config({ virtual_lines = { current_line = true } })
 	elseif force == "off" then
-		return vim.diagnostic.config({ virtual_lines = false })
+		current_line_enabled = false
+		return vim.diagnostic.config({ virtual_lines = { current_line = false } })
 	end
 
-	virtual_lines_enabled = not virtual_lines_enabled
-	signs_enabled = not signs_enabled
-
+	current_line_enabled = not current_line_enabled
 	vim.diagnostic.config({
-		virtual_lines = virtual_lines_enabled == true and { current_line = true } or false,
+		virtual_lines = current_line_enabled == true and { current_line = true } or false,
 	})
 end
 
