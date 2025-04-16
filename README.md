@@ -132,14 +132,22 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 - <leader>s로 검색하는 기능의 확장으로,
   papago api따위를 활용하여 번역 후 결과를 작은 floating window로 띄우기
 
-- <leader>lv 이거 현재 상태 읽어서 뒤집도록 해야한다. jump()로 이동후
-  켜진것을 감안해서 toggle하지 못하고 있다.
-  
 
-- 코드 비교를 위해 visual_selected를 즉시 정해진 위치(/tmp)에 넣는 기능이
-  필요하겠다. 두 개를 각각 선택 및 A/B파일로 저장하고, 또한 단축키로 이들
-  파일을 불러와 diff 해주면 아주 좋을 듯. 파일 타입도 현재 버퍼의 파일타입을
-  취해서 알아서 넣어주고.
+- 버퍼 다루는 키맵 확장
+  - `,sv` -> `,sdv` 확장, tmp에 임시 저장해준다. visual이면 선택한 라인만 보내준다.
+  - `,sx` -> `,sdx` 확장, (상동)
+  - `,st` -> `,sdt` 확장, (상동)
+  - `,s(d)t` | `,mt` 이것들은 `t`에 `T`도 추가해준다. `T`는 탭 선택 인터페이스 제공하고             
+    - 이제 위에서 특히 `,sT`, `,sdT`, `,mT` 등을 활용해 하나의 텝에 2개의 버퍼를 비교하는
+      기능을 위한 인터페이스를 마련한다.
+    - DiffTabBuffers 이름으로 좌우 버퍼에 해당하는 파일 비교
+
+~> 코드 비교를 위해 visual_selected를 즉시 정해진 위치(/tmp)에 넣는 기능이~
+~> 필요하겠다. 두 개를 각각 선택 및 A/B파일로 저장하고, 또한 단축키로 이들~
+~> 파일을 불러와 diff 해주면 아주 좋을 듯. 파일 타입도 현재 버퍼의 파일타입을~
+~> 취해서 알아서 넣어주고.~
+
+
 
 
 ### codecompanion
@@ -214,6 +222,8 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
   https://patrick-f.tistory.com/36
 
 - 구조는 reference에 있는 중국인 양반것이 매우 좋아 보임
+  - 내가 임의로 만든 작은 단위의 기능들은 각 카테고리 안에 `modules/`라고
+    만들어서 기능당 하나의 lua파일에 담아서 관리해야겠다.
 
 ### 개선서항 [-]
 
