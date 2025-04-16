@@ -21,7 +21,7 @@ function Save_entire_buffer_to_register_for_AI_prompt()
 
 	vim.fn.setreg("+", result)
 	require("utils").highlight_text_temporarily(1, vim.fn.line("$"))
-	print("copied entirely for AI!")
+	vim.notify("copied entirely for AI!", vim.log.levels.INFO)
 end
 
 -- Visual mode: 선택한 텍스트를 주석과 함께 md 코드블록 형식으로 레지스트리에 저장
@@ -62,7 +62,7 @@ function Save_visual_selection_to_register_for_AI_prompt()
 		-- 텍스트를 레지스트리에 저장
 		vim.fn.setreg("+", result)
 		-- highlight_copied_text(start_line, end_line)
-		print("copied selected for AI!")
+		vim.notify("copied selected for AI!", vim.log.levels.INFO)
 	end)
 end
 
@@ -79,6 +79,6 @@ function Save_buf_ref_of_visual_selection_to_register_for_AI_prompt()
 		vim.fn.setreg("+", result)
 		vim.fn.setreg("S", start_line)
 		vim.fn.setreg("E", end_line)
-		print("copied 'Buf Ref' for AI!")
+		vim.notify("copied 'Buf Ref' for AI!", vim.log.levels.INFO)
 	end)
 end

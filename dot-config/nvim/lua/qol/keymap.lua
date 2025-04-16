@@ -57,6 +57,11 @@ map("n", "<Space><Space>", function()
 	vim.cmd("NoiceDismiss")
 	BlinkCursorLine()
 end)
+map("n", "yp", function()
+	local absolute_path = vim.fn.expand("%:p")
+	vim.fn.setreg("+", absolute_path)
+	vim.notify("Copied path: " .. absolute_path, vim.log.levels.INFO)
+end)
 
 map("i", "cc<Enter>", function()
 	vim.api.nvim_input("<Esc>cc")
@@ -67,12 +72,6 @@ end)
 map({ "i", "c" }, ";j<Space>", function()
 	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
 end, { noremap = true })
--- BUG:: 걍 안됨.
--- map({ "c" }, "<Esc>", function()
--- 	print("아니 왜안돼")
--- 	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
--- 	-- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-c>", true, false, true), "n", true)
--- end, { noremap = false })
 map({ "i", "c" }, "gq", function()
 	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
 end, { noremap = true })
