@@ -17,6 +17,9 @@ vim.api.nvim_create_autocmd({ "User" }, {
 	callback = function(request)
 		if request.match == "CodeCompanionRequestStarted" then
 			vim.cmd("stopinsert")
+			-- 영타 상태로 무조건 바꾸기
+			vim.api.nvim_input("<Esc>")
+			os.execute("xdotool key Escape")
 		end
 	end,
 })
