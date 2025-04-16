@@ -49,6 +49,20 @@ M.get_visual_text = function(include_linebreak)
 	end
 end
 
+---
+--- 선택된 텍스트의 시작줄과 끝줄 **번호**를 반환합니다.
+---
+--- @return number startLine 선택된 텍스트의 시작 라인 번호
+--- @return number endLine 선택된 텍스트의 끝 라인 번호
+M.get_visual_line = function()
+	local selectedLines = { vim.fn.getpos("v")[2], vim.fn.getpos(".")[2] }
+	-- 선택 범위 정렬
+	local startLine = math.min(selectedLines[1], selectedLines[2])
+	local endLine = math.max(selectedLines[1], selectedLines[2])
+
+	return startLine, endLine
+end
+
 -- DEPRECATED:: 2025-04-13
 -- M.is_buffer_active_somewhere = function(bufnr)
 -- 	-- 모든 창 확인

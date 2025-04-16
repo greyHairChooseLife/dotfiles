@@ -72,17 +72,14 @@ local visual_convert = function(opts)
 	local filename = opts.filename or (root_path .. "_" .. timestamp)
 	local save_path = opts.save_path or vim.fn.expand("~/Documents/html_to_img") .. "/" .. filename .. "." .. format
 
-	local range = { vim.fn.getpos("v")[2], vim.fn.getpos(".")[2] }
-	-- sort the range
-	local line1 = math.min(range[1], range[2])
-	local line2 = math.max(range[1], range[2])
+	local startLine, endLine = require("utils").get_visual_line()
 
 	local mode = vim.api.nvim_get_mode().mode
 	if mode == "n" then
 		convert(nil, { save_to_file = save_to_file, format = format, save_path = save_path, filename = filename })
 	else
 		convert(
-			{ line1, line2 },
+			{ startLine, endLine },
 			{ save_to_file = save_to_file, format = format, save_path = save_path, filename = filename }
 		)
 	end
