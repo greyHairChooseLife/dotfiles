@@ -163,3 +163,14 @@ wk_map({
 		["j"] = { Format_json_with_jq, desc = "format to JSON with jq", mode = "v" },
 	},
 })
+map({ "n", "v" }, "<leader><leader>s", function()
+	local mode = vim.fn.mode()
+	if mode == "n" then
+		require("utils").save_cursor_position()
+		vim.api.nvim_feedkeys("vip", "n", true)
+		require("utils").restore_cursor_position()
+		vim.cmd("TTS")
+	else
+		vim.cmd("TTS")
+	end
+end, opt)
