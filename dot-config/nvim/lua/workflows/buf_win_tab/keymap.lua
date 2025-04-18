@@ -102,10 +102,32 @@ local copy_buffer = require("workflows.buf_win_tab.modules.copy_buffer")
 wk_map({
 	[",s"] = {
 		group = "  Split",
-		order = { "v", "d", "x", "t" },
+		order = { "v", "x", "t", "T" },
 		["v"] = { "<cmd>vs<CR>", desc = "vertical", mode = "n" },
 		["x"] = { "<cmd>sp | wincmd w<CR>", desc = "horizontal", mode = "n" },
-		["t"] = { SplitTabModifyTabname, desc = "new tab", mode = "n" },
+		["t"] = { SplitTabModifyTabname, desc = "tab new", mode = "n" },
+		["T"] = {
+			function()
+				local callback = function(tab_id)
+					local file_path = vim.fn.expand("%:p")
+					if tab_id then
+						-- Switch to selected tab
+						vim.cmd(tab_id .. "tabnext")
+						-- Open the file
+						local escaped_path = vim.fn.fnameescape(file_path)
+						local ok, err = pcall(vim.cmd, "vsplit " .. escaped_path)
+						if not ok then
+							vim.notify("Error opening temporary file in selected tab: " .. err, vim.log.levels.ERROR)
+							pcall(vim.fn.delete, file_path)
+						end
+					end
+				end
+
+				require("workflows.buf_win_tab.modules.select_tab").selectTab(callback)
+			end,
+			desc = "tab select",
+			mode = "n",
+		},
 	},
 	[",sd"] = {
 		order = { "v", "x", "t", "T" },
