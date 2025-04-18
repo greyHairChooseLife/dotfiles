@@ -36,6 +36,16 @@
   vim.cmd([[cab cc CodeCompanion]])
   ```
 
+- `vim.notify`
+  - ex) 
+    ```lua
+    vim.notify("Harpoon Updated", 2, { render = "minimal" })
+    -- 2: info
+    -- 3: warn
+    -- 4: error
+    ```
+
+
 ## best practice
 
 - https://github.com/yingmanwumen/nvim
