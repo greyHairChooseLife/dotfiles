@@ -222,6 +222,20 @@ wk_map({
 	},
 })
 
+-- MEMO:: QuickFix
+wk_map({
+	["<Space>q"] = {
+		group = "Quick Fix",
+		order = { "f", "t", "n", "p" },
+		["f"] = { "<cmd>copen<CR>", desc = "focus", mode = "n" },
+		["t"] = { QF_ToggleList, desc = "toggle", mode = "n" },
+		["n"] = { QF_next, desc = "next", mode = "n" },
+		["p"] = { QF_prev, desc = "prev", mode = "n" },
+	},
+})
+vim.keymap.set("n", "qn", QF_next)
+vim.keymap.set("n", "qp", QF_prev)
+
 -- MEMO:: Telescope
 local builtin = require("telescope.builtin")
 wk_map({
@@ -247,18 +261,6 @@ wk_map({
 			desc = "todo Tags current",
 			mode = "n",
 		},
-	},
-})
-
--- MEMO:: QuickFix
-wk_map({
-	[",q"] = {
-		group = "QuickFix",
-		order = { "f", "t", "n", "p" },
-		["f"] = { "<cmd>copen<CR>", desc = "focus", mode = "n" },
-		["t"] = { QF_ToggleList, desc = "toggle", mode = "n" },
-		["n"] = { QF_next, desc = "next", mode = "n" },
-		["p"] = { QF_prev, desc = "prev", mode = "n" },
 	},
 })
 
