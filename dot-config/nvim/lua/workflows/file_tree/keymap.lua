@@ -43,7 +43,26 @@ M.nvim_tree_on_attach = function(bufnr)
 		api.tree.open()
 	end, opts("Open Without Focus"))
 	vim.keymap.set("n", "O", api.node.open.edit, opts("Open"))
-	vim.keymap.set("n", "T", api.node.open.tab, opts("Open in New Tab"))
+	vim.keymap.set("n", "t", api.node.open.tab, opts("Open in New Tab"))
+	vim.keymap.set("n", "T", function()
+		local callback = function(tab_id)
+			local node = api.tree.get_node_under_cursor()
+			local target_file_path = node.absolute_path
+			if tab_id then
+				-- Switch to selected tab
+				vim.cmd(tab_id .. "tabnext")
+				-- Open the file
+				local escaped_path = vim.fn.fnameescape(target_file_path)
+				local ok, err = pcall(vim.cmd, "vsplit " .. escaped_path)
+				if not ok then
+					vim.notify("Error opening temporary file in selected tab: " .. err, vim.log.levels.ERROR)
+					pcall(vim.fn.delete, target_file_path)
+				end
+			end
+		end
+
+		require("workflows.buf_win_tab.modules.select_tab").selectTab(callback)
+	end, opts("Open in Selected Tab"))
 	vim.keymap.set("n", "l", function()
 		local node = api.tree.get_node_under_cursor()
 		if node.type == "directory" then
