@@ -17,20 +17,8 @@ M.duplicateAndOpenTempFile = function(opts)
 	local direction = opts.direction or "right" -- Default to vertical split
 
 	if direction == "select_tab" then
-		local callback = function(tab_id)
-			if tab_id then
-				-- Switch to selected tab
-				vim.cmd(tab_id .. "tabnext")
-				-- Open the file
-				local escaped_path = vim.fn.fnameescape(temp_file_path)
-				local ok, err = pcall(vim.cmd, "vsplit " .. escaped_path)
-				if not ok then
-					vim.notify("Error opening temporary file in selected tab: " .. err, vim.log.levels.ERROR)
-					pcall(vim.fn.delete, temp_file_path)
-				end
-			end
-		end
-		require("workflows.buf_win_tab.modules.select_tab").selectTab(callback)
+		local m = require("workflows.buf_win_tab.modules.select_tab")
+		m.selectTabAndOpen({ source_file_path = temp_file_path })
 		return temp_file_path
 	end
 
