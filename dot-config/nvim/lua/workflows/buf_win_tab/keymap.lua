@@ -21,11 +21,11 @@ map("n", "gtQ", ManageBuffer_gtQ)
 -- Save
 map("n", "gw", function()
 	vim.cmd("silent w")
-	vim.notify("Saved current buffers", 3, { render = "minimal" })
+	vim.notify("Saved current buffers", 2, { render = "minimal" })
 end)
 map("n", "gW", function()
 	vim.cmd("wa")
-	vim.notify("Saved all buffers", 3, { render = "minimal" })
+	vim.notify("Saved all buffers", 2, { render = "minimal" })
 end)
 -- Save & Quit
 map("n", "ge", ManageBuffer_ge)

@@ -28,38 +28,6 @@ function NavBuffAfterCleaning(direction)
 	utils.print_in_time("  Buffers .. [" .. current_buf_index .. "/" .. #filtered_buffers .. "]", 2)
 end
 
-function ManageBuffer_gq()
-	local bufnr = vim.fn.bufnr("%")
-
-	if vim.bo[bufnr].filetype == "codecompanion" then
-		return vim.cmd("q")
-	end
-
-	local excluded_filetypes = { "help", "copilot-chat", "gitcommit" }
-	local excluded_buftypes = { "nofile" }
-
-	local is_buffer_valid = vim.api.nvim_buf_is_valid(bufnr)
-	local is_buflisted = vim.bo[bufnr].buflisted
-	local is_bufname_empty = vim.fn.bufname(bufnr) == ""
-	local is_buffer_active = utils.is_buffer_active_somewhere(bufnr)
-	local is_excluded_filetype = vim.tbl_contains(excluded_filetypes, vim.bo[bufnr].filetype)
-	local is_excluded_buftype = vim.tbl_contains(excluded_buftypes, vim.bo[bufnr].buftype)
-
-	-- 모든 조건을 통과해야만 버퍼를 메모리에서 삭제
-	if
-		is_buffer_valid
-		and is_buflisted
-		and not is_bufname_empty
-		and not is_buffer_active
-		and not is_excluded_filetype
-		and not is_excluded_buftype
-	then
-		vim.cmd.bdelete(bufnr)
-	else
-		vim.cmd("q!")
-	end
-end
-
 function CloseOtherBuffersInCurrentTab()
 	local current_buf = vim.api.nvim_get_current_buf()
 	local current_tab = vim.api.nvim_get_current_tabpage()
@@ -158,38 +126,58 @@ end
 
 function ManageBuffer_ge()
 	vim.cmd("w") -- 일단 저장
-
 	ManageBuffer_gq()
+	vim.notify("Saved last buffers", 2, { render = "minimal" })
+end
 
-	vim.notify("Saved last buffers", 3, { render = "minimal" })
+---@param bufnr integer?
+function ManageBuffer_gq(bufnr)
+	bufnr = bufnr or vim.fn.bufnr("%")
+
+	local excluded_filetypes = { "help", "gitcommit", "NvimTree", "codecompanion" }
+	local excluded_buftypes = { "nofile" }
+
+	local is_buffer_valid = vim.api.nvim_buf_is_valid(bufnr)
+	local is_buflisted = vim.bo[bufnr].buflisted
+	local is_bufname_empty = vim.fn.bufname(bufnr) == ""
+	local is_buffer_active = utils.is_buffer_active_somewhere(bufnr)
+	local is_excluded_filetype = vim.tbl_contains(excluded_filetypes, vim.bo[bufnr].filetype)
+	local is_excluded_buftype = vim.tbl_contains(excluded_buftypes, vim.bo[bufnr].buftype)
+
+	-- 모든 조건을 통과해야만 버퍼를 메모리에서 삭제
+	if
+		is_buffer_valid
+		and is_buflisted
+		and not is_bufname_empty
+		and not is_buffer_active
+		and not is_excluded_filetype
+		and not is_excluded_buftype
+	then
+		vim.cmd.bdelete(bufnr)
+	else
+		vim.cmd("q")
+	end
 end
 
 function ManageBuffer_gtq()
+	-- NvimTree는 꼭 이렇게 별도로 꺼줘야한다.
+	if require("nvim-tree.api").tree.is_visible() then
+		vim.cmd("NvimTreeClose")
+	end
+
 	-- 예외처리: 특수 탭
+	local special_tabs = { " Commit", " File", "GV", "Diff" }
 	local tabname = utils.get_current_tabname()
-	if tabname == " Commit" or tabname == " File" or tabname == "GV" or tabname == "Diff" then
-		vim.cmd("tabclose!")
-		return
+	local is_special_tabs = vim.tbl_contains(special_tabs, tabname)
+	if is_special_tabs then
+		return vim.cmd("tabclose!")
 	end
 
-	-- 예외처리: 전체 탭의 개수가 1개
-	if vim.fn.tabpagenr("$") == 1 then
-		vim.notify("Cannot close the last tab page", 4, { render = "minimal" })
-		return
-	end
-
-	-- 현재 탭의 모든 윈도우 순회하며 조건에 맞을 때 종료(조건: is_buffer_active_somewhere)
-	local tabid = vim.api.nvim_get_current_tabpage() -- 탭 ID 가져오기
-	local wins = vim.api.nvim_tabpage_list_wins(tabid) -- 현재 탭의 윈도우 목록 가져오기, 인자로 받는 것은 탭 번호가 아니라 탭 ID
+	local wins = vim.api.nvim_tabpage_list_wins(0)
 	for _, win in ipairs(wins) do
-		if vim.bo.filetype == "NvimTree" or vim.bo.filetype == "codecompanion" then
-			vim.cmd("q")
-		elseif vim.api.nvim_win_is_valid(win) then
-			local bufnr = vim.api.nvim_win_get_buf(win) -- 윈도우에 연결된 버퍼 번호 가져오기
-			vim.cmd("q") -- 일단 꺼
-			if not utils.is_buffer_active_somewhere(bufnr) then -- 다른데 활성화(눈에 보이게) 되어있지 않은것만 꺼
-				vim.api.nvim_buf_delete(bufnr, { force = true })
-			end
+		if vim.api.nvim_win_is_valid(win) then
+			local bufnr = vim.api.nvim_win_get_buf(win)
+			ManageBuffer_gq(bufnr)
 		end
 	end
 end
@@ -208,7 +196,7 @@ function ManageBuffer_gE() -- 저장 후, loaded buffer를 모두 닫는다.
 	vim.cmd("w")
 
 	ManageBuffer_gQ()
-	vim.notify("Saved last buffers", 3, { render = "minimal" })
+	vim.notify("Saved last buffers", 2, { render = "minimal" })
 end
 
 function ManageBuffer_gtQ()

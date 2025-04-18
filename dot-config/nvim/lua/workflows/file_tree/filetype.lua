@@ -88,11 +88,6 @@ vim.api.nvim_create_autocmd("FileType", {
 			vim.cmd("vnew")
 			NvimTreeResetUI()
 		end, opts)
-
-		vim.keymap.set({ "n", "v" }, "gq", function()
-			vim.cmd("q | wincmd p")
-			BlinkCursorLine(500)
-		end, opts)
 	end,
 })
 
@@ -102,14 +97,14 @@ vim.api.nvim_create_autocmd("FileType", {
 		-- KEYMAP
 		vim.keymap.set("n", "gq", function()
 			vim.cmd("silent q")
-		end, { buffer = true })
+		end, opts)
 		vim.keymap.set("n", "gw", function()
 			vim.cmd("silent w")
-			vim.notify("Harpoon Updated", 3, { render = "minimal" })
-		end, { buffer = true })
+			vim.notify("Harpoon Updated", 2, { render = "minimal" })
+		end, opts)
 		vim.keymap.set("n", "ge", function()
 			vim.cmd("silent w")
-			vim.notify("Harpoon Updated", 3, { render = "minimal" })
-		end, { buffer = true })
+			vim.notify("Harpoon Updated", 2, { render = "minimal" })
+		end, opts)
 	end,
 })
