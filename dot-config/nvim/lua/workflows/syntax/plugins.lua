@@ -115,7 +115,6 @@ return {
 		config = function(_, opts)
 			require("nvim-treesitter.configs").setup(opts)
 			vim.treesitter.language.register("markdown", "vimwiki")
-			vim.treesitter.language.register("markdown", "AvanteInput")
 		end,
 	},
 

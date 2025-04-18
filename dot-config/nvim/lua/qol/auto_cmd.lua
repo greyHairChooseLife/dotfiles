@@ -49,21 +49,6 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 
 			utils.cursor.hide()
 		end
-
-		-- DEPRECATED:: 2025-04-12
-		--
-		-- if vim.bo.filetype == "Avante" then
-		-- 	vim.cmd("stopinsert")
-		-- 	vim.opt.signcolumn = "yes"
-		-- end
-
-		-- if vim.bo.filetype == "AvanteInput" then
-		-- 	-- vim.cmd("stopinsert")
-		-- 	vim.opt.wrap = true
-		-- 	vim.defer_fn(function()
-		-- 		-- os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
-		-- 	end, 200) -- 약간의 딜레이가 필요하다. 왜냐면 내가 <A-hjkl>로 이동할 때 Alt키를 약간 느리게 떼는 경향이 있는데, 그럼 <A-Esc>가 되어버린다. 그래서 Alt키에서 손을 뗄 때까지 약간의 시간을 기다리는 딜레이를 준다.
-		-- end
 	end,
 })
 

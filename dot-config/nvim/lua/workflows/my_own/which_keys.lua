@@ -108,41 +108,6 @@ wk_map({
 	},
 })
 
--- DEPRECATED:: 2025-04-11
--- MEMO:: Avante.nvim
--- wk_map({
--- 	["<leader>a"] = {
--- 		group = "Avante",
--- 		order = { "a", "c", "f", "t" },
--- 		["a"] = { "<cmd>AvanteAsk<CR>", desc = "ask", mode = { "n", "v" } },
--- 		["c"] = { "", desc = "current buffer(file) into/outof ctx", mode = { "n" } },
--- 		["t"] = {
--- 			function()
--- 				require("utils").save_cursor_position()
--- 				vim.cmd("AvanteToggle")
--- 				require("utils").restore_cursor_position()
--- 			end,
--- 			desc = "toggle",
--- 			mode = { "n", "v" },
--- 		},
--- 		["f"] = { "<cmd>AvanteFocus<CR>", desc = "focus", mode = { "n", "v" } },
--- 	},
--- })
--- local apf = require("workflows.AI.avante_prefill_function")
--- wk_map({
--- 	["<leader>ae"] = {
--- 		group = "Prefill",
--- 		order = { "1", "2", "3", "4", "5", "6", "7" },
--- 		["1"] = { apf.prefill_4, desc = "코드 설명", mode = { "n", "v" } },
--- 		["2"] = { apf.prefill_1, desc = "코드 리뷰", mode = { "n", "v" } },
--- 		["3"] = { apf.prefill_6, desc = "버그 해결", mode = { "n", "v" } },
--- 		["4"] = { apf.prefill_3, desc = "diagnostics 설명", mode = { "n", "v" } },
--- 		["5"] = { apf.prefill_2, desc = "코드 최적화", mode = { "n", "v" } },
--- 		["6"] = { apf.prefill_5, desc = "docstring 추가", mode = { "n", "v" } },
--- 		["7"] = { apf.prefill_7, desc = "테스트 작성", mode = { "n", "v" } },
--- 	},
--- })
-
 -- MEMO:: Directory
 wk_map({
 	["<Space>d"] = {

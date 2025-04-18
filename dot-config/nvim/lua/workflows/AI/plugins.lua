@@ -29,7 +29,7 @@ return {
 				keymap = {
 					accept = "<A-k>",
 					dismiss = "<A-h>",
-					accept_word = false, -- <A-l> 키맵
+					accept_word = false, -- 이어지는 suggestion을 위해 별도 설정
 					accept_line = "<A-j>",
 					prev = "<A-p>",
 					next = "<A-n>",

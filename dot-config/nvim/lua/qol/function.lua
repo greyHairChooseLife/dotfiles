@@ -95,11 +95,6 @@ function ReloadLayout(force)
 		vim.cmd("AerialToggle")
 	end
 
-	if utils.is_filetype_open("Avante") then
-		vim.cmd("AvanteToggle")
-		vim.cmd("AvanteToggle")
-	end
-
 	restore()
 end
 

@@ -118,7 +118,7 @@ vim.cmd([[
   highlight RenderMarkdownCode guibg=#181818 guifg=NONE
   highlight RenderMarkdownCodeInline guibg=#181818 guifg=NONE
   highlight RenderMarkdownCodeNofile guibg=#181818 guifg=NONE
-  highlight RenderMarkdownCodeAvante guibg=#000000 guifg=NONE
+  highlight RenderMarkdownCodeCodeCompanion guibg=#000000 guifg=NONE
   highlight RenderMarkdownDash guifg=#FFFFFF
   highlight RenderMarkdownQuote guifg=#5F5F5F
   highlight RenderMarkdownBullet guifg=#007F7F gui=bold
@@ -253,16 +253,6 @@ vim.cmd([[
   highlight AerialNormal guibg=#333342
   highlight AerialEOB guifg=#333342
   highlight AerialFoldColumn guifg=#333342
-
-
-  " MEMO:: Avante
-  highlight AvanteConflictCurrentLabel guifg=#FFA500 guibg=#000000
-  highlight AvanteConflictIncomingLabel guifg=#FFA500 guibg=#000000
-  highlight AvantePopupHint guifg=#8b8378 guibg=#24283b gui=italic
-  highlight AvanteThirdTitle guibg=#24283b
-  highlight AvanteNormal guibg=#242024
-  highlight AvanteSignColumn guibg=#242024
-  highlight AvanteSignEOB guifg=#242024
 
 
   " MEMO:: Pmenu for completion

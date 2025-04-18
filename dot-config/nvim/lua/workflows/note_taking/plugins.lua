@@ -59,7 +59,7 @@ return {
 		-- commit = "5cec1bb5fb11079a88fd5b3abd9c94867aec5945",
 		-- event = "BufEnter *.md",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
-		ft = { "markdown", "vimwiki", "Avante", "AvanteInput", "copilot-chat", "gitcommit", "codecompanion" },
+		ft = { "markdown", "vimwiki", "gitcommit", "codecompanion" },
 		---@module 'render-markdown'
 		---@type render.md.UserConfig
 		opts = {
@@ -69,9 +69,6 @@ return {
 			file_types = {
 				"markdown",
 				"vimwiki",
-				"Avante",
-				"AvanteInput",
-				"copilot-chat",
 				"gitcommit",
 				"codecompanion",
 			},
@@ -576,72 +573,6 @@ return {
 					},
 				},
 				filetype = {
-					Avante = {
-						heading = {
-							width = { "full", "full", "full" },
-							left_margin = { 0, 0, 0, 0 },
-							left_pad = { 0, 0, 0, 0 },
-							right_pad = { 0, 0, 0, 0 },
-							min_width = { 0, 0, 0, 0 },
-						},
-						sign = { enabled = false },
-						code = {
-							style = "full",
-							position = "right",
-							language_name = true,
-							language_pad = 0,
-							left_pad = 2,
-							-- Amount of padding to add to the right of code blocks when width is 'block'
-							right_pad = 0,
-							left_margin = 0,
-							-- min_width = 100,
-							width = "full",
-							border = "thick",
-							highlight = "RenderMarkdownCodeAvante",
-						},
-						quote = {
-							repeat_linebreak = true,
-						},
-						indent = { enabled = false },
-					},
-					AvanteInput = {
-						heading = {
-							width = { "full", "full", "full" },
-							left_margin = { 0, 0, 0, 0 },
-							left_pad = { 0, 0, 0, 0 },
-							right_pad = { 0, 0, 0, 0 },
-							min_width = { 0, 0, 0, 0 },
-						},
-						sign = { enabled = false },
-						code = {
-							style = "normal",
-							position = "left",
-							language_name = false,
-							language_pad = 0,
-							left_pad = 2,
-							-- Amount of padding to add to the right of code blocks when width is 'block'
-							right_pad = 0,
-							left_margin = 0,
-							min_width = 100,
-							width = "full",
-							border = "thin",
-							highlight = "RenderMarkdownCodeAvante",
-						},
-						quote = {
-							repeat_linebreak = true,
-						},
-						indent = { enabled = false },
-					},
-					["copilot-chat"] = {
-						heading = {
-							width = { "full", "full", "full" },
-							left_margin = { 0, 0, 0, 0 },
-							left_pad = { 0, 0, 0, 0 },
-							right_pad = { 0, 0, 0, 0 },
-							min_width = { 0, 0, 0, 0 },
-						},
-						indent = { enabled = false },
-					},
 					codecompanion = {
 						heading = {
 							width = { "full", "full", "full" },
@@ -713,8 +644,8 @@ return {
 							-- min_width = 100,
 							width = "block",
 							border = "thick",
-							highlight = "RenderMarkdownCodeAvante",
-							highlight_border = "RenderMarkdownCodeAvante",
+							highlight = "RenderMarkdownCodeCodeCompanion",
+							highlight_border = "RenderMarkdownCodeCodeCompanion",
 						},
 						quote = {
 							repeat_linebreak = true,
@@ -745,8 +676,7 @@ return {
 	{
 		"greyhairchooselife/markdowny.nvim",
 		event = "BufEnter *.md",
-		-- BUG:: 왜 안돼??? 플러그인도 수정해서 파일 타입 추가해줬는데...
-		ft = { "copilot-chat", "AvanteInput", "codecompanion" },
+		ft = { "codecompanion" },
 	},
 	{
 		"vhyrro/luarocks.nvim",
