@@ -1,7 +1,7 @@
 local M = {}
 
 --- Shows a selection UI for tabs and executes a callback with the selected tab
----@param callback function Function to call with the selected tab number (nil if cancelled)
+---@param callback fun(tab_id: integer|nil) Function to call with the selected tab number (nil if cancelled)
 M.selectTab = function(callback)
 	-- Get list of tabs
 	local tabs = {}

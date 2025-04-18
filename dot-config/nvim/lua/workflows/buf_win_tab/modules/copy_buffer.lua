@@ -17,7 +17,7 @@ M.duplicateAndOpenTempFile = function(opts)
 	local direction = opts.direction or "right" -- Default to vertical split
 
 	if direction == "select_tab" then
-		require("workflows.buf_win_tab.modules.select_tab").selectTab(function(tab_id)
+		local callback = function(tab_id)
 			if tab_id then
 				-- Switch to selected tab
 				vim.cmd(tab_id .. "tabnext")
@@ -29,7 +29,8 @@ M.duplicateAndOpenTempFile = function(opts)
 					pcall(vim.fn.delete, temp_file_path)
 				end
 			end
-		end)
+		end
+		require("workflows.buf_win_tab.modules.select_tab").selectTab(callback)
 		return temp_file_path
 	end
 
