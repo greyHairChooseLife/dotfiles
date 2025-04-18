@@ -93,7 +93,31 @@ local wk_map = require("utils").wk_map
 wk_map({
 	[",m"] = {
 		group = "  Move",
+		order = { "t", "T" },
 		["t"] = { MoveTabModifyTabname, desc = "tab new", mode = "n" },
+		["T"] = {
+			function()
+				local callback = function(tab_id)
+					local file_path = vim.fn.expand("%:p")
+					if tab_id then
+						vim.cmd("quit")
+						-- Switch to selected tab
+						vim.cmd(tab_id .. "tabnext")
+						-- Open the file
+						local escaped_path = vim.fn.fnameescape(file_path)
+						local ok, err = pcall(vim.cmd, "vsplit " .. escaped_path)
+						if not ok then
+							vim.notify("Error opening temporary file in selected tab: " .. err, vim.log.levels.ERROR)
+							pcall(vim.fn.delete, file_path)
+						end
+					end
+				end
+
+				require("workflows.buf_win_tab.modules.select_tab").selectTab(callback)
+			end,
+			desc = "tab select",
+			mode = "n",
+		},
 	},
 })
 
