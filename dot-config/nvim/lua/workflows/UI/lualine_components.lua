@@ -112,29 +112,6 @@ function M.winfix_status()
 	end
 end
 
-function M.copilot_chat()
-	local ft = vim.bo.filetype
-	if ft ~= "copilot-chat" then
-		return ""
-	end
-
-	local async = require("plenary.async")
-	local chat = require("CopilotChat")
-	local config = chat.config
-	local model = config.model
-
-	async.run(function()
-		local resolved_model = chat.resolve_model()
-		if resolved_model then
-			model = resolved_model
-		end
-	end, function(_, _)
-		-- Nothing to do here since we're just updating a local variable
-	end)
-
-	return model
-end
-
 function M.register_recording()
 	local register = vim.fn.reg_recording()
 	if #register > 0 then
@@ -282,22 +259,6 @@ M.my_oil = {
 			},
 		},
 		lualine_b = M.fill_color(M.colors.oil_bg),
-	},
-}
-
-M.my_copilot_chat = {
-	filetypes = { "copilot-chat" },
-	sections = {
-		lualine_a = {
-			{
-				"filetype",
-				color = { bg = M.colors.bg2, fg = M.colors.bg2 },
-			},
-		},
-		lualine_z = { { M.copilot_chat, color = { fg = M.colors.orange, bg = M.colors.bg2 } } },
-	},
-	inactive_sections = {
-		lualine_z = { { M.copilot_chat, color = { fg = M.colors.orange, bg = M.colors.bg2 } } },
 	},
 }
 

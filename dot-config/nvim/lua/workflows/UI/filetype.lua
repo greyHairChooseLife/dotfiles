@@ -133,20 +133,3 @@ vim.api.nvim_create_autocmd("FileType", {
 		)
 	end,
 })
-
-vim.api.nvim_create_autocmd("BufEnter", { -- 왠지 모르지만 BufEnter로 해야한다.
-	pattern = "copilot-*",
-	callback = function()
-		-- options
-		setOpt(
-			"winhighlight",
-			"Normal:ChatWithCopilotNormal,FoldColumn:ChatWithCopilotNormal,SignColumn:ChatWithCopilotNormal,StatusLineNC:ChatWithCopilotNormal,StatusLine:ChatWithCopilotNormal,EndOfBuffer:ChatWithCopilotEOB"
-		)
-		setOpt("number", false)
-		setOpt("relativenumber", false)
-		setOpt("conceallevel", 0)
-		setOpt("cursorline", false)
-		setOpt("signcolumn", "no")
-		setOpt("statusline", "%!v:lua._G.status_line_copilot_chat()")
-	end,
-})

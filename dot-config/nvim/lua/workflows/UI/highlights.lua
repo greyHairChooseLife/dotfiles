@@ -335,17 +335,6 @@ vim.cmd([[
   highlight TerminalSignColumn guibg=#0c0c0c
 
 
-  " MEMO:: ChatWithCopilot
-  highlight ChatWithCopilotNormal guibg=#242024
-  highlight ChatWithCopilotEOB guifg=#242024
-  highlight CopilotChatHeader guifg=#4169E1 gui=italic
-  highlight CopilotChatSeparator guifg=#4169E1
-" highlight CopilotChatStatus - Status and spinner in chat buffer
-" highlight CopilotChatHelp - Help messages in chat buffer (help, references)
-" highlight CopilotChatKeyword - Keyword highlight in chat buffer (e.g. prompts, contexts)
-" highlight CopilotChatInput - Input highlight in chat buffer (for contexts)
-
-
   " MEMO:: CodeCompanion
   highlight CodeCompanionMeHeader guibg=#A1C98A guifg=#000080
   highlight CodeCompanionCopilotHeader guibg=#000080 guifg=#DCDCAA

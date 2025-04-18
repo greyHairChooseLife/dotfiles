@@ -59,7 +59,6 @@ wk_map({
 		["a"] = { cdc_func.add_buffer_reference, desc = "add buffer reference", mode = { "n", "v" } },
 		["A"] = { cdc_func.add_tab_buffers_reference, desc = "add All buffers in Tab reference", mode = { "n", "v" } },
 
-		-- ["C"] = { "<cmd>CopilotChatCommit<CR>", desc = "write commitm msg", mode = { "n" } },
 		["C"] = {
 			"<cmd>CodeCompanion /generate_commit_msg<CR>",
 			desc = "generate commitm msg",
