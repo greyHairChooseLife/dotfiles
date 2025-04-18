@@ -147,3 +147,88 @@ map({ "n", "v" }, "<A-Enter>t", TabOnlyAndCloseHiddenBuffers)
 --       vim.api.nvim_buf_delete(bufnr, { force = true }) -- 버퍼 삭제 (force 옵션으로 강제 종료)
 --   end
 -- end, opt)
+
+local wk_map = require("utils").wk_map
+wk_map({
+	[",m"] = {
+		group = "expand",
+		["t"] = { MoveTabModifyTabname, desc = "move to tab", mode = "n" },
+	},
+})
+
+-- MEMO:: Split Buffer
+local copy_buffer = require("workflows.buf_win_tab.modules.copy_buffer")
+wk_map({
+	[",sd"] = {
+		order = { "v", "x", "t" },
+		group = "duplicate",
+		["v"] = {
+			function()
+				local startLine, endLine
+				if vim.fn.mode() ~= "n" then
+					startLine, endLine = require("utils").get_visual_line()
+				end
+
+				copy_buffer.duplicateAndOpenTempFile({
+					direction = "right",
+					range = { startLine = startLine, endLine = endLine },
+				})
+			end,
+			desc = "virtical",
+			mode = { "n", "v" },
+		},
+		["x"] = {
+			function()
+				local startLine, endLine
+				if vim.fn.mode() ~= "n" then
+					startLine, endLine = require("utils").get_visual_line()
+				end
+
+				copy_buffer.duplicateAndOpenTempFile({
+					direction = "down",
+					range = { startLine = startLine, endLine = endLine },
+				})
+			end,
+			desc = "horizontal",
+			mode = { "n", "v" },
+		},
+		["t"] = {
+			function()
+				local startLine, endLine
+				if vim.fn.mode() ~= "n" then
+					startLine, endLine = require("utils").get_visual_line()
+				end
+
+				copy_buffer.duplicateAndOpenTempFile({
+					direction = "tab",
+					range = { startLine = startLine, endLine = endLine },
+				})
+			end,
+			desc = "new tab",
+			mode = { "n", "v" },
+		},
+	},
+	[",s"] = {
+		group = "  Split",
+		order = { "v", "d", "x", "t" },
+		["v"] = { "<cmd>vs<CR>", desc = "vertical", mode = "n" },
+		["x"] = { "<cmd>sp | wincmd w<CR>", desc = "horizontal", mode = "n" },
+		["t"] = { SplitTabModifyTabname, desc = "new tab", mode = "n" },
+	},
+})
+
+-- MEMO:: Diff
+wk_map({
+	[",d"] = {
+		group = "󰕚  Diff",
+		order = { "g", "f" },
+		["g"] = { VDiffSplitOnTab, desc = "git diff", mode = "n" },
+		["f"] = {
+			function()
+				vim.fn.feedkeys(":vert diffsplit ", "n")
+			end,
+			desc = "file diff",
+			mode = "n",
+		},
+	},
+})

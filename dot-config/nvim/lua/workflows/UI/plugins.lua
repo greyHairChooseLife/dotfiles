@@ -548,10 +548,10 @@ return {
 			},
 			-- callback where you can add custom code when the focus window opens
 			on_open = function(_win)
-				require("utils").setOpt(
-					"winhighlight",
-					"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
-				)
+				-- require("utils").setOpt(
+				-- 	"winhighlight",
+				-- 	"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
+				-- )
 			end,
 			-- callback where you can add custom code when the focus window closes
 			on_close = function() end,

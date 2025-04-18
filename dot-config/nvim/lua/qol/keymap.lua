@@ -5,6 +5,7 @@ local opt = { noremap = true, silent = true }
 -- (의도) "저는 오늘 저녁으로 김치를 먹었습니다."
 -- (결과) "저 는오 늘저녁으 로김치 를먹었습니다."
 map("i", "<Space>", function()
+	-- TODO:: 이거 input-method가 한글로 설정된 경우로 한정할 수 있겠다. 그럼 nerd-dictation같은거 잘 될듯
 	vim.defer_fn(function()
 		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Space>", true, false, true), "n", true)
 	end, 20)

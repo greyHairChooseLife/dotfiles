@@ -182,7 +182,7 @@ function ManageBuffer_gtq()
 	local tabid = vim.api.nvim_get_current_tabpage() -- 탭 ID 가져오기
 	local wins = vim.api.nvim_tabpage_list_wins(tabid) -- 현재 탭의 윈도우 목록 가져오기, 인자로 받는 것은 탭 번호가 아니라 탭 ID
 	for _, win in ipairs(wins) do
-		if vim.bo.filetype == "NvimTree" then
+		if vim.bo.filetype == "NvimTree" or vim.bo.filetype == "codecompanion" then
 			vim.cmd("q")
 		elseif vim.api.nvim_win_is_valid(win) then
 			local bufnr = vim.api.nvim_win_get_buf(win) -- 윈도우에 연결된 버퍼 번호 가져오기

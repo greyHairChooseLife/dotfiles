@@ -321,36 +321,3 @@ wk_map({
 		},
 	},
 })
-wk_map({
-	[",v"] = {
-		group = "expand",
-		["d"] = { VDiffSplitOnTab, desc = "vertical diff", mode = "n" },
-	},
-})
-wk_map({
-	[",vf"] = {
-		group = "expand",
-		["d"] = {
-			function()
-				vim.fn.feedkeys(":vert diffsplit ", "n")
-			end,
-			desc = "vertical File diff",
-			mode = "n",
-		},
-	},
-})
-wk_map({
-	[",s"] = {
-		group = "expand",
-		order = { "v", "x", "t" },
-		["v"] = { "<cmd>vs<CR>", desc = "split vertical", mode = "n" },
-		["x"] = { "<cmd>sp | wincmd w<CR>", desc = "split horizontal", mode = "n" },
-		["t"] = { SplitTabModifyTabname, desc = "split to tab", mode = "n" },
-	},
-})
-wk_map({
-	[",m"] = {
-		group = "expand",
-		["t"] = { MoveTabModifyTabname, desc = "move to tab", mode = "n" },
-	},
-})
