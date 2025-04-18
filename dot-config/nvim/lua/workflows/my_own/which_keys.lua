@@ -1,18 +1,5 @@
 local wk_map = require("utils").wk_map
 
--- MEMO:: All Groups
-wk_map({
-	["<leader>"] = {
-		group = "External",
-	},
-	["<Space>"] = {
-		group = "Internal",
-	},
-	[","] = {
-		group = "on the fly",
-	},
-})
-
 -- MEMO:: Git
 wk_map({ ["<leader>g"] = { group = "󰊢  Git" } })
 wk_map({
