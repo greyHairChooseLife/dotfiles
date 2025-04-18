@@ -66,12 +66,6 @@ map("n", "<A-S-Left>", "<cmd>vertical resize -8<CR>", {})
 map("n", "<A-S-Right>", "<cmd>vertical resize +8<CR>", {})
 map("n", "<A-S-Down>", "<cmd>horizontal resize -8<CR>", {})
 map("n", "<A-S-Up>", "<cmd>horizontal resize +8<CR>", {})
--- Etc
--- DEPRECATED:: 2025-02-07, which-key
--- map("n", ",sv", "<cmd>vs<CR>") -- go to definition in splitted window (vertical)
--- map("n", ",sx", "<cmd>sp | wincmd w<CR>") -- go to definition in splitted window (horizontal)
--- map("n", ",st", SplitTabModifyTabname) -- Copy window to new tab
--- map("n", ",mt", MoveTabModifyTabname) -- move window to tab
 
 ---------------------------------------------------------------------------------------------------------------------------------- TABS
 -- New / Rename / Swap Position
@@ -94,59 +88,6 @@ map("n", "<A-8>", "8gt")
 map("n", "<A-9>", "9gt")
 -- Etc
 map({ "n", "v" }, "<A-Enter>t", TabOnlyAndCloseHiddenBuffers)
-
--- DEPRECATED::, 2024-12-24 향후 문제 없으면 제거
--- map('n', 'gq', function()
---   if vim.fn.winnr('$') == 1 and vim.fn.tabpagenr('$') == 1 then vim.cmd('q')  -- 마지막 탭의 마지막 윈도우라면 걍 끄면 됨
---   elseif vim.fn.winnr('$') == 1 and vim.fn.tabpagenr('$') ~= 1 then
---     local bufnr = vim.fn.bufnr('%')
---     vim.cmd('q')
---     if vim.api.nvim_buf_is_valid(bufnr) then
---       vim.api.nvim_buf_delete(bufnr, { force = true })
---     end
---   elseif vim.fn.winnr('$') == 2 and require('nvim-tree.api').tree.is_visible() then
---     local bufnr = vim.fn.bufnr('%')
---     vim.cmd('q')
---     if vim.api.nvim_buf_is_valid(bufnr) then
---       vim.api.nvim_buf_delete(bufnr, { force = true })
---     end
---   else vim.cmd('bd!') end
--- end) -- close buffer, saving memory
-
--- DEPRECATED:: 2024-12-24 향후 문제 없으면 제거
--- map('n', 'ge', function()
---   vim.cmd('w')
---   -- 현재 윈도우가 마지막 윈도우라면 q로 종료
---   if vim.fn.winnr('$') == 1 then vim.cmd('q')
---   else vim.cmd('bd') end
---   vim.notify('Saved last buffers', 3, { render = 'minimal' })
--- end)
-
--- DEPRECATED:: 2024-12-24 향후 문제 없으면 제거
--- map('n', 'gtq', function()
---   -- 탭 이름이 'abcd' 라면
---   local tabname = GetCurrentTabName()
---   if tabname == ' Commit' or tabname == ' File' or tabname == 'GV' or tabname == 'Diff' then
---     vim.cmd('tabclose!')
---     return
---   end
---
---   -- 전체 탭의 개수가 1개라면 아무것도 하지 않고 종료
---   if vim.fn.tabpagenr('$') == 1 then
---     vim.notify('Cannot close the last tab page', 4, { render = 'minimal' })
---     return
---   end
---
---   -- 현재 탭의 모든 윈도우를 순회하며 버퍼를 닫음
---   -- local tabnr = vim.fn.tabpagenr()  -- 현재 탭 번호 가져오기
---   local tabid = vim.api.nvim_get_current_tabpage()  -- 탭 ID 가져오기
---   local wins = vim.api.nvim_tabpage_list_wins(tabid) -- 현재 탭의 윈도우 목록 가져오기, 인자로 받는 것은 탭 번호가 아니라 탭 ID
---
---   for _, win in ipairs(wins) do
---       local bufnr = vim.api.nvim_win_get_buf(win) -- 윈도우에 연결된 버퍼 번호 가져오기
---       vim.api.nvim_buf_delete(bufnr, { force = true }) -- 버퍼 삭제 (force 옵션으로 강제 종료)
---   end
--- end, opt)
 
 local wk_map = require("utils").wk_map
 wk_map({
