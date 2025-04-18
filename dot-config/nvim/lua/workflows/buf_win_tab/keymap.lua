@@ -90,22 +90,6 @@ map("n", "<A-9>", "9gt")
 map({ "n", "v" }, "<A-Enter>t", TabOnlyAndCloseHiddenBuffers)
 
 local wk_map = require("utils").wk_map
-wk_map({
-	[",m"] = {
-		group = "  Move",
-		order = { "t", "T" },
-		["t"] = { MoveTabModifyTabname, desc = "tab new", mode = "n" },
-		["T"] = {
-			function()
-				local m = require("workflows.buf_win_tab.modules.select_tab")
-				m.selectTabAndOpen({ quit_current_window = true })
-			end,
-			desc = "tab select",
-			mode = "n",
-		},
-	},
-})
-
 -- MEMO:: Split Buffer
 local copy_buffer = require("workflows.buf_win_tab.modules.copy_buffer")
 wk_map({
@@ -186,6 +170,23 @@ wk_map({
 			end,
 			desc = "tab select",
 			mode = { "n", "v" },
+		},
+	},
+})
+
+-- MEMO:: Move Buffer
+wk_map({
+	[",m"] = {
+		group = "  Move",
+		order = { "t", "T" },
+		["t"] = { MoveTabModifyTabname, desc = "tab new", mode = "n" },
+		["T"] = {
+			function()
+				local m = require("workflows.buf_win_tab.modules.select_tab")
+				m.selectTabAndOpen({ quit_current_window = true })
+			end,
+			desc = "tab select",
+			mode = "n",
 		},
 	},
 })
