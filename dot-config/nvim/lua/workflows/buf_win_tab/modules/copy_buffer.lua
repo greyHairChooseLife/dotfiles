@@ -15,6 +15,24 @@ M.duplicateAndOpenTempFile = function(opts)
 
 	-- Determine the command to open the new window/tab
 	local direction = opts.direction or "right" -- Default to vertical split
+
+	if direction == "select_tab" then
+		require("workflows.buf_win_tab.modules.select_tab").selectTab(function(tab_id)
+			if tab_id then
+				-- Switch to selected tab
+				vim.cmd(tab_id .. "tabnext")
+				-- Open the file
+				local escaped_path = vim.fn.fnameescape(temp_file_path)
+				local ok, err = pcall(vim.cmd, "vsplit " .. escaped_path)
+				if not ok then
+					vim.notify("Error opening temporary file in selected tab: " .. err, vim.log.levels.ERROR)
+					pcall(vim.fn.delete, temp_file_path)
+				end
+			end
+		end)
+		return temp_file_path
+	end
+
 	local cmd_prefix
 	if direction == "tab" then
 		cmd_prefix = "tabnew"
@@ -54,7 +72,7 @@ end
 ---@class duplicateAndSaveTempFileOpts
 ---@field source_file_path? string file path to duplicate
 ---@field range { startLine: integer, endLine: integer }? selected range (1-based inclusive)
----@field direction "tab" | "right" | "down" where to place window
+---@field direction "select_tab" | "tab" | "right" | "down" where to place window
 ---@param opts duplicateAndSaveTempFileOpts Options for duplicating content
 ---@return string? path Path to the temporary file, or nil on error
 M.duplicateAndSaveTempFile = function(opts)

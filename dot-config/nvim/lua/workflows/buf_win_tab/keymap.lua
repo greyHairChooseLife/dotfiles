@@ -92,16 +92,23 @@ map({ "n", "v" }, "<A-Enter>t", TabOnlyAndCloseHiddenBuffers)
 local wk_map = require("utils").wk_map
 wk_map({
 	[",m"] = {
-		group = "expand",
-		["t"] = { MoveTabModifyTabname, desc = "move to tab", mode = "n" },
+		group = "  Move",
+		["t"] = { MoveTabModifyTabname, desc = "tab new", mode = "n" },
 	},
 })
 
 -- MEMO:: Split Buffer
 local copy_buffer = require("workflows.buf_win_tab.modules.copy_buffer")
 wk_map({
+	[",s"] = {
+		group = "  Split",
+		order = { "v", "d", "x", "t" },
+		["v"] = { "<cmd>vs<CR>", desc = "vertical", mode = "n" },
+		["x"] = { "<cmd>sp | wincmd w<CR>", desc = "horizontal", mode = "n" },
+		["t"] = { SplitTabModifyTabname, desc = "new tab", mode = "n" },
+	},
 	[",sd"] = {
-		order = { "v", "x", "t" },
+		order = { "v", "x", "t", "T" },
 		group = "duplicate",
 		["v"] = {
 			function()
@@ -145,16 +152,24 @@ wk_map({
 					range = { startLine = startLine, endLine = endLine },
 				})
 			end,
-			desc = "new tab",
+			desc = "tab new",
 			mode = { "n", "v" },
 		},
-	},
-	[",s"] = {
-		group = "  Split",
-		order = { "v", "d", "x", "t" },
-		["v"] = { "<cmd>vs<CR>", desc = "vertical", mode = "n" },
-		["x"] = { "<cmd>sp | wincmd w<CR>", desc = "horizontal", mode = "n" },
-		["t"] = { SplitTabModifyTabname, desc = "new tab", mode = "n" },
+		["T"] = {
+			function()
+				local startLine, endLine
+				if vim.fn.mode() ~= "n" then
+					startLine, endLine = require("utils").get_visual_line()
+				end
+
+				copy_buffer.duplicateAndOpenTempFile({
+					direction = "select_tab",
+					range = { startLine = startLine, endLine = endLine },
+				})
+			end,
+			desc = "tab select",
+			mode = { "n", "v" },
+		},
 	},
 })
 
