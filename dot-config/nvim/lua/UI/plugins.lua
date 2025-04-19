@@ -60,7 +60,7 @@ return {
 			local utils = require("utils")
 
 			-- Import lualine components
-			local lualine_components = require("workflows.UI.lualine_components")
+			local lualine_components = require("UI.lualine_components")
 			local colors = lualine_components.colors
 			local my_theme = lualine_components.theme
 
@@ -414,7 +414,7 @@ return {
 				dashboard.button("w", "Word", ":Telescope live_grep<CR>"),
 				dashboard.button("o", "Old", ":Telescope oldfiles<CR>"),
 				dashboard.button("c", "  Copilot", function()
-					local cdc_func = require("workflows.AI.function.codecompanion")
+					local cdc_func = require("AI.function.codecompanion")
 					cdc_func.create_new()
 					vim.cmd("only")
 				end),

@@ -91,7 +91,7 @@ map({ "n", "v" }, "<A-Enter>t", TabOnlyAndCloseHiddenBuffers)
 
 local wk_map = require("utils").wk_map
 -- MEMO:: Split Buffer
-local copy_buffer = require("workflows.buf_win_tab.modules.copy_buffer")
+local copy_buffer = require("buf_win_tab.modules.copy_buffer")
 wk_map({
 	[",s"] = {
 		group = "  Split",
@@ -101,7 +101,7 @@ wk_map({
 		["t"] = { SplitTabModifyTabname, desc = "tab new", mode = "n" },
 		["T"] = {
 			function()
-				local m = require("workflows.buf_win_tab.modules.select_tab")
+				local m = require("buf_win_tab.modules.select_tab")
 				m.selectTabAndOpen()
 			end,
 			desc = "tab select",
@@ -182,7 +182,7 @@ wk_map({
 		["t"] = { MoveTabModifyTabname, desc = "tab new", mode = "n" },
 		["T"] = {
 			function()
-				local m = require("workflows.buf_win_tab.modules.select_tab")
+				local m = require("buf_win_tab.modules.select_tab")
 				m.selectTabAndOpen({ quit_current_window = true })
 			end,
 			desc = "tab select",

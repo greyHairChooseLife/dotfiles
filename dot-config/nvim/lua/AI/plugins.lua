@@ -162,8 +162,8 @@ return {
 							regenerate = { modes = { n = "gR" } },
 						},
 						adapter = "copilot",
-						slash_commands = require("workflows.AI.codecompanion.slash_commands"),
-						-- tools = require("workflows.AI.codecompanion.tools"),
+						slash_commands = require("AI.codecompanion.slash_commands"),
+						-- tools = require("AI.codecompanion.tools"),
 						-- variables = {},
 					},
 					inline = {
@@ -180,17 +180,17 @@ return {
 						opts = { is_slash_cmd = false, short_name = "[deprecated] commit" },
 					},
 					-- custom
-					["Review Commit"] = require("workflows.AI.function.codecompanion-review_commit"),
-					["Generate CommitMsg"] = require("workflows.AI.function.codecompanion-generate_commit_msg"),
+					["Review Commit"] = require("AI.function.codecompanion-review_commit"),
+					["Generate CommitMsg"] = require("AI.function.codecompanion-generate_commit_msg"),
 					["Analyze Git Status for branching commits"] = require(
-						"workflows.AI.function.codecompanion-analyze_git_status"
+						"AI.function.codecompanion-analyze_git_status"
 					),
 					["Load Full-context of the git status"] = require(
-						"workflows.AI.function.codecompanion-get_full_git_status_reference"
+						"AI.function.codecompanion-get_full_git_status_reference"
 					),
 				},
 				opts = {
-					-- system_prompt = require("workflows.AI.codecompanion.system_prompt"),
+					-- system_prompt = require("AI.codecompanion.system_prompt"),
 				},
 			})
 
@@ -228,7 +228,7 @@ return {
 			-- 			return
 			-- 		end
 			-- 		-- local config = require("codecompanion.config")
-			-- 		-- local add_reference = require("workflows.AI.codecompanion.utils.add_reference")
+			-- 		-- local add_reference = require("AI.codecompanion.utils.add_reference")
 			-- 		--
 			-- 		-- add_reference(current_chat, {
 			-- 		--   role = config.constants.USER_ROLE,

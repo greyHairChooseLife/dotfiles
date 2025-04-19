@@ -16,7 +16,7 @@ end, opt)
 -- <<<<<<<<<<<<<<<<< copilot.lua
 
 -- MEMO:: CodeCompanion
-local cdc_func = require("workflows.AI.function.codecompanion")
+local cdc_func = require("AI.function.codecompanion")
 wk_map({
 	["<leader>c"] = {
 		group = "  CodeCompanion",

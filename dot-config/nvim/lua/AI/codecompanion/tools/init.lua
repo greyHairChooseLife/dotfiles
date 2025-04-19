@@ -1,4 +1,4 @@
-local tools_prefix = vim.fn.stdpath("config") .. "/lua/workflows/AI/codecompanion/tools/"
+local tools_prefix = vim.fn.stdpath("config") .. "/lua/AI/codecompanion/tools/"
 
 return {
 	groups = {

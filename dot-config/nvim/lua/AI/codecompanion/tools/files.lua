@@ -5,7 +5,7 @@ in the same XML block. All actions must be approved by you.
 --]]
 
 local Path = require("plenary.path")
-local add_reference = require("workflows.AI.codecompanion.utils.add_reference")
+local add_reference = require("AI.codecompanion.utils.add_reference")
 local config = require("codecompanion.config")
 
 local util = require("codecompanion.utils")

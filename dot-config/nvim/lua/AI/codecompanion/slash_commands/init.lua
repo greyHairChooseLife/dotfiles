@@ -1,0 +1,17 @@
+return {
+	["delete_session"] = require("AI.codecompanion.slash_commands.delete_session"),
+	["dump_session"] = require("AI.codecompanion.slash_commands.dump_session"),
+	["restore_session"] = require("AI.codecompanion.slash_commands.restore_session"),
+	-- ["git_commit"] = require("AI.codecompanion.slash_commands.git_commit"),
+	-- ["thinking"] = require("AI.codecompanion.slash_commands.thinking"),
+	-- ["agent_mode"] = require("AI.codecompanion.slash_commands.agent_mode"),
+	-- ["plan_mode"] = require("AI.codecompanion.slash_commands.plan_mode"),
+	-- ["bilingual"] = require("AI.codecompanion.slash_commands.bilingual"),
+	-- ["emoji"] = require("AI.codecompanion.slash_commands.emoji"),
+	-- ["chinese"] = require("AI.codecompanion.slash_commands.chinese"),
+	-- ["codeforces_companion"] = require("AI.codecompanion.slash_commands.codeforces_companion"),
+	-- ["review_merge_request"] = require("AI.codecompanion.slash_commands.review_merge_request"),
+	-- ["review_git_diffs"] = require("AI.codecompanion.slash_commands.review_git_diffs"),
+	-- ["graphviz"] = require("AI.codecompanion.slash_commands.graphviz"),
+	["summarize_text"] = require("AI.codecompanion.slash_commands.summarize_text"),
+}

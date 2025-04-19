@@ -21,12 +21,7 @@ local workflows = {
 }
 local specs = {}
 for _, workflow in ipairs(workflows) do
-	-- 워크플로우별 플러그인 사양을 import
-	local base_path = ""
-	if workflow ~= "qol" then
-		base_path = "workflows."
-	end
-	table.insert(specs, { import = base_path .. workflow .. ".plugins" })
+	table.insert(specs, { import = workflow .. ".plugins" })
 end
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -73,67 +68,34 @@ require("lazy").setup({
 		custom_keys = {
 			["<localleader>i"] = false,
 			["<localleader>l"] = false,
-			["ya"] = {
-				function(plugin)
-					vim.fn.setreg("+", plugin.dir)
-					vim.notify("Copied plugin directory to clipboard: " .. plugin.dir)
-				end,
-				desc = "copy plugin path",
-			},
-			["<localleader>t"] = {
-				function(plugin)
-					require("lazy.util").float_term(nil, {
-						cwd = plugin.dir,
-					})
-				end,
-				desc = "Open terminal in plugin dir",
-			},
 		},
 	},
 })
 
--- 워크플로우별 추가 설정 적용
-for _, workflow in ipairs(workflows) do
-	local base_path = workflow == "qol" and workflow or "workflows." .. workflow
-	local config_dir = vim.fn.stdpath("config") .. "/lua/" .. base_path:gsub("%.", "/")
-
-	-- Function to load modules from directory and its subdirectories
-	local function load_directory(dir_path, module_prefix)
-		-- 디렉토리 내의 모든 .lua 파일을 찾아서 로드
-		if vim.fn.isdirectory(dir_path) == 1 then
-			-- Load .lua files in the current directory
-			local files = vim.fn.glob(dir_path .. "/*.lua")
-			for file in string.gmatch(files, "[^\n]+") do
-				-- plugins.lua는 이미 lazy.nvim에서 로드했으므로 제외
-				if not file:match("plugins.lua$") then
-					local module_name = vim.fn.fnamemodify(file, ":t:r") -- 파일 확장자 제거
-					require("utils").safe_require(module_prefix .. "." .. module_name)
-				end
-			end
-
-			-- Find and process subdirectories
-			local subdirs = vim.fn.glob(dir_path .. "/*/")
-			for subdir in string.gmatch(subdirs, "[^\n]+") do
-				local subdir_name = vim.fn.fnamemodify(subdir:sub(1, -2), ":t") -- Remove trailing slash and get dir name
-
-				-- Always load 'function' directories first
-				if subdir_name == "function" then
-					local subdir_module_prefix = module_prefix .. "." .. subdir_name
-					load_directory(subdir, subdir_module_prefix)
-				end
-			end
-
-			-- Process other subdirectories (non-function ones)
-			for subdir in string.gmatch(subdirs, "[^\n]+") do
-				local subdir_name = vim.fn.fnamemodify(subdir:sub(1, -2), ":t") -- Remove trailing slash and get dir name
-				if subdir_name ~= "function" then
-					local subdir_module_prefix = module_prefix .. "." .. subdir_name
-					load_directory(subdir, subdir_module_prefix)
-				end
+-- Function to load modules from directory and its subdirectories
+local function load_directory(dir_path, module_prefix)
+	if vim.fn.isdirectory(dir_path) == 1 then
+		local lua_files_in_current_dir = vim.fn.glob(dir_path .. "/*.lua")
+		for file in string.gmatch(lua_files_in_current_dir, "[^\n]+") do
+			-- plugins.lua는 이미 lazy.nvim에서 로드했으므로 제외
+			if not file:match("plugins.lua$") then
+				local module_name = vim.fn.fnamemodify(file, ":t:r") -- 파일 확장자 제거
+				require("utils").safe_require(module_prefix .. "." .. module_name)
 			end
 		end
-	end
 
-	-- Start loading from the workflow directory
-	load_directory(config_dir, base_path)
+		-- 하위 디렉토리도 재귀적으로 실행
+		local subdirs = vim.fn.glob(dir_path .. "/*/")
+		for subdir in string.gmatch(subdirs, "[^\n]+") do
+			local subdir_name = vim.fn.fnamemodify(subdir:sub(1, -2), ":t") -- Remove trailing slash and get dir name
+			local subdir_module_prefix = module_prefix .. "." .. subdir_name
+			load_directory(subdir, subdir_module_prefix)
+		end
+	end
+end
+
+-- 워크플로우별 추가 설정(plug-in 외 다른놈들) 적용
+for _, wf in ipairs(workflows) do
+	local wf_dir = vim.fn.stdpath("config") .. "/lua/" .. wf:gsub("%.", "/")
+	load_directory(wf_dir, wf)
 end

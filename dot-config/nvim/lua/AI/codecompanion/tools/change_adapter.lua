@@ -3,7 +3,7 @@
 This tool is used to change adapter for better performance.
 --]]
 
-local change_adapter = require("workflows.AI.codecompanion.utils.change_adapter")
+local change_adapter = require("AI.codecompanion.utils.change_adapter")
 local codecompanion = require("codecompanion")
 local config = require("codecompanion.config")
 

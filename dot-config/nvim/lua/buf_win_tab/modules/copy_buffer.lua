@@ -17,7 +17,7 @@ M.duplicateAndOpenTempFile = function(opts)
 	local direction = opts.direction or "right" -- Default to vertical split
 
 	if direction == "select_tab" then
-		local m = require("workflows.buf_win_tab.modules.select_tab")
+		local m = require("buf_win_tab.modules.select_tab")
 		m.selectTabAndOpen({ source_file_path = temp_file_path })
 		return temp_file_path
 	end

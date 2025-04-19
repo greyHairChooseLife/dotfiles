@@ -198,6 +198,8 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 ### config 훔치기 [-]
 
+leader gc해서 커밋 메시지 켤 때 뭐 이상해진다. 가끔. 윈도우 자리가 안맞음
+
 - 전반적으로
   https://patrick-f.tistory.com/36
 

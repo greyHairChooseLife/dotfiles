@@ -1,4 +1,4 @@
-local bf = require("workflows.auto_completion.function.blink-function")
+local bf = require("auto_completion.function.blink-function")
 
 return {
 	{

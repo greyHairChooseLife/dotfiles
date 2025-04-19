@@ -103,7 +103,7 @@ return {
 					error = "",
 				},
 			},
-			on_attach = require("workflows.file_tree.keymap").nvim_tree_on_attach,
+			on_attach = require("file_tree.keymap").nvim_tree_on_attach,
 			auto_reload_on_write = true,
 			modified = {
 				enable = true,

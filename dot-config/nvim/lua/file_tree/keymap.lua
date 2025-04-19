@@ -41,7 +41,7 @@ M.nvim_tree_on_attach = function(bufnr)
 	map("n", "T", function()
 		local node = api.tree.get_node_under_cursor()
 		local target_file_path = node.absolute_path
-		local m = require("workflows.buf_win_tab.modules.select_tab")
+		local m = require("buf_win_tab.modules.select_tab")
 		m.selectTabAndOpen({ source_file_path = target_file_path })
 	end, opts("Open in Selected Tab"))
 	map("n", "l", function()

@@ -3,7 +3,7 @@ local opt = { noremap = true, silent = true }
 
 local builtin = require("telescope.builtin")
 
-local tele_func = require("workflows.fuzzy_find.function")
+local tele_func = require("fuzzy_find.function")
 
 map({ "n", "v" }, ",.t", tele_func.terminal_buffer_search)
 

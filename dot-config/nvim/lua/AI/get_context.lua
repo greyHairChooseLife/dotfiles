@@ -150,7 +150,7 @@ end
 ---@return table context Collection of file data
 ---@usage
 --- ```lua
---- local reader = require('workflows.AI.get_context')
+--- local reader = require('AI.get_context')
 --- local paths = {'/home/user/project/main.lua', '/home/user/project/config.json'}
 --- local context = reader.read_files(paths)
 ---

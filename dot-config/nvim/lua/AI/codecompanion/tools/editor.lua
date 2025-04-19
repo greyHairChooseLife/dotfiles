@@ -4,7 +4,7 @@ This tool is used to directly modify the contents of a buffer. It can handle
 multiple edits in the same XML block.
 --]]
 
-local add_reference = require("workflows.AI.codecompanion.utils.add_reference")
+local add_reference = require("AI.codecompanion.utils.add_reference")
 local config = require("codecompanion.config")
 
 local keymaps = require("codecompanion.utils.keymaps")

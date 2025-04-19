@@ -1,4 +1,4 @@
-local restore_messages = require("workflows.AI.codecompanion.utils.restore_messages")
+local restore_messages = require("AI.codecompanion.utils.restore_messages")
 local util = require("codecompanion.utils")
 
 -- ---@param chat CodeCompanion.Chat

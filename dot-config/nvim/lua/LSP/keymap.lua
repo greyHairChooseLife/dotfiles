@@ -85,8 +85,8 @@ wk_map({
 	["<Space>l"] = {
 		group = "LSP",
 		order = { "d", "D", "c", "v" },
-		["d"] = { require("workflows.LSP.function").diagnostic_local, desc = "diagnostic (local)", mode = { "n" } },
-		["D"] = { require("workflows.LSP.function").diagnostic_global, desc = "diagnostic (global)", mode = { "n" } },
+		["d"] = { require("LSP.function").diagnostic_local, desc = "diagnostic (local)", mode = { "n" } },
+		["D"] = { require("LSP.function").diagnostic_global, desc = "diagnostic (global)", mode = { "n" } },
 		["y"] = { CopyDiagnosticsAtLine, desc = "copy diagnostics at line", mode = { "n", "v" } },
 		["c"] = { vim.lsp.buf.code_action, desc = "code action", mode = { "n", "v" } },
 		["v"] = { ToggleVirtualText, desc = "virtual text toggle", mode = { "n" } },
