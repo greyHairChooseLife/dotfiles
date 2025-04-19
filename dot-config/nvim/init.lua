@@ -12,7 +12,7 @@ local workflows = {
 	"syntax",
 	"LSP",
 	"format_lint",
-	"auto_completion",
+	"completion",
 	"AI",
 	"UI",
 	"note_taking",

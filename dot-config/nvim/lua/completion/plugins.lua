@@ -1,4 +1,4 @@
-local bf = require("auto_completion.function.blink-function")
+local bf = require("completion.function.blink-function")
 
 return {
 	{
