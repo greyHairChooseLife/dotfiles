@@ -161,14 +161,6 @@ wk_map({
 		group = "UI",
 		order = { "i", "d" },
 		["i"] = { "<cmd>IBLToggle<CR>", desc = "IBL-toggle", mode = "n" },
-		["d"] = {
-			function()
-				vim.cmd("Gitsigns toggle_word_diff")
-				vim.cmd("Gitsigns toggle_linehl")
-			end,
-			desc = "diff preview",
-			mode = "n",
-		},
 		["v"] = { ToggleVirtualText, desc = "virtual text toggle", mode = { "n" } },
 		["r"] = { "<cmd>RenderMarkdown buf_toggle<CR>", desc = "  rendering toggle", mode = { "n" } },
 	},

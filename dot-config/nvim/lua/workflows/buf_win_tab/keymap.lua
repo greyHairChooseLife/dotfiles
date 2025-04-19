@@ -195,7 +195,7 @@ wk_map({
 wk_map({
 	[",d"] = {
 		group = "󰕚  Diff",
-		order = { "g", "f", "c" },
+		order = { "g", "c", "t", "f" },
 		["g"] = { VDiffSplitOnTab, desc = "git diff", mode = "n" },
 		["f"] = {
 			function()
@@ -204,7 +204,7 @@ wk_map({
 			desc = "file diff",
 			mode = "n",
 		},
-		["c"] = {
+		["t"] = {
 			function()
 				local tabnr = vim.fn.tabpagenr()
 				vim.fn.settabvar(tabnr, "tabname", "Diff") -- GV에 탭이름 변경
@@ -213,7 +213,15 @@ wk_map({
 				vim.cmd("wincmd l")
 				vim.cmd("diffthis")
 			end,
-			desc = "current tab",
+			desc = "tab (buffers) diff",
+			mode = "n",
+		},
+		["c"] = {
+			function()
+				vim.cmd("Gitsigns toggle_word_diff")
+				vim.cmd("Gitsigns toggle_linehl")
+			end,
+			desc = "current inline diff",
 			mode = "n",
 		},
 	},
