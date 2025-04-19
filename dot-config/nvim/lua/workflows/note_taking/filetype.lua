@@ -1,12 +1,6 @@
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "vimwiki",
 	callback = function()
-		-- SNIPPET
-		-- DEPRECATED:: 2025-04-12
-		-- vim.keymap.set("i", ",,h2", function()
-		-- 	vim.api.nvim_feedkeys("## ", "i", true)
-		-- end)
-
 		-- callouts
 		vim.keymap.set("i", ",,qt", function()
 			vim.api.nvim_put({ "> [!qt] ", ">   󱞪 " }, "c", false, true)

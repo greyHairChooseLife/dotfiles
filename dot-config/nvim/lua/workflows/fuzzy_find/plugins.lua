@@ -454,12 +454,6 @@ return {
 						-- jump to entry where hoop loop was started from
 						reset_selection = true,
 					},
-					-- DEPRECATED:: 2024-12-28
-					-- coc = {
-					--   prefer_locations = true,    -- always use Telescope locations to preview definitions/declarations/implementations etc
-					--   push_cursor_on_edit = true, -- save the cursor position to jump back in the future
-					--   timeout = 3000,             -- timeout for coc commands
-					-- },
 					fzf = {
 						fuzzy = true, -- false will only do exact matching
 						override_generic_sorter = true, -- override the generic sorter

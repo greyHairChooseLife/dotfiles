@@ -22,13 +22,6 @@ map({ "n", "v" }, "gu", function()
 	vim.cmd("normal! lbvU")
 	require("utils").restore_cursor_position()
 end) -- CamelCase
--- DEPRECATED:: 2025-02-07, which-key
--- map("n", ",r", ReloadLayout) -- 창 크기 동일하게
--- map("n", ",C", [[:%s/<C-r><C-w>//g<Left><Left>]]) -- change word under cursor globally
--- map("n", ",R", RunBufferWithSh, opt)
--- map("n", ",cR", RunBufferWithShCover, opt)
--- map("v", ",R", RunSelectedLinesWithSh, opt)
--- map("v", ",cR", RunSelectedLinesWithShCover, opt)
 
 map({ "n", "v" }, ";", ":")
 map({ "n", "v" }, ":", ";")
@@ -141,21 +134,6 @@ end, opt)
 
 -- { 중괄호 }로 묶인 영역 통째로 복사
 map("n", "yY", "va{Vy", opt)
-
--- DEPRECATED:: 2024-01-17
--- map({ "n" }, ",,p", '"*p') -- easy-paste system clipboard
--- map({ "n", "v" }, ",p", '"0p') -- paste last thing yanked, not deleted
-
--- DEPRECATED:: 2025-02-04, which-key
--- -- INDENT-BLANKLINE
--- map({ "n", "v" }, "<F2>", "<cmd>IBLToggle<CR>")
--- -- AUTO-SESSION
--- map("n", "<leader><leader>s", "<cmd>SessionSave<CR>") -- save
--- map("n", ",.S", "<cmd>SessionSearch<CR>", opt) -- search and load
--- map("n", ",,q", QF_ToggleList, opt)
--- map("n", ",q", "<cmd>copen<CR>", opt)
--- map("n", "qn", QF_next, { buffer = false })
--- map("n", "qp", QF_prev, { buffer = false })
 
 local wk_map = require("utils").wk_map
 wk_map({

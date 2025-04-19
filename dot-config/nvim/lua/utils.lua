@@ -63,18 +63,6 @@ M.get_visual_line = function()
 	return startLine, endLine
 end
 
--- DEPRECATED:: 2025-04-13
--- M.is_buffer_active_somewhere = function(bufnr)
--- 	-- 모든 창 확인
--- 	local windows = vim.api.nvim_list_wins()
--- 	for _, winid in ipairs(windows) do
--- 		-- 각 창의 버퍼 번호 확인
--- 		if vim.api.nvim_win_get_buf(winid) == bufnr then
--- 			return true -- 버퍼가 하나 이상의 창에 활성화됨
--- 		end
--- 	end
--- 	return false -- 어떤 창에도 표시되지 않음
--- end
 M.is_buffer_active_somewhere = function(bufnr)
 	-- Get the current window ID
 	local current_winid = vim.api.nvim_get_current_win()

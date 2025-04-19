@@ -25,11 +25,6 @@ map("v", ",.c", tele_func.visual_grep_string)
 map("n", ",.b", tele_func.buffers_without_terminal)
 map("n", ",.z", builtin.current_buffer_fuzzy_find) -- Regex search current file
 
--- DEPRECATED:: 2025-02-06, which-key
--- map("n", ",.R", builtin.resume)
--- map("n", ",.H", builtin.help_tags)
--- map("n", ",.T", "<cmd>TodoTelescope<CR>")
-
 map("n", ",.q", builtin.quickfix)
 map({ "n", "i" }, ",.r", builtin.registers)
 map("n", ",.m", builtin.marks)

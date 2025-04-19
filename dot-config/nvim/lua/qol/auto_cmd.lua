@@ -59,8 +59,6 @@ vim.api.nvim_create_autocmd("TabNew", {
 			local tabname = utils.get_current_tabname()
 			if tabname == " Commit" or tabname == " File" then
 				vim.cmd("IBLDisable")
-				-- DEPRECATED:: 2024-12-28
-				-- vim.cmd('silent CocDisable')
 			end
 		end, 50)
 	end,
@@ -72,8 +70,6 @@ vim.api.nvim_create_autocmd("TabEnter", {
 		local tabname = utils.get_current_tabname()
 		if tabname == " Commit" or tabname == " File" then
 			vim.cmd("IBLDisable")
-			-- DEPRECATED:: 2024-12-28
-			-- vim.cmd('silent CocDisable')
 		end
 	end,
 })
@@ -83,8 +79,6 @@ vim.api.nvim_create_autocmd("TabLeave", {
 		local tabname = utils.get_current_tabname()
 		if tabname == " Commit" or tabname == " File" then
 			vim.cmd("IBLEnable")
-			-- DEPRECATED:: 2024-12-28
-			-- vim.cmd('silent CocEnable')
 		end
 	end,
 })
@@ -190,11 +184,6 @@ vim.api.nvim_create_autocmd("CmdwinEnter", {
 vim.api.nvim_create_autocmd("CmdwinLeave", {
 	callback = function()
 		-- vim.api.nvim_del_augroup_by_name("CmdwinEnter_GUI_KEYMAP")
-
-		-- DEPRECATED:: 2025-01-24
-		-- Noice.nvim 이후로 주석처리
-		-- vim.o.cmdheight = 1
-
 		vim.o.laststatus = 2
 	end,
 })

@@ -14,7 +14,6 @@ local workflows = {
 	"format_lint",
 	"auto_completion",
 	"AI",
-	"testing",
 	"UI",
 	"note_taking",
 	"my_own",

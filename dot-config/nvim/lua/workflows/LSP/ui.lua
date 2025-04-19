@@ -29,15 +29,4 @@ vim.diagnostic.config({
 	},
 })
 
--- DEPRECATED:: 2025-04-01
--- 'lua/workflows/LSP/keymap.lua' 위치로 옮겼다. hover를 실행하는 키맵에서 직접 config 지정하는 방식
--- vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
--- 	-- border = "none",
--- 	border = utils.borders.documentation_left,
--- 	-- title = "Hover",
--- 	focusable = true,
--- 	max_width = 120, -- 최대 너비 제한
--- 	max_height = 150, -- 최대 높이 제한
--- })
-
 -- vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "none" }) -- blink.cmp에서 정의
