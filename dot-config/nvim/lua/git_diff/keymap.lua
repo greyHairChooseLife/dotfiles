@@ -19,3 +19,49 @@ map("n", "greh", "<cmd>Gitsigns reset_hunk | NvimTreeRefresh<CR>") -- reset hunk
 map("v", "greh", Visual_reset) -- reset hunk, de-active
 map("n", "gpre", "<cmd>Gitsigns preview_hunk<CR>") -- show diff
 map("n", "gbl", "<cmd>Gitsigns blame_line<CR>") -- show diff
+
+local wk_map = require("utils").wk_map
+wk_map({ ["<leader>g"] = { group = "󰊢  Git" } })
+wk_map({
+	-- git log
+	["<leader>gl"] = {
+		group = "Log",
+		order = { "<Space>", "a", "r", "f" },
+		["<Space>"] = { "<cmd>GV<CR>", desc = "(default)", mode = "n" },
+		["a"] = { "<cmd>GV --all<CR>", desc = "all", mode = "n" },
+		["r"] = { "<cmd>GV reflog<CR>", desc = "reflog", mode = "n" },
+		["f"] = { "<cmd>GV!<CR>", desc = "current File", mode = "n" },
+	},
+})
+wk_map({
+	-- git review
+	["<leader>gr"] = {
+		group = "Review",
+		order = { "w", "s", "<Space>", "f", "a", "F" },
+		["w"] = { "<cmd>DiffviewOpen<CR>", desc = "working on", mode = { "n" } },
+		["s"] = { "<cmd>DiffviewOpen --staged<CR>", desc = "staged", mode = { "n" } },
+		["<Space>"] = {
+			function()
+				local mode = vim.fn.mode()
+				if mode == "n" then
+					vim.cmd("DiffviewFileHistory")
+				else
+					DiffviewOpenWithVisualHash()
+				end
+			end,
+			desc = "normal or visual-selected",
+			mode = { "n", "v" },
+		},
+		["f"] = { "<cmd>DiffviewFileHistory %<CR>", desc = "file", mode = { "n" } },
+		["a"] = { "<cmd>DiffviewFileHistory --all<CR>", desc = "all", mode = { "n" } },
+		["F"] = { "<cmd>DiffviewFileHistory --reverse --range=HEAD...FETCH_HEAD<CR>", desc = "fetched", mode = { "n" } },
+		["r"] = {
+			function()
+				vim.fn.feedkeys(":DiffviewFileHistory --range=", "n")
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "c", false)
+			end,
+			desc = "range select",
+			mode = { "n" },
+		},
+	},
+})

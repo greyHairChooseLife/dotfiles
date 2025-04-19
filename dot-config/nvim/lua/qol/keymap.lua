@@ -1,5 +1,6 @@
 local map = vim.keymap.set
 local opt = { noremap = true, silent = true }
+local wk_map = require("utils").wk_map
 
 -- MEMO:: 이거 없으면 일부 터미널에서 한글 입력시 문제가 발생한다.
 -- (의도) "저는 오늘 저녁으로 김치를 먹었습니다."
@@ -135,13 +136,6 @@ end, opt)
 -- { 중괄호 }로 묶인 영역 통째로 복사
 map("n", "yY", "va{Vy", opt)
 
-local wk_map = require("utils").wk_map
-wk_map({
-	[","] = {
-		order = { "j" },
-		["j"] = { Format_json_with_jq, desc = "format to JSON with jq", mode = "v" },
-	},
-})
 map({ "n", "v" }, "<leader><leader>s", function()
 	local mode = vim.fn.mode()
 	if mode == "n" then
@@ -153,3 +147,90 @@ map({ "n", "v" }, "<leader><leader>s", function()
 		vim.cmd("TTS")
 	end
 end, opt)
+
+-- MEMO:: Session
+wk_map({
+	["<leader>s"] = {
+		group = "󱫥  Session",
+		order = { "s", "l" },
+		["s"] = { "<cmd>SessionSave<CR>", desc = "save", mode = "n" },
+		["v"] = { "<cmd>SessionSearch<CR>", desc = "view", mode = "n" },
+	},
+})
+
+-- MEMO:: Run Command
+wk_map({
+	["<leader>r"] = {
+		group = "  Run Command",
+		order = { "r", "R", "u" },
+		["u"] = {
+			function()
+				RunBufferWithSh({ selected = true, underline = true })
+			end,
+			desc = "underline",
+			mode = "v",
+		},
+		["r"] = {
+			function()
+				local mode = vim.api.nvim_get_mode().mode
+				if mode == "n" then
+					RunBufferWithSh()
+				else
+					RunBufferWithSh({ selected = true })
+				end
+			end,
+			desc = "run on buffer",
+			mode = { "n", "v" },
+		},
+		["R"] = {
+			function()
+				local mode = vim.api.nvim_get_mode().mode
+				if mode == "n" then
+					RunBufferWithSh({ cover = true })
+				else
+					RunBufferWithSh({ selected = true, cover = true })
+				end
+			end,
+			desc = "run on buffer and cover ",
+			mode = { "n", "v" },
+		},
+	},
+})
+
+-- MEMO:: QuickFix
+wk_map({
+	["<Space>q"] = {
+		group = "Quick Fix",
+		order = { "f", "t", "n", "p" },
+		["f"] = { "<cmd>copen<CR>", desc = "focus", mode = "n" },
+		["t"] = { QF_ToggleList, desc = "toggle", mode = "n" },
+		["n"] = { QF_next, desc = "next", mode = "n" },
+		["p"] = { QF_prev, desc = "prev", mode = "n" },
+	},
+})
+vim.keymap.set("n", "qn", QF_next)
+vim.keymap.set("n", "qp", QF_prev)
+
+-- MEMO:: Etc
+wk_map({
+	[","] = {
+		order = { "r", "R", "C" },
+		["r"] = { ReloadLayout, desc = "reload layout", mode = "n" },
+		["R"] = {
+			function()
+				ReloadLayout(true)
+			end,
+			desc = "reload layout force",
+			mode = "n",
+		},
+		["C"] = {
+			function()
+				local word = vim.fn.expand("<cword>")
+				vim.api.nvim_feedkeys(":%s/" .. word .. "//g", "n", false)
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true), "n", false)
+			end,
+			desc = "change",
+			mode = "n",
+		},
+	},
+})

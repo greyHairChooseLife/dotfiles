@@ -4,7 +4,7 @@ vim.g.mapleader = "\\" -- Set leader key
 -- specs table
 local workflows = {
 	"qol",
-	"fuzzy_find",
+	"picker",
 	"file_tree",
 	"builtin_terminal",
 	"buf_win_tab",
@@ -16,7 +16,6 @@ local workflows = {
 	"AI",
 	"UI",
 	"note_taking",
-	"my_own",
 	"big_data",
 }
 local specs = {}

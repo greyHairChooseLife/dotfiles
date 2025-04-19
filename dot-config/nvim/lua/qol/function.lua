@@ -71,7 +71,7 @@ function ReloadLayout(force)
 	local _, restore = utils.get_window_preserver()
 
 	if force then
-		UnfixAllWindows()
+		require("UI.modules.window_size").unfixAllWindows()
 	end
 
 	local win_count_curr_tab = #vim.api.nvim_tabpage_list_wins(0)
