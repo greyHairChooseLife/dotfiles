@@ -130,12 +130,23 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 - 파이썬 formmat 되긴 하는거야? ruff 말이야.
 
-
-- ~/REF 보고 따라하자. 구조 좋은거 그거로
+- 현재 탭에서 qq 또는 덮어씌워져서 hidden 표시된 버퍼를 현재 탭 내에서 관리하는거 빨랑 만들자.
+  <Alt-Enter><Space>  따위에도 적용해야한다.
 
 
 
 ### codecompanion
+
+
+- 채팅에 이름 달아주고, picker에서 해당 채팅을 열기
+
+- dump, restore, delete 기능을 키맵으로 만들자: <leader>s로 세션 기능 내에 달아주면 될듯
+
+- 현재까지의 대화내용을 바탕으로 나의 영어 작문 능력을 개선하기 위해
+  `as-is > to-be` 형태로 요약/튜터링 해 주기. 더 자연스러운 표현으로!
+
+  - 이거 hook 달아서 채팅 꺼질 때 마다 llm이 내 영어 작문 오답노트를 생성해주게 해도 좋을듯?
+
 
 - /workspace with vectorcode plugin [ref](https://codecompanion.olimorris.dev/extending/workspace.html)
 

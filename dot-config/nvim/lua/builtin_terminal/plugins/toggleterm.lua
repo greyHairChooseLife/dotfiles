@@ -28,7 +28,7 @@ return {
 			-- width = 150,
 			-- height = 50,
 			-- row = 5,
-			winblend = 10,
+			winblend = 0,
 			title_pos = "center",
 		},
 	},
