@@ -167,6 +167,9 @@ function ManageBuffer_gq(bufnr, winid)
 		and not excluded_filetype
 		and not excluded_buftype
 	then
+		if #vim.api.nvim_list_wins() == 1 then
+			return vim.cmd("q")
+		end
 		close_if_last_with_nvimtree()
 		vim.cmd.bdelete(bufnr)
 	else
