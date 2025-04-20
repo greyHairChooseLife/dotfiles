@@ -29,49 +29,34 @@ function NavBuffAfterCleaning(direction)
 end
 
 function CloseOtherBuffersInCurrentTab()
-	local current_buf = vim.api.nvim_get_current_buf()
-	local current_tab = vim.api.nvim_get_current_tabpage()
-	local windows = vim.api.nvim_tabpage_list_wins(current_tab)
+	local current_buf_id = vim.api.nvim_get_current_buf()
+	local current_win_id = vim.api.nvim_get_current_win()
+	local current_tab_id = vim.api.nvim_get_current_tabpage()
+	local window_ids = vim.api.nvim_tabpage_list_wins(current_tab_id)
 
-	-- 현재 탭의 다른 윈도우 닫기
-	for _, win in ipairs(windows) do
-		if vim.api.nvim_win_get_buf(win) ~= current_buf then
-			vim.api.nvim_win_close(win, true)
+	local excluded_buftypes = { "nofile" }
+
+	for _, win_id in ipairs(window_ids) do
+		if not vim.api.nvim_win_is_valid(win_id) then
+			goto continue
 		end
-	end
 
-	-- 히든 버퍼 중 다른 탭에서 사용되지 않는 버퍼 삭제
-	local buffers = vim.api.nvim_list_bufs()
-	for _, buf in ipairs(buffers) do
-		if vim.api.nvim_buf_is_loaded(buf) and buf ~= current_buf then
-			-- 다른 탭에서 열려있는지 확인
-			local is_open_elsewhere = false
-			for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
-				if tab ~= current_tab then
-					local tab_wins = vim.api.nvim_tabpage_list_wins(tab)
-					for _, tw in ipairs(tab_wins) do
-						if vim.api.nvim_win_get_buf(tw) == buf then
-							is_open_elsewhere = true
-							break
-						end
-					end
-				end
-				if is_open_elsewhere then
-					break
-				end
-			end
-
-			-- 다른 탭에서 사용되지 않는 히든 버퍼 삭제
-			if not is_open_elsewhere and vim.fn.bufwinnr(buf) == -1 then
-				local filetype = vim.api.nvim_buf_get_option(buf, "filetype")
-				if filetype ~= "VoltWindow" then
-					vim.api.nvim_buf_delete(buf, { force = true })
-				end
+		local buf_id = vim.api.nvim_win_get_buf(win_id)
+		if win_id ~= current_win_id and buf_id ~= current_buf_id then
+			if
+				utils.is_buffer_shown_only_in_current_tab(buf_id)
+				and not vim.tbl_contains(excluded_buftypes, vim.bo[buf_id].buftype)
+			then
+				vim.api.nvim_buf_delete(buf_id, { force = true })
+			else
+				ManageBuffer_gq(nil, win_id)
 			end
 		end
+
+		::continue::
 	end
 
-	vim.api.nvim_command("only")
+	vim.cmd("only")
 end
 
 function TabOnlyAndCloseHiddenBuffers()
@@ -131,31 +116,39 @@ function ManageBuffer_ge()
 end
 
 ---@param bufnr integer?
-function ManageBuffer_gq(bufnr)
-	bufnr = bufnr or vim.fn.bufnr("%")
+---@param winid integer?
+function ManageBuffer_gq(bufnr, winid)
+	bufnr = bufnr or (winid and vim.api.nvim_win_get_buf(winid)) or vim.fn.bufnr("%")
+
+	-- Early return if buffer is not valid
+	if not vim.api.nvim_buf_is_valid(bufnr) then
+		return vim.notify(bufnr .. " is not valid bufrn.", 3, { render = "minimal" })
+	end
 
 	local excluded_filetypes = { "help", "gitcommit", "NvimTree", "codecompanion" }
 	local excluded_buftypes = { "nofile" }
 
-	local is_buffer_valid = vim.api.nvim_buf_is_valid(bufnr)
 	local is_buflisted = vim.bo[bufnr].buflisted
-	local is_bufname_empty = vim.fn.bufname(bufnr) == ""
-	local is_buffer_active = utils.is_buffer_active_somewhere(bufnr)
-	local is_excluded_filetype = vim.tbl_contains(excluded_filetypes, vim.bo[bufnr].filetype)
-	local is_excluded_buftype = vim.tbl_contains(excluded_buftypes, vim.bo[bufnr].buftype)
+	local bufname_empty = vim.fn.bufname(bufnr) == ""
+	local buffer_active_in_other_window = utils.is_buffer_active_somewhere(bufnr)
+	local excluded_filetype = vim.tbl_contains(excluded_filetypes, vim.bo[bufnr].filetype)
+	local excluded_buftype = vim.tbl_contains(excluded_buftypes, vim.bo[bufnr].buftype)
 
 	-- 모든 조건을 통과해야만 버퍼를 메모리에서 삭제
 	if
-		is_buffer_valid
-		and is_buflisted
-		and not is_bufname_empty
-		and not is_buffer_active
-		and not is_excluded_filetype
-		and not is_excluded_buftype
+		is_buflisted
+		and not bufname_empty
+		and not buffer_active_in_other_window
+		and not excluded_filetype
+		and not excluded_buftype
 	then
 		vim.cmd.bdelete(bufnr)
 	else
-		vim.cmd("q")
+		if utils.is_last_window() then
+			vim.cmd("q")
+		else
+			vim.api.nvim_win_close(winid or 0, false) -- win_id가 주어지지 않으면 그냥 현재 윈도우
+		end
 	end
 end
 

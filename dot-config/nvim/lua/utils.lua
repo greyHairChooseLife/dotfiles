@@ -514,4 +514,45 @@ M.highlight_text_temporarily = function(start_line, end_line, highlight_group, d
 	end, duration_ms)
 end
 
+---현재 탭 또는 모든 탭에서 마지막 창인지 확인하는 함수
+---@param current_tab_only boolean? 현재 탭만 확인할지 여부
+---@return boolean 마지막 창인지 여부
+M.is_last_window = function(current_tab_only)
+	local win_count = #vim.api.nvim_tabpage_list_wins(0)
+	local is_last_window = win_count == 1
+
+	-- If requested, also check if there's only one tab
+	if current_tab_only then
+		local tab_count = #vim.api.nvim_list_tabpages()
+		return is_last_window and tab_count == 1
+	end
+
+	return is_last_window
+end
+
+--- Check if a buffer is shown only in the current tab
+-- @param buf_id number: The buffer ID to check
+-- @return boolean: true if the buffer is shown only in the current tab, false otherwise
+M.is_buffer_shown_only_in_current_tab = function(buf_id)
+	local current_tab = vim.api.nvim_get_current_tabpage()
+	local win_with_buf_count = 0
+	local win_with_buf_in_current_tab_count = 0
+
+	-- Iterate through all windows
+	for _, win_id in ipairs(vim.api.nvim_list_wins()) do
+		-- If window shows the specified buffer
+		if vim.api.nvim_win_get_buf(win_id) == buf_id then
+			win_with_buf_count = win_with_buf_count + 1
+
+			-- If window is in the current tab
+			if vim.api.nvim_win_get_tabpage(win_id) == current_tab then
+				win_with_buf_in_current_tab_count = win_with_buf_in_current_tab_count + 1
+			end
+		end
+	end
+
+	-- Buffer is shown only in current tab if all windows showing it are in current tab
+	return win_with_buf_count > 0 and win_with_buf_count == win_with_buf_in_current_tab_count
+end
+
 return M
