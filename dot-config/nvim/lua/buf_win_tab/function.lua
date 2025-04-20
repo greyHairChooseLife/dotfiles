@@ -115,6 +115,31 @@ function ManageBuffer_ge()
 	vim.notify("Saved last buffers", 2, { render = "minimal" })
 end
 
+local function close_if_last_with_nvimtree()
+	local all_windows = vim.api.nvim_list_wins()
+
+	if #all_windows == 2 then
+		local current_win = vim.api.nvim_get_current_win()
+		local other_win
+
+		-- Find the window that isn't the current one
+		for _, win in ipairs(all_windows) do
+			if win ~= current_win then
+				other_win = win
+				break
+			end
+		end
+
+		-- Check if the other window is NvimTree
+		if other_win then
+			local buf = vim.api.nvim_win_get_buf(other_win)
+			if vim.bo[buf].filetype == "NvimTree" then
+				vim.cmd("q")
+			end
+		end
+	end
+end
+
 ---@param bufnr integer?
 ---@param winid integer?
 function ManageBuffer_gq(bufnr, winid)
@@ -142,6 +167,7 @@ function ManageBuffer_gq(bufnr, winid)
 		and not excluded_filetype
 		and not excluded_buftype
 	then
+		close_if_last_with_nvimtree()
 		vim.cmd.bdelete(bufnr)
 	else
 		if utils.is_last_window() then
