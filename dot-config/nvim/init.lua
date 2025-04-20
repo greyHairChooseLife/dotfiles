@@ -42,7 +42,7 @@ require("lazy").setup({
 		lazy = true, -- 기본적으로 모든 플러그인을 지연 로드
 	},
 	git = {
-		log = { "-200" }, -- (L)og에서 몇개나 보여줄지
+		log = { "-50" }, -- (L)og에서 몇개나 보여줄지
 	},
 	diff = {
 		cmd = "diffview.nvim",
@@ -50,7 +50,6 @@ require("lazy").setup({
 	change_detection = {
 		-- automatically check for config file changes and reload the ui
 		enabled = false,
-		notify = true, -- get a notification when changes are found
 	},
 	performance = {
 		rtp = {
@@ -67,6 +66,35 @@ require("lazy").setup({
 		custom_keys = {
 			["<localleader>i"] = false,
 			["<localleader>l"] = false,
+			["<localleader>t"] = {
+				function(plugin)
+					require("lazy.util").float_term(nil, {
+						cwd = plugin.dir,
+						size = {
+							width = 0.95,
+							height = 0.95,
+						},
+					})
+				end,
+				desc = "Open terminal in plugin dir",
+			},
+			["z"] = {
+				function(plugin)
+					vim.cmd(":tcd " .. plugin.dir)
+					vim.fn.feedkeys('0wvv"9y', "x")
+					local commit = vim.fn.getreg("9")
+					local first_char = commit:sub(1, 1)
+					local is_alphanumeric = first_char:match("[%w]") ~= nil
+
+					if is_alphanumeric then
+						local args = ("-C=%s"):format(plugin.dir) .. " " .. commit .. "^!"
+						vim.cmd("DiffviewOpen " .. args)
+					else
+						vim.cmd("DiffviewFileHistory --reverse --range=HEAD..origin/HEAD")
+					end
+				end,
+				desc = "DiffviewOpen with current commit hash & CD into plugin dir",
+			},
 		},
 	},
 })
