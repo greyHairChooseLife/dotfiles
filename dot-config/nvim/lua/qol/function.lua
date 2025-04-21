@@ -169,7 +169,16 @@ function RunBufferWithSh(opt)
 
 	if selected and underline then
 		local cmd = require("utils").get_visual_text()
-		vim.api.nvim_command("silent! read !" .. cmd)
+
+		-- remove trailing newline char
+		if cmd and #cmd > 0 and cmd:sub(-1) == "\n" then
+			cmd = cmd:sub(1, -2)
+		end
+		vim.api.nvim_command(
+			"silent! read !bash -ic "
+				.. vim.fn.shellescape(cmd .. " | sed -r 's/\\x1B\\[[0-9;]*[mK]//g'")
+				.. " 2>/dev/null"
+		) -- interactive shell without Color
 		return
 	end
 
@@ -197,17 +206,46 @@ function RunBufferWithSh(opt)
 		vim.api.nvim_set_current_win(current_win)
 		if cover then
 			-- 우측 윈도우 덮어쓰기
-			vim.api.nvim_command("wincmd l | %delete")
+			vim.api.nvim_command("wincmd l | wincmd 99j | %delete")
 		else
 			-- 우측에 새로운 윈도우
-			vim.api.nvim_command("wincmd l | new")
+			vim.api.nvim_command("wincmd l | wincmd 99j | new")
 		end
 	end
 
 	vim.api.nvim_command(
 		[[r !date "+\%T" | awk '{line="=========================="; print line "\n===== time: " $1 " =====\n" line}']]
 	)
-	vim.api.nvim_command("setlocal buftype=nofile | silent! read !sh " .. temp_file)
+
+	-- Read the file line by line and execute each line separately
+	local lines = {}
+	local f = io.open(temp_file, "r")
+	if f then
+		for line in f:lines() do
+			table.insert(lines, line)
+		end
+		f:close()
+	end
+
+	for _, line in ipairs(lines) do
+		if line:match("%S") then -- Skip empty lines
+			vim.api.nvim_command("normal! o" .. line) -- Add the command
+			vim.api.nvim_command(
+				"silent! read !bash -ic "
+					.. vim.fn.shellescape(line .. " | sed -r 's/\\x1B\\[[0-9;]*[mK]//g'")
+					.. " 2>/dev/null"
+			) -- Add the output
+			vim.api.nvim_command("normal! o") -- Add an empty line for readability
+		end
+	end
+
+	local line_count = vim.api.nvim_buf_line_count(0)
+	-- Get current window height
+	local current_height = vim.api.nvim_win_get_height(0)
+	-- Set window height only if current height is smaller than needed
+	if current_height < line_count + 5 then
+		vim.api.nvim_win_set_height(0, line_count + 5)
+	end
 
 	vim.fn.delete(temp_file)
 	require("utils").restore_cursor_position()
