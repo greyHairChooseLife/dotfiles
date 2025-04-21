@@ -172,11 +172,14 @@ function ManageBuffer_gq(bufnr, winid)
 		end
 		close_if_last_with_nvimtree()
 		vim.cmd.bdelete(bufnr)
+		print("quit: 1")
 	else
 		if utils.is_last_window() then
 			vim.cmd("q")
+			print("quit: 2")
 		else
 			vim.api.nvim_win_close(winid or 0, false) -- win_id가 주어지지 않으면 그냥 현재 윈도우
+			print("quit: 3")
 		end
 	end
 end
