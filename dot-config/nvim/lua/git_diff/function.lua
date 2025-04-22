@@ -1,5 +1,7 @@
 function VDiffSplitOnTab()
-	vim.cmd("sp | wincmd T | Gvdiffsplit | wincmd l")
+	vim.cmd("sp | wincmd T")
+	vim.cmd("Gvdiffsplit")
+	vim.cmd("wincmd l")
 
 	local tabnr = vim.fn.tabpagenr()
 	vim.fn.settabvar(tabnr, "tabname", "Diff")

@@ -196,7 +196,13 @@ wk_map({
 	[",d"] = {
 		group = "󰕚  Diff",
 		order = { "g", "c", "t", "f" },
-		["g"] = { VDiffSplitOnTab, desc = "git diff", mode = "n" },
+		["g"] = {
+			function()
+				VDiffSplitOnTab()
+			end,
+			desc = "git diff",
+			mode = "n",
+		},
 		["f"] = {
 			function()
 				vim.fn.feedkeys(":vert diffsplit ", "n")
