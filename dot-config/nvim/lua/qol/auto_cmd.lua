@@ -85,7 +85,9 @@ vim.api.nvim_create_autocmd("TabLeave", {
 
 vim.api.nvim_create_autocmd("TabClosed", {
 	callback = function()
-		vim.cmd("tabprev")
+		-- DEPRECATED:: 2025-04-22
+		-- 없는게 자연스런 순서
+		-- vim.cmd("tabprev")
 	end,
 })
 

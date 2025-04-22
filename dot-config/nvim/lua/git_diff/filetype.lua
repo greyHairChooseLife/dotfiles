@@ -2,15 +2,22 @@
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "gitcommit",
 	callback = function()
-		vim.cmd("wincmd p")
-		local save_view = vim.fn.winsaveview()
-		vim.cmd("WinShift up")
-		vim.cmd("wincmd p")
-		vim.cmd("WinShift right")
-		vim.cmd("wincmd p")
-		vim.fn.winrestview(save_view)
-		vim.cmd("wincmd p")
-		vim.cmd("normal gg")
+		vim.cmd("WinShift far_right")
+		vim.api.nvim_win_set_width(0, 85)
+		vim.defer_fn(function()
+			vim.cmd("normal gg")
+		end, 10)
+
+		-- DEPRECATED:: 2025-04-22
+		-- vim.cmd("wincmd p")
+		-- local save_view = vim.fn.winsaveview()
+		-- vim.cmd("WinShift up")
+		-- vim.cmd("wincmd p")
+		-- vim.cmd("WinShift right")
+		-- vim.cmd("wincmd p")
+		-- vim.fn.winrestview(save_view)
+		-- vim.cmd("wincmd p")
+		-- vim.cmd("normal gg")
 
 		-- KEYMAP
 		vim.keymap.set("n", "gq", function()
