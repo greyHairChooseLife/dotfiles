@@ -94,7 +94,10 @@ return {
 			dashboard.button("ba", " bash", ":cd ~/.config | e bash.sub/<CR>"),
 			dashboard.button(".", "", ""),
 			dashboard.button("-", "                   ---------  sessions   ", ""),
-			dashboard.button("S", "Session", "<cmd>SessionSearch<CR>"),
+			dashboard.button("s", "Session", function()
+				vim.cmd("SessionSearch")
+				vim.fn.feedkeys("!json ", "m") -- json 파일에 탭 이름 정보 저장해둠
+			end),
 		}
 
 		dashboard.section.header.opts.hl = "AlphaHeaderLabel"

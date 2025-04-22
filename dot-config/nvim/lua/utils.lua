@@ -141,6 +141,7 @@ M.tree = {
 	end,
 }
 
+---@param FT string 파일타입
 M.close_FT_buffers = function(FT)
 	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 		if vim.api.nvim_buf_is_loaded(buf) then

@@ -154,7 +154,14 @@ wk_map({
 		group = "󱫥  Session",
 		order = { "s", "l" },
 		["s"] = { "<cmd>SessionSave<CR>", desc = "save", mode = "n" },
-		["v"] = { "<cmd>SessionSearch<CR>", desc = "view", mode = "n" },
+		["v"] = {
+			function()
+				vim.cmd("SessionSearch")
+				vim.fn.feedkeys("!json ", "m") -- json 파일에 탭 이름 정보 저장해둠
+			end,
+			desc = "view",
+			mode = "n",
+		},
 	},
 })
 

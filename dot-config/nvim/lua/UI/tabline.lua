@@ -7,6 +7,11 @@ function MyTabLine()
 	for i = 1, vim.fn.tabpagenr("$") do
 		local tabname = vim.fn.gettabvar(i, "tabname", "Tab " .. i)
 
+		-- userdata를 문자열로 변환
+		if type(tabname) ~= "string" then
+			tabname = (tostring(tabname) or "Tab ") .. i
+		end
+
 		-- 탭 이름이 최대 너비보다 길 경우 잘라냄
 		if #tabname > max_width then
 			tabname = string.sub(tabname, 1, max_width - 3) .. "..."
@@ -91,6 +96,11 @@ function MyTabLine_width_fixed()
 
 	for i = 1, vim.fn.tabpagenr("$") do
 		local tabname = vim.fn.gettabvar(i, "tabname", "Tab " .. i)
+
+		-- userdata를 문자열로 변환
+		if type(tabname) ~= "string" then
+			tabname = (tostring(tabname) or "Tab ") .. i
+		end
 
 		-- 탭 이름 길이 조정
 		if #tabname > max_width then
