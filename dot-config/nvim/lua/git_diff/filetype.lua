@@ -2,6 +2,7 @@
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "gitcommit",
 	callback = function()
+		-- 시작시 윈도우를 최우측에 두고, 커서를 최상단에 위치
 		vim.cmd("WinShift far_right")
 		vim.api.nvim_win_set_width(0, 85)
 		vim.defer_fn(function()
@@ -30,6 +31,8 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "fugitive",
 	callback = function()
+		vim.fn.feedkeys("gu", "x") -- 시작시 커서를 unstaged 목록에 위치
+
 		-- Keymap
 		local opts = { buffer = true }
 
