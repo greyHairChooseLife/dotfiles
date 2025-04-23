@@ -31,11 +31,15 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "fugitive",
 	callback = function()
-		vim.fn.feedkeys("gu", "x") -- 시작시 커서를 unstaged 목록에 위치
+		vim.defer_fn(function()
+			vim.fn.feedkeys("gU", "x") -- 시작시 커서를 unstaged 목록에 위치
+		end, 1)
 
 		-- Keymap
 		local opts = { buffer = true }
 
+		vim.keymap.set("n", "cc", OpenCommitMsg, opts)
+		vim.keymap.set("n", "ca", AmendCommitMsg, opts)
 		vim.keymap.set("n", "P", ":G push", opts)
 		vim.keymap.set("n", "F", "<Cmd>G fetch<CR>", opts)
 		vim.keymap.set("n", ",g", function()

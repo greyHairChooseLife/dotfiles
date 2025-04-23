@@ -1,11 +1,12 @@
 local map = vim.keymap.set
 local opt = { noremap = true, silent = true }
+local g_util = require("utils")
 
 -- git status 관리
 map("n", ",g", "<cmd>G<CR>", opt) -- shortcut
-map("n", "<leader>gc", "<cmd>G commit<CR>", opt) -- shortcut
+map("n", "<leader>gc", OpenCommitMsg, opt) -- shortcut
 map("v", "<leader>gc", Commit_with_selected, opt)
-map("n", "<leader>ga", "<cmd>silent G commit --amend<CR>", opt)
+map("n", "<leader>ga", AmendCommitMsg, opt)
 
 -- GITSIGNS
 map("n", "gsth", "<cmd>Gitsigns stage_hunk | NvimTreeRefresh<CR>", opt) -- stage hunk

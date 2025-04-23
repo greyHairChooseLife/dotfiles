@@ -1,3 +1,5 @@
+local g_utils = require("utils")
+
 function VDiffSplitOnTab()
 	vim.cmd("sp | wincmd T")
 	vim.cmd("Gvdiffsplit")
@@ -49,4 +51,14 @@ function Commit_with_selected()
 	vim.defer_fn(function()
 		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("VggP", true, false, true), "n", false)
 	end, 100)
+end
+
+function OpenCommitMsg()
+	g_utils.save_cursor_position(true)
+	vim.cmd("G commit")
+end
+
+function AmendCommitMsg()
+	g_utils.save_cursor_position(true)
+	vim.cmd("G commit --amend")
 end
