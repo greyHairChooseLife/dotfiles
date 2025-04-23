@@ -49,8 +49,7 @@ return {
 		pre_save_cmds = {
 			function()
 				local cdc = require("codecompanion")
-				local is_codecompanion_visible = cdc.last_chat().ui:is_visible()
-				if is_codecompanion_visible then
+				if cdc.last_chat() and cdc.last_chat().ui:is_visible() then
 					cdc.toggle()
 					was_codecompanion_visible = true
 				end
