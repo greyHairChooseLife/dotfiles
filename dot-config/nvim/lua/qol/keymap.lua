@@ -14,7 +14,7 @@ end, opt)
 
 map("n", "`g", "<cmd>wincmd p<CR>") -- focus previous window & cursor position
 map("v", "p", '"_dP') -- paste without yanking in visual mode
-map("v", "x", '"_d') -- delete without yanking in visual mode
+-- map("v", "x", '"_d') -- delete without yanking in visual mode
 map("v", "<leader>s", SearchWithBrowser, opt)
 
 -- 앞글자 대문자로 변환

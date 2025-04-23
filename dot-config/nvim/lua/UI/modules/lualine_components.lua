@@ -2,6 +2,7 @@
 local M = {}
 
 M.colors = {
+	real_blue = "#0020fc",
 	blue = "#61afef",
 	git_add = "#40cd52",
 	git_change = "#ffcc00",

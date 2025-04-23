@@ -115,8 +115,8 @@ return {
 						lualine_components.register_recording,
 						padding = { left = 1, right = 1 },
 						color = {
-							bg = colors.white,
-							fg = colors.black,
+							bg = colors.real_blue,
+							fg = colors.search,
 						},
 					},
 				},
