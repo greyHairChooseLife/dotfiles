@@ -61,6 +61,9 @@ end)
 map("i", "cc<Enter>", function()
 	vim.api.nvim_input("<Esc>cc")
 end)
+map("i", "zz", function()
+	vim.api.nvim_input("<Esc>zza")
+end)
 
 -- TODO: <esc> 시뮬레이션 방법을 통일(검증 필요)하고, 함수로 만들어 재사용하자.
 -- Easy Escape
