@@ -4,7 +4,6 @@ vim.api.nvim_create_autocmd("BufUnload", {
 	callback = function()
 		vim.defer_fn(function()
 			require("utils").restore_cursor_position(true)
-			vim.notify("Position restored!")
 		end, 1)
 	end,
 })
