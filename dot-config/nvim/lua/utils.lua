@@ -230,6 +230,18 @@ M.icons = {
 		Change = "~",
 		Delete = "-",
 	},
+	etc = {
+		modified = "󰈸󰈸󰈸", --   
+	},
+	nvimtree_git = {
+		unstaged = "󰍶", --  󱠇  󰅙   󰍶
+		staged = "󰗠", --     󰗠 󰗡 󰄲 󰄴 󱤧 󰄵 󰱒
+		unmerged = "",
+		renamed = "", --      
+		untracked = "󰋗 ", --       󰅗 󰅘 󰅙 󰅚 󰅜 󰅝 󱍥 󱍦
+		deleted = "", -- 󰗨 󰺝 󰛌
+		ignored = "",
+	},
 	kinds = {
 		Array = "󰅪",
 		Branch = "",
@@ -273,12 +285,6 @@ M.icons = {
 		Buffer = "📝",
 		Path = "📁",
 		Cmdline = "💻",
-	},
-	statusline = {
-		Error = " ",
-		Warn = " ",
-		Hint = " ",
-		Info = " ",
 	},
 }
 
