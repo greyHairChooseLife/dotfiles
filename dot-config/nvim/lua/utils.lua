@@ -374,8 +374,6 @@ end
 M.restore_cursor_position = function(for_commit_msg)
 	local saved_cursor = not for_commit_msg and saved_cursor_normal or saved_cursor_for_commit_msg
 
-	vim.notify(vim.inspect(saved_cursor))
-
 	if saved_cursor then
 		-- 윈도우가 여전히 유효한지 확인
 		if vim.api.nvim_win_is_valid(saved_cursor.win) then

@@ -215,7 +215,7 @@ M.add_buffer_reference = function()
 		if chat then
 			for _, msg in ipairs(chat.references.Chat.agents.messages) do
 				if msg.content == formatted_content then
-					vim.notify("Already in reference!", vim.log.levels.INFO)
+					vim.notify("Already in reference!", 2, { render = "minimal" })
 					return false
 				end
 			end
@@ -235,7 +235,6 @@ M.add_buffer_reference = function()
 			opts = {},
 		})
 		cdc.last_chat().ui:set_virtual_text("Added: " .. vim.fn.fnamemodify(path, ":t"))
-		vim.print("buffer added to chat")
 	end
 
 	local chat = cdc.last_chat()
@@ -342,11 +341,11 @@ M.add_tab_buffers_reference = function()
 	if #added_buffers > 0 then
 		local added_msg = "Added: " .. table.concat(added_buffers, ", ")
 		chat.ui:set_virtual_text(added_msg)
-		vim.notify(added_msg, vim.log.levels.INFO)
+		vim.notify(added_msg, 2, { render = "minimal" })
 	end
 
 	if #skipped_buffers > 0 then
-		vim.notify("Skipped (already in context): " .. table.concat(skipped_buffers, ", "), vim.log.levels.INFO)
+		vim.notify("Skipped (already in context): " .. table.concat(skipped_buffers, ", "), 2, { render = "minimal" })
 	end
 
 	-- UI redraw
