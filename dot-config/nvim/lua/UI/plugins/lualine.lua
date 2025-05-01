@@ -73,7 +73,7 @@ return {
 							if vim.bo.modified then
 								return { fg = colors.red2 }
 							elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-								return { fg = colors.red2 }
+								return { fg = colors.black }
 							else
 								return {}
 							end
@@ -203,9 +203,15 @@ return {
 							end
 						end,
 						padding = { left = 0, right = 1 },
-						color = {
-							fg = colors.orange,
-						},
+						color = function()
+							if vim.bo.modified then
+								return { fg = colors.red2, bg = colors.bblack }
+							elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
+								return { fg = colors.wwhite, bg = colors.bblack }
+							else
+								return { bg = colors.bblack }
+							end
+						end,
 					},
 				},
 				lualine_b = {
