@@ -1,0 +1,217 @@
+local utils = require("utils")
+local SN = require("snacks")
+local snp = require("snacks").picker
+
+local M = {}
+
+-- MEMO: CUSTOM PICKER EXAMPLE
+local function pick_cmd_result(picker_opts)
+	local git_root = SN.git.get_root()
+	local finder = function(opts, ctx)
+		return require("snacks.picker.source.proc").proc({
+			opts,
+			{
+				cmd = picker_opts.cmd,
+				args = picker_opts.args,
+				transform = function(item)
+					item.cwd = picker_opts.cwd or git_root
+					item.file = item.text
+				end,
+			},
+		}, ctx)
+	end
+
+	snp.pick({
+		source = picker_opts.name,
+		finder = finder,
+		preview = picker_opts.preview,
+		title = picker_opts.title,
+	})
+end
+
+M.example = function()
+	pick_cmd_result({
+		cmd = "git",
+		args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", "HEAD", "-r" },
+		name = "git_show",
+		title = "Git Last Commit",
+		preview = "git_show",
+	})
+end
+-- MEMO: GIT
+M.git_log = function()
+	local config = {}
+	snp.git_log(config)
+end
+M.git_log_line = function()
+	-- vim.cmd("normal! <Esc>")
+	local config = {}
+	snp.git_log_line(config)
+end
+M.git_log_file = function()
+	local config = {}
+	snp.git_log_file(config)
+end
+M.git_diff = function()
+	local config = {}
+	snp.git_diff(config)
+	-- builtin.git_status({
+	-- 	previewer = diff_delta,
+	-- 	layout_config = wide_layout_config,
+	-- })
+end
+M.git_stash = function()
+	local config = {}
+	snp.git_stash(config)
+	-- builtin.git_stash({
+	-- 	previewer = stash_delta,
+	-- 	layout_config = wide_layout_config,
+	-- })
+end
+M.git_status = function()
+	local config = {}
+	snp.git_status(config)
+end
+M.git_branches = function()
+	local config = {
+		layout = { fullscreen = true },
+	}
+	snp.git_branches(config)
+end
+
+-- MEMO: FIND
+M.files = function()
+	local config = {}
+	snp.files(config)
+end
+M.files_visual = function()
+	local search_text = utils.get_visual_text()
+	local config = {
+		on_show = function()
+			vim.api.nvim_put({ search_text .. " " }, "c", true, true)
+		end,
+	}
+	snp.files(config)
+end
+M.buffers = function()
+	local config = {
+		layout = {
+			preset = "default",
+			layout = {
+				preset = "default",
+				box = "horizontal",
+				width = 0.8,
+				min_width = 120,
+				height = 0.8,
+				{
+					box = "vertical",
+					border = "rounded",
+					title = "{title} {live} {flags}",
+					{ win = "input", height = 1, border = "bottom" },
+					{ win = "list", border = "none" },
+				},
+				{
+					win = "preview",
+					width = 0.8,
+					wo = {
+						winhighlight = {
+							NormalFloat = "Normal",
+							FloatBorder = "SnacksPickerPreviewBorder",
+							CursorLine = "SnacksPickerCursorLine",
+						},
+					},
+				},
+			},
+		},
+		current = false,
+		filter = {
+			filter = function(item)
+				if item.file then
+					local filename = item.file:match("([^/]+)$")
+					if filename and filename:match("^Term:") then
+						return false -- Filter out this item
+					end
+				end
+				return true -- Keep this item
+			end,
+		},
+	}
+	snp.buffers(config)
+end
+M.buffers_term_only = function()
+	local config = {
+		layout = {
+			preset = "bottom",
+			-- fullscreen = true,
+		},
+		title = "TERMINAL",
+		current = true,
+		filter = {
+			filter = function(item)
+				if item.file then
+					local filename = item.file:match("([^/]+)$")
+					if filename and filename:match("^Term:") then
+						return true -- Filter out this item
+					end
+				end
+			end,
+		},
+	}
+	snp.buffers(config)
+end
+M.recent = function()
+	local config = {
+		filter = { cwd = true },
+	}
+	snp.recent(config)
+end
+M.recent_global = function()
+	local config = {
+		filter = { cwd = false },
+	}
+	snp.recent(config)
+end
+
+-- MEMO: ETC
+M.command_history = function()
+	local config = {}
+	snp.command_history(config)
+end
+
+-- MEMO: GREP
+M.grep = function()
+	local config = {}
+	snp.grep(config)
+end
+M.grep_current_buffer = function()
+	local config = {}
+	snp.lines(config)
+end
+M.grep_current_buffers = function()
+	local config = {}
+	snp.grep_buffers(config)
+end
+M.grep_visual = function()
+	local search_text = utils.get_visual_text()
+	local config = {
+		on_show = function()
+			vim.api.nvim_put({ search_text .. " " }, "c", true, true)
+		end,
+	}
+	snp.grep(config)
+end
+M.grep_visual_current_buffers = function()
+	local search_text = utils.get_visual_text()
+	local config = {
+		on_show = function()
+			vim.api.nvim_put({ search_text .. " " }, "c", true, true)
+		end,
+	}
+	snp.grep_buffers(config)
+end
+M.grep_word = function()
+	local config = {}
+	snp.grep_word(config)
+end
+
+return M

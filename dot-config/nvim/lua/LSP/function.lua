@@ -53,24 +53,3 @@ function CopyDiagnosticsAtLine()
 	print("Copied diagnostics for line " .. (line + 1) .. ":\n" .. all_messages)
 	return all_messages
 end
-
--- MEMO:: for keymaps
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-local T = {} -- Telescope
-local tele = require("telescope.builtin")
-
-T.diagnostic_local = function()
-	tele.diagnostics({
-		bufnr = 0, -- 현재 버퍼로 제한
-		line_width = 200, -- 어차피 현재 파일일이다.
-	})
-end
-
-T.diagnostic_global = function()
-	tele.diagnostics({
-		bufnr = nil, -- 모든 버퍼
-		line_width = 200, --diagnostic line은 필요 없고 파일만 구분되면 돼
-	})
-end
-
-return T

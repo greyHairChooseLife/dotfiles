@@ -4,7 +4,8 @@ return {
 	lazy = false,
 	config = function()
 		local g_util = require("utils")
-		local sn = require("snacks").picker
+		local snp = require("snacks").picker
+		local snpa = require("snacks").picker.actions
 
 		local layout = {
 			setter = {
@@ -15,6 +16,34 @@ return {
 				end,
 			},
 			list = {
+				-- Override 'default' layout
+				default = {
+					layout = {
+						box = "horizontal",
+						width = 0.8,
+						min_width = 120,
+						height = 0.8,
+						{
+							box = "vertical",
+							border = "rounded",
+							title = "{title} {live} {flags}",
+							{ win = "input", height = 1, border = "bottom" },
+							{ win = "list", border = "none" },
+						},
+						{
+							win = "preview",
+							title = "{preview}",
+							border = "single",
+							width = 0.5,
+							wo = {
+								winhighlight = {
+									NormalFloat = "Normal",
+									FloatBorder = "SnacksPickerPreviewBorder",
+								},
+							},
+						},
+					},
+				},
 				my_telescope_top = {
 					layout = {
 						box = "horizontal",
@@ -110,7 +139,6 @@ return {
 				["/"] = "toggle_focus",
 				["<C-n>"] = { "history_forward", mode = { "i", "n" } },
 				["<C-p>"] = { "history_back", mode = { "i", "n" } },
-				["gq"] = { "cancel", mode = { "i", "n" } },
 				["<C-w>"] = { "<c-s-w>", mode = { "i" }, expr = true, desc = "delete word" },
 				["<CR>"] = { "confirm", mode = { "n", "i" } }, -- BUG: 이거 기존 버퍼는 제거하도록
 				-- ["<Down>"] = { "list_down", mode = { "i", "n" } },
@@ -125,7 +153,7 @@ return {
 				["<a-i>"] = { "toggle_ignored", mode = { "i", "n" } },
 				["<a-m>"] = { "toggle_maximize", mode = { "i", "n" } },
 				["<a-p>"] = { "toggle_preview", mode = { "i", "n" } },
-				["<a-Space>"] = { "cycle_win", mode = { "i", "n" } },
+				["<a-Space>"] = { "focus_preview", mode = { "i", "n" } },
 				["<c-a>"] = { "select_all", mode = { "n", "i" } },
 				["<a-k>"] = { "preview_scroll_up", mode = { "i", "n" } },
 				["<a-j>"] = { "preview_scroll_down", mode = { "i", "n" } },
@@ -134,20 +162,23 @@ return {
 				["<c-g>"] = { "toggle_live", mode = { "i", "n" } },
 				["<c-j>"] = { "list_down", mode = { "i", "n" } },
 				["<c-k>"] = { "list_up", mode = { "i", "n" } },
-				-- ["<c-n>"] = { "list_down", mode = { "i", "n" } },
-				-- ["<c-p>"] = { "list_up", mode = { "i", "n" } },
-				["<c-q>"] = { "qflist", mode = { "i", "n" } },
+				["<c-b>"] = "",
+				["<c-f>"] = "",
+				["<c-n>"] = "",
+				["<c-p>"] = "",
+				["<c-q>"] = { "qflist_all", mode = { "i", "n" } },
+				["<a-q>"] = { "qflist", mode = { "i", "n" } },
 				["<c-x>"] = { "edit_split", mode = { "i", "n" } },
 				["<c-t>"] = { "tab", mode = { "n", "i" } },
-				["<c-K>"] = {
-					function(picker)
-						vim.notify(vim.inspect(picker))
+				-- ["<c-T>"] = {
+				-- 	function(picker)
+				-- 		vim.notify(vim.inspect(picker))
 
-						-- local m = require("buf_win_tab.modules.select_tab")
-						-- m.selectTabAndOpen({ source_file_path = temp_file_path })
-					end,
-					mode = { "n", "i" },
-				},
+				-- 		-- local m = require("buf_win_tab.modules.select_tab")
+				-- 		-- m.selectTabAndOpen({ source_file_path = temp_file_path })
+				-- 	end,
+				-- 	mode = { "n", "i" },
+				-- },
 				["<c-v>"] = { "edit_vsplit", mode = { "i", "n" } },
 				["<c-r>#"] = { "insert_alt", mode = "i" },
 				["<c-r>%"] = { "insert_filename", mode = "i" },
@@ -156,6 +187,12 @@ return {
 				["<c-r><c-l>"] = { "insert_line", mode = "i" },
 				["<c-r><c-p>"] = { "insert_file_full", mode = "i" },
 				["<c-r><c-w>"] = { "insert_cword", mode = "i" },
+				["<c-r><c-r>"] = {
+					function()
+						vim.cmd("norm! cc")
+					end,
+					mode = "i",
+				},
 				["<c-w>H"] = "layout_left",
 				["<c-w>J"] = "layout_bottom",
 				["<c-w>K"] = "layout_top",
@@ -165,7 +202,9 @@ return {
 				["gg"] = "list_top",
 				["j"] = "list_down",
 				["k"] = "list_up",
-				["q"] = "close",
+				-- ["gq"] = "close",
+				["gq"] = { "cancel", mode = { "i", "n" } },
+				["gQ"] = { "cancel", mode = { "i", "n" } },
 			},
 			list = {
 				["/"] = "toggle_focus",
@@ -183,18 +222,20 @@ return {
 				["<a-i>"] = "toggle_ignored",
 				["<a-m>"] = "toggle_maximize",
 				["<a-p>"] = "toggle_preview",
-				["<a-Space>"] = { "cycle_win" },
+				["<a-Space>"] = { "focus_preview" },
 				["<c-a>"] = "select_all",
-				["<c-b>"] = "preview_scroll_up",
-				["<c-f>"] = "preview_scroll_down",
+				["<c-b>"] = "",
+				["<c-f>"] = "",
+				["<c-n>"] = "",
+				["<c-p>"] = "",
+				["<a-k>"] = "preview_scroll_up",
+				["<a-j>"] = "preview_scroll_down",
 				["<c-d>"] = "list_scroll_down",
 				["<c-u>"] = "list_scroll_up",
 				["<c-j>"] = "list_down",
 				["<c-k>"] = "list_up",
-				-- ["<c-n>"] = "list_down",
-				-- ["<c-p>"] = "list_up",
 				["<c-q>"] = "qflist",
-				["<c-s>"] = "edit_split",
+				["<c-x>"] = "edit_split",
 				["<c-t>"] = "tab",
 				["<c-v>"] = "edit_vsplit",
 				["<c-w>H"] = "layout_left",
@@ -207,23 +248,109 @@ return {
 				["i"] = "focus_input",
 				["j"] = "list_down",
 				["k"] = "list_up",
-				["q"] = "close",
+				["gq"] = "close",
 				["zb"] = "list_scroll_bottom",
 				["zt"] = "list_scroll_top",
 				["zz"] = "list_scroll_center",
 			},
 			preview = {
-				["<Esc>"] = "cancel",
-				["q"] = "close",
+				["gq"] = { "cancel", mode = { "i", "n" } },
+				["gQ"] = { "cancel", mode = { "i", "n" } },
+				["<Esc>"] = "focus_input",
 				["i"] = "focus_input",
-				["<a-Space>"] = { "cycle_win" },
+				["<a-h>"] = "focus_input",
+				["<a-Space>"] = "cycle_win",
+			},
+		}
+
+		local actions = {
+			flash = function(picker)
+				require("flash").jump({
+					pattern = "^",
+					labels = "asdfghjklqwertyuiopzxcvbnm1234",
+					label = {
+						after = { 0, 0 },
+						rainbow = {
+							enabled = true,
+							-- number between 1 and 9
+							shade = 5,
+						},
+					},
+					search = {
+						mode = "search",
+						exclude = {
+							function(win)
+								return vim.bo[vim.api.nvim_win_get_buf(win)].filetype ~= "snacks_picker_list"
+							end,
+						},
+					},
+					action = function(match)
+						local idx = picker.list:row2idx(match.pos[1])
+						picker.list:_move(idx, true, true)
+					end,
+				})
+			end,
+		}
+
+		local M = {}
+		M.is_grep = nil
+
+		local function switch_grep_files(picker, _)
+			-- switch b/w grep and files picker
+			local snacks = require("snacks")
+			local cwd = picker.input.filter.cwd
+			picker:close()
+			if M.is_grep then
+				-- if we are inside grep picker then switch to files picker and set M.is_grep = false
+				local pattern = picker.input.filter.search or picker.input.filter.pattern
+				snacks.picker.files({ cwd = cwd, pattern = pattern })
+				M.is_grep = false
+				return
+			else
+				-- if we are inside files picker then switch to grep picker and set M.is_grep = true
+				local pattern = picker.input.filter.pattern or picker.input.filter.search
+				snacks.picker.grep({ cwd = cwd, search = pattern })
+				M.is_grep = true
+			end
+		end
+
+		local sources = {
+			files = {
+				actions = {
+					switch_grep_files = function(picker, _)
+						M.is_grep = false
+						switch_grep_files(picker, _)
+					end,
+				},
+				win = {
+					input = {
+						keys = {
+							["<a-r>"] = { "switch_grep_files", desc = "Switch to grep", mode = { "i", "v" } },
+						},
+					},
+				},
+			},
+			grep = {
+				actions = {
+					switch_grep_files = function(picker, _)
+						M.is_grep = true
+						switch_grep_files(picker, _)
+					end,
+				},
+				win = {
+					input = {
+						keys = {
+							["<a-r>"] = { "switch_grep_files", desc = "Switch to grep", mode = { "i", "v" } },
+						},
+					},
+				},
 			},
 		}
 
 		local config = {
 			enabled = true,
-			prompt = "󰭎 ",
-			sources = {},
+			prompt = "󰭎  ",
+			sources = sources,
 			focus = "input",
 			layout = layout.setter,
 			layouts = layout.list,
@@ -264,8 +391,13 @@ return {
 				-- preview window
 				preview = {
 					keys = keymaps.preview,
+					wo = {
+						number = false,
+						relativenumber = false,
+					},
 				},
 			},
+			actions = actions,
 			---@class snacks.picker.icons
 			icons = {
 				files = {

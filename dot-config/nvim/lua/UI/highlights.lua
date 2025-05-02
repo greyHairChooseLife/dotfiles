@@ -15,7 +15,7 @@ vim.cmd([[
   highlight Search guibg=#FFFF00 guifg=#1d202f
   highlight CurSearch gui=bold guibg=#0000FF guifg=white
   highlight Visual guibg=#4d6652 guifg=NONE
-  highlight CursorLine guibg=#4d6652 guifg=NONE
+  highlight CursorLine guibg=#242024 guifg=NONE
   highlight Folded guibg=#24283b guifg=#4d6652 gui=italic
   highlight StatusLine guibg=#24283b
   highlight StatusLineNC guibg=#24283b
@@ -275,7 +275,7 @@ vim.cmd([[
 
 
   " MEMO:: Borders
-  highlight FloatBorder guifg=#98c379 guibg=#24283b
+  highlight FloatBorder guifg=#000000 guibg=#000000
   highlight NormalFloat guifg=NONE guibg=#000000
   highlight DiagnosticsBorder guifg=#FF4500 guibg=#000000
   highlight BlinkCmpSignatureHelpBorder guifg=#ffff00 guibg=#000000
@@ -338,6 +338,16 @@ vim.cmd([[
   highlight CodeCompanionH4Bg guibg=NONE guifg=#e0af68 gui=bold
   highlight CodeCompanionH5Bg guibg=NONE guifg=#8b8378 gui=bold
   highlight CodeCompanionH6Bg guibg=NONE guifg=#B0C4DE gui=bold
+
+  " MEMO:: Snacks
+  highlight SnacksPickerInputTitle guibg=#000000 guifg=#A1C98A
+  " highlight SnacksPickerListCursorLine guibg=#242024 guifg=NONE
+  highlight SnacksPickerListCursorLine guibg=#000080 guifg=NONE
+  " highlight SnacksPickerPreviewCursorLine guibg=NONE
+  highlight SnacksPickerInputBorder guibg=#000000 guifg=#000000
+  highlight SnacksPickerPreviewBorder guibg=#24283B guifg=#24283B
+  highlight SnacksPickerCursorLine guibg=#24283B guifg=NONE
+  highlight SnacksPickerMatch guifg=#FF4500
 ]])
 
 --
