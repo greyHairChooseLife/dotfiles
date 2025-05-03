@@ -1,4 +1,4 @@
-local utils = require("utils")
+local g_utils = require("utils")
 
 -- revoke hiding cursor
 -- (while hiding is done each)
@@ -11,7 +11,7 @@ vim.api.nvim_create_autocmd("BufLeave", {
 		local is_listed_ft = vim.tbl_contains(ft, vim.bo[bufnr].filetype)
 
 		if is_listed_ft then
-			utils.cursor.show()
+			g_utils.cursor.show()
 		end
 	end,
 })
@@ -31,13 +31,32 @@ vim.api.nvim_create_autocmd("CmdlineLeave", {
 		if cmd == "messages" then
 			vim.defer_fn(function()
 				if vim.bo.filetype == "noice" then
-					local setOpt = utils.setOpt
+					local setOpt = g_utils.setOpt
 					setOpt("winhighlight", "Normal:CodeCompanionNormal,EndOfBuffer:CodeCompanionEOB")
 					setOpt("number", true)
 					setOpt("relativenumber", true)
 					setOpt("signcolumn", "no")
 				end
 			end, 100)
+		end
+	end,
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+	pattern = "*",
+	callback = function()
+		local tabid = vim.api.nvim_get_current_tabpage()
+		local tab_wins = vim.api.nvim_tabpage_list_wins(tabid)
+		local nbr_notify_wins = 0
+		-- exclude floating window to exclude notify windows
+		for _, win in ipairs(tab_wins) do
+			if vim.api.nvim_win_get_config(win).relative ~= "" then
+				nbr_notify_wins = nbr_notify_wins + 1
+			end
+		end
+
+		if (#tab_wins - nbr_notify_wins) == 2 and g_utils.is_filetype_open("NvimTree", tabid) then
+			NvimTreeResetUI()
 		end
 	end,
 })

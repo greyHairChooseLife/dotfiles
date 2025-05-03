@@ -407,9 +407,14 @@ M.restore_cursor_position = function(for_commit_msg)
 	end
 end
 
-M.is_filetype_open = function(filetype)
+--- 특정 파일 타입이 열려 있는지 확인하는 함수
+--- @param filetype string 찾고자 하는 파일 타입
+--- @param tabid number|nil 검색할 탭 ID (기본값: 0, 현재 탭)
+--- @return boolean
+M.is_filetype_open = function(filetype, tabid)
+	tabid = tabid or 0
 	-- Get all windows in current tab
-	local wins = vim.api.nvim_tabpage_list_wins(0)
+	local wins = vim.api.nvim_tabpage_list_wins(tabid)
 
 	-- Check each window's buffer filetype
 	for _, win in ipairs(wins) do
