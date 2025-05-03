@@ -1,59 +1,4 @@
 local map = vim.keymap.set
-local opt = { noremap = true, silent = true }
-local wk_map = require("utils").wk_map
--- map({ "n", "v" }, ",.t", tele_func.terminal_buffer_search)
-
--- map("n", ",.gco", tele_func.git_commits)
--- map("n", ",.gbco", tele_func.git_bcommits)
--- map("n", ",.gd", tele_func.git_diff)
--- map("n", ",.gss", tele_func.git_stash)
--- map("n", ",.gst", builtin.git_status)
--- map("n", ",.gbr", builtin.git_branches)
-
--- map("n", ",.f", builtin.find_files)
--- map("v", ",.f", tele_func.visual_file)
--- map("n", ",.w", builtin.live_grep)
--- map("v", ",.w", tele_func.visual_live_grep)
--- map("n", ",..w", tele_func.live_grep_current_buffer)
--- map("v", ",..w", tele_func.visual_live_grep_current_buffer)
--- map("n", ",.c", builtin.grep_string)
--- map("v", ",.c", tele_func.visual_grep_string)
--- map("n", ",.b", tele_func.buffers_without_terminal)
--- map("n", ",.z", builtin.current_buffer_fuzzy_find) -- Regex search current file
-
--- map("n", ",.q", builtin.quickfix)
--- map({ "n", "i" }, ",.r", builtin.registers)
--- map("n", ",.m", builtin.marks)
--- map("n", ",.o", function()
--- 	builtin.oldfiles({ only_cwd = true })
--- end)
-
--- -- MEMO:: Telescope
--- wk_map({
--- 	[",."] = {
--- 		group = "Telescope",
--- 		order = { "R", "H", "N", "T" },
--- 		["R"] = { builtin.resume, desc = "resume", mode = "n" },
--- 		["H"] = { builtin.help_tags, desc = "help doc", mode = "n" },
--- 		["N"] = { "<cmd>Noice telescope<CR>", desc = "noice Log", mode = "n" },
--- 		["T"] = { "<cmd>TodoTelescope<CR>", desc = "todo Tags", mode = "n" },
--- 	},
--- })
--- wk_map({
--- 	[",.."] = {
--- 		group = "expand",
--- 		["T"] = {
--- 			function()
--- 				local dir_path = vim.fn.expand("%:p:h") -- 상대경로
--- 				local file_path = vim.fn.expand("%:t") -- 파일명
--- 				vim.cmd(string.format("TodoTelescope cwd=%s default_text=%s", dir_path, file_path))
--- 				vim.cmd("normal! a ")
--- 			end,
--- 			desc = "todo Tags current",
--- 			mode = "n",
--- 		},
--- 	},
--- })
 
 local my_picker_src = require("picker.modules.picker_sources")
 local snp = require("snacks").picker
@@ -62,7 +7,7 @@ local snp = require("snacks").picker
 -- TODO:: delta 적용
 map("n", ",.gl", my_picker_src.git_log)
 map("v", ",.gl", my_picker_src.git_log_line)
-map("n", ",.gfl", my_picker_src.git_log_file)
+map("n", ",..gl", my_picker_src.git_log_file)
 map("n", ",.gd", my_picker_src.git_diff)
 map("n", ",.gss", my_picker_src.git_stash)
 map("n", ",.gst", my_picker_src.git_status)
