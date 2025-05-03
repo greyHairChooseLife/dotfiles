@@ -1,6 +1,3 @@
-
-
-
 ## how to start?
 
 ```bash
@@ -80,79 +77,151 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 
 
-
-## Comming soon..
-
-[rainfrong: TUI DB](https://github.com/achristmascarl/rainfrog)
-
-
-## Todo - etc
-
-
-> [!ye] tmux
->
-> - feat: add tmuxinator
-> - default path를 확인하는 방법, 그냥 new pane 하면 자꾸 특정 path가 열린다.
-
-
-
-
-> [!ye] i3-WM
->
-> - `mod-q` update
->
->   ```bash
->   # 의사코드
->   if current_process_is_tmux then
->       save_tmux_resurrect()
->       kill process
->   else
->       kill process
->   end
->   ```
-
-
 ## NVIM
-
-### 읽을것 읽기
-
-5개 링크
-
-- https://github.com/jmacadie/telescope-hierarchy.nvim
-- https://www.reddit.com/r/neovim/comments/1h25lal/what_are_your_favorite_underappreciated_neovim/
-
 
 ### etc
 
 
+1. 이제 picker 선택
+   - 레딧 글 저장해둔거 읽기
+   - UI도 중요 요소
+   - source를 직접 만들어 사용하기 얼마나 쉬운가?
+   - 직접 써보자. 
+
+2. open buffer 기능 개발
+   - File Path: lua/buf_win_tab/modules/handle_buffer.lua, 6:13
+     ```lua
+     local OPEN = {}
+     
+     -- START_debug:
+     -- MEMO:: (picker/tree) 현재탭에서 포커스, 없으면 열기
+     -- START_debug:
+     -- MEMO:: (picker/tree) 모든탭에서 포커스, 아무데도 없으면 현재 탭에서 열기
+     -- START_debug:
+     -- MEMO:: (picker/tree) 지정탭에 버퍼가 존재하지 않으면 :e로 열기. 존재하고 visible이면 포커싱, invisi면 :vnew b로 열기
+     ```
+
+3. mv buffer 기능 개발
+  - File Path: lua/buf_win_tab/modules/handle_buffer.lua, 525:528
+    ```lua
+    local MOVE = {}
+    
+    -- START_debug:
+    -- MEMO:: (,mt/,mT) 다른 탭으로 이동(기존 탭에선 delete)
+    ```
+
+4. 이후 진행 아래 진행...
+
+
+
+- nvimtree 에서 필터링 따위를 통해 현재 텝에서 열린것/숨겨진 것 등만 표시하는 기능 
+
+- :e! 실행할 때마다 NvimTree가 켜져있다면 ui-reset해주는 autocmd
+
+
+- lualine의 inactive에서 a_파트를 고정 색이 아니라 만약 현재 탭에 동일한 버퍼가 active인 경우에 똑같이 오렌지색으로 넣어주자.
+
+- 텝 생성시 esc로 취소하면 자꾸 그냥 만들어진다. no name으로. 이거 /,? search 기능에서 esc 뚫어낸거랑 같은 방식으로 할 수 있을듯?
+
+
+- `Tab, S-Tab, g-Tab`으로 버퍼 순회할 때 현재 탭의 윈도우에 active인 것은 제외해도 되겠다. 그리고 이것이 시각적으 로표현되도록 하면 좋겠다.
+    [ref](https://www.youtube.com/watch?v=ST_DZ6yIiXY)
+
+- winbar의 활용
+
+- visual select에서 대문자 S 입력하면 이후 연속해서(sequence) 입력하는 문자에 따라 다양한 기능을 제공한다. 이게 뭔지 알아보자.
+
+- (config 훔치기) https://patrick-f.tistory.com/36
+
+- 레딧 saved-list 확인
+
+- search 'best picker' on reddit
+
+- utils는 각 workflow마다의 util이 있고, global util이 있겠다. 이를
+  구분하자. 이때 기존 workflow의 function.lua가 util이 되면 적절하겠다. 독립적
+  기능은 modules로 이동하자.
+
+- nvimtree에 포커싱 되어있을 때 커서라인 색상 주황색 또는 연두색으로
+
+
+- revive buffer 이거 delete된 버퍼만 살아온다. 그냥 quit은 아님. qg로 되살리도록 하자. 걍 quit이든 bdelete이든 상관 없을 무
+
+  ```
+  -- Lua
+  local last_closed_window = nil
+
+  -- 윈도우가 닫힐 때 상태를 저장
+  vim.api.nvim_create_autocmd("WinClosed", {
+    callback = function(args)
+      local win_id = tonumber(args.match) -- 닫힌 윈도우 ID
+      if vim.api.nvim_win_is_valid(win_id) then
+        local buf_id = vim.api.nvim_win_get_buf(win_id)
+        local pos = vim.api.nvim_win_get_position(win_id)
+        local width = vim.api.nvim_win_get_width(win_id)
+        local height = vim.api.nvim_win_get_height(win_id)
+        last_closed_window = {
+          buf_id = buf_id,
+          pos = pos,
+          width = width,
+          height = height,
+        }
+      end
+    end,
+  })
+
+  -- 마지막으로 닫힌 윈도우를 복원
+  local function reopen_last_closed_window()
+    if last_closed_window and vim.api.nvim_buf_is_valid(last_closed_window.buf_id) then
+      -- 새 윈도우 열기
+      vim.cmd("vsplit")
+      local new_win = vim.api.nvim_get_current_win()
+
+      -- 버퍼 설정
+      vim.api.nvim_win_set_buf(new_win, last_closed_window.buf_id)
+
+      -- 크기 및 위치 복원
+      vim.api.nvim_win_set_width(new_win, last_closed_window.width)
+      vim.api.nvim_win_set_height(new_win, last_closed_window.height)
+
+      print("Last closed window restored.")
+    else
+      print("No valid window to restore.")
+    end
+  end
+
+  -- 명령어로 등록
+  vim.api.nvim_create_user_command("ReopenLastWindow", reopen_last_closed_window, {})
+  ```
+
 - <leader>s로 검색하는 기능의 확장으로,
   papago api따위를 활용하여 번역 후 결과를 작은 floating window로 띄우기
-
-- 파이썬 formmat 되긴 하는거야? ruff 말이야.
-
-- 현재 탭에서 qq 또는 덮어씌워져서 hidden 표시된 버퍼를 현재 탭 내에서 관리하는거 빨랑 만들자.
-  <Alt-Enter><Space>  따위에도 적용해야한다.
-
-
 
 ### codecompanion
 
 
-- 채팅에 이름 달아주고, picker에서 해당 채팅을 열기
+- ~채팅에 이름 달아주고, picker에서 해당 채팅을 열기~
+- ~dump, restore, delete 기능을 키맵으로 만들자: <leader>s로 세션 기능 내에 달아주면 될듯~
 
-- dump, restore, delete 기능을 키맵으로 만들자: <leader>s로 세션 기능 내에 달아주면 될듯
-
-- 현재까지의 대화내용을 바탕으로 나의 영어 작문 능력을 개선하기 위해
-  `as-is > to-be` 형태로 요약/튜터링 해 주기. 더 자연스러운 표현으로!
-
+- 현재까지의 대화내용을 바탕으로 나의 영어 작문 능력을 개선하기 위해 `as-is > to-be` 형태로 요약/튜터링 해 주기. 더 자연스러운 표현으로!
   - 이거 hook 달아서 채팅 꺼질 때 마다 llm이 내 영어 작문 오답노트를 생성해주게 해도 좋을듯?
-
 
 - /workspace with vectorcode plugin [ref](https://codecompanion.olimorris.dev/extending/workspace.html)
 
 - mcp!
 
+
 ### 관심있는 플러그인
+
+- speach to text with chatGPT api
+  https://github.com/kyza0d/vocal.nvim
+
+- better picker!
+  - keymap: telescope 에서 <C-q>로 선택한 파일을 qf에 추가한다. 근데 이거 곧바로 qflist 버퍼를 띄우기보단 그냥 log만 남겨주는게 좋을듯
+
+
+
+- https://github.com/jmacadie/telescope-hierarchy.nvim
+- https://www.reddit.com/r/neovim/comments/1h25lal/what_are_your_favorite_underappreciated_neovim/
 
 - [snacks.scope](https://github.com/folke/snacks.nvim/blob/main/docs/scope.md)
   : 조건문, 반복문 등도 treesitter에 등록시켜주나? 그래서 aerial에서도 확인 할 수 있나?
@@ -199,48 +268,27 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 - [scope.nvim](https://github.com/tiagovla/scope.nvim)
   원래는 tab과 buffer는 별 관련이 없다. 근데 텝마다 별도의 buffer그룹을 가졌으면... 하고 생각할 때가 있다. 이런 아이디어를 구현한 플러그인
+  - 현재 탭에서 qq 또는 덮어씌워져서 hidden 표시된 버퍼를 현재 탭 내에서 관리하는거 빨랑 만들자.
+    <Alt-Enter><Space>, <Tab>, <S-Tab>  따위에도 적용해야한다.
+    - `gq`로 지워질 때 그냥  :quit은 탭에 저장 안하고, 오로지 `qq`로 지울 때만 현재 탭의 사족으로 남기자.
+    - (예전 버전)현재 tab에서 loaded / inactive / active 버퍼 리스트를 얻을 수 있는 나만의 utils를 만들어두면 좋겠다. 
+      -> scope.nvim
 
 
-- Aider plugins
-  https://github.com/GeorgesAlkhouri/nvim-aider
-  https://github.com/joshuavial/aider.nvim
-  https://github.com/aweis89/aider.nvim
 
 
-### config 훔치기 [-]
 
-leader gc해서 커밋 메시지 켤 때 뭐 이상해진다. 가끔. 윈도우 자리가 안맞음
+### maybe one-day
 
-- 전반적으로
-  https://patrick-f.tistory.com/36
-
-- 구조는 reference에 있는 중국인 양반것이 매우 좋아 보임
-  - 내가 임의로 만든 작은 단위의 기능들은 각 카테고리 안에 `modules/`라고
-    만들어서 기능당 하나의 lua파일에 담아서 관리해야겠다.
-
-### 개선서항 [-]
-
-#### 간단
-
-- `<leader>cc`로 commitmsg 버퍼를 켜면 최종 버퍼의 포키싱 윈도우 범위가 바뀐다.(살짝 올라감)
-- auto-session 복구시 탭 이름도 복구 되도록
-- keymap: telescope 에서 <C-q>로 선택한 파일을 qf에 추가한다. 근데 이거 곧바로 qflist 버퍼를 띄우기보단 그냥 log만 남겨주는게 좋을듯
-
-- `Tab, S-Tab, g-Tab`으로 버퍼 순회할 때 현재 탭의 윈도우에 active인 것은 제외해도 되겠다. 그리고 이것이 시각적으 로표현되도록 하면 좋겠다.
-    [ref](https://www.youtube.com/watch?v=ST_DZ6yIiXY)
-
-- winbar의 활용
-
-- visual select에서 대문자 S 입력하면 이후 연속해서(sequence) 입력하는 문자에 따라 다양한 기능을 제공한다. 이게 뭔지 알아보자.
-
-#### 복잡
-
-- nvim-tree에서 지금 주황색으로 보여주고 표시하는건 loaded buffer인데, 현재탭의 active window만 보는것도 좋을것같다.    
-  정리해보면 not-loaded(기본 트리)/ loaded/ active(cucrent tab) / left(== inactive in current tab)을 한눈에 볼 파악할 수 있는 tree가 있다면 유용하겠다.(ex: avante.nvim selected file에 active 파일들을 모두 추가)
-
-- 현재 tab에서 loaded / inactive / active 버퍼 리스트를 얻을 수 있는 나만의 utils를 만들어두면 좋겠다. 
-  -> scope.nvim
-
-### 버그
-
+- harpoon은 자꾸 내가 지정한걸 까먹는다.
 - harpoon으로 열린 버퍼는 BufReadPost로 실행하고있는 :loadview가 제대로 안된다. cursor_position등 정보를 harpoon이 별도로 저장하고 사용해서 그런듯.
+
+## ETC
+
+
+- db tui: [rainfrong: TUI DB](https://github.com/achristmascarl/rainfrog)
+
+- tmux: tmuxinator
+- tmux: default path를 확인하는 방법, 그냥 new pane 하면 자꾸 특정 path가 열린다.
+
+
