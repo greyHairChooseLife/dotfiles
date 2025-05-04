@@ -1,4 +1,4 @@
-local utils = require("utils")
+local g_utils = require("utils")
 local SN = require("snacks")
 local snp = require("snacks").picker
 
@@ -40,7 +40,21 @@ M.example = function()
 end
 -- MEMO: GIT
 M.git_log = function()
-	local config = {}
+	local config = {
+		actions = {
+			open_picker_files_from_last_commit = function(picker)
+				local select = picker:current().commit
+				M.files_from_last_commit(select)
+			end,
+		},
+		win = {
+			input = {
+				keys = {
+					["<Space>"] = { "open_picker_files_from_last_commit", mode = { "n" } },
+				},
+			},
+		},
+	}
 	snp.git_log(config)
 end
 M.git_log_line = function()
@@ -53,7 +67,9 @@ M.git_log_file = function()
 	snp.git_log_file(config)
 end
 M.git_diff = function()
-	local config = {}
+	local config = {
+		-- preview = "diff",
+	}
 	snp.git_diff(config)
 	-- builtin.git_status({
 	-- 	previewer = diff_delta,
@@ -85,7 +101,7 @@ M.files = function()
 	snp.files(config)
 end
 M.files_visual = function()
-	local search_text = utils.get_visual_text()
+	local search_text = g_utils.get_visual_text()
 	local config = {
 		on_show = function()
 			vim.api.nvim_put({ search_text .. " " }, "c", true, true)
@@ -94,6 +110,8 @@ M.files_visual = function()
 	snp.files(config)
 end
 M.buffers = function()
+	g_utils.close_empty_unnamed_buffers()
+	g_utils.save_cursor_position()
 	local config = {
 		layout = {
 			preset = "default",
@@ -123,7 +141,7 @@ M.buffers = function()
 				},
 			},
 		},
-		current = false,
+		current = true,
 		filter = {
 			filter = function(item)
 				if item.file then
@@ -134,6 +152,25 @@ M.buffers = function()
 				end
 				return true -- Keep this item
 			end,
+		},
+		actions = {
+			close_and_stay = function(picker)
+				picker:close()
+				g_utils.restore_cursor_position()
+			end,
+			bufwipeout = function(picker)
+				local buf_id = picker:current().buf
+				vim.api.nvim_buf_delete(buf_id, { force = false })
+				M.buffers()
+			end,
+		},
+		win = {
+			input = {
+				keys = {
+					["gq"] = { "close_and_stay", mode = { "n", "i" } },
+					["<c-d>"] = { "bufwipeout", mode = { "n", "i" } },
+				},
+			},
 		},
 	}
 	snp.buffers(config)
@@ -177,6 +214,36 @@ M.command_history = function()
 	local config = {}
 	snp.command_history(config)
 end
+M.files_from_last_commit = function(commit_hash)
+	commit_hash = commit_hash or "HEAD" -- 기본값은 HEAD로 설정
+
+	pick_cmd_result({
+		cmd = "git",
+		args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", commit_hash, "-r" },
+		name = "git_show",
+		title = "Git Commit Files: " .. commit_hash,
+		preview = "git_diff",
+	})
+end
+M.qflist = function()
+	local config = {
+		actions = {
+			remove_select = function(picker)
+				local buf_id = picker:current()
+				QF_RemoveItem(buf_id.idx, true)
+				vim.schedule(M.qflist)
+			end,
+		},
+		win = {
+			input = {
+				keys = {
+					["<c-d>"] = { "remove_select", mode = { "n", "i" } },
+				},
+			},
+		},
+	}
+	snp.qflist(config)
+end
 
 -- MEMO: GREP
 M.grep = function()
@@ -188,11 +255,11 @@ M.grep_current_buffer = function()
 	snp.lines(config)
 end
 M.grep_current_buffers = function()
-	local config = {}
+	local config = { need_search = true }
 	snp.grep_buffers(config)
 end
 M.grep_visual = function()
-	local search_text = utils.get_visual_text()
+	local search_text = g_utils.get_visual_text()
 	local config = {
 		on_show = function()
 			vim.api.nvim_put({ search_text .. " " }, "c", true, true)
@@ -201,7 +268,7 @@ M.grep_visual = function()
 	snp.grep(config)
 end
 M.grep_visual_current_buffers = function()
-	local search_text = utils.get_visual_text()
+	local search_text = g_utils.get_visual_text()
 	local config = {
 		on_show = function()
 			vim.api.nvim_put({ search_text .. " " }, "c", true, true)

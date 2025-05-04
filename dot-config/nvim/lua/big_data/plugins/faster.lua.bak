@@ -1,5 +1,5 @@
 return {
 	"pteroctopus/faster.nvim",
-	-- TODO: beter option?
+	eabled = false,
 	lazy = false,
 }

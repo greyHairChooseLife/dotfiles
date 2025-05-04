@@ -6,6 +6,7 @@ return {
 		require("snacks").setup({
 			picker = require("picker.plugins.configs.snacks-picker"),
 			scroll = require("UI.plugins.configs.snacks-scroll"),
+			bigfile = { enabled = true },
 		})
 	end,
 }

@@ -26,7 +26,7 @@ local layouts = {
 				win = "preview",
 				title = "{preview}",
 				border = "single",
-				width = 0.5,
+				width = 0.75,
 				wo = {
 					winhighlight = {
 						NormalFloat = "Normal",
@@ -111,7 +111,8 @@ local previewers = {
 		cmd = { "delta" }, -- example to show a diff with delta
 	},
 	git = {
-		builtin = true, -- use Neovim for previewing git output (true) or use git (false)
+		builtin = false, -- use Neovim for previewing git output (true) or use git (false)
+		native = true,
 		args = {}, -- additional arguments passed to the git command. Useful to set pager options usin `-c ...`
 	},
 	file = {
@@ -122,6 +123,7 @@ local previewers = {
 	man_pager = nil, ---@type string? MANPAGER env to use for `man` preview
 }
 
+---@class snacks.picker.keymaps
 local keymaps = {
 	input = {
 		-- to close the picker on ESC instead of going to normal mode,
@@ -131,7 +133,7 @@ local keymaps = {
 		["<C-n>"] = { "history_forward", mode = { "i", "n" } },
 		["<C-p>"] = { "history_back", mode = { "i", "n" } },
 		["<C-w>"] = { "<c-s-w>", mode = { "i" }, expr = true, desc = "delete word" },
-		["<CR>"] = { "confirm", mode = { "n", "i" } }, -- BUG: 이거 기존 버퍼는 제거하도록
+		["<CR>"] = { "confirm", mode = { "n", "i" } },
 		-- ["<Down>"] = { "list_down", mode = { "i", "n" } },
 		-- ["<Esc>"] = "cancel",
 		["<S-CR>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
@@ -141,35 +143,27 @@ local keymaps = {
 		-- ["<a-d>"] = { "inspect", mode = { "n", "i" } },
 		["<a-f>"] = { "toggle_follow", mode = { "i", "n" } },
 		["<a-h>"] = { "toggle_hidden", mode = { "i", "n" } },
-		["<a-i>"] = { "toggle_ignored", mode = { "i", "n" } },
+		["<a-s-i>"] = { "toggle_ignored", mode = { "i", "n" } },
 		["<a-m>"] = { "toggle_maximize", mode = { "i", "n" } },
 		["<a-p>"] = { "toggle_preview", mode = { "i", "n" } },
 		["<a-Space>"] = { "focus_preview", mode = { "i", "n" } },
 		["<c-a>"] = { "select_all", mode = { "n", "i" } },
 		["<a-k>"] = { "preview_scroll_up", mode = { "i", "n" } },
 		["<a-j>"] = { "preview_scroll_down", mode = { "i", "n" } },
-		["<c-u>"] = { "list_scroll_up", mode = { "i", "n" } },
-		["<c-d>"] = { "list_scroll_down", mode = { "i", "n" } },
 		["<c-g>"] = { "toggle_live", mode = { "i", "n" } },
 		["<c-j>"] = { "list_down", mode = { "i", "n" } },
 		["<c-k>"] = { "list_up", mode = { "i", "n" } },
-		["<c-b>"] = "",
-		["<c-f>"] = "",
+		["<c-f>"] = { "list_scroll_down", mode = { "i", "n" } },
+		["<c-b>"] = { "list_scroll_up", mode = { "i", "n" } },
+		["<c-u>"] = "",
+		["<c-d>"] = "",
 		["<c-n>"] = "",
 		["<c-p>"] = "",
 		["<c-q>"] = { "qflist_all", mode = { "i", "n" } },
 		["<a-q>"] = { "qflist", mode = { "i", "n" } },
 		["<c-x>"] = { "edit_split", mode = { "i", "n" } },
 		["<c-t>"] = { "tab", mode = { "n", "i" } },
-		-- ["<c-T>"] = {
-		-- 	function(picker)
-		-- 		vim.notify(vim.inspect(picker))
-
-		-- 		-- local m = require("buf_win_tab.modules.select_tab")
-		-- 		-- m.selectTabAndOpen({ source_file_path = temp_file_path })
-		-- 	end,
-		-- 	mode = { "n", "i" },
-		-- },
+		["<c-S-t>"] = { "select_to_tab", mode = { "n", "i" } },
 		["<c-v>"] = { "edit_vsplit", mode = { "i", "n" } },
 		["<c-r>#"] = { "insert_alt", mode = "i" },
 		["<c-r>%"] = { "insert_filename", mode = "i" },
@@ -184,10 +178,14 @@ local keymaps = {
 			end,
 			mode = "i",
 		},
-		["<c-w>H"] = "layout_left",
-		["<c-w>J"] = "layout_bottom",
-		["<c-w>K"] = "layout_top",
-		["<c-w>L"] = "layout_right",
+		["<c-Left>"] = { { "layout_left", "focus_input" }, mode = { "i", "n" } },
+		["<c-Down>"] = { { "layout_bottom", "focus_input" }, mode = { "i", "n" } },
+		["<c-Up>"] = { { "layout_top", "focus_input" }, mode = { "i", "n" } },
+		["<c-Right>"] = { { "resume", "focus_input" }, mode = { "i", "n" } },
+		["<c-w>H"] = "",
+		["<c-w>J"] = "",
+		["<c-w>K"] = "",
+		["<c-w>L"] = "",
 		["?"] = "toggle_help_input",
 		["G"] = "list_bottom",
 		["gg"] = "list_top",
@@ -196,6 +194,9 @@ local keymaps = {
 		-- ["gq"] = "close",
 		["gq"] = { "cancel", mode = { "i", "n" } },
 		["gQ"] = { "cancel", mode = { "i", "n" } },
+		["zb"] = "list_scroll_bottom",
+		["zt"] = "list_scroll_top",
+		["zz"] = "list_scroll_center",
 	},
 	list = {
 		["/"] = "toggle_focus",
@@ -210,19 +211,19 @@ local keymaps = {
 		["<a-d>"] = "inspect",
 		["<a-f>"] = "toggle_follow",
 		["<a-h>"] = "toggle_hidden",
-		["<a-i>"] = "toggle_ignored",
+		["<a-s-i>"] = "toggle_ignored",
 		["<a-m>"] = "toggle_maximize",
 		["<a-p>"] = "toggle_preview",
 		["<a-Space>"] = { "focus_preview" },
 		["<c-a>"] = "select_all",
-		["<c-b>"] = "",
-		["<c-f>"] = "",
+		["<c-u>"] = "",
+		["<c-d>"] = "",
+		["<c-f>"] = "list_scroll_down",
+		["<c-b>"] = "list_scroll_up",
 		["<c-n>"] = "",
 		["<c-p>"] = "",
 		["<a-k>"] = "preview_scroll_up",
 		["<a-j>"] = "preview_scroll_down",
-		["<c-d>"] = "list_scroll_down",
-		["<c-u>"] = "list_scroll_up",
 		["<c-j>"] = "list_down",
 		["<c-k>"] = "list_up",
 		["<c-q>"] = "qflist",
@@ -245,8 +246,8 @@ local keymaps = {
 		["zz"] = "list_scroll_center",
 	},
 	preview = {
-		["gq"] = { "cancel", mode = { "i", "n" } },
-		["gQ"] = { "cancel", mode = { "i", "n" } },
+		["gq"] = "focus_input",
+		["gQ"] = "focus_input",
 		["<Esc>"] = "focus_input",
 		["i"] = "focus_input",
 		["<a-h>"] = "focus_input",
@@ -280,6 +281,14 @@ local actions = {
 				picker.list:_move(idx, true, true)
 			end,
 		})
+	end,
+	select_to_tab = function(picker)
+		local path = picker:current()._path
+		require("buf_win_tab.modules.select_tab").selectTabAndOpen({ source_file_path = path })
+	end,
+	resume = function(picker)
+		picker:close()
+		picker.resume()
 	end,
 }
 

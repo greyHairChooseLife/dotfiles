@@ -82,41 +82,11 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 ### etc
 
 
-1. 이제 picker 선택
-   - 레딧 글 저장해둔거 읽기
-   - UI도 중요 요소
-   - source를 직접 만들어 사용하기 얼마나 쉬운가?
-   - 직접 써보자. 
 
-2. open buffer 기능 개발
-   - File Path: lua/buf_win_tab/modules/handle_buffer.lua, 6:13
-     ```lua
-     local OPEN = {}
-     
-     -- START_debug:
-     -- MEMO:: (picker/tree) 현재탭에서 포커스, 없으면 열기
-     -- START_debug:
-     -- MEMO:: (picker/tree) 모든탭에서 포커스, 아무데도 없으면 현재 탭에서 열기
-     -- START_debug:
-     -- MEMO:: (picker/tree) 지정탭에 버퍼가 존재하지 않으면 :e로 열기. 존재하고 visible이면 포커싱, invisi면 :vnew b로 열기
-     ```
-
-3. mv buffer 기능 개발
-  - File Path: lua/buf_win_tab/modules/handle_buffer.lua, 525:528
-    ```lua
-    local MOVE = {}
-    
-    -- START_debug:
-    -- MEMO:: (,mt/,mT) 다른 탭으로 이동(기존 탭에선 delete)
-    ```
-
-4. 이후 진행 아래 진행...
-
-
+- diff with delta
 
 - nvimtree 에서 필터링 따위를 통해 현재 텝에서 열린것/숨겨진 것 등만 표시하는 기능 
 
-- :e! 실행할 때마다 NvimTree가 켜져있다면 ui-reset해주는 autocmd
 
 
 - lualine의 inactive에서 a_파트를 고정 색이 아니라 만약 현재 탭에 동일한 버퍼가 active인 경우에 똑같이 오렌지색으로 넣어주자.
@@ -211,6 +181,11 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 
 ### 관심있는 플러그인
+
+
+
+- 원하는 대로 리스트를 담은 메뉴를 만들 수 있다. 말하자면, vim.ui.select의 Wrapper
+  https://github.com/leath-dub/snipe.nvim
 
 - speach to text with chatGPT api
   https://github.com/kyza0d/vocal.nvim

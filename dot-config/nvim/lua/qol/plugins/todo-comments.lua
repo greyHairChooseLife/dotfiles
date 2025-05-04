@@ -1,6 +1,7 @@
 return {
 	"folke/todo-comments.nvim",
 	dependencies = { "nvim-lua/plenary.nvim" },
+	cmd = "TodoTelescope",
 	event = "BufReadPre",
 	opts = {
 		signs = false, -- show icons in the signs column
@@ -68,6 +69,28 @@ return {
 			-- don't replace the (KEYWORDS) placeholder
 			pattern = [[\b(KEYWORDS):]], -- ripgrep regex
 			-- pattern = [[\b(KEYWORDS)\b]], -- match without the extra colon. You'll likely get false positives
+		},
+	},
+	keys = {
+		{
+			",.T",
+			function()
+				local snp = require("snacks").picker
+				snp.todo_comments()
+			end,
+		},
+		{
+			",..T",
+			function()
+				local snp = require("snacks").picker
+				local file_path = vim.fn.expand("%:t") -- 파일명
+				snp.todo_comments({
+					on_show = function(picker)
+						picker.input:set("'" .. file_path .. " ")
+						vim.notify(vim.inspect(picker))
+					end,
+				})
+			end,
 		},
 	},
 }

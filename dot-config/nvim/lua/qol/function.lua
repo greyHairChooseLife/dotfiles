@@ -272,24 +272,26 @@ function QF_ToggleList() -- Quickfix list toggle 함수 정의
 	end
 end
 
-function QF_RemoveItem() -- Quickfix 항목 제거 함수 정의
-	local curqfidx = vim.fn.line(".") - 1
+function QF_RemoveItem(number, stop_auto_open) -- Quickfix 항목 제거 함수 정의
+	local curqfidx = (number or vim.fn.line(".")) - 1
 	local qfall = vim.fn.getqflist()
 	if #qfall == 1 then
 		vim.fn.setqflist({}, "r")
 		vim.api.nvim_command("cclose")
-		vim.api.nvim_echo({ { "Good job, Quickfix list cleared!!", "MoreMsg" } }, false, {})
+		vim.notify("Quickfix clear!", 2, { render = "minimal" })
 	else
 		table.remove(qfall, curqfidx + 1) -- Lua에서 table 인덱스는 1부터 시작함에 주의
 		vim.fn.setqflist(qfall, "r")
-		if curqfidx < #qfall then
-			vim.api.nvim_command(tostring(curqfidx) .. "cfirst")
-		else
-			vim.api.nvim_command(tostring(#qfall) .. "cfirst")
+		if not stop_auto_open then
+			if curqfidx < #qfall then
+				vim.api.nvim_command(tostring(curqfidx) .. "cfirst")
+			else
+				vim.api.nvim_command(tostring(#qfall) .. "cfirst")
+			end
 		end
 		if #qfall == 0 then
 			vim.api.nvim_command("cclose")
-			vim.api.nvim_echo({ { "Quickfix list cleared", "MoreMsg" } }, false, {})
+			vim.notify("Quickfix clear!", 2, { render = "minimal" })
 		else
 			vim.api.nvim_command("copen")
 		end

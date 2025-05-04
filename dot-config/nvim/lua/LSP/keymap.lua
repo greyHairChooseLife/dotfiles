@@ -30,7 +30,8 @@ map("n", "dK", vim.diagnostic.open_float, opt)
 
 map("n", "gD", function()
 	-- vim.lsp.buf.declaration()
-	snp.lsp_declarations()
+	local config = { auto_confirm = false }
+	snp.lsp_declarations(config)
 end, opt)
 map("n", "gd", function()
 	-- telescope.lsp_definitions({
@@ -38,7 +39,8 @@ map("n", "gd", function()
 	-- 	show_line = false, -- 결과 텍스트 표시
 	-- 	trim_text = false, -- 텍스트 트림 비활성화
 	-- })
-	snp.lsp_definitions()
+	local config = { auto_confirm = false }
+	snp.lsp_definitions(config)
 end, opt)
 map("n", "gy", function()
 	-- telescope.lsp_type_definition({
@@ -62,7 +64,9 @@ map("n", "gR", function()
 	-- 	include_declaration = true,
 	-- 	include_current_line = false, --> false: ()커서가 위치한 요소도 결과에)포함, ture: 제외
 	-- })
-	snp.lsp_references()
+
+	local config = { include_declaration = false, auto_confirm = false }
+	snp.lsp_references(config)
 end, opt)
 map("n", "gI", function()
 	telescope.lsp_incoming_calls({

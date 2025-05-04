@@ -3,7 +3,7 @@ local opt = { noremap = true, silent = true }
 local g_util = require("utils")
 
 -- git status 관리
-map("n", ",g", "<cmd>G<CR>", opt) -- shortcut
+map("n", ",g", "<cmd>topleft G<CR>", opt) -- shortcut
 map("n", "<leader>gc", OpenCommitMsg, opt) -- shortcut
 map("v", "<leader>gc", Commit_with_selected, opt)
 map("n", "<leader>ga", AmendCommitMsg, opt)
