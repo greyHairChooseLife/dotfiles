@@ -585,4 +585,16 @@ M.is_buffer_shown_only_in_current_tab = function(buf_id)
 	return win_with_buf_count > 0 and win_with_buf_count == win_with_buf_in_current_tab_count
 end
 
+local check_is_alacritty = function()
+	for k, _ in pairs(vim.fn.environ()) do
+		if k:match("^ALACRITTY_") then
+			return true
+		end
+	end
+
+	return false
+end
+
+M.is_alacritty = check_is_alacritty()
+
 return M

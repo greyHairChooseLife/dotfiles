@@ -4,6 +4,7 @@ return {
 	lazy = false,
 	config = function()
 		require("snacks").setup({
+			image = { enabled = not require("utils").is_alacritty or true },
 			picker = require("picker.plugins.configs.snacks-picker"),
 			scroll = require("UI.plugins.configs.snacks-scroll"),
 			bigfile = { enabled = true },
