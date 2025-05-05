@@ -186,13 +186,13 @@ M.my_nvimTree = {
 		lualine_a = {
 			{
 				M.get_git_branch,
-				color = { bg = M.colors.nvimTree, fg = M.colors.orange, gui = "bold,italic" },
+				color = { bg = M.colors.orange, fg = M.colors.nvimTree, gui = "bold,italic" },
 				padding = { left = 3 },
 			},
 			{
 				M.harpoon_length,
-				color = { bg = M.colors.nvimTree, fg = M.colors.orange, gui = "bold,italic" },
-				padding = { left = 22, right = 3 },
+				color = { bg = M.colors.orange, fg = M.colors.nvimTree, gui = "bold,italic" },
+				padding = { left = 22, right = 4 },
 			},
 		},
 	},

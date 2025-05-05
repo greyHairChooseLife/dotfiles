@@ -115,7 +115,7 @@ mo() {
 }
 
 btkb() {
-  if [ "$HOSTNAME" != "Lenovo-ideapad" ]; then
+  if [ "$HOSTNAME" != "Lenovo-ideapad" ] && [ "$HOSTNAME" != "cbpm-labtop" ]; then
     exit 0
   fi
 

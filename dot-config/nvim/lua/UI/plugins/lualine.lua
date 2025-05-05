@@ -28,6 +28,8 @@ return {
 						"vimwiki",
 						"aerial",
 						"noice",
+						"DiffviewFiles",
+						"DiffviewFileHistory",
 						-- "snacks_picker_input", -- 의미없네
 						-- "snacks_picker_list",  -- 의미없네
 						-- "snacks_picker_preview", -- 의미없네
