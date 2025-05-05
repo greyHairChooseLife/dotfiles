@@ -6,11 +6,8 @@ vim.api.nvim_create_autocmd("BufLeave", {
 	pattern = "*",
 	callback = function()
 		local bufnr = vim.fn.bufnr("%")
-		local ft = { "NvimTree", "aerial" }
-
-		local is_listed_ft = vim.tbl_contains(ft, vim.bo[bufnr].filetype)
-
-		if is_listed_ft then
+		local ft_for_showing_cursor = { "aerial", "NvimTree", "DiffviewFiles", "DiffviewFileHistory" }
+		if vim.tbl_contains(ft_for_showing_cursor, vim.bo[bufnr].filetype) then
 			g_utils.cursor.show()
 		end
 	end,

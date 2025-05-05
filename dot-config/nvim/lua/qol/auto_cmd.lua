@@ -38,6 +38,7 @@ vim.api.nvim_create_autocmd("WinEnter", {
 
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	callback = function()
+		-- reviving session breaks NvimTree buffer sometimes
 		if vim.bo.filetype == "NvimTree" then
 			local api = require("nvim-tree.api")
 			local view = require("nvim-tree.view")
@@ -46,7 +47,11 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 			if not view.is_visible() then
 				api.tree.open()
 			end
+		end
 
+		-- hide cursor for some filetypes
+		local ft_for_hiding_cursor = { "aerial", "NvimTree", "DiffviewFiles", "DiffviewFileHistory" }
+		if vim.tbl_contains(ft_for_hiding_cursor, vim.bo.filetype) then
 			utils.cursor.hide()
 		end
 	end,
