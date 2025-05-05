@@ -16,8 +16,10 @@ return {
 	opts = {
 		servers = {
 			lua_ls = {},
-			ts_ls = {},
-			basedpyright = {},
+			-- START_debug:
+			-- ts_ls = {},
+			-- basedpyright = {},
+			-- END___debug:
 		},
 	},
 	config = function(_, opts)
