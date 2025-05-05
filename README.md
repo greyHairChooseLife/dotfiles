@@ -83,8 +83,6 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 
 
-- diff with delta
-
 - nvimtree 에서 필터링 따위를 통해 현재 텝에서 열린것/숨겨진 것 등만 표시하는 기능 
 
 
