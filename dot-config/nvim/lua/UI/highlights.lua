@@ -112,7 +112,16 @@ vim.cmd([[
   highlight DiffChange guibg=#312E03 guifg=NONE
   highlight DiffText guibg=#605D08 guifg=NONE gui=italic
   highlight DiffDelete guibg=#4f2d3d guifg=NONE
-
+  highlight DiffviewFilePanelInsertions guifg=#117e40 guibg=NONE
+  highlight DiffviewFilePanelDeletions guifg=#aa3000 guibg=NONE
+  highlight DiffviewStatusModified guifg=#6183BB guibg=NONE
+  highlight DiffviewStatusAdded guifg=#449DAB guibg=NONE
+  highlight DiffviewStatusUntracked guifg=#449DAB guibg=NONE
+  highlight DiffviewStatusBroken guifg=#914C54 guibg=NONE
+  highlight DiffviewStatusDeleted guifg=#914C54 guibg=NONE
+  highlight DiffviewStatusRenamed guifg=#6183BB guibg=NONE
+  highlight DiffviewStatusModified guifg=#6183BB guibg=NONE
+  highlight DiffviewCursorLine guifg=NONE guibg=#14283B
 
   " MEMO:: render-markdown
   highlight RenderMarkdownCode guibg=#181818 guifg=NONE

@@ -39,18 +39,35 @@ M.example = function()
 	})
 end
 -- MEMO: GIT
+local log_actions = {
+	open_picker_files_from_last_commit = function(picker)
+		local select = picker:current().commit
+		M.files_from_last_commit(select)
+	end,
+	view_in_diffview = function(picker)
+		local select = picker:current().commit
+		local args = select .. "^!"
+		vim.cmd("DiffviewOpen " .. args)
+	end,
+	rebase_interactively = function(picker)
+		local select = picker:current().commit
+		local args = select .. "^"
+		vim.cmd("GV")
+		vim.defer_fn(function()
+			vim.cmd("Git rebase -i " .. args)
+		end, 1)
+	end,
+}
 M.git_log = function()
 	local config = {
-		actions = {
-			open_picker_files_from_last_commit = function(picker)
-				local select = picker:current().commit
-				M.files_from_last_commit(select)
-			end,
-		},
+		actions = log_actions,
 		win = {
 			input = {
 				keys = {
 					["<Space>"] = { "open_picker_files_from_last_commit", mode = { "n" } },
+					["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
+					["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
+					["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
 				},
 			},
 		},
@@ -59,11 +76,35 @@ M.git_log = function()
 end
 M.git_log_line = function()
 	-- vim.cmd("normal! <Esc>")
-	local config = {}
+	local config = {
+		actions = log_actions,
+		win = {
+			input = {
+				keys = {
+					["<Space>"] = { "open_picker_files_from_last_commit", mode = { "n" } },
+					["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
+					["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
+					["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
+				},
+			},
+		},
+	}
 	snp.git_log_line(config)
 end
 M.git_log_file = function()
-	local config = {}
+	local config = {
+		actions = log_actions,
+		win = {
+			input = {
+				keys = {
+					["<Space>"] = { "open_picker_files_from_last_commit", mode = { "n" } },
+					["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
+					["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
+					["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
+				},
+			},
+		},
+	}
 	snp.git_log_file(config)
 end
 M.git_diff = function()
