@@ -37,8 +37,9 @@ map({ "n", "v" }, "gl", "$") -- move cursor
 map({ "n", "v" }, "gL", "$") -- move cursor
 map("n", "'", ToggleHilightSearch)
 map("v", "'", HilightSearch)
-map("n", "j", [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
-map("n", "k", [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
+-- These add {count}j/k into jumplist so it can jump back with c-o/i
+-- map("n", "j", [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
+-- map("n", "k", [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
 
 map("n", "vv", "viw") -- easy visual block for word
 map("v", "v", "<Esc>")

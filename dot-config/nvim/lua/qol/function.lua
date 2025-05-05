@@ -347,6 +347,10 @@ function QF_prev()
 	else
 		vim.cmd("cprev")
 	end
+	-- Print the current index and total
+	local current_idx = vim.fn.getqflist({ idx = 0 }).idx
+	local total = #vim.fn.getqflist()
+	print(string.format("qf: %d/%d", current_idx, total))
 end
 
 function QF_next()
@@ -361,6 +365,11 @@ function QF_next()
 	else
 		vim.cmd("cnext")
 	end
+
+	-- Print the current index and total
+	local current_idx = vim.fn.getqflist({ idx = 0 }).idx
+	local total = #vim.fn.getqflist()
+	print(string.format("qf: %d/%d", current_idx, total))
 end
 --<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
