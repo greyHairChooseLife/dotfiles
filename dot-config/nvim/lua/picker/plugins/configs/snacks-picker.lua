@@ -111,8 +111,8 @@ local previewers = {
 		cmd = { "delta" }, -- example to show a diff with delta
 	},
 	git = {
-		builtin = false, -- use Neovim for previewing git output (true) or use git (false)
-		native = true,
+		builtin = true, -- use Neovim for previewing git output (true) or use git (false)
+		-- native = true, uncomment this to use delta as I use it native diff tool for git
 		args = {}, -- additional arguments passed to the git command. Useful to set pager options usin `-c ...`
 	},
 	file = {

@@ -55,9 +55,6 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "aerial",
 	callback = function()
-		-- etc
-		utils.cursor.hide()
-
 		-- options
 		setOpt("winhighlight", "Normal:AerialNormal,EndOfBuffer:AerialEOB,FoldColumn:AerialFoldColumn")
 		setOpt("signcolumn", "no")
@@ -74,6 +71,20 @@ vim.api.nvim_create_autocmd("FileType", {
 		setOpt("relativenumber", false)
 		setOpt("signcolumn", "no")
 		setOpt("foldcolumn", "2")
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "DiffviewFiles", "DiffviewFileHistory" },
+	callback = function()
+		vim.notify("test")
+		-- options
+		vim.defer_fn(function()
+			setOpt(
+				"winhighlight",
+				"Normal:FugitiveNormal,EndOfBuffer:FugitiveEOB,FoldColumn:FugitiveFoldColumn,SignColumn:FugitiveFoldColumn,CursorLine:DiffviewCursorLine"
+			)
+		end, 1)
 	end,
 })
 
