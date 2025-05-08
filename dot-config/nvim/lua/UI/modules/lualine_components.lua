@@ -304,7 +304,7 @@ M.my_codecompanion = {
 				padding = { left = 1, right = 5 },
 			},
 			{
-				require("AI.codecompanion_lualine_active_component"),
+				require("AI.codecompanion.utils.lualine_component.active"),
 				color = { fg = M.colors.orange, bg = M.colors.bg2 },
 			},
 		},
@@ -322,7 +322,7 @@ M.my_codecompanion = {
 				padding = { left = 1, right = 5 },
 			},
 			{
-				require("AI.codecompanion_lualine_inactive_component"),
+				require("AI.codecompanion.utils.lualine_component.inactive"),
 				color = { fg = M.colors.orange, bg = M.colors.bg2 },
 			},
 		},
