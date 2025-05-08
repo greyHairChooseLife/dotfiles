@@ -71,7 +71,7 @@ return {
 			dashboard.button("w", "Word", ":Telescope live_grep<CR>"),
 			dashboard.button("o", "Old", ":Telescope oldfiles<CR>"),
 			dashboard.button("c", "  Copilot", function()
-				local cdc_func = require("AI.function.codecompanion")
+				local cdc_func = require("AI.codecompanion.utils.general")
 				cdc_func.create_new()
 				vim.cmd("only")
 			end),

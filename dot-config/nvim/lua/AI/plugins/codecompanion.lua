@@ -10,10 +10,10 @@ return {
 	},
 	init = function()
 		vim.cmd([[cab ccc CodeCompanionCmd]])
-		vim.cmd([[cab cci CodeCompanion]])
+		vim.cmd([[cab cc CodeCompanion]]) -- inline
+		vim.cmd([[cab cca CodeCompanionActions]])
 	end,
 	config = function()
-		local codecompanion = require("codecompanion")
 		-- Set up function to sync mini.diff highlights with current colorscheme
 		local function sync_diff_highlights()
 			-- Link the MiniDiff's custom highlights to the default diff highlights
@@ -64,7 +64,7 @@ return {
 					prompt = "Prompt ", -- Prompt used for interactive LLM calls
 					provider = "snacks", -- default|telescope|mini_pick
 					opts = {
-						show_default_actions = true, -- Show the default actions in the action palette?
+						show_default_actions = false, -- Show the default actions in the action palette?
 						show_default_prompt_library = false, -- Show the default prompt library in the action palette?
 					},
 				},
@@ -137,69 +137,12 @@ return {
 					},
 				},
 			},
-			prompt_library = {
-				-- touch default
-				["Generate a Commit Message"] = {
-					opts = { is_slash_cmd = false, short_name = "[deprecated] commit" },
-				},
-				-- custom
-				["Review Commit"] = require("AI.function.codecompanion-review_commit"),
-				["Generate CommitMsg"] = require("AI.function.codecompanion-generate_commit_msg"),
-				["Analyze Git Status for branching commits"] = require("AI.function.codecompanion-analyze_git_status"),
-				["Load Full-context of the git status"] = require(
-					"AI.function.codecompanion-get_full_git_status_reference"
-				),
-			},
+			prompt_library = require("AI.codecompanion.prompt_library"),
 			opts = {
 				-- system_prompt = require("AI.codecompanion.system_prompt"),
 			},
 		})
 
 		require("AI.codecompanion.utils.extmarks").setup()
-
-		-- START_debug:
-		-- local function compact_reference(messages)
-		-- 	local refs = {}
-		-- 	local result = {}
-
-		-- 	-- First loop to find last occurrence of each reference
-		-- 	for i, msg in ipairs(messages) do
-		-- 		if msg.opts and msg.opts.reference then
-		-- 			refs[msg.opts.reference] = i
-		-- 		end
-		-- 	end
-
-		-- 	-- Second loop to keep messages with unique references
-		-- 	for i, msg in ipairs(messages) do
-		-- 		local ref = msg.opts and msg.opts.reference
-		-- 		if not ref or refs[ref] == i then
-		-- 			table.insert(result, msg)
-		-- 		end
-		-- 	end
-
-		-- 	return result
-		-- end
-
-		-- vim.api.nvim_create_autocmd({ "User" }, {
-		-- 	pattern = "CodeCompanionRequestFinished",
-		-- 	callback = function(request)
-		-- 		if request.data.strategy ~= "chat" then
-		-- 			return
-		-- 		end
-		-- 		local current_chat = codecompanion.last_chat()
-		-- 		if not current_chat then
-		-- 			return
-		-- 		end
-		-- 		-- local config = require("codecompanion.config")
-		-- 		-- local add_reference = require("AI.codecompanion.utils.add_reference")
-		-- 		--
-		-- 		-- add_reference(current_chat, {
-		-- 		--   role = config.constants.USER_ROLE,
-		-- 		--   content = string.format("# Environment\n- Current Time: %s\n", os.date("%c")),
-		-- 		-- }, "system_prompt", "environment")
-		-- 		current_chat.messages = compact_reference(current_chat.messages)
-		-- 	end,
-		-- })
-		-- END___debug:
 	end,
 }

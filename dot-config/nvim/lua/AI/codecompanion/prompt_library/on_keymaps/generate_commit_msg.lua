@@ -44,8 +44,9 @@ You are a commit assistant.
 
 return {
 	strategy = "chat",
-	description = "Analyze the git staged for a clean commits.",
+	description = "",
 	opts = {
+		is_default = true, -- don't show on action palette
 		is_slash_cmd = false,
 		-- modes = { "v" },
 		short_name = "generate_commit_msg",

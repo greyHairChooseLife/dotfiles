@@ -32,9 +32,10 @@ return {
 	strategy = "chat",
 	description = "Get full files for references that are related git status.",
 	opts = {
+		is_default = true, -- don't show on action palette
 		is_slash_cmd = true,
-		short_name = "get_full_commit_context",
-		auto_submit = false,
+		short_name = "load full file contents for analyzing commit",
+		auto_submit = true,
 		user_prompt = false,
 		ignore_system_prompt = true,
 		stop_context_insertion = true,

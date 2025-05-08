@@ -2,21 +2,19 @@ local wk_map = require("utils").wk_map
 local map = vim.keymap.set
 local opt = { noremap = true, silent = true }
 
--- >>>>>>>>>>>>>>>>> context provider
+-- MEMO:: context provider
 map("n", ",y", Save_entire_buffer_to_register_for_AI_prompt, opt)
 map("v", ",y", Save_visual_selection_to_register_for_AI_prompt, opt)
 map("v", ",r", Save_buf_ref_of_visual_selection_to_register_for_AI_prompt, opt)
--- >>>>>>>>>>>>>>>>> context provider
 
--- >>>>>>>>>>>>>>>>> copilot.lua
+-- MEMO:: copilot.lua
 map("i", "<A-l>", function()
 	require("copilot.suggestion").accept_word() -- virtual text가 자꾸 사라져서 짜증난다
 	require("copilot.suggestion").next()
 end, opt)
--- <<<<<<<<<<<<<<<<< copilot.lua
 
 -- MEMO:: CodeCompanion
-local cdc_func = require("AI.function.codecompanion")
+local cdc_func = require("AI.codecompanion.utils.general")
 wk_map({
 	["<leader>c"] = {
 		group = "  CodeCompanion",
@@ -54,7 +52,6 @@ local predefined = {
 	fix = "/fix",
 	lsp = "/lsp",
 	code_workflow = "/cw",
-	-- analyze_git_status_for_commits
 	agsfc = "/analyze_git_status_for_commits",
 	review_commit = "/review_commit",
 }
@@ -80,7 +77,6 @@ local chat = {
   Answer in Korean.
 ]],
 }
-
 local inline = {
 	better_naming = "Improve this codeblocks by renaming unclear variables and parameters to something more descriptive, based on what they represent or do.",
 	docstring = "Please add documentation comments to the selected code, in Korean",
@@ -107,14 +103,24 @@ wk_map({
 		["e"] = { gen_command("pre", predefined.explain), desc = "explain", mode = { "v" } },
 		["l"] = { gen_command("pre", predefined.lsp), desc = "lsp", mode = { "v" } },
 		["f"] = { gen_command("pre", predefined.fix), desc = "fix", mode = { "v" } },
-		["g"] = { gen_command("pre", predefined.code_workflow), desc = "generate code(workflow)", mode = { "n" } },
-		["c"] = { gen_command("pre", predefined.agsfc), desc = "analyze: staged/unstaged/untracked", mode = { "n" } },
-		["R"] = { gen_command("pre", predefined.review_commit), desc = "커밋 리뷰", mode = { "n", "v" } },
+		["g"] = { gen_command("pre", predefined.code_workflow), desc = "  generate code", mode = { "n" } },
+		-- DEPRECATED:: 2025-05-08
+		-- to action palette only
+		-- ["c"] = {
+		-- 	gen_command("pre", predefined.agsfc),
+		-- 	desc = "analyze: staged & unstaged & untracked",
+		-- 	mode = { "n" },
+		-- },
+		["R"] = {
+			gen_command("pre", predefined.review_commit),
+			desc = "Review commit: HEAD or CommitHash",
+			mode = { "n", "v" },
+		},
 
-		["n"] = { gen_command("inline", inline.better_naming), desc = "naming variable", mode = { "v" } },
-		["d"] = { gen_command("inline", inline.docstring), desc = "docstring", mode = { "v" } },
+		["n"] = { gen_command("inline", inline.better_naming), desc = "󰊈 better naming", mode = { "v" } },
+		["d"] = { gen_command("inline", inline.docstring), desc = "󰊈 docstring", mode = { "v" } },
 
-		["i"] = { gen_command("chat", chat.improve_readability), desc = "improve readability (my own)", mode = { "v" } },
-		["I"] = { gen_command("chat", chat.cra), desc = "improve readability (prompt from avante)", mode = { "v" } },
+		["i"] = { gen_command("chat", chat.improve_readability), desc = "improve readability", mode = { "v" } },
+		["I"] = { gen_command("chat", chat.cra), desc = "improve readability: prompt from avante", mode = { "v" } },
 	},
 })

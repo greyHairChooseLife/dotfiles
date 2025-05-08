@@ -34,9 +34,10 @@ Notice: Before you answer, if full of related files contents might be needed for
 
 return {
 	strategy = "chat",
-	description = "Review commit with only changed code.",
+	description = "",
 	opts = {
 		modes = { "n", "v" },
+		is_default = true, -- don't show on action palette
 		is_slash_cmd = false,
 		short_name = "review_commit",
 		auto_submit = true,

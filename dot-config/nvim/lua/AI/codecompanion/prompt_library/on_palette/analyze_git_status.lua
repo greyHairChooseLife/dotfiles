@@ -55,7 +55,7 @@ You are a commit assistant.
 
 return {
 	strategy = "chat",
-	description = "Analyze the git status/diffs for a clean commits.",
+	description = "suggest separated staging after analyzing git status",
 	opts = {
 		is_slash_cmd = false,
 		-- modes = { "v" },
