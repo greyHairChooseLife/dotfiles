@@ -77,7 +77,6 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "DiffviewFiles", "DiffviewFileHistory" },
 	callback = function()
-		vim.notify("test")
 		-- options
 		vim.defer_fn(function()
 			setOpt(

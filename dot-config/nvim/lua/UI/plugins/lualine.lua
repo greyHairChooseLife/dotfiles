@@ -138,7 +138,7 @@ return {
 						"lsp_status",
 						icon = "󰌚",
 						symbols = {
-							done = "󰞑",
+							done = "",
 							-- Delimiter inserted between LSP names:
 							separator = " & ",
 						},

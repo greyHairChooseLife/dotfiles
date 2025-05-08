@@ -53,13 +53,16 @@ return {
 					window = {
 						height = 0.8,
 						width = math.max(math.min(math.floor(0.45 * vim.o.columns), 135), 100), -- 최대 135, 최소 100
+						opts = {
+							signcolumn = "yes:1",
+						},
 					},
 				},
 				action_palette = {
 					width = 95,
 					height = 10,
 					prompt = "Prompt ", -- Prompt used for interactive LLM calls
-					provider = "telescope", -- default|telescope|mini_pick
+					provider = "snacks", -- default|telescope|mini_pick
 					opts = {
 						show_default_actions = true, -- Show the default actions in the action palette?
 						show_default_prompt_library = false, -- Show the default prompt library in the action palette?
@@ -102,6 +105,10 @@ return {
 						---The header name for your messages
 						---@type string
 						user = " 󰟷",
+						---Decorate the user message before it's sent to the LLM
+						prompt_decorator = function(message, adapter, context)
+							return string.format([[<prompt>%s</prompt>]], message)
+						end,
 					},
 					keymaps = {
 						close = { modes = { n = "<C-c>", i = "<C-c>" } },
