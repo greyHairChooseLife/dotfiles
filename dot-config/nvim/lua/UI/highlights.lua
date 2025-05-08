@@ -86,18 +86,23 @@ vim.cmd([[
 
   " MEMO:: GitSigns
   highlight GitSignsAdd guifg=#40cd52
+  highlight GitSignsStagedAdd guifg=#40cd52
   highlight GitSignsAddNr guifg=#40cd52
   highlight GitSignsAddLn guibg=#1a472a guifg=NONE
   highlight GitSignsChange guifg=#ffcc00
+  highlight GitSignsStagedChange guifg=#ffcc00
   highlight GitSignsChangeNr guifg=#ffcc00
   highlight GitSignsChangeLn guibg=#867300 guifg=NONE
   highlight GitSignsChangedelete guifg=#f1502f
   highlight GitSignsDelete guifg=#f1502f
+  highlight GitSignsStagedDelete guifg=#f1502f
   highlight GitSignsTopdelete guifg=#f1502f
+  highlight GitSignsStagedTopdelete guifg=#f1502f
   highlight GitSignsChangedeleteNr guifg=#f1502f
   highlight GitSignsDeleteNr guifg=#f1502f
   highlight GitSignsTopdeleteNr guifg=#f1502f
   highlight GitSignsUntracked guifg=#7f52ff
+  highlight GitSignsStagedUntracked guifg=#7f52ff
 
   highlight GitSignsAddInline guibg=#867300 guifg=NONE gui=italic
   highlight GitSignsChangeInline guibg=#FFFF00 guifg=NONE " useless?
@@ -335,8 +340,8 @@ vim.cmd([[
 
 
   " MEMO:: CodeCompanion
-  highlight CodeCompanionMeHeader guibg=#A1C98A guifg=#000080
-  highlight CodeCompanionCopilotHeader guibg=#000080 guifg=#DCDCAA
+  highlight CodeCompanionMeHeader guibg=#1E5631 guifg=#000000
+  highlight CodeCompanionCopilotHeader guibg=#181d5f guifg=#E0E0E0
   highlight CodeCompanionNormal guibg=#242024 guifg=NONE
   highlight CodeCompanionSignColumn guibg=#242024  guifg=NONE
   highlight CodeCompanionEOB  guibg=NONE guifg=#242024

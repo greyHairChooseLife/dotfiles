@@ -148,6 +148,8 @@ return {
 			},
 		})
 
+		require("AI.codecompanion.utils.extmarks").setup()
+
 		-- START_debug:
 		-- local function compact_reference(messages)
 		-- 	local refs = {}

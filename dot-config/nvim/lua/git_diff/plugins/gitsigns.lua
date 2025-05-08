@@ -21,12 +21,12 @@ return {
 		numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
 		signs_staged_enable = true,
 		signs_staged = {
-			add = { hl = "GitSignsAdd", text = "✔" },
-			change = { hl = "GitSignsChange", text = "✔" },
-			delete = { hl = "GitSignsChangedelete", text = "✔" },
-			topdelete = { hl = "GitSignsDelete", text = "✔" },
-			changedelete = { hl = "GitSignsTopdelete", text = "✔" },
-			untracked = { hl = "GitSignsUntracked", text = "✔" },
+			add = { text = "✔" },
+			change = { text = "✔" },
+			delete = { text = "✔" },
+			topdelete = { text = "✔" },
+			changedelete = { text = "✔" },
+			untracked = { text = "✔" },
 		},
 		preview_config = {
 			-- Options passed to nvim_open_win
