@@ -30,6 +30,12 @@ export PATH=$PATH:/opt/miniforge/bin  # miniforge 설치를 AUR에서 했다.
 export GTK_THEME=Adwaita:dark
 
 # font
+# MEMO::
+# - kime는 ghostty에서 안된다. 도대체 왜!!!
+# - ibus는 버그가 많다. 아님 내가 설정을 못하는건가?
 export GTK_IM_MODULE=kime
 export QT_IM_MODULE=kime
 export XMODIFIERS=@im=kime
+# export GTK_IM_MODULE=ibus
+# export QT_IM_MODULE=ibus
+# export XMODIFIERS=@im=ibus
