@@ -1,4 +1,11 @@
 return {
+	-- MEMO:: touch default
+	["buffer"] = { opts = { provider = "snacks" } },
+	["file"] = { opts = { provider = "snacks" } },
+	["help"] = { opts = { provider = "snacks" } },
+	["symbols"] = { opts = { provider = "snacks" } },
+
+	-- MEMO:: custom
 	["delete_session"] = require("AI.codecompanion.slash_commands.delete_session"),
 	["dump_session"] = require("AI.codecompanion.slash_commands.dump_session"),
 	["restore_session"] = require("AI.codecompanion.slash_commands.restore_session"),
