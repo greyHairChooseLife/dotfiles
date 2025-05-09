@@ -10,8 +10,20 @@ return {
 			config = function()
 				local diff = require("mini.diff")
 				diff.setup({
+					-- Disable column style
+					view = { style = "number" },
 					-- Disabled by default
 					source = diff.gen_source.none(),
+					-- Disable all default mappings
+					mappings = {
+						apply = "",
+						reset = "",
+						textobject = "",
+						goto_first = "",
+						goto_prev = "",
+						goto_next = "",
+						goto_last = "",
+					},
 				})
 			end,
 		},

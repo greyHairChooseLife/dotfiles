@@ -87,7 +87,7 @@ wk_map({
 		-- ["i"] = { cdc_func.inspect, desc = "inspect New", mode = { "n" } },
 		-- ["u"] = { cdc_func.test, desc = "test", mode = { "n", "v" } },
 		["c"] = { cdc_func.create_new, desc = "create new", mode = { "n" } },
-		["h"] = { "CodeCompanionHistory", desc = "history", mode = { "n" } },
+		["h"] = { "<cmd>CodeCompanionHistory<CR>", desc = "history", mode = { "n" } },
 		["t"] = { cdc_func.toggle_last_chat, desc = "toggle", mode = { "n", "v" } },
 		["f"] = {
 			function()
