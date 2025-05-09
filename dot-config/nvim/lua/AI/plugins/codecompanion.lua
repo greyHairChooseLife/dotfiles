@@ -4,9 +4,20 @@ return {
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
-		-- "ravitemer/mcphub.nvim",
 		-- "j-hui/fidget.nvim",
-		"echasnovski/mini.diff",
+		{
+			"echasnovski/mini.diff",
+			config = function()
+				local diff = require("mini.diff")
+				diff.setup({
+					-- Disabled by default
+					source = diff.gen_source.none(),
+				})
+			end,
+		},
+		-- EXTENSIONS
+		"ravitemer/codecompanion-history.nvim",
+		"ravitemer/mcphub.nvim",
 	},
 	init = function()
 		vim.cmd([[cab ccc CodeCompanionCmd]])
@@ -14,28 +25,6 @@ return {
 		vim.cmd([[cab cca CodeCompanionActions]])
 	end,
 	config = function()
-		-- Set up function to sync mini.diff highlights with current colorscheme
-		local function sync_diff_highlights()
-			-- Link the MiniDiff's custom highlights to the default diff highlights
-			-- Set highlight color for added lines to match the default DiffAdd highlight
-			vim.api.nvim_set_hl(0, "MiniDiffOverAdd", { link = "DiffAdd" })
-			-- Set highlight color for deleted lines to match the default DiffDelete highlight
-			vim.api.nvim_set_hl(0, "MiniDiffOverDelete", { link = "DiffDelete" })
-			-- Set highlight color for changed lines to match the default DiffChange highlight
-			vim.api.nvim_set_hl(0, "MiniDiffOverChange", { link = "DiffChange" })
-			-- Set highlight color for context lines to match the default DiffText highlight
-			vim.api.nvim_set_hl(0, "MiniDiffOverContext", { link = "DiffText" })
-		end
-
-		-- Initial highlight setup
-		sync_diff_highlights()
-
-		-- Update highlights when colorscheme changes
-		vim.api.nvim_create_autocmd("ColorScheme", {
-			callback = sync_diff_highlights,
-			group = vim.api.nvim_create_augroup("CodeCompanionDiffHighlights", {}),
-		})
-
 		require("codecompanion").setup({
 			display = {
 				chat = {
@@ -78,6 +67,7 @@ return {
 			adapters = {
 				opts = {
 					show_defaults = false,
+					show_model_choices = true,
 				},
 				copilot = function()
 					return require("codecompanion.adapters").extend("copilot", {
@@ -126,7 +116,7 @@ return {
 					},
 					adapter = "copilot",
 					slash_commands = require("AI.codecompanion.slash_commands"),
-					-- tools = require("AI.codecompanion.tools"),
+					tools = require("AI.codecompanion.tools"),
 					-- variables = {},
 				},
 				inline = {
@@ -141,8 +131,12 @@ return {
 			opts = {
 				-- system_prompt = require("AI.codecompanion.system_prompt"),
 			},
+			extensions = require("AI.codecompanion.extensions"),
 		})
 
+		-- MEMO:: setup custom utils
+		require("AI.codecompanion.utils.basic_autocmd_as_callback").setup()
+		require("AI.codecompanion.utils.diff_highlights").setup()
 		require("AI.codecompanion.utils.extmarks").setup()
 	end,
 }
