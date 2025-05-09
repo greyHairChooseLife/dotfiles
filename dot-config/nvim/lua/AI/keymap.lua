@@ -15,45 +15,15 @@ end, opt)
 
 -- MEMO:: CodeCompanion
 local cdc_func = require("AI.codecompanion.utils.general")
-wk_map({
-	["<leader>c"] = {
-		group = "  CodeCompanion",
-		order = { "c", "t", "f", "a", "A", "e", "C" },
-		-- ["i"] = { cdc_func.inspect, desc = "inspect New", mode = { "n" } },
-		-- ["u"] = { cdc_func.test, desc = "test", mode = { "n", "v" } },
-		["c"] = { cdc_func.create_new, desc = "create new", mode = { "n" } },
-		["t"] = { cdc_func.toggle_last_chat, desc = "toggle", mode = { "n", "v" } },
-		["f"] = {
-			function()
-				local mode = vim.fn.mode()
-				if mode == "n" then
-					cdc_func.focus_last_chat()
-				else
-					cdc_func.create_new() -- 새로운 채팅에서 visual 레퍼런스 가지고 시작
-					-- cdc_func.add_buffer_reference() -- 마지막 채팅에서 visual 레퍼런스 가지고 시작
-				end
-			end,
-			desc = "focus",
-			mode = { "n", "v" },
-		},
-		["a"] = { cdc_func.add_buffer_reference, desc = "add buffer reference", mode = { "n", "v" } },
-		["A"] = { cdc_func.add_tab_buffers_reference, desc = "add All buffers in Tab reference", mode = { "n", "v" } },
-
-		["C"] = {
-			"<cmd>CodeCompanion /generate_commit_msg<CR>",
-			desc = "generate commitm msg",
-			mode = { "n" },
-		},
-	},
-})
-
 local predefined = {
 	explain = "/explain",
 	fix = "/fix",
 	lsp = "/lsp",
 	code_workflow = "/cw",
-	agsfc = "/analyze_git_status_for_commits",
 	review_commit = "/review_commit",
+	generate_commit_msg = "/generate_commit_msg",
+	-- DEPRECATED:: 2025-05-09
+	-- agsfc = "/analyze_git_status_for_commits",
 }
 local chat = {
 	-- improve_readability
@@ -96,10 +66,37 @@ local gen_command = function(mode, prompt)
 end
 
 wk_map({
+	["<leader>c"] = {
+		group = "  CodeCompanion",
+		order = { "c", "h", "t", "f", "a", "A", "e", "C" },
+		-- ["i"] = { cdc_func.inspect, desc = "inspect New", mode = { "n" } },
+		-- ["u"] = { cdc_func.test, desc = "test", mode = { "n", "v" } },
+		["c"] = { cdc_func.create_new, desc = "create new", mode = { "n" } },
+		["h"] = { "CodeCompanionHistory", desc = "history", mode = { "n" } },
+		["t"] = { cdc_func.toggle_last_chat, desc = "toggle", mode = { "n", "v" } },
+		["f"] = {
+			function()
+				local mode = vim.fn.mode()
+				if mode == "n" then
+					cdc_func.focus_last_chat()
+				else
+					cdc_func.create_new() -- 새로운 채팅에서 visual 레퍼런스 가지고 시작
+					-- cdc_func.add_buffer_reference() -- 마지막 채팅에서 visual 레퍼런스 가지고 시작
+				end
+			end,
+			desc = "focus",
+			mode = { "n", "v" },
+		},
+		["a"] = { cdc_func.add_buffer_reference, desc = "add buffer reference", mode = { "n", "v" } },
+		["A"] = { cdc_func.add_tab_buffers_reference, desc = "add All buffers in Tab reference", mode = { "n", "v" } },
+		["C"] = { gen_command("pre", predefined.generate_commit_msg), desc = "generate commitm msg", mode = { "n" } },
+	},
+})
+
+wk_map({
 	["<leader>ce"] = {
 		group = "Prefill",
 		order = { "d", "e", "l", "f", "g", "n", "i", "I", "c", "R" },
-
 		["e"] = { gen_command("pre", predefined.explain), desc = "explain", mode = { "v" } },
 		["l"] = { gen_command("pre", predefined.lsp), desc = "lsp", mode = { "v" } },
 		["f"] = { gen_command("pre", predefined.fix), desc = "fix", mode = { "v" } },

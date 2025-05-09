@@ -1,6 +1,8 @@
 return {
 	enabled = true,
 	opts = {
+		auto_save = false,
+		save_chat_keymap = "gS",
 		-- Keymap to open history from chat buffer (default: gh)
 		keymap = "gH",
 		-- Automatically generate titles for new chats
@@ -8,7 +10,7 @@ return {
 		---On exiting and entering neovim, loads the last chat on opening chat
 		continue_last_chat = false,
 		---When chat is cleared with `gx` delete the chat from history
-		delete_on_clearing_chat = true,
+		delete_on_clearing_chat = false,
 		-- Picker interface ("telescope" or "default")
 		picker = "snacks",
 		---Enable detailed logging for history extension
