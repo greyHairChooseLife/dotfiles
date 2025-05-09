@@ -13,6 +13,21 @@ map("i", "<A-l>", function()
 	require("copilot.suggestion").next()
 end, opt)
 
+-- MEMO:: STT & TTS
+map("v", ",v", "<cmd>TTS<CR>", opt)
+-- DEPRECATED:: 2025-05-09
+-- vim.keymap.set({ "n", "v" }, "<leader><leader>s", function()
+-- 	local mode = vim.fn.mode()
+-- 	if mode == "n" then
+-- 		require("utils").save_cursor_position()
+-- 		vim.api.nvim_feedkeys("vip", "n", true)
+-- 		require("utils").restore_cursor_position()
+-- 		vim.cmd("TTS")
+-- 	else
+-- 		vim.cmd("TTS")
+-- 	end
+-- end, opt)
+
 -- MEMO:: CodeCompanion
 local cdc_func = require("AI.codecompanion.utils.general")
 local predefined = {
