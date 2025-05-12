@@ -83,7 +83,7 @@ return {
 				local handle_unstaged = io.popen("git --no-pager diff")
 				local handle_untracked = io.popen("git --no-pager ls-files --others --exclude-standard")
 
-				if handle_staged == nil and handle_staged == nil and handle_untracked == nil then
+				if handle_staged == nil and handle_unstaged == nil and handle_untracked == nil then
 					return nil
 				end
 

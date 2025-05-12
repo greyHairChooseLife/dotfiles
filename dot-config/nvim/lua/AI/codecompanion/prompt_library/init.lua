@@ -10,9 +10,11 @@ return {
 	--
 	-- off action palette & slash_command only
 	["os1"] = require("AI.codecompanion.prompt_library.on_slash_commands.get_full_git_status_reference"),
+
 	-- off action palette & keymap only
 	["ok1"] = require("AI.codecompanion.prompt_library.on_keymaps.review_commit"),
 	["ok2"] = require("AI.codecompanion.prompt_library.on_keymaps.generate_commit_msg"),
+
 	-- on action palette
 	["Analyze git status"] = require("AI.codecompanion.prompt_library.on_palette.analyze_git_status"),
 }
