@@ -100,11 +100,14 @@ map({ "n", "v" }, "<C-y>", "2<C-y>")
 map("n", ",.<ESC>", "<Nop>") -- do nothing
 
 -- 선택한 줄 이동
--- TODO:: commandline 자꾸 깜빡이는게 거슬려
 map("x", "<A-k>", ":move '<-2<CR>gv-gv")
 map("x", "<A-j>", ":move '>+1<CR>gv-gv")
 map("v", "<A-h>", "<gv")
 map("v", "<A-l>", ">gv")
+
+-- insert mode 편집 쉽게
+map("i", "<C-,>", "<C-Left>")
+map("i", "<C-.>", "<C-Right>")
 
 -- snippet
 map("i", "cl<cr>", Insert_console_log, opt)
