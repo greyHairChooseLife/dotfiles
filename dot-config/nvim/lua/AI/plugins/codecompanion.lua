@@ -140,9 +140,7 @@ return {
 				},
 			},
 			prompt_library = require("AI.codecompanion.prompt_library"),
-			opts = {
-				-- system_prompt = require("AI.codecompanion.system_prompt"),
-			},
+			opts = { system_prompt = require("AI.codecompanion.system_prompts.v1") },
 			extensions = require("AI.codecompanion.extensions"),
 		})
 
