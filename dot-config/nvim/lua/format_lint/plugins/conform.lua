@@ -6,10 +6,11 @@ return {
 			formatters_by_ft = {
 				lua = { "stylua", stop_after_first = true },
 				http = { "kulala" },
-				javascript = { "prettierd", "prettier", stop_after_first = true },
-				typescript = { "prettierd", "prettier", stop_after_first = true },
-				javascriptreact = { "prettierd", "prettier", stop_after_first = true },
-				typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+				html = { "prettierd", "biome", stop_after_first = true },
+				javascript = { "biome", "prettierd", "prettier", stop_after_first = true },
+				typescript = { "biome", "prettierd", "prettier", stop_after_first = true },
+				javascriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
+				typescriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
 				json = { "prettierd", stop_after_first = true },
 				python = { "ruff_organize_imports", "ruff_fix", "ruff_format", stop_after_first = true },
 				bash = { "shfmt" },
@@ -22,6 +23,9 @@ return {
 					command = "kulala-fmt",
 					args = { "format", "$FILENAME" },
 					stdin = false,
+				},
+				biome = {
+					-- require_cwd = true,
 				},
 			},
 			format_on_save = {

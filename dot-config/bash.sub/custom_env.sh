@@ -24,8 +24,6 @@ export MANWIDTH=999
 
 export LANG=en_US.UTF-8 # 이게 ssh servet-clinet간에 다르면 한글 랜더링 오류가 난다.
 
-export PATH=$PATH:/opt/miniforge/bin  # miniforge 설치를 AUR에서 했다.
-
 # for global theme
 export GTK_THEME=Adwaita:dark
 

@@ -5,6 +5,8 @@ return {
 		require("mason-lspconfig").setup({
 			ensure_installed = {
 				"lua_ls",
+				"html",
+				"biome",
 				-- START_debug:
 				-- "ts_ls",
 				-- "basedpyright",

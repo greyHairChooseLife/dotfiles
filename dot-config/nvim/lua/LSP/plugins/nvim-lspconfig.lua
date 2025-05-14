@@ -15,7 +15,8 @@ return {
 	},
 	opts = {
 		servers = {
-			lua_ls = {},
+			-- lua_ls = {},
+			-- html = {},
 			-- START_debug:
 			-- ts_ls = {},
 			-- basedpyright = {},
