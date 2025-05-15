@@ -6,6 +6,7 @@ return {
 			ensure_installed = {
 				"lua_ls",
 				"html",
+				"superhtml",
 				"biome",
 				-- START_debug:
 				-- "ts_ls",
