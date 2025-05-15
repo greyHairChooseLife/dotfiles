@@ -14,36 +14,36 @@ if ! command -v yay &> /dev/null; then
 fi
 
 # Ask if user wants to install packages
-read -p "inatll basic packages? (y/n): " install_answer
+read -p "Install basic packages? (y/n): " install_answer
 if [ "$install_answer" == 'y' ]; then
-    echo "패키지 설치를 시작합니다..."
+      echo "Starting package installation..."
     bash ./install_pkgs.sh
     if [ $? -ne 0 ]; then
-        echo "패키지 설치 중 오류가 발생했습니다."
-        read -p "계속 진행하시겠습니까? (y/n): " continue_answer
+          echo "An error occurred during package installation."
+          read -p "Do you want to continue? (y/n): " continue_answer
         if [ "$continue_answer" != 'y' ]; then
-            echo "취소하였습니다."
+              echo "Canceled."
             exit 1
         fi
     else
-        echo "패키지 설치가 완료되었습니다."
+          echo "Package installation completed."
     fi
 fi
 
-read -p "config symlink를
+read -p "Config symlink
 (u)pdate, (d)elete, (c)ancel: " answer
 
 if [ $answer == 'c' ]; then
-    echo "취소하였습니다."
+      echo "Canceled."
     exit 1
 elif [ $answer == 'd' ]; then
     stow --target $HOME --dotfiles -D .
-    echo "config symlink가 모두 제거되었습니다."
+      echo "All config symlinks have been removed."
     exit 1
 fi
 
 if [ $answer != 'u' ]; then
-    echo "잘못된 입력입니다."
+      echo "Invalid input."
     bash $0
 fi
 
@@ -56,17 +56,17 @@ stow --target $HOME --dotfiles -R .
 # 동일한 이름의 plain text 파일이 있다면 실패할 수 있다.
 if [ $? -ne 0 ]; then exit 1; fi
 
-read -p "생성을 완료하였습니다. 변경 내용을 반영하시겠습니까? (y/n): " answer
+read -p "Setup completed. Would you like to apply the changes? (y/n): " answer
 if [ $answer != 'y' ]; then
-    echo "취소하였습니다."
+      echo "Canceled."
     exit 1
 fi
 
-read -p "dunst를 reload하시겠습니까? (y/n): " answer
+read -p "Would you like to reload dunst? (y/n): " answer
 if [ $answer == 'y' ]; then dunstctl reload; fi
 
-read -p ".Xresources를 reload하시겠습니까? (y/n): " answer
+read -p "Would you like to reload .Xresources? (y/n): " answer
 if [ $answer == 'y' ]; then xrdb -merge ~/.Xresources; fi
 
-read -p ".xprofile을 reload하시겠습니까? (y/n): " answer
+read -p "Would you like to reload .xprofile? (y/n): " answer
 if [ $answer == 'y' ]; then source ~/.xprofile; fi
