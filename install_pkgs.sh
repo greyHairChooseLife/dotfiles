@@ -97,7 +97,8 @@ sudo pacman -S --needed \
     xorg-xwd \
     xorg-xwininfo \
     xorg-xwud \
-    xterm
+    xterm \
+    yazi
 
 # Install AUR packages
 yay -S --needed \
@@ -110,8 +111,7 @@ yay -S --needed \
     sysz \
     ttf-d2coding-nerd \
     ttf-dejavu-nerd \
-    xbanish \
-    ghostty
+    xbanish
 
 # Enable important services
 sudo systemctl enable NetworkManager
