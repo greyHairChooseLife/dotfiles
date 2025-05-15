@@ -116,4 +116,14 @@ yay -S --needed \
 # Enable important services
 sudo systemctl enable NetworkManager
 sudo systemctl enable bluetooth
+
+# Config etc
+# docker 사용 권한
 sudo usermod -aG docker $USER
+# npm global
+mkdir -p ~/.npm-global
+npm config set prefix '~/.npm-global'
+mkdir -p $HOME/.local/state/bash.sub
+# 기본 템플릿 파일
+touch $HOME/.local/state/bash.sub/api-key.sh # template
+touch $HOME/.local/state/bash.sub/ssh.sh # template
