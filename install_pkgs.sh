@@ -24,7 +24,6 @@ sudo pacman -S --needed \
     git-delta \
     github-cli \
     gnome-themes-extra \
-    grub \
     i3-wm \
     i3lock \
     i3status \
