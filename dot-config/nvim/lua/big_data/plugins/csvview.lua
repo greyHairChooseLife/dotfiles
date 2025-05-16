@@ -3,6 +3,7 @@
 
 return {
 	"hat0uma/csvview.nvim",
+	cmd = "CsvViewEnable",
 	ft = { "csv" },
 	opts = {
 		view = {

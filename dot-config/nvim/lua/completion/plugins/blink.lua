@@ -301,9 +301,13 @@ return {
 						return vim.fn.getcmdtype() ~= ":" or not vim.fn.getcmdline():match("^[%%0-9,'<>%-]*!")
 					end,
 				},
+				-- define `dadbod` provider
+				dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
 			},
 			per_filetype = {
 				codecompanion = { "codecompanion" },
+				-- add `dadbod` source for sql files
+				sql = { "dadbod", "buffer" },
 			},
 		},
 		fuzzy = {
@@ -338,4 +342,12 @@ return {
 		},
 	},
 	opts_extend = { "sources.default" },
+	-- REF:
+	-- config = function(_, opts)
+	-- 	require("blink.cmp").setup(opts)
+	-- 	-- Set border color.
+	-- 	vim.api.nvim_set_hl(0, "BlinkCmpDocBorder", { link = "FloatBorder" })
+	-- 	-- Extend neovim's client capabilities with the completion ones.
+	-- 	vim.lsp.config("*", { capabilities = require("blink.cmp").get_lsp_capabilities(nil, true) })
+	-- end,
 }
