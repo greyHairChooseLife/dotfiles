@@ -13,55 +13,78 @@ return {
 			},
 		},
 	},
-	opts = {
-		servers = {
-			-- lua_ls = {},
-			-- html = {},
-			-- START_debug:
-			-- ts_ls = {},
-			-- basedpyright = {},
-			-- END___debug:
-		},
-	},
-	config = function(_, opts)
-		local lspconfig = require("lspconfig")
-		for server, config in pairs(opts.servers) do
-			config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)
-			lspconfig[server].setup(config)
-		end
-
-		-- REF: https://www.reddit.com/r/neovim/comments/1heow4i/why_are_not_all_basedpyright_features_working/
-		lspconfig.basedpyright.setup({
-			-- on_attach = function(client, bufnr)
-			-- 	client.server_capabilities.document_formatting = false
-			-- 	client.server_capabilities.semanticTokensProvider = nil
-			-- 	require("lsp.attach").on_attach(client, bufnr)
-			-- end,
-			settings = {
-				basedpyright = {
-					analysis = {
-						autoSearchPaths = true,
-						diagnosticMode = "openFilesOnly",
-						useLibraryCodeForTypes = true,
-						typeCheckingMode = "basic",
-						diagnosticSeverityOverrides = {
-							reportAny = false,
-							reportMissingTypeArgument = false,
-							reportMissingTypeStubs = false,
-							reportUnknownArgumentType = false,
-							reportUnknownMemberType = false,
-							reportMissingParameterType = "none",
-							reportUnusedParameter = "warning",
-							reportUnknownParameterType = false,
-							reportUnknownVariableType = false,
-							reportUnusedCallResult = false,
-							reportUnusedVariable = "warning",
-							reportUnusedImport = "warning",
+	config = function()
+		local servers = {
+			lua_ls = {},
+			html = {},
+			superhtml = {},
+			ts_ls = {},
+			ruff = {
+				init_options = {
+					settings = { showSyntaxErrors = false },
+					-- not working
+					-- use config file (ref: https://docs.astral.sh/ruff/settings)
+					-- configuration = { format = { ["quote-style"] = "single" } },
+				},
+			},
+			pylsp = {
+				settings = {
+					pylsp = {
+						pyflakes = { enabled = false },
+						pycodestyle = { enabled = false },
+						autopep8 = { enabled = false },
+						yapf = { enabled = false },
+						mccabe = { enabled = false },
+						pylsp_mypy = { enabled = false },
+						pylsp_black = { enabled = false },
+						pylsp_isort = { enabled = false },
+						-- plugins = {
+						-- 	pycodestyle = {
+						-- 		ignore = { "W391" },
+						-- 		maxLineLength = 100,
+						-- 	},
+						-- },
+					},
+				},
+			},
+			basedpyright = {
+				settings = {
+					basedpyright = {
+						analysis = {
+							autoSearchPaths = true,
+							diagnosticMode = "openFilesOnly",
+							useLibraryCodeForTypes = true,
+							typeCheckingMode = "basic",
+							diagnosticSeverityOverrides = {
+								reportAny = false,
+								reportMissingTypeArgument = false,
+								reportMissingTypeStubs = false,
+								reportUnknownArgumentType = false,
+								reportUnknownMemberType = false,
+								reportUnusedParameter = "warning",
+								reportMissingParameterType = "none",
+								reportUnknownParameterType = false,
+								reportUnknownVariableType = false,
+								reportUnusedCallResult = false,
+								reportUnusedVariable = "warning",
+								reportUnusedImport = "warning",
+							},
 						},
 					},
 				},
-				python = {},
 			},
-		})
+		}
+		local disabled_server = { "pylsp" }
+
+		for server, config in pairs(servers) do
+			config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)
+
+			if vim.tbl_contains(disabled_server, server) then
+				vim.lsp.enable(server, false)
+			else
+				vim.lsp.config(server, config)
+				vim.lsp.enable(server)
+			end
+		end
 	end,
 }

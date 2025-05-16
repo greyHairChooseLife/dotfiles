@@ -6,13 +6,18 @@ return {
 			formatters_by_ft = {
 				lua = { "stylua", stop_after_first = true },
 				http = { "kulala" },
-				html = { "prettierd", "biome", stop_after_first = true },
+				html = { "superhtml", stop_after_first = true },
+				css = { "biome" },
 				javascript = { "biome", "prettierd", "prettier", stop_after_first = true },
 				typescript = { "biome", "prettierd", "prettier", stop_after_first = true },
 				javascriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
 				typescriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
 				json = { "prettierd", stop_after_first = true },
-				python = { "ruff_organize_imports", "ruff_fix", "ruff_format", stop_after_first = true },
+				python = {
+					"ruff_organize_imports",
+					"ruff_fix", -- 사용않는 import 등
+					"ruff_format",
+				},
 				bash = { "shfmt" },
 				sh = { "shfmt" },
 				yaml = { "yamlfmt" },

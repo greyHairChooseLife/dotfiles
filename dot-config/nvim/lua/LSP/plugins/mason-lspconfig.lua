@@ -8,11 +8,13 @@ return {
 				"html",
 				"superhtml",
 				"biome",
-				-- START_debug:
-				-- "ts_ls",
-				-- "basedpyright",
-				-- END___debug:
+				"ts_ls",
+				"pylsp",
+				"ruff",
+				"basedpyright",
 			},
+			---@type boolean | string[] | { exclude: string[] }
+			automatic_enable = false,
 		})
 	end,
 }
