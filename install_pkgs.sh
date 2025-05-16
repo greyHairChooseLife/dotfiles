@@ -110,7 +110,8 @@ yay -S --needed \
     sysz \
     ttf-d2coding-nerd \
     ttf-dejavu-nerd \
-    xbanish
+    xbanish \
+    vi-mongo
 
 # Enable important services
 sudo systemctl enable NetworkManager
