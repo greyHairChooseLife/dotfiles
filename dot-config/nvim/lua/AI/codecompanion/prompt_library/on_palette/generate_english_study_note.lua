@@ -82,12 +82,12 @@ Important rules:
 
 return {
 	strategy = "chat",
-	description = "Generate personalized English study notes based on your conversation",
+	description = "Generate personalized English study notes based on conversation",
 	opts = {
-		is_default = true, -- don't show on action palette
-		is_slash_cmd = true,
+		is_default = false, -- don't show on action palette
+		is_slash_cmd = false,
 		modes = { "n" },
-		short_name = "english_study",
+		short_name = "generate_english_study_note",
 		auto_submit = true,
 		user_prompt = false,
 		ignore_system_prompt = true,
@@ -103,46 +103,19 @@ return {
 			role = "user",
 			opts = { contains_code = true },
 			content = function()
-				local cdc = require("codecompanion")
+				local records_file = "/tmp/english_study_src/records.md"
+				local user_writing_records = ""
 
-				local messages = cdc.last_chat().messages
-
-				if not messages or #messages == 0 then
-					return "No messages found in this chat buffer."
+				local file = io.open(records_file, "r")
+				if file then
+					user_writing_records = file:read("*all")
+					file:close()
+					os.remove(records_file) -- Remove the file after reading
+				else
+					vim.notify("Error: Could not open records file at " .. records_file, 4, { render = "minimal" })
 				end
 
-				-- Set proper adapter
-				local chat = cdc.last_chat()
-				if chat then
-					chat:apply_model("gpt-4.1")
-					chat:apply_settings()
-				end
-
-				-- Extract only user messages and filter out code blocks
-				local user_messages = {}
-
-				for _, msg in ipairs(messages or {}) do
-					if msg.role == "user" and msg.opts and msg.opts.visible then
-						-- Extract the content
-						local content = msg.content
-
-						-- Filter out code blocks
-						content = content:gsub("```.-```", "")
-
-						-- Filter out reference indicators
-						content = content:gsub("<buf>.-</buf>", "")
-						content = content:gsub("<file>.-</file>", "")
-						content = content:gsub("<url>.-</url>", "")
-						content = content:gsub("<tool>.-</tool>", "")
-
-						table.insert(user_messages, content)
-					end
-				end
-
-				-- Join all user messages for analysis
-				local user_conversation = table.concat(user_messages, "\n\n")
-
-				if user_conversation == "" then
+				if user_writing_records == "" then
 					return "No user messages found in this conversation."
 				end
 
@@ -154,7 +127,7 @@ Focus on grammar mistakes, unnatural expressions, inappropriate vocabulary, and 
 ```txt
 ]]
 
-				prompt = prompt .. user_conversation .. "\n```"
+				prompt = prompt .. user_writing_records .. "\n```"
 
 				return prompt
 			end,

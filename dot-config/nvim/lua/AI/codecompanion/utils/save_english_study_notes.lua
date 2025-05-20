@@ -1,13 +1,13 @@
 local M = {}
 
 local function append_to_otp_file(generated)
-	local target_file = "/home/sy/Documents/dev-wiki/notes/Area/나를_사랑하기/오답노트.md"
+	local target_file = "/home/sy/Documents/dev-wiki/notes/Area/나를_사랑하기/English_오답노트.md"
 	local line_to_append = "[" .. generated .. "](./from_codecompanion_conversation/" .. generated .. ")"
 
 	-- Open the file in append mode
 	local file = io.open(target_file, "a")
 	if not file then
-		vim.notify("Failed to open target file for appending", vim.log.levels.ERROR)
+		vim.notify("Failed to open target file for appending", 4)
 		return false
 	end
 
@@ -15,7 +15,7 @@ local function append_to_otp_file(generated)
 	file:write("\n" .. line_to_append)
 	file:close()
 
-	vim.notify("Successfully appended link to 오답노트.md", vim.log.levels.INFO)
+	-- vim.notify("Successfully appended link to 오답노트.md", vim.log.levels.INFO)
 	return true
 end
 
@@ -25,23 +25,19 @@ function M.setup()
 		callback = function(_)
 			-- Get the messages from the closed chat
 			local cdc = require("codecompanion")
-			local closed_chat = cdc.last_chat()
 
-			if not closed_chat or not closed_chat.messages then
-				return
+			local messages = cdc.last_chat().messages
+
+			if not messages or #messages == 0 then
+				vim.notify("no messages found", 2, { render = "minimal" })
+				return nil
 			end
 
-			-- Look for English study notes in the last assistant message
 			local study_notes = nil
-			for i = #closed_chat.messages, 1, -1 do
-				local msg = closed_chat.messages[i]
-				if msg.role == "llm" and msg.opts and msg.opts.visible then
-					-- Check if this contains study notes
-					if msg.content:match("# English Study Notes") then
-						study_notes = msg.content
-						break
-					end
-				end
+			local last_message = messages[#messages]
+
+			if last_message.role == "llm" and last_message.content:match("# English Study Notes") then
+				study_notes = last_message.content
 			end
 
 			-- If study notes were found, save them
@@ -63,10 +59,10 @@ function M.setup()
 				if file then
 					file:write(study_notes)
 					file:close()
-					vim.notify("English study notes saved to: " .. filename, vim.log.levels.INFO)
+					vim.notify("English study notes saved to: " .. filename, 2, { render = "minimal" })
 					append_to_otp_file(date_str)
 				else
-					vim.notify("Failed to save English study notes", vim.log.levels.ERROR)
+					vim.notify("Failed to save English study notes", 4)
 				end
 			end
 		end,

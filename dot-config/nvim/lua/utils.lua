@@ -597,4 +597,13 @@ end
 
 M.is_alacritty = check_is_alacritty()
 
+-- Function to check if a file exists
+M.file_exists = function(filepath)
+	local f = io.open(filepath, "rb")
+	if f then
+		f:close()
+	end
+	return f ~= nil
+end
+
 return M
