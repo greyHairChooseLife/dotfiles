@@ -2,7 +2,7 @@ return {
 	-- The plugin location on GitHub
 	"vimwiki/vimwiki",
 	-- The event that triggers the plugin
-	lazy = false,
+	-- lazy = false,
 	event = "BufEnter *.md",
 	cmd = "VimwikiIndex",
 	-- The configuration for the plugin

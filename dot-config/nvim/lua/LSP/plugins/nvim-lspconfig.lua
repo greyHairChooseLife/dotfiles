@@ -19,14 +19,7 @@ return {
 			html = {},
 			superhtml = {},
 			ts_ls = {},
-			ruff = {
-				init_options = {
-					settings = { showSyntaxErrors = false },
-					-- not working
-					-- use config file (ref: https://docs.astral.sh/ruff/settings)
-					-- configuration = { format = { ["quote-style"] = "single" } },
-				},
-			},
+			ruff = { init_options = { settings = { showSyntaxErrors = false } } },
 			pylsp = {
 				settings = {
 					pylsp = {
@@ -68,13 +61,18 @@ return {
 								reportUnusedCallResult = false,
 								reportUnusedVariable = "warning",
 								reportUnusedImport = "warning",
+								reportOptionalMemberAccess = "warning",
+								reportOptionalSubscript = "warning",
 							},
 						},
 					},
 				},
 			},
 		}
-		local disabled_server = { "pylsp" }
+		local disabled_server = {
+			"pylsp",
+			"ruff", -- lsp 없어도 format은 잘만 된다.
+		}
 
 		for server, config in pairs(servers) do
 			config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)

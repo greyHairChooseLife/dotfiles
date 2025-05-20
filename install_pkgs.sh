@@ -97,7 +97,8 @@ sudo pacman -S --needed \
     xorg-xwininfo \
     xorg-xwud \
     xterm \
-    yazi
+    yazi \
+    rsync
 
 # Install AUR packages
 yay -S --needed \

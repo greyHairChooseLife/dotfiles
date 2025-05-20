@@ -1,8 +1,19 @@
+local map = vim.keymap.set
+
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "vimwiki",
 	callback = function()
+		map("n", "gW", function()
+			vim.cmd("silent w")
+			vim.notify("Saved current buffers", 2, { render = "minimal" })
+		end)
+		map("n", "gw", function()
+			vim.cmd("wa")
+			vim.notify("Saved all buffers", 2, { render = "minimal" })
+		end)
+
 		-- callouts
-		vim.keymap.set("i", ",,qt", function()
+		map("i", ",,qt", function()
 			vim.api.nvim_put({ "> [!qt] ", ">   󱞪 " }, "c", false, true)
 
 			-- 커서를 [!qt]의 q 뒤로 이동
@@ -10,7 +21,7 @@ vim.api.nvim_create_autocmd("FileType", {
 			vim.api.nvim_win_set_cursor(0, { row - 1, 10 })
 		end)
 
-		vim.keymap.set("i", ",,td", function()
+		map("i", ",,td", function()
 			local date = vim.fn.system('date "+%Y-%m-%d"')
 			date = date:gsub("\n$", "")
 			vim.api.nvim_put({ "> [!td]" .. date, "> [-] ", ">  󱞪 " }, "c", false, true)
@@ -20,17 +31,17 @@ vim.api.nvim_create_autocmd("FileType", {
 			vim.api.nvim_win_set_cursor(0, { row - 1, 10 })
 		end)
 
-		vim.keymap.set("i", ",,rf", function()
+		map("i", ",,rf", function()
 			vim.api.nvim_put({ "> [!rf]" }, "l", false, true)
 			vim.api.nvim_put({ "> " }, "c", false, true)
 		end)
 
-		vim.keymap.set("i", ",,co", function()
+		map("i", ",,co", function()
 			vim.api.nvim_put({ "> [!" }, "c", false, true)
 		end)
 
 		-- Log callout
-		vim.keymap.set("i", ",,lg", function()
+		map("i", ",,lg", function()
 			local date = vim.fn.system('date "+%Y-%m-%d"')
 			date = date:gsub("\n$", "")
 			-- vim.api.nvim_put({ "> [!lg] Log " .. date, "> - " }, 'c', false, true)
@@ -42,12 +53,12 @@ vim.api.nvim_create_autocmd("FileType", {
 		end)
 
 		-- callout: 개념정리
-		vim.keymap.set("i", ",,cn", function()
+		map("i", ",,cn", function()
 			vim.api.nvim_put({ "> [!cn] 개념정리", "> ", "> " }, "c", false, true)
 		end)
 
-		vim.keymap.set("n", "<leader><leader>w", "<cmd>VimwikiIndex<CR>")
-		vim.keymap.set("n", "<leader><leader>d", "<cmd>VimwikiDiaryIndex<CR>")
+		map("n", "<leader><leader>w", "<cmd>VimwikiIndex<CR>")
+		map("n", "<leader><leader>d", "<cmd>VimwikiDiaryIndex<CR>")
 
 		local function ToggleBracket()
 			local cursor_pos = vim.api.nvim_win_get_cursor(0)
@@ -90,15 +101,15 @@ vim.api.nvim_create_autocmd("FileType", {
 			vim.api.nvim_win_set_cursor(0, { line_num, col_num })
 		end
 
-		vim.keymap.set("n", "<Space><Space>", ToggleBracket)
+		map("n", "<Space><Space>", ToggleBracket)
 
-		vim.keymap.set("i", ",,T", "<ESC>:VimwikiTable ")
+		map("i", ",,T", "<ESC>:VimwikiTable ")
 
-		vim.keymap.set("n", "<C-k>", "<cmd>VimwikiPrevLink<CR>")
-		vim.keymap.set("n", "<C-j>", "<cmd>VimwikiNextLink<CR>")
+		map("n", "<C-k>", "<cmd>VimwikiPrevLink<CR>")
+		map("n", "<C-j>", "<cmd>VimwikiNextLink<CR>")
 
-		vim.keymap.set("n", "<tab>", "<cmd>VimwikiVSplitLink 1 0<CR>")
-		vim.keymap.set("n", "<S-tab>", "<cmd>VimwikiVSplitLink 1 1<CR>")
+		map("n", "<tab>", "<cmd>VimwikiVSplitLink 1 0<CR>")
+		map("n", "<S-tab>", "<cmd>VimwikiVSplitLink 1 1<CR>")
 
 		local function insert_header()
 			local filename = vim.fn.expand("%:t")
@@ -107,8 +118,8 @@ vim.api.nvim_create_autocmd("FileType", {
 			vim.api.nvim_buf_set_lines(0, 0, 0, false, { msg })
 		end
 
-		vim.keymap.set("i", ",,H", insert_header)
-		vim.keymap.set("n", "<CR>", function()
+		map("i", ",,H", insert_header)
+		map("n", "<CR>", function()
 			vim.cmd("VimwikiFollowLink")
 
 			local filepath = vim.fn.expand("%:p")
@@ -126,17 +137,17 @@ vim.api.nvim_create_autocmd("FileType", {
 			end
 		end)
 
-		vim.keymap.set("n", "<Backspace>", "<cmd>VimwikiGoBackLink<CR>")
+		map("n", "<Backspace>", "<cmd>VimwikiGoBackLink<CR>")
 
-		vim.keymap.set("v", "<CR>", "<Plug>VimwikiNormalizeLinkVisual", { noremap = false, silent = true })
+		map("v", "<CR>", "<Plug>VimwikiNormalizeLinkVisual", { noremap = false, silent = true })
 
-		vim.keymap.set("n", "<leader>wd", "<cmd>VimwikiDeleteFile<CR>")
-		vim.keymap.set("n", "<leader>wr", "<cmd>VimwikiRenameFile<CR>")
+		map("n", "<leader>wd", "<cmd>VimwikiDeleteFile<CR>")
+		map("n", "<leader>wr", "<cmd>VimwikiRenameFile<CR>")
 
-		vim.keymap.set("n", "<C-p>", "<Plug>VimwikiGoToPrevHeader", { noremap = true, silent = true })
-		vim.keymap.set("n", "<C-n>", "<Plug>VimwikiGoToNextHeader", { noremap = true, silent = true })
-		vim.keymap.set("n", "<C-[>", "<Plug>VimwikiGoToPrevSiblingHeader", { noremap = true, silent = true })
-		vim.keymap.set("n", "<C-]>", "<Plug>VimwikiGoToNextSiblingHeader", { noremap = true, silent = true })
+		map("n", "<C-p>", "<Plug>VimwikiGoToPrevHeader", { noremap = true, silent = true })
+		map("n", "<C-n>", "<Plug>VimwikiGoToNextHeader", { noremap = true, silent = true })
+		map("n", "<C-[>", "<Plug>VimwikiGoToPrevSiblingHeader", { noremap = true, silent = true })
+		map("n", "<C-]>", "<Plug>VimwikiGoToNextSiblingHeader", { noremap = true, silent = true })
 
 		-- vim.keymap.set('n', '<C-p>', '<Plug>VimwikiGoToPrevHeader', { noremap = true, silent = true })
 		-- vim.keymap.set('n', '<C-n>', '<Plug>VimwikiGoToNextHeader', { noremap = true, silent = true })
@@ -155,10 +166,10 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "markdown", "codecompanion" },
 	callback = function()
 		-- KEYMAPS
-		vim.keymap.set("v", "<C-b>", ":lua require('markdowny').bold()<cr>", { buffer = true })
-		vim.keymap.set("v", "<C-i>", ":lua require('markdowny').italic()<cr>", { buffer = true })
-		vim.keymap.set("v", "<C-c>", ":lua require('markdowny').cancel()<cr>", { buffer = true })
-		vim.keymap.set("v", "<C-k>", ":lua require('markdowny').link()<cr>", { buffer = true })
-		vim.keymap.set("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = true })
+		map("v", "<C-b>", ":lua require('markdowny').bold()<cr>", { buffer = true })
+		map("v", "<C-i>", ":lua require('markdowny').italic()<cr>", { buffer = true })
+		map("v", "<C-c>", ":lua require('markdowny').cancel()<cr>", { buffer = true })
+		map("v", "<C-k>", ":lua require('markdowny').link()<cr>", { buffer = true })
+		map("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = true })
 	end,
 })

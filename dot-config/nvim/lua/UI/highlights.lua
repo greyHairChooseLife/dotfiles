@@ -19,6 +19,7 @@ vim.cmd([[
   highlight Folded guibg=#24283b guifg=#4d6652 gui=italic
   highlight StatusLine guibg=#24283b
   highlight StatusLineNC guibg=#24283b
+  highlight FoldColumn guifg=#24283b
 
 
   " MEMO:: Outline

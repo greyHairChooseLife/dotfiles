@@ -408,10 +408,10 @@ return {
 			log = { raw = "[!lg]", rendered = "󰨸 Log ", highlight = "RenderMarkdownMyTest" },
 			concept = { raw = "[!cn]", rendered = "󰃁 개념정리 ", highlight = "RenderMarkdownBlue" },
 
-			my_red = { raw = "[!re]", rendered = "", highlight = "RenderMarkdownRed" },
-			my_blue = { raw = "[!bl]", rendered = "", highlight = "RenderMarkdownBlue" },
-			my_green = { raw = "[!gr]", rendered = "", highlight = "RenderMarkdownGreen" },
-			my_yellow = { raw = "[!ye]", rendered = "", highlight = "RenderMarkdownYellow" },
+			my_red = { raw = "[!re]", rendered = "⚡ ", highlight = "RenderMarkdownRed" }, -- 
+			my_blue = { raw = "[!bl]", rendered = "⚡ ", highlight = "RenderMarkdownBlue" },
+			my_green = { raw = "[!gr]", rendered = "⚡ ", highlight = "RenderMarkdownGreen" },
+			my_yellow = { raw = "[!ye]", rendered = "⚡ ", highlight = "RenderMarkdownYellow" },
 		},
 		link = {
 			-- Turn on / off inline link icon rendering
@@ -442,7 +442,7 @@ return {
 				discord = { pattern = "discord%.com", icon = "󰙯 " },
 				github = { pattern = "github%.com", icon = "󰊤 " },
 				gitlab = { pattern = "gitlab%.com", icon = "󰮠 " },
-				google = { pattern = "google%.com", icon = "󰊭 " },
+				-- google = { pattern = "google%.com", icon = "󰊭 " },
 				neovim = { pattern = "neovim%.io", icon = " " },
 				reddit = { pattern = "reddit%.com", icon = "󰑍 " },
 				stackoverflow = { pattern = "stackoverflow%.com", icon = "󰓌 " },
