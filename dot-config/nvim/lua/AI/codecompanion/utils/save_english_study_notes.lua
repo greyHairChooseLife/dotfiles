@@ -26,6 +26,11 @@ function M.setup()
 			-- Get the messages from the closed chat
 			local cdc = require("codecompanion")
 
+			if not cdc.last_chat() or not cdc.last_chat() then
+				vim.notify("no messages found", 2, { render = "minimal" })
+				return nil
+			end
+
 			local messages = cdc.last_chat().messages
 
 			if not messages or #messages == 0 then

@@ -1,11 +1,26 @@
 local M = {}
 
+local exclude_phrases = {
+	"### Git Staged",
+	"Please analyze my English",
+	"Please explain this code from buffer",
+	"Please generate unit tests for this code from buffer",
+	"Please fix this code from buffer",
+	"This is a list of the diagnostic messages",
+}
+
 function M.setup()
 	vim.api.nvim_create_autocmd({ "User" }, {
 		pattern = "CodeCompanionRequestStarted",
 		callback = function(_)
 			-- vim.notify(vim.inspect(req))
 			local cdc = require("codecompanion")
+
+			if not cdc.last_chat() or not cdc.last_chat() then
+				vim.notify("no messages found", 2, { render = "minimal" })
+				return nil
+			end
+
 			local messages = cdc.last_chat().messages
 
 			if not messages or #messages == 0 then
@@ -24,8 +39,16 @@ function M.setup()
 			content = content:gsub("<tool>.-</tool>", "")
 			content = content .. "\n"
 
-			if not content or #content < 30 or content:match("Please analyze my English") then
+			-- conditino 1:
+			if not content or #content < 30 then
 				return nil
+			end
+
+			-- conditino 2: Check if content contains any excluded phrase
+			for _, phrase in ipairs(exclude_phrases) do
+				if content:match(phrase) then
+					return nil
+				end
 			end
 
 			local notes_dir = vim.fn.expand("/tmp/english_study_src")
