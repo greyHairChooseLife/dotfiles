@@ -55,7 +55,9 @@ local function show_provider(cmp, sort, initial_select)
 	initial_select = initial_select or false
 	if sort == "lsp" then
 		cmp.show({
-			providers = { sort, "path", "codecompanion" },
+			-- DEPRECATED:: 2025-05-21 codecompanion works out of box
+			-- providers = { sort, "path", "codecompanion" },
+			providers = { sort, "path" },
 			initial_selected_item_idx = initial_select == true and 1 or nil,
 		})
 	else

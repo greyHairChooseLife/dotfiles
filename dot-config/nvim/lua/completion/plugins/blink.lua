@@ -266,7 +266,9 @@ return {
 		-- Default list of enabled providers defined so that you can extend it
 		-- elsewhere in your config, without redefining it, due to `opts_extend`
 		sources = {
-			default = { "lsp", "path", "codecompanion" },
+			-- DEPRECATED:: 2025-05-21 codecompanion works out of box
+			-- default = { "lsp", "path", "codecompanion" },
+			default = { "lsp", "path" },
 			min_keyword_length = function()
 				return vim.bo.filetype == "markdown" and 2 or 0
 			end,
@@ -305,7 +307,9 @@ return {
 				dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
 			},
 			per_filetype = {
-				codecompanion = { "codecompanion" },
+				-- DEPRECATED:: 2025-05-21 codecompanion works out of box
+				-- codecompanion = { "codecompanion" },
+
 				-- add `dadbod` source for sql files
 				sql = { "dadbod", "buffer" },
 			},
