@@ -13,7 +13,7 @@ return {
 		scope = { -- https://github.com/lukas-reineke/indent-blankline.nvim?tab=readme-ov-file#scope
 			enabled = true,
 			-- char = "▍",
-			char = "▏",
+			char = "▎",
 			show_start = false,
 			show_end = false,
 			injected_languages = true,

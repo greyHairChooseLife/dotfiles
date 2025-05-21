@@ -42,49 +42,53 @@ return {
 			harpoon:list():select(4)
 		end)
 
-		vim.keymap.set("n", "<C-h>", function()
-			if vim.bo.filetype == "NvimTree" then
-				harpoon.ui:toggle_quick_menu(harpoon:list())
-				return
-			end
+		-- DEPRECATED:: 2025-05-21
+		-- this keymap work for treewalker
+		-- vim.keymap.set("n", "<C-h>", function()
+		-- 	if vim.bo.filetype == "NvimTree" then
+		-- 		harpoon.ui:toggle_quick_menu(harpoon:list())
+		-- 		return
+		-- 	end
 
-			if vim.bo.filetype == "harpoon" then
-				if vim.fn.line(".") == 1 then
-					vim.cmd("normal j")
-					return
-				end
+		-- 	if vim.bo.filetype == "harpoon" then
+		-- 		if vim.fn.line(".") == 1 then
+		-- 			vim.cmd("normal j")
+		-- 			return
+		-- 		end
 
-				vim.cmd("normal k")
-				return
-			end
+		-- 		vim.cmd("normal k")
+		-- 		return
+		-- 	end
 
-			local success, _ = pcall(function()
-				harpoon:list():prev({ ui_nav_wrap = true })
-			end)
-			if not success then
-				harpoon:list():prev({ ui_nav_wrap = true })
-			end
-		end) -- ui_nav_wrap will cycle the list
+		-- 	local success, _ = pcall(function()
+		-- 		harpoon:list():prev({ ui_nav_wrap = true })
+		-- 	end)
+		-- 	if not success then
+		-- 		harpoon:list():prev({ ui_nav_wrap = true })
+		-- 	end
+		-- end) -- ui_nav_wrap will cycle the list
 
-		vim.keymap.set("n", "<C-l>", function()
-			if vim.bo.filetype == "NvimTree" then
-				harpoon.ui:toggle_quick_menu(harpoon:list())
-				return
-			end
+		-- DEPRECATED:: 2025-05-21
+		-- this keymap work for treewalker
+		-- vim.keymap.set("n", "<C-l>", function()
+		-- 	if vim.bo.filetype == "NvimTree" then
+		-- 		harpoon.ui:toggle_quick_menu(harpoon:list())
+		-- 		return
+		-- 	end
 
-			if vim.bo.filetype == "harpoon" then
-				-- 현재 커서가 마지막 라인이라면
-				if vim.fn.line(".") == vim.fn.line("$") then
-					-- 커서를 마지막 라인으로 이동
-					vim.cmd("normal k")
-					return
-				end
-				vim.cmd("normal j")
-				return
-			end
+		-- 	if vim.bo.filetype == "harpoon" then
+		-- 		-- 현재 커서가 마지막 라인이라면
+		-- 		if vim.fn.line(".") == vim.fn.line("$") then
+		-- 			-- 커서를 마지막 라인으로 이동
+		-- 			vim.cmd("normal k")
+		-- 			return
+		-- 		end
+		-- 		vim.cmd("normal j")
+		-- 		return
+		-- 	end
 
-			harpoon:list():next({ ui_nav_wrap = true })
-		end)
+		-- 	harpoon:list():next({ ui_nav_wrap = true })
+		-- end)
 
 		harpoon:extend({
 			UI_CREATE = function(cx)

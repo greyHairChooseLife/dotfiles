@@ -305,7 +305,7 @@ vim.cmd([[
   " MEMO:: Indent Blank Line
   highlight @ibl.scope.underline.1 guifg=#Ff0000 guibg=#00ff00 " not working
   highlight IblScope guifg=#7f52ff guibg=NONE
-  highlight IblIndent guifg=#24283b guibg=NONE
+  highlight IblIndent guifg=#5f5f5f guibg=NONE
 
 
   " MEMO:: Indent Blank Line
