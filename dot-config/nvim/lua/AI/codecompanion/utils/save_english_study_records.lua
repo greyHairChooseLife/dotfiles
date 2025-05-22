@@ -31,6 +31,10 @@ function M.setup()
 			local last_message = messages[#messages]
 			local content = last_message.content
 
+			if not last_message.content then
+				return nil
+			end
+
 			-- Filter out code blocks and references
 			content = content:gsub("```.-```", "")
 			content = content:gsub("<buf>.-</buf>", "")

@@ -64,10 +64,6 @@ return {
 		user_prompt = false,
 		ignore_system_prompt = true,
 		stop_context_insertion = true,
-		adapter = {
-			name = "copilot",
-			model = "claude-3.7-sonnet",
-		},
 	},
 	prompts = {
 		{
@@ -79,6 +75,9 @@ return {
 			role = "user",
 			opts = { contains_code = true },
 			content = function()
+				local chage_model = require("AI.codecompanion.utils.general").chage_model
+				chage_model("gemini-2.5-pro")
+
 				local handle_staged = io.popen("git --no-pager diff --no-ext-diff --staged")
 				local handle_unstaged = io.popen("git --no-pager diff")
 				local handle_untracked = io.popen("git --no-pager ls-files --others --exclude-standard")

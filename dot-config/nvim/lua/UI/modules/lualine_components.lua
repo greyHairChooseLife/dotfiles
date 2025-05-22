@@ -263,6 +263,15 @@ M.my_oil = {
 	},
 }
 
+local function codecompanion_current_model_name()
+	local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
+	if not chat then
+		return nil
+	end
+
+	return chat.settings.model
+end
+
 local function codecompanion_adapter_name()
 	local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
 	if not chat then
@@ -281,14 +290,7 @@ local function codecompanion_adapter_name()
 
 	return "(" .. adapter_name .. ")" .. string.rep(" ", padding_len)
 end
-local function codecompanion_current_model_name()
-	local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
-	if not chat then
-		return nil
-	end
 
-	return chat.settings.model
-end
 M.my_codecompanion = {
 	filetypes = { "codecompanion" },
 	sections = {

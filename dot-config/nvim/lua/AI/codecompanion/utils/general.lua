@@ -356,4 +356,51 @@ M.add_tab_buffers_reference = function()
 	end)
 end
 
+-- work while adapter is 'copilot'
+---@param model string adapter.model
+M.chage_model = function(model)
+	local chat = require("codecompanion").last_chat()
+
+	if chat and chat.adapter and chat.adapter.name == "copilot" then
+		chat:apply_model(model)
+	end
+end
+
+M.codecompanion_breadcrumbs = function()
+	local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
+	if not chat then
+		return nil
+	end
+
+	-- REF:
+	-- vim.notify(vim.inspect(chat.settings))
+	-- {
+	--   max_tokens = 15000,
+	--   model = "gemini-2.5-pro",
+	--   n = 1,
+	--   reasoning_effort = "medium",
+	--   temperature = 0,
+	--   top_p = 1
+	-- }
+
+	local reasoning_effort = chat.settings.reasoning_effort
+	local max_tokens = chat.settings.max_tokens
+	local used_tokens = chat.ui.tokens
+	local percentage_usage = "0"
+
+	if used_tokens ~= nil then
+		percentage_usage = string.format("%.1f", (used_tokens / max_tokens) * 100)
+	end
+	used_tokens = 0
+
+	local result = " " .. reasoning_effort .. "    󰰤 " .. percentage_usage .. "󱉸 (" .. used_tokens .. ")"
+	local needed_padding = 24 - vim.api.nvim_strwidth(result)
+
+	if needed_padding > 0 then
+		return string.rep(" ", needed_padding) .. result
+	else
+		return result
+	end
+end
+
 return M

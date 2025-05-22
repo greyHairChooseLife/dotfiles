@@ -15,6 +15,7 @@ return {
 
 	-- off action palette & slash_command only
 	["os1"] = require(on_slash_commands .. "get_full_git_status_reference"),
+	["os2"] = require(on_slash_commands .. "spec_maker"),
 
 	-- off action palette & keymap only
 	["ok1"] = require(on_keymaps .. "review_commit"),

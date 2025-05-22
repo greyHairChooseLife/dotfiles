@@ -77,12 +77,18 @@ function M:init(options)
 	})
 end
 
+local chat_info = require("AI.codecompanion.utils.general").codecompanion_breadcrumbs
+
 function M:update_status()
 	if self.processing then
 		self.spinner_index = (self.spinner_index % spinner_symbols_len) + 1
 		return spinner_symbols[self.spinner_index]
 	else
-		return "          - R.E.A.D.Y - " -- Return a placeholder when not processing
+		return chat_info()
+		-- if info then
+		-- 	return codecompanion_breadcrumbs()
+		-- end
+		-- return "          - R.E.A.D.Y - " -- Return a placeholder when not processing
 	end
 end
 
