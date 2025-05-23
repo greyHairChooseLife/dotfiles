@@ -25,7 +25,7 @@ return {
 	opts = {
 		is_default = true, -- don't show on action palette
 		is_slash_cmd = true,
-		short_name = "make specification",
+		short_name = "workspace generator",
 		auto_submit = false,
 		user_prompt = true,
 		ignore_system_prompt = true,
