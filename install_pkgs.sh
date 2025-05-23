@@ -99,7 +99,9 @@ sudo pacman -S --needed \
     xterm \
     yazi \
     rsync \
-    docker-compose
+    docker-compose \
+    openssh
+
 # Install AUR packages
 yay -S --needed \
     brave-bin \
