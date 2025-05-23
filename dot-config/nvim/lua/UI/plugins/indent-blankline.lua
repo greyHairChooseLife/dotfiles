@@ -23,6 +23,8 @@ return {
 		exclude = {
 			filetypes = {
 				"css",
+				"markdown",
+				"vimwiki",
 			},
 		},
 	},
