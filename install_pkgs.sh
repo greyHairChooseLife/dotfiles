@@ -100,7 +100,8 @@ sudo pacman -S --needed \
     yazi \
     rsync \
     docker-compose \
-    openssh
+    openssh \
+    go
 
 # Install AUR packages
 yay -S --needed \
