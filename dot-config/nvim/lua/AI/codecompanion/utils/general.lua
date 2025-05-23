@@ -97,7 +97,14 @@ M.test = function()
 end
 
 M.create_new = function()
-	cdc.chat()
+	local windows = vim.api.nvim_list_wins()
+	if #windows > 1 then
+		cdc.chat()
+	else
+		vim.cmd("vnew")
+		cdc.chat()
+		vim.cmd("only")
+	end
 end
 
 M.toggle_last_chat = function()
