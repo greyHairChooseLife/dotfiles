@@ -101,6 +101,46 @@ return {
 					vim.wo.signcolumn = "no"
 				end,
 			},
+			project_local_todo = {
+				command_name = "LocalTodo",
+				title = "      TODO      ",
+				directory = function()
+					-- Try to get git root directory first
+					local git_root = vim.system({
+						"git",
+						"rev-parse",
+						"--show-toplevel",
+					}, {
+						text = true,
+					}):wait()
+
+					if git_root.code == 0 then
+						-- Remove trailing newline and return the git root
+						return git_root.stdout:gsub("\n", "") .. "/"
+					else
+						-- Fall back to current working directory
+						local cwd, err = vim.uv.cwd()
+						if cwd == nil then
+							vim.notify(err or "Unknown error getting current directory", vim.log.levels.WARN)
+							return "~/Documents/notes/" -- Fallback directory if cwd fails
+						end
+						return cwd .. "/"
+					end
+				end,
+				filename = function()
+					return "TODO.md"
+				end,
+
+				post_open = function(_, _)
+					vim.wo.winhl =
+						"Normal:NoteBackground,FloatBorder:LocalTodoBorder,FloatTitle:LocalTodoTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
+					vim.wo.number = false
+					vim.wo.foldcolumn = "2"
+					vim.wo.relativenumber = false
+					vim.wo.cursorline = false
+					vim.wo.signcolumn = "no"
+				end,
+			},
 		},
 	},
 }

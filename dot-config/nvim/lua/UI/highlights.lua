@@ -324,6 +324,8 @@ vim.cmd([[
   highlight NoteTitle guibg=#ff0000 guifg=#000000 gui=bold
   highlight LocalNoteBorder guibg=#24283b guifg=#98c379
   highlight LocalNoteTitle guibg=#98c379 guifg=#000000 gui=bold
+  highlight LocalTodoBorder guibg=#24283b guifg=#1e90ff
+  highlight LocalTodoTitle guibg=#1e90ff guifg=#000000 gui=bold
   highlight NoteEOB guifg=#24283b
   highlight NoteFoldColumn guifg=#24283b
 
