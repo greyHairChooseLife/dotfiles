@@ -98,8 +98,8 @@ sudo pacman -S --needed \
     xorg-xwud \
     xterm \
     yazi \
-    rsync
-
+    rsync \
+    docker-compose
 # Install AUR packages
 yay -S --needed \
     brave-bin \
@@ -112,7 +112,8 @@ yay -S --needed \
     ttf-d2coding-nerd \
     ttf-dejavu-nerd \
     xbanish \
-    vi-mongo
+    vi-mongo \
+    lazydocker
 
 # Enable important services
 sudo systemctl enable NetworkManager

@@ -15,6 +15,8 @@ Continue asking focused questions that build upon my previous answers until you 
 Once you have sufficient information, let me know you're ready to complete the files
 
 The goal is creating specification documents that provide clear direction to a project team while ensuring all requirements are properly documented and organized.
+
+There are a result of an earlier discussions so you must consider based on that.
 ]]
 
 return {
