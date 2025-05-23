@@ -1,7 +1,16 @@
 return {
 	-- MEMO:: touch default
-	["buffer"] = { opts = { provider = "snacks" } },
-	["file"] = { opts = { provider = "snacks" } },
+	["buffer"] = {
+		opts = { provider = "snacks" },
+		keymaps = { modes = {
+			i = "<C-b>",
+			n = { "<C-b>" },
+		} },
+	},
+	["file"] = { opts = { provider = "snacks" }, keymaps = { modes = {
+		i = "<C-f>",
+		n = { "<C-f>" },
+	} } },
 	["help"] = { opts = { provider = "snacks" } },
 	["symbols"] = { opts = { provider = "snacks" } },
 
