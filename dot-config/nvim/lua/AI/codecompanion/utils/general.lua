@@ -390,7 +390,7 @@ M.codecompanion_breadcrumbs = function()
 	--   top_p = 1
 	-- }
 
-	local reasoning_effort = chat.settings.reasoning_effort
+	local reasoning_effort = chat.settings and chat.settings.reasoning_effort or " no"
 	local max_tokens = chat.settings.max_tokens
 	local used_tokens = chat.ui.tokens
 	local percentage_usage = "0"
@@ -400,7 +400,7 @@ M.codecompanion_breadcrumbs = function()
 	end
 	used_tokens = 0
 
-	local result = " " .. reasoning_effort .. "    󰰤 " .. percentage_usage .. "󱉸 (" .. used_tokens .. ")"
+	local result = " " .. reasoning_effort .. "    󰰤  " .. percentage_usage .. "󱉸 (" .. used_tokens .. ")"
 	local needed_padding = 24 - vim.api.nvim_strwidth(result)
 
 	if needed_padding > 0 then
