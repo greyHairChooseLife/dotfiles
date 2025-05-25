@@ -98,12 +98,13 @@ end
 
 M.create_new = function()
 	local windows = vim.api.nvim_list_wins()
-	if #windows > 1 then
-		cdc.chat()
-	else
+
+	if #windows == 1 and vim.bo.filetype == "codecompanion" then
 		vim.cmd("vnew")
 		cdc.chat()
 		vim.cmd("only")
+	else
+		cdc.chat()
 	end
 end
 
