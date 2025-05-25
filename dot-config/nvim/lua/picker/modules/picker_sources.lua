@@ -117,8 +117,31 @@ M.git_diff = function()
 	-- 	layout_config = wide_layout_config,
 	-- })
 end
+local stash_actions = {
+	stash_pop = function(picker)
+		local select = picker:current().stash
+		vim.cmd("Git stash pop " .. select)
+		picker:close()
+	end,
+	stash_drop = function(picker)
+		local select = picker:current().stash
+		vim.cmd("Git stash drop " .. select)
+		picker:close()
+		M.git_stash()
+	end,
+}
 M.git_stash = function()
-	local config = {}
+	local config = {
+		actions = stash_actions,
+		win = {
+			input = {
+				keys = {
+					["<c-p>"] = { "stash_pop", mode = { "n", "i" } },
+					["<c-d>"] = { "stash_drop", mode = { "n", "i" } },
+				},
+			},
+		},
+	}
 	snp.git_stash(config)
 	-- builtin.git_stash({
 	-- 	previewer = stash_delta,
