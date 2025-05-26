@@ -117,6 +117,8 @@ end
 M.focus_last_chat = function()
 	local chat = cdc.last_chat()
 
+	vim.notify(vim.inspect(chat))
+
 	if not chat then
 		return cdc.chat()
 	end
@@ -391,7 +393,9 @@ M.codecompanion_breadcrumbs = function()
 	--   top_p = 1
 	-- }
 
-	local reasoning_effort = chat.settings and chat.settings.reasoning_effort or " no"
+	-- DEPRECATED:: 2025-05-26 업데이트 이후 해당 key 사라짐
+	-- local reasoning_effort = chat.settings and chat.settings.reasoning_effort or " no"
+	local reasoning_effort = chat._chat_has_reasoning and "yes" or "no"
 	local max_tokens = chat.settings.max_tokens
 	local used_tokens = chat.ui.tokens
 	local percentage_usage = "0"
