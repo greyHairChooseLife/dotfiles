@@ -117,8 +117,6 @@ end
 M.focus_last_chat = function()
 	local chat = cdc.last_chat()
 
-	vim.notify(vim.inspect(chat))
-
 	if not chat then
 		return cdc.chat()
 	end
