@@ -146,7 +146,10 @@ btkb() {
             return 1
         fi
 
-        setxkbmap -device "$DEVICE_ID" -option ctrl:swapcaps
+        for i in {1..10}; do
+            setxkbmap -device "$DEVICE_ID" -option ctrl:swapcaps
+            sleep 0.01
+        done
         echo "  - 내장 키보드       : 활성화"
         echo "  - ctrl/capsLck swap : 활성화"
     else
