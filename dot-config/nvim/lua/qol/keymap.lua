@@ -140,6 +140,9 @@ map("n", "N", function()
 	Safe_search("N")
 end, opt)
 
+map("n", ",t", "viw<cmd>Translate ko<CR><Esc>", opt)
+map("v", ",t", "<cmd>Translate ko<CR>", opt)
+
 -- { 중괄호 }로 묶인 영역 통째로 복사
 map("n", "yY", "va{Vy", opt)
 
