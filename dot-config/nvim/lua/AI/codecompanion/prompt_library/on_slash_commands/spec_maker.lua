@@ -1,4 +1,4 @@
-local user_role_content = [[
+local user_role_content_bak = [[
 I need your help developing comprehensive specifications for a project. I have several skeleton files that need to be filled with detailed, coherent information.
 
 To gather the necessary information:
@@ -17,6 +17,40 @@ Once you have sufficient information, let me know you're ready to complete the f
 The goal is creating specification documents that provide clear direction to a project team while ensuring all requirements are properly documented and organized.
 
 There are a result of an earlier discussions so you must consider based on that.
+]]
+
+local user_role_content = [[
+I need comprehensive specifications for a software development project. I have multiple skeleton files that require detailed, coherent content.
+
+Please conduct a systematic requirements gathering process:
+
+1. **File Organization**:
+   - Review all provided skeleton files first
+   - Determine the logical order for completion based on dependencies and foundational requirements
+
+2. **Smart Progression**:
+   - Build each question on previous answers and earlier file content
+   - Complete one file section before moving to the next
+   - When you can reasonably predict answers based on context, propose them for my confirmation rather than asking open-ended questions within format like below:
+     Format:
+     - All header must have one empty line of margin above and below.
+     - Level 2 header(##) must have TWO empty lines above and one of it below.
+     - Keep descriptions concise and direct
+     - Use simple numbered lists without excessive nesting
+     - Maintain clean spacing between sections
+     - use '-' character for bullet point
+
+
+3. **Efficiency Focus**:
+   - Group related questions within each file to minimize back-and-forth
+   - Reference information from previously completed files to avoid redundancy
+   - Flag any cross-file dependencies or conflicts
+
+4. **Completion Criteria**: Signal when you have sufficient information for each file's section, then proceed to the next in sequence.
+
+Note: This builds on earlier discussions, so consider that existing context when forming your approach.
+
+Goal: Professional specification documents with all requirements properly documented and organized for immediate development use.
 ]]
 
 return {
