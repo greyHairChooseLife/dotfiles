@@ -131,6 +131,7 @@ return {
 						stop = { modes = { n = "gs" } },
 						pin = { modes = { n = "grp" } },
 						watch = { modes = { n = "grw" } },
+						goto_file_under_cursor = { modes = { n = "grt" } },
 						clear = { modes = { n = "gX" } },
 						previous_header = { modes = { n = "<C-p>" } },
 						next_header = { modes = { n = "<C-n>" } },
@@ -139,7 +140,11 @@ return {
 						system_prompt = { modes = { n = "gts" } }, -- toggle system prompts
 						regenerate = { modes = { n = "gR" } },
 					},
-					adapter = "copilot",
+					-- adapter = "copilot",
+					adapter = {
+						name = "copilot",
+						model = "claude-sonnet-4",
+					},
 					slash_commands = require("AI.codecompanion.slash_commands"),
 					tools = require("AI.codecompanion.tools"),
 					-- variables = {},
