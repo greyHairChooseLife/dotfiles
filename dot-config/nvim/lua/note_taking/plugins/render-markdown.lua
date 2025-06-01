@@ -384,7 +384,7 @@ return {
 			-- | highlight  | highlight for the 'rendered' text and quote markers                 |
 			-- | quote_icon | optional override for quote.icon value for individual callout       |
 			--  󰓛 󰄱        󱓻강 sdf   sfd  󱓼  󰨔 󰴩     
-			note = { raw = "[!NOTE]", rendered = "󰋽 Note", highlight = "Re,derMarkdownInfo" },
+			note = { raw = "[!NOTE]", rendered = "󰋽 Note", highlight = "RederMarkdownInfo" },
 			tip = { raw = "[!TIP]", rendered = "󰌶 Tip", highlight = "RenderMarkdownSuccess" },
 			important = { raw = "[!IMPORTANT]", rendered = "󰅾 Important", highlight = "RenderMarkdownHint" },
 			warning = { raw = "[!WARNING]", rendered = "󰀪 Warning", highlight = "RenderMarkdownWarn" },
