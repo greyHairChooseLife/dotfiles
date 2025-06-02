@@ -68,6 +68,10 @@ return {
 					},
 				},
 			},
+			taplo = {},
+			docker_compose_language_service = {}, -- doesn't work at all
+			yamlls = {},
+			dockerls = {},
 		}
 		local disabled_server = {
 			"pylsp",
@@ -85,7 +89,7 @@ return {
 			end
 		end
 
-		-- MEMO:: ruff doesn't need to oepn doc
+		-- MEMO:: ruff doesn't need to hoverProvider(open doc)
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
 			callback = function(args)

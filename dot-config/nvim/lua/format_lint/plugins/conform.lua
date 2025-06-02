@@ -33,6 +33,7 @@ return {
 					-- require_cwd = true,
 				},
 				shfmt = { args = { "-i=4", "-ci", "-bn", "-sr", "-kp" } },
+				yamlfmt = {}, -- $HOME/.config/yamlfmt/.yamlfmt.yml
 			},
 			format_on_save = {
 				timeout_ms = 500,
