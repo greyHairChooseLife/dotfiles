@@ -120,17 +120,17 @@ return {
 				table.remove(sections, 1)
 				if #sections > 0 then
 					if #sections == 2 then
-						return "󰼏  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                              "
+						return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                              "
 							.. table.concat(sections, ".")
 							.. ". "
 					end
 					if #sections == 3 then
-						return "󰼐  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                       "
+						return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                       "
 							.. table.concat(sections, ".")
 							.. ". "
 					end
 					if #sections == 4 then
-						return "󰼑  ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                         "
+						return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                         "
 							.. table.concat(sections, ".")
 							.. ". "
 					end
@@ -548,16 +548,16 @@ return {
 									return "󰯆 󰯆 󰯆  DO NOT use this header. (msg under this wouldn't send to LLM.) 󰯆 󰯆 󰯆                             "
 								end
 								if #sections == 2 then
-									return "󰼏  "
+									return "  "
 								end
 								if #sections == 3 then
-									return "  󰼐  "
+									return "    "
 								end
 								if #sections == 4 then
-									return "    󰼑  "
+									return "      "
 								end
 								if #sections == 5 then
-									return "      󰼒  "
+									return "        "
 								end
 								return table.concat(sections, ".")
 							end
