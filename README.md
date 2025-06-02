@@ -82,6 +82,11 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 ### etc
 
 
+- render markdown todo list 관련 재조정
+  - callout에 todo도 개선
+  - 기존 스티커 형태로 사용하는건 안먹힌다.
+  - cancel, done, todo 등으로 전환하는 키맵도 있어야겠다.
+
 
 - nvimtree 에서 필터링 따위를 통해 현재 텝에서 열린것/숨겨진 것 등만 표시하는 기능 
 

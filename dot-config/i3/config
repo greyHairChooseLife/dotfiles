@@ -179,7 +179,7 @@ set $ws3 3:code-R
 set $ws4 4:note
 set $ws5 5:multi
 set $ws6 6:ChatGPT
-set $ws7 7:screen
+set $ws7 7:view
 set $ws8 8:Music
 
 # switch to workspace
@@ -191,7 +191,7 @@ bindsym $mod+5 workspace $ws5
 bindsym $mod+6 workspace $ws6
 bindsym $mod+slash workspace $ws6
 bindsym $mod+7 workspace $ws7
-# bindsym $mod+p workspace $ws7
+bindsym $mod+v workspace $ws7
 bindsym $mod+8 workspace $ws8
 
 # Move focused container to workspace

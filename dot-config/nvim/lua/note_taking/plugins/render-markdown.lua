@@ -242,7 +242,8 @@ return {
 			enabled = true,
 			-- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
 			-- The icon gets repeated across the window's width
-			icon = "",
+			icon = "▔",
+			-- icon = "",
 			-- Width of the generated line:
 			--  <integer>: a hard coded width value
 			--  full: full width of the window
@@ -482,7 +483,7 @@ return {
 				-- Used when not being rendered, get user setting
 				default = vim.api.nvim_get_option_value("concealcursor", {}),
 				-- Used when being rendered, disable concealing text in all modes
-				rendered = "",
+				rendered = "n",
 			},
 			-- showbreak = { default = vim.api.nvim_get_option_value('showbreak', {}), rendered = '  ' },
 			showbreak = { default = vim.api.nvim_get_option_value("showbreak", {}), rendered = "" },
@@ -548,16 +549,16 @@ return {
 									return "󰯆 󰯆 󰯆  DO NOT use this header. (msg under this wouldn't send to LLM.) 󰯆 󰯆 󰯆                             "
 								end
 								if #sections == 2 then
-									return "  "
+									return " ▂▂▂▂   "
 								end
 								if #sections == 3 then
-									return "    "
+									return "   ▂▂▂▂▂▂   "
 								end
 								if #sections == 4 then
-									return "      "
+									return "     ▂▂▂▂▂▂   "
 								end
 								if #sections == 5 then
-									return "        "
+									return "       ▂▂▂▂▂▂   "
 								end
 								return table.concat(sections, ".")
 							end
