@@ -55,3 +55,9 @@ opt.sessionoptions = "globals,blank,buffers,curdir,folds,help,tabpages,winsize,w
 opt.completeopt = { "menu", "menuone", "popup" }
 
 opt.diffopt = "internal,filler,closeoff,indent-heuristic,linematch:60,algorithm:histogram"
+
+vim.filetype.add({
+	pattern = {
+		["%.env%..*"] = "sh",
+	},
+})
