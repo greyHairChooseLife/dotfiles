@@ -102,7 +102,8 @@ sudo pacman -S --needed \
     docker-compose \
     openssh \
     go \
-    yq
+    yq \
+    cmus
 
 # Install AUR packages
 yay -S --needed \

@@ -6,6 +6,7 @@ echo ""
 if ! command -v yay &> /dev/null; then
     echo "yay not found. Installing yay..."
     bash scripts/install_yay.sh
+
     if [ $? -ne 0 ]; then
         echo "Failed to install yay. Exiting."
         exit 1
@@ -16,8 +17,11 @@ fi
 # Ask if user wants to install packages
 read -p "Install basic packages? (y/n): " install_answer
 if [ "$install_answer" == 'y' ]; then
-      echo "Starting package installation..."
+    echo "Starting package installation..."
     bash scripts/install_pkgs.sh
+    echo "Update mime desktop at '/usr/share/applications/'"
+    sudo bash scripts/mime_desktop.sh
+
     if [ $? -ne 0 ]; then
           echo "An error occurred during package installation."
           read -p "Do you want to continue? (y/n): " continue_answer

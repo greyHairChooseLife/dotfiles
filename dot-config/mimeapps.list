@@ -1,0 +1,3 @@
+[Default Applications]
+audio/mpeg=cmus.desktop
+audio/mp3=cmus.desktop
