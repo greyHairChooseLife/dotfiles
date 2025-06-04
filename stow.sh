@@ -5,7 +5,7 @@ echo ""
 # Check if yay is installed, if not install it
 if ! command -v yay &> /dev/null; then
     echo "yay not found. Installing yay..."
-    bash ./install_yay.sh
+    bash scripts/install_yay.sh
     if [ $? -ne 0 ]; then
         echo "Failed to install yay. Exiting."
         exit 1
@@ -17,7 +17,7 @@ fi
 read -p "Install basic packages? (y/n): " install_answer
 if [ "$install_answer" == 'y' ]; then
       echo "Starting package installation..."
-    bash ./install_pkgs.sh
+    bash scripts/install_pkgs.sh
     if [ $? -ne 0 ]; then
           echo "An error occurred during package installation."
           read -p "Do you want to continue? (y/n): " continue_answer
@@ -30,8 +30,8 @@ if [ "$install_answer" == 'y' ]; then
     fi
 fi
 
-read -p "Config symlink
-(u)pdate, (d)elete, (c)ancel: " answer
+read -p "
+Config symlink (u)pdate, (d)elete, (c)ancel: " answer
 
 if [ $answer == 'c' ]; then
       echo "Canceled."
@@ -56,7 +56,11 @@ stow --target $HOME --dotfiles -R .
 # 동일한 이름의 plain text 파일이 있다면 실패할 수 있다.
 if [ $? -ne 0 ]; then exit 1; fi
 
-read -p "Setup completed. Would you like to apply the changes? (y/n): " answer
+read -p "
+Symlink completed.
+
+Would you like to apply the changes? (y/n): " answer
+
 if [ $answer != 'y' ]; then
       echo "Canceled."
     exit 1

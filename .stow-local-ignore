@@ -1,9 +1,9 @@
-.git
-.gitignore
+\.git
+\.gitignore
+\.aider.*
+
+README.*
+stow.sh
 deprecated    # 어느 계층에서든 deprecated는 무시
 warehouse     # 사용 예정
-README.*
-.aider.tags.cache.v3/
-.aider.chat.history.md
-.aider.input.history
-stow.sh
+scripts
