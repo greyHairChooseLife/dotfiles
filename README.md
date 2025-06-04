@@ -34,6 +34,10 @@ dotfiles/
 
 ## Tmux
 
+### TODO
+
+- tmux resurrection 이거 내가 원하는 시점으로 이동하고, 필요시 스냅샷을 제거할 수 있도록
+
 ### tmux plugins 관리: 어떻게 서브모듈 방식을 극복할 것인가? [-]
 
 [-] 아래 방식으로 잘 기능하긴 한다. 그러나 내 나름대로 환경변수를 활용해서 시도하니 그건 또
@@ -81,6 +85,11 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 ### etc
 
+- > workspace generator
+  >
+  > - make another part for generating workspace group that brings everything.
+  > - make on_palette prompt for listing worksapce of all data and update README.md to structure subdivided todo list based on specs/*.
+  >   _"Based on the specifications, make README.md. And append step by step todo-list in the README.md for developing application using @full_stack_dev"_
 
 - render markdown todo list 관련 재조정
   - callout에 todo도 개선
