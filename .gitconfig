@@ -52,6 +52,7 @@
 
 [push]
   default = upstream
+	autoSetupRemote = true # main 외 branches들을 remote에 push를 기본적으로 허용. 이거 안하면 매번 물어봄.
 
 [web]
 	browser = brave
