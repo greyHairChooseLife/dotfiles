@@ -8,7 +8,7 @@ editor:
     env: EDITOR
 showConnectionPage: true
 showWelcomePage: false
-currentConnection: kiosk-demo
+currentConnection: mongodb://localhost:27017/academic_society
 connections:
     - url: mongodb://localhost:27017
       host: localhost
@@ -17,6 +17,15 @@ connections:
       username: ""
       password: ""
       name: kiosk-demo
+      timeout: 5
+      options: {}
+    - url: mongodb://localhost:27017/academic_society
+      host: localhost
+      port: 27017
+      database: academic_society
+      username: ""
+      password: ""
+      name: mongodb://localhost:27017/academic_society
       timeout: 5
       options: {}
 styles:
