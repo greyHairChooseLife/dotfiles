@@ -103,11 +103,9 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
 - lualine의 inactive에서 a_파트를 고정 색이 아니라 만약 현재 탭에 동일한 버퍼가 active인 경우에 똑같이 오렌지색으로 넣어주자.
 
+
 - 텝 생성시 esc로 취소하면 자꾸 그냥 만들어진다. no name으로. 이거 /,? search 기능에서 esc 뚫어낸거랑 같은 방식으로 할 수 있을듯?
 
-
-- `Tab, S-Tab, g-Tab`으로 버퍼 순회할 때 현재 탭의 윈도우에 active인 것은 제외해도 되겠다. 그리고 이것이 시각적으 로표현되도록 하면 좋겠다.
-    [ref](https://www.youtube.com/watch?v=ST_DZ6yIiXY)
 
 - winbar의 활용
 

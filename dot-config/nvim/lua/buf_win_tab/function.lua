@@ -56,30 +56,39 @@ function NavBuffAfterCleaningExceptCurrentTabShowing(direction)
 end
 
 function BufferNextDropLast()
+	-- DEPRECATED:: 2025-06-07
+	-- local last_buf = vim.api.nvim_get_current_buf()
+	-- local listed_buffers = vim.fn.getbufinfo({ buflisted = 1 })
+	-- -- "Term: "으로 시작하는 버퍼를 제거
+	-- local filtered_buffers = vim.tbl_filter(function(buf)
+	-- 	return not string.find(buf.name, "Term:")
+	-- end, listed_buffers)
+	-- -- hidden 버퍼만 필터링
+	-- local hidden_bufs = {}
+	-- for _, buf in ipairs(filtered_buffers) do
+	-- 	if buf.hidden == 1 then
+	-- 		table.insert(hidden_bufs, buf.bufnr)
+	-- 	end
+	-- end
+	-- -- 테이블에 요소가 1개 이상이라면, 다음 버퍼로 0번째 버퍼로 이동
+	-- if #hidden_bufs > 0 then
+	-- 	vim.api.nvim_set_current_buf(hidden_bufs[1])
+	-- end
+	-- -- 어쨋든 최근 버퍼는 닫는다.
+	-- vim.cmd("bd " .. last_buf)
+
 	local last_buf = vim.api.nvim_get_current_buf()
-	local listed_buffers = vim.fn.getbufinfo({ buflisted = 1 })
 
-	-- "Term: "으로 시작하는 버퍼를 제거
-	local filtered_buffers = vim.tbl_filter(function(buf)
-		return not string.find(buf.name, "Term:")
-	end, listed_buffers)
+	NavBuffAfterCleaningExceptCurrentTabShowing("next")
 
-	-- hidden 버퍼만 필터링
-	local hidden_bufs = {}
-
-	for _, buf in ipairs(filtered_buffers) do
-		if buf.hidden == 1 then
-			table.insert(hidden_bufs, buf.bufnr)
+	-- Close the original buffer after navigating
+	if vim.api.nvim_buf_is_valid(last_buf) then
+		if last_buf == vim.api.nvim_get_current_buf() then
+			vim.fn.feedkeys("gq")
+		else
+			vim.cmd("bd " .. last_buf)
 		end
 	end
-
-	-- 테이블에 요소가 1개 이상이라면, 다음 버퍼로 0번째 버퍼로 이동
-	if #hidden_bufs > 0 then
-		vim.api.nvim_set_current_buf(hidden_bufs[1])
-	end
-
-	-- 어쨋든 최근 버퍼는 닫는다.
-	vim.cmd("bd " .. last_buf)
 end
 
 function CloseOtherBuffersInCurrentTab()
