@@ -60,7 +60,7 @@ function CloseOtherBuffersInCurrentTab()
 end
 
 function TabOnlyAndCloseHiddenBuffers()
-	vim.cmd("TTimerlyToggle")
+	vim.cmd("TTimerlyClose")
 	-- 현재 탭에서 열린 버퍼 번호들을 저장
 	local open_buffers = {}
 	for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
