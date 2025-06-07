@@ -4,18 +4,21 @@ local opt = { noremap = true, silent = true }
 ---------------------------------------------------------------------------------------------------------------------------------- BUFFER
 -- Navigation (next/prev)
 map("n", "<Tab>", function()
-	NavBuffAfterCleaning("next")
+	-- 	NavBuffAfterCleaning("next")
+	NavBuffAfterCleaningExceptCurrentTabShowing("next")
 end, opt)
 map("n", "<S-Tab>", function()
-	NavBuffAfterCleaning("prev")
+	-- NavBuffAfterCleaning("prev")
+	NavBuffAfterCleaningExceptCurrentTabShowing("prev")
 end, opt)
+map("n", "g<Tab>", BufferNextDropLast)
 map("n", "<C-i>", "<C-i>", opt)
+
 -- Quit
 map({ "n", "i" }, "<leader>Q", "<cmd>qa!<CR>")
 map("n", "qq", "<cmd>q<CR>") -- 버퍼를 남겨둘 필요가 있는 경우가 오히려 더 적다. 희안하게 !를 붙이면 hidden이 아니라 active상태다.
 map("n", "gq", ManageBuffer_gq)
 map("n", "gQ", ManageBuffer_gQ)
-map("n", "g<Tab>", BufferNextDropLast)
 map("n", "gtq", ManageBuffer_gtq)
 map("n", "gtQ", ManageBuffer_gtQ)
 -- Save

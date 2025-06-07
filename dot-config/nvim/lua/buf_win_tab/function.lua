@@ -28,6 +28,33 @@ function NavBuffAfterCleaning(direction)
 	utils.print_in_time("  Buffers .. [" .. current_buf_index .. "/" .. #filtered_buffers .. "]", 2)
 end
 
+function NavBuffAfterCleaningExceptCurrentTabShowing(direction)
+	local initial_buf = vim.api.nvim_get_current_buf()
+	local current_win = vim.api.nvim_get_current_win()
+	local attempts = 0
+	local max_attempts = 20
+
+	repeat
+		NavBuffAfterCleaning(direction)
+		local current_buf = vim.api.nvim_get_current_buf()
+		attempts = attempts + 1
+
+		-- Check if this buffer is visible in OTHER windows (not current window)
+		local is_visible_elsewhere = false
+		for _, win_id in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+			if win_id ~= current_win and vim.api.nvim_win_get_buf(win_id) == current_buf then
+				is_visible_elsewhere = true
+				break
+			end
+		end
+
+		if attempts >= max_attempts or current_buf == initial_buf then
+			break
+		end
+
+	until not is_visible_elsewhere
+end
+
 function BufferNextDropLast()
 	local last_buf = vim.api.nvim_get_current_buf()
 	local listed_buffers = vim.fn.getbufinfo({ buflisted = 1 })
