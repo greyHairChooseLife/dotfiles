@@ -545,19 +545,19 @@ return {
 							local sections = ctx.sections
 							table.remove(sections, 1)
 							if #sections > 0 then
+								-- if #sections == 1 then
+								-- 	return "󰯆 󰯆 󰯆  DO NOT use this header. (msg under this wouldn't send to LLM.) 󰯆 󰯆 󰯆                             "
+								-- end
 								if #sections == 1 then
-									return "󰯆 󰯆 󰯆  DO NOT use this header. (msg under this wouldn't send to LLM.) 󰯆 󰯆 󰯆                             "
-								end
-								if #sections == 2 then
 									return " ▂▂▂▂   "
 								end
-								if #sections == 3 then
+								if #sections == 2 then
 									return "   ▂▂▂▂▂▂   "
 								end
-								if #sections == 4 then
+								if #sections == 3 then
 									return "     ▂▂▂▂▂▂   "
 								end
-								if #sections == 5 then
+								if #sections == 4 then
 									return "       ▂▂▂▂▂▂   "
 								end
 								return table.concat(sections, ".")
