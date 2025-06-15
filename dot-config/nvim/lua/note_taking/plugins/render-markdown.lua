@@ -185,11 +185,11 @@ return {
 			custom = {
 				TODO = {
 					pattern = "TODO",
-					background = "RenderMarkdownMyTodo",
+					background = "RenderMarkdownMyTodoHeader",
 				},
 				REFERENCE = {
 					pattern = "REFERENCE",
-					background = "RenderMarkdownMyReference",
+					background = "RenderMarkdownMyReferenceHeader",
 				},
 			},
 		},
@@ -296,7 +296,8 @@ return {
 			--   'raw': Matched against the raw text of a 'shortcut_link'
 			--   'rendered': Replaces the 'raw' value when rendering
 			--   'highlight': Highlight for the 'rendered' icon
-			-- BUG:: 우측에 공백이 하나 있어야만 렌더링이 된다.
+			-- NOTE:: 우측에 공백이 하나 있어야만 렌더링이 된다.
+			-- NOTE:: 좌측에 '-' 기호가 있어야만 렌더 링된다.
 			custom = {
 				todo = {
 					raw = "[-]",
@@ -305,9 +306,9 @@ return {
 					scope_highlight = nil,
 				},
 				done = { raw = "[x]", rendered = " 󰗠 DONE ", highlight = "RenderMarkdownMySimpleDone" },
-				cancel = { raw = "[c]", rendered = " 󰜺 cancel ", highlight = "RenderMarkdownMySimpleCancel" },
+				cancel = { raw = "[cc]", rendered = " 󰜺 cancel ", highlight = "RenderMarkdownMySimpleCancel" },
 				checkbox_cancel = {
-					raw = "[n]",
+					raw = "[c]",
 					rendered = "",
 					highlight = "RenderMarkdownCancel",
 					scope_highlight = "RenderMarkdownCancelScope",

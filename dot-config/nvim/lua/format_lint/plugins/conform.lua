@@ -18,8 +18,8 @@ return {
 					"ruff_fix", -- 사용않는 import 등
 					"ruff_format",
 				},
-				bash = { "shfmt" },
-				sh = { "shfmt" },
+				bash = { "shfmt", stop_after_first = true },
+				sh = { "shfmt", stop_after_first = true },
 				yaml = { "yamlfmt" },
 				toml = { "taplo" },
 			},

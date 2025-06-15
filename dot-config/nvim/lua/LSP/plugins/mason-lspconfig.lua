@@ -45,6 +45,7 @@ return {
 				"yamlls",
 				"dockerls", -- "dockerfile-language-server",
 				"docker_compose_language_service", -- "docker-compose-language-service",
+				"bashls",
 			},
 			---@type boolean | string[] | { exclude: string[] }
 			automatic_enable = false,

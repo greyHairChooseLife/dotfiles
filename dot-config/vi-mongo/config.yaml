@@ -19,13 +19,22 @@ connections:
       name: kiosk-demo
       timeout: 5
       options: {}
-    - url: mongodb://admin:123@localhost:27017/academic_society?authSource=admin
+    - url: mongodb://admin:admin@localhost:27017/academic_society?authSource=admin
       host: localhost
       port: 27017
       database: academic_society
       username: ""
       password: ""
       name: academic_society-dev
+      timeout: 5
+      options: {}
+    - url: mongodb://admin:admin@localhost:27018/academic_society?authSource=admin
+      host: localhost
+      port: 27018
+      database: academic_society
+      username: ""
+      password: ""
+      name: academic_society-prod
       timeout: 5
       options: {}
 styles:

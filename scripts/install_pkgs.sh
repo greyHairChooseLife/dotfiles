@@ -103,7 +103,9 @@ sudo pacman -S --needed \
     openssh \
     go \
     yq \
-    cmus
+    cmus \
+    rclone \
+    fuse3
 
 # Install AUR packages
 yay -S --needed \

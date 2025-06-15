@@ -144,6 +144,9 @@ vim.cmd([[
   highlight RenderMarkdownCancel guifg=#8b8378
   highlight RenderMarkdownCancelScope guifg=#8b8378 gui=strikethrough
 
+  highlight RenderMarkdownMyTodoHeader guibg=#954C54 guifg=#FFFFFF gui=bold,italic
+  highlight RenderMarkdownMyReferenceHeader guibg=#C678DD guifg=#FFFFFF gui=bold,italic
+
   highlight RenderMarkdownMyTodo guifg=#CA4500 gui=bold,italic
   highlight RenderMarkdownMyTodoFin guifg=#1e6e40 gui=bold,italic
   highlight RenderMarkdownMySimpleTodo guifg=#ffffff guibg=#CA4500 gui=bold,italic

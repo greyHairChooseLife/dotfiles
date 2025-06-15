@@ -72,6 +72,7 @@ return {
 			docker_compose_language_service = {}, -- doesn't work at all
 			yamlls = {},
 			dockerls = {},
+			bashls = {},
 		}
 		local disabled_server = {
 			"pylsp",
