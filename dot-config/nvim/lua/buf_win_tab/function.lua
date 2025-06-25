@@ -302,7 +302,11 @@ function RenameCurrentTab()
 	local tabnr = vim.fn.tabpagenr()
 
 	-- 입력 프롬프트를 표시하여 새 탭 이름을 입력받습니다
-	local tabname = vim.fn.input("Enter new tab name: ")
+	local current_tabname = vim.t[0].tabname
+	if current_tabname == nil or current_tabname == vim.NIL then
+		current_tabname = ""
+	end
+	local tabname = vim.fn.input("Enter new tab name: ", current_tabname)
 	if tabname == "" then
 		-- tabname = 'Tab ' .. tabnr
 		-- 입력이 없거나 ESC를 누른 경우, 함수 종료

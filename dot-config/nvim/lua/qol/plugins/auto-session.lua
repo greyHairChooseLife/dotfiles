@@ -3,12 +3,9 @@ local was_codecompanion_visible = false
 
 local function save_tab_names()
 	local tab_names = {}
-	for i = 1, vim.fn.tabpagenr("$") do
-		if vim.t[i].tabname then
-			tab_names[i] = vim.t[i].tabname
-		else
-			tab_names[i] = "no name"
-		end
+	for i, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
+		local name = vim.t[tabpage].tabname or "no name"
+		tab_names[i] = name
 	end
 	return tab_names
 end
