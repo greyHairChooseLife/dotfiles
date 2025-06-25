@@ -161,10 +161,10 @@ local keymaps = {
 		["<c-p>"] = "",
 		["<c-q>"] = { "qflist_all", mode = { "i", "n" } },
 		["<a-q>"] = { "qflist", mode = { "i", "n" } },
-		["<c-x>"] = { "edit_split", mode = { "i", "n" } },
-		["<c-t>"] = { "tab", mode = { "n", "i" } },
-		["<c-S-t>"] = { "select_to_tab", mode = { "n", "i" } },
-		["<c-v>"] = { "edit_vsplit", mode = { "i", "n" } },
+		["<c-x>"] = { "split_multi", mode = { "i", "n" } },
+		["<c-t>"] = { "tab_split_multi", mode = { "n", "i" } },
+		["<c-a-t>"] = { "select_to_tab_multi", mode = { "n", "i" } },
+		["<c-v>"] = { "vsplit_multi", mode = { "i", "n" } },
 		["<c-r>#"] = { "insert_alt", mode = "i" },
 		["<c-r>%"] = { "insert_filename", mode = "i" },
 		["<c-r><c-a>"] = { "insert_cWORD", mode = "i" },
@@ -179,9 +179,9 @@ local keymaps = {
 			mode = "i",
 		},
 		["<c-Left>"] = { { "layout_left", "focus_input" }, mode = { "i", "n" } },
-		["<c-Down>"] = { { "layout_bottom", "focus_input" }, mode = { "i", "n" } },
-		["<c-Up>"] = { { "layout_top", "focus_input" }, mode = { "i", "n" } },
-		["<c-Right>"] = { { "resume", "focus_input" }, mode = { "i", "n" } },
+		-- ["<c-Down>"] = { { "layout_bottom", "focus_input" }, mode = { "i", "n" } }, -- this keymap is taken by tmux
+		-- ["<c-Up>"] = { { "layout_top", "focus_input" }, mode = { "i", "n" } }, -- this keymap is taken by tmux
+		["<c-Right>"] = { { "resume_picker_ui", "focus_input" }, mode = { "i", "n" } },
 		["<c-w>H"] = "",
 		["<c-w>J"] = "",
 		["<c-w>K"] = "",
@@ -227,9 +227,10 @@ local keymaps = {
 		["<c-j>"] = "list_down",
 		["<c-k>"] = "list_up",
 		["<c-q>"] = "qflist",
-		["<c-x>"] = "edit_split",
-		["<c-t>"] = "tab",
-		["<c-v>"] = "edit_vsplit",
+		["<c-x>"] = "split_multi",
+		["<c-v>"] = "vsplit_multi",
+		["<c-t>"] = "tab_split_multi",
+		["<c-a-t>"] = "select_to_tab_multi",
 		["<c-w>H"] = "layout_left",
 		["<c-w>J"] = "layout_bottom",
 		["<c-w>K"] = "layout_top",
@@ -282,11 +283,91 @@ local actions = {
 			end,
 		})
 	end,
-	select_to_tab = function(picker)
-		local path = picker:current()._path
-		require("buf_win_tab.modules.select_tab").selectTabAndOpen({ source_file_path = path })
+	split_multi = function(picker)
+		vim.cmd.stopinsert()
+		local items = picker:selected({ fallback = true })
+		if #items == 0 then
+			picker:close()
+			return
+		elseif #items >= 1 then
+			for item_idx, item in ipairs(items) do
+				local path = item._path
+				vim.cmd("split " .. path)
+				if item_idx == 1 then
+					g_util.save_cursor_position()
+				end
+			end
+			g_util.restore_cursor_position()
+		end
 	end,
-	resume = function(picker)
+	vsplit_multi = function(picker)
+		vim.cmd.stopinsert()
+		local items = picker:selected({ fallback = true })
+		if #items == 0 then
+			picker:close()
+			return
+		elseif #items >= 1 then
+			for item_idx, item in ipairs(items) do
+				local path = item._path
+				vim.cmd("vsplit " .. path)
+				if item_idx == 1 then
+					g_util.save_cursor_position()
+				end
+			end
+			g_util.restore_cursor_position()
+		end
+	end,
+	tab_split_multi = function(picker)
+		vim.cmd.stopinsert()
+		local items = picker:selected({ fallback = true })
+		if #items == 0 then
+			picker:close()
+			return
+		elseif #items >= 1 then
+			for item_idx, item in ipairs(items) do
+				local path = item._path
+				if item_idx == 1 then
+					vim.cmd("tabnew " .. path)
+					g_util.save_cursor_position()
+				else
+					vim.cmd("vsplit " .. path)
+				end
+			end
+			g_util.restore_cursor_position()
+		end
+	end,
+	select_to_tab_multi = function(picker)
+		local items = picker:selected({ fallback = true })
+		if #items == 0 then
+			picker:close()
+			return
+		end
+
+		local function process_item(idx)
+			local item = items[idx]
+			if not item then
+				g_util.restore_cursor_position()
+				vim.cmd.stopinsert()
+				return
+			end
+			local path = item._path
+			if idx == 1 then
+				require("buf_win_tab.modules.select_tab").selectTabAndOpen({
+					source_file_path = path,
+					on_complete = function()
+						g_util.save_cursor_position()
+						process_item(idx + 1)
+					end,
+				})
+			else
+				vim.cmd("vsplit " .. path)
+				process_item(idx + 1)
+			end
+		end
+
+		process_item(1)
+	end,
+	resume_picker_ui = function(picker)
 		picker:close()
 		picker.resume()
 	end,

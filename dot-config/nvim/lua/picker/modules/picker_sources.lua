@@ -206,6 +206,7 @@ M.buffers = function()
 			},
 		},
 		current = true,
+		sort_lastused = false,
 		filter = {
 			filter = function(item)
 				if item.file then
@@ -222,21 +223,42 @@ M.buffers = function()
 				picker:close()
 				g_utils.restore_cursor_position()
 			end,
-			bufwipeout = function(picker)
-				local buf_id = picker:current().buf
-				vim.api.nvim_buf_delete(buf_id, { force = false })
-				M.buffers()
+			my_bufdelete = function(picker)
+				picker.preview:reset()
+				local non_buf_delete_requested = false
+				local to_be_closed_win = {}
+				for _, item in ipairs(picker:selected({ fallback = true })) do
+					if item.buf then
+						table.insert(to_be_closed_win, item.info.windows[1])
+						Snacks.bufdelete.delete(item.buf)
+					else
+						non_buf_delete_requested = true
+					end
+				end
+				if non_buf_delete_requested then
+					Snacks.notify.warn("Only open buffers can be deleted", { title = "Snacks Picker" })
+				end
+				picker.list:set_selected()
+				picker.list:set_target()
+				picker:find()
+
+				picker:close()
+				for _, win_id in ipairs(to_be_closed_win) do
+					vim.api.nvim_win_close(win_id, false)
+				end
+				picker:resume()
 			end,
 		},
 		win = {
 			input = {
 				keys = {
 					["gq"] = { "close_and_stay", mode = { "n", "i" } },
-					["<c-d>"] = { "bufwipeout", mode = { "n", "i" } },
+					["<c-d>"] = { "my_bufdelete", mode = { "n", "i" } },
 				},
 			},
 		},
 	}
+
 	snp.buffers(config)
 end
 M.buffers_term_only = function()

@@ -28,6 +28,7 @@ end
 ---@class selectTabAndOpenOpts
 ---@field source_file_path? string file path to open. Or just current buffer
 ---@field quit_current_window? boolean|nil quit prev
+---@field on_complete? function called after selection is handled
 ---@param opts selectTabAndOpenOpts?
 M.selectTabAndOpen = function(opts)
 	opts = opts or {}
@@ -64,6 +65,9 @@ M.selectTabAndOpen = function(opts)
 					pcall(vim.fn.delete, file_path)
 				end
 			end
+		end
+		if opts.on_complete then
+			opts.on_complete()
 		end
 	end)
 end
