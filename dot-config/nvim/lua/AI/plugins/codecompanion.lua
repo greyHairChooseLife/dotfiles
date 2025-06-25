@@ -97,7 +97,8 @@ return {
 					return require("codecompanion.adapters").extend("copilot", {
 						schema = {
 							model = {
-								default = "claude-sonnet-4",
+								default = "gpt-4.1",
+								-- default = "claude-sonnet-4",
 								-- default = "claude-3.7-sonnet",
 								-- default = "claude-3.7-sonnet-thought",
 							},
@@ -140,17 +141,19 @@ return {
 						system_prompt = { modes = { n = "gts" } }, -- toggle system prompts
 						regenerate = { modes = { n = "gR" } },
 					},
-					-- adapter = "copilot",
 					adapter = {
 						name = "copilot",
-						model = "claude-sonnet-4",
+						model = "gpt-4.1",
 					},
 					slash_commands = require("AI.codecompanion.slash_commands"),
 					tools = require("AI.codecompanion.tools"),
 					-- variables = {},
 				},
 				inline = {
-					adapter = "copilot",
+					adapter = {
+						name = "copilot",
+						model = "gpt-4.1",
+					},
 					keymaps = {
 						accept_change = { modes = { n = "ca" } },
 						reject_change = { modes = { n = "cr" } },

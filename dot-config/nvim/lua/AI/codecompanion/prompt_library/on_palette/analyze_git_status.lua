@@ -76,7 +76,8 @@ return {
 			opts = { contains_code = true },
 			content = function()
 				local chage_model = require("AI.codecompanion.utils.general").chage_model
-				chage_model("gemini-2.5-pro")
+				-- MEMO:: github copilot is not unlimited anymore
+				-- chage_model("gemini-2.5-pro")
 
 				local handle_staged = io.popen("git --no-pager diff --no-ext-diff --staged")
 				local handle_unstaged = io.popen("git --no-pager diff")

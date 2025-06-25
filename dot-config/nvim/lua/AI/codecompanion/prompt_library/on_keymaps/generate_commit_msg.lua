@@ -56,7 +56,9 @@ return {
 		stop_context_insertion = true,
 		adapter = {
 			name = "copilot",
-			model = "claude-3.5-sonnet",
+			-- MEMO:: github copilot is not unlimited anymore
+			-- model = "claude-3.5-sonnet",
+			model = "gpt-4.1",
 		},
 	},
 	prompts = {

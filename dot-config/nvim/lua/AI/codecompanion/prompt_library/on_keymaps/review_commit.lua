@@ -49,7 +49,9 @@ return {
 			-- model = "claude-3-7-sonnet-20250219", -- think
 			-- model = "claude-3-5-sonnet-20241022", -- thinkless
 			name = "copilot",
-			model = "claude-3.7-sonnet",
+			-- MEMO:: github copilot is not unlimited anymore
+			-- model = "claude-3.7-sonnet",
+			model = "gpt-4.1",
 		},
 	},
 	prompts = {
