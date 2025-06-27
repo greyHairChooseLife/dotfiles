@@ -161,7 +161,7 @@ local keymaps = {
 		["<c-p>"] = "",
 		["<c-q>"] = { "qflist_all", mode = { "i", "n" } },
 		["<a-q>"] = { "qflist", mode = { "i", "n" } },
-		["<c-x>"] = { "split_multi", mode = { "i", "n" } },
+		["<c-s>"] = { "split_multi", mode = { "i", "n" } },
 		["<c-t>"] = { "tab_split_multi", mode = { "n", "i" } },
 		["<c-a-t>"] = { "select_to_tab_multi", mode = { "n", "i" } },
 		["<c-v>"] = { "vsplit_multi", mode = { "i", "n" } },
@@ -227,7 +227,7 @@ local keymaps = {
 		["<c-j>"] = "list_down",
 		["<c-k>"] = "list_up",
 		["<c-q>"] = "qflist",
-		["<c-x>"] = "split_multi", -- MEMO: 이거 tmux랑 겹치네..
+		["<c-s>"] = "split_multi", -- MEMO: 이거 tmux랑 겹치네..
 		["<c-v>"] = "vsplit_multi",
 		["<c-t>"] = "tab_split_multi",
 		["<c-a-t>"] = "select_to_tab_multi",
@@ -255,6 +255,16 @@ local keymaps = {
 		["<a-Space>"] = "cycle_win",
 	},
 }
+
+local setPostIfPossible = function(item)
+	vim.cmd("normal! zz")
+	if item.pos then
+		local win = vim.api.nvim_get_current_win()
+		vim.api.nvim_win_set_cursor(win, item.pos)
+		vim.cmd("normal! zz")
+		BlinkCursorLine()
+	end
+end
 
 local actions = {
 	flash = function(picker)
@@ -292,6 +302,8 @@ local actions = {
 			for item_idx, item in ipairs(items) do
 				local path = item._path
 				vim.cmd("split " .. path)
+				setPostIfPossible(item)
+
 				if item_idx == 1 then
 					g_util.save_cursor_position()
 				end
@@ -308,6 +320,8 @@ local actions = {
 			for item_idx, item in ipairs(items) do
 				local path = item._path
 				vim.cmd("vsplit " .. path)
+				setPostIfPossible(item)
+
 				if item_idx == 1 then
 					g_util.save_cursor_position()
 				end
@@ -325,9 +339,11 @@ local actions = {
 				local path = item._path
 				if item_idx == 1 then
 					vim.cmd("tabnew " .. path)
+					setPostIfPossible(item)
 					g_util.save_cursor_position()
 				else
 					vim.cmd("vsplit " .. path)
+					setPostIfPossible(item)
 				end
 			end
 			g_util.restore_cursor_position()
@@ -335,7 +351,6 @@ local actions = {
 	end,
 	select_to_tab_multi = function(picker)
 		local items = picker:selected({ fallback = true })
-		picker:close()
 		if #items == 0 then
 			return
 		end
@@ -352,12 +367,15 @@ local actions = {
 				require("buf_win_tab.modules.select_tab").selectTabAndOpen({
 					source_file_path = path,
 					on_complete = function()
+						picker:close()
+						setPostIfPossible(item)
 						g_util.save_cursor_position()
 						process_item(idx + 1)
 					end,
 				})
 			else
 				vim.cmd("vsplit " .. path)
+				setPostIfPossible(item)
 				process_item(idx + 1)
 			end
 		end

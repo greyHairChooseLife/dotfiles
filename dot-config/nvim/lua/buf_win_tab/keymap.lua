@@ -47,7 +47,7 @@ end)
 
 ---------------------------------------------------------------------------------------------------------------------------------- WINDOW
 -- New ( horizontal / vertical )
-map("n", "<A-x>", "<cmd>rightbelow new<CR>")
+map("n", "<A-s>", "<cmd>rightbelow new<CR>")
 map("n", "<A-v>", "<cmd>vnew<CR>")
 -- Navigation
 map("n", "<A-h>", "<cmd>wincmd h<CR>")

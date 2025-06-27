@@ -96,7 +96,7 @@ return {
 					harpoon.ui:select_menu_item({ vsplit = true })
 				end, { buffer = cx.bufnr })
 
-				vim.keymap.set("n", "<C-x>", function()
+				vim.keymap.set("n", "<C-s>", function()
 					harpoon.ui:select_menu_item({ split = true })
 					vim.cmd("WinShift down")
 					vim.cmd("WinShift down")
