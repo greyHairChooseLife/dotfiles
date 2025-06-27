@@ -284,10 +284,9 @@ local actions = {
 		})
 	end,
 	split_multi = function(picker)
-		vim.cmd.stopinsert()
 		local items = picker:selected({ fallback = true })
+		picker:close()
 		if #items == 0 then
-			picker:close()
 			return
 		elseif #items >= 1 then
 			for item_idx, item in ipairs(items) do
@@ -301,10 +300,9 @@ local actions = {
 		end
 	end,
 	vsplit_multi = function(picker)
-		vim.cmd.stopinsert()
 		local items = picker:selected({ fallback = true })
+		picker:close()
 		if #items == 0 then
-			picker:close()
 			return
 		elseif #items >= 1 then
 			for item_idx, item in ipairs(items) do
@@ -318,10 +316,9 @@ local actions = {
 		end
 	end,
 	tab_split_multi = function(picker)
-		vim.cmd.stopinsert()
 		local items = picker:selected({ fallback = true })
+		picker:close()
 		if #items == 0 then
-			picker:close()
 			return
 		elseif #items >= 1 then
 			for item_idx, item in ipairs(items) do
@@ -338,8 +335,8 @@ local actions = {
 	end,
 	select_to_tab_multi = function(picker)
 		local items = picker:selected({ fallback = true })
+		picker:close()
 		if #items == 0 then
-			picker:close()
 			return
 		end
 
