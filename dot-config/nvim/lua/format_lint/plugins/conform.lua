@@ -34,6 +34,9 @@ return {
 				},
 				shfmt = { args = { "-i=4", "-ci", "-bn", "-sr", "-kp" } },
 				yamlfmt = {}, -- $HOME/.config/yamlfmt/.yamlfmt.yml
+				-- ruff_organize_imports = {
+				-- 	args = { "order-by-type = false" },
+				-- },
 			},
 			format_on_save = {
 				timeout_ms = 500,

@@ -24,7 +24,10 @@ map("n", "dp", function()
 	vim.diagnostic.jump({ count = -1, float = false })
 	ToggleVirtualText({ force = "on" })
 end, opt)
-map("n", "dK", vim.diagnostic.open_float, opt)
+map("n", "dK", function()
+	vim.diagnostic.open_float()
+	ToggleVirtualText({ force = "off" })
+end, opt)
 
 -- MEMO:: `<C-l>`: show autocompletion menu to prefilter (i.e. `:warning:`)
 

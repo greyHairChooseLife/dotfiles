@@ -12,7 +12,7 @@ function ToggleVirtualText(opts)
 		return vim.diagnostic.config({ virtual_lines = { current_line = true } })
 	elseif force == "off" then
 		current_line_enabled = false
-		return vim.diagnostic.config({ virtual_lines = { current_line = false } })
+		return vim.diagnostic.config({ virtual_lines = false })
 	end
 
 	current_line_enabled = not current_line_enabled

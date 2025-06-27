@@ -61,3 +61,11 @@ vim.filetype.add({
 		["%.env%..*"] = "sh",
 	},
 })
+
+vim.cmd([[cab db lua Snacks.debug.inspect(<c-e>]])
+vim.cmd([[iab db Snacks.debug.inspect(]])
+
+-- common typo
+vim.cmd([[iab teh the]])
+vim.cmd([[iab depreacted deprecated]])
+vim.cmd([[iab Depreacted Deprecated]])

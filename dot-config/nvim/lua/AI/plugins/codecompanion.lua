@@ -95,6 +95,8 @@ return {
 				},
 				copilot = function()
 					return require("codecompanion.adapters").extend("copilot", {
+						-- github copilot premium request calculation
+						-- https://docs.github.com/en/copilot/about-github-copilot/github-copilot-features#user-content-fnref-2
 						schema = {
 							model = {
 								default = "gpt-4.1",
