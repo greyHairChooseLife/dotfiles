@@ -141,5 +141,71 @@ function MyTabLine_width_fixed()
 	return s
 end
 
+function MyTabLine_width_flexible(MinimalLength, MaximumLength)
+	local s = ""
+	local sep = "%#TabLineSelBorder# " -- 탭 구분자
+
+	for i = 1, vim.fn.tabpagenr("$") do
+		local tabname = vim.fn.gettabvar(i, "tabname", "Tab " .. i)
+
+		-- userdata를 문자열로 변환
+		if type(tabname) ~= "string" then
+			tabname = (tostring(tabname) or "Tab ") .. i
+		end
+
+		-- Convert empty string or nil to nil
+		if MinimalLength == "" or MinimalLength == 0 then
+			MinimalLength = nil
+		end
+		if MaximumLength == "" or MaximumLength == 0 then
+			MaximumLength = nil
+		end
+
+		-- 최대 길이 제한
+		if MaximumLength and #tabname > MaximumLength then
+			tabname = string.sub(tabname, 1, MaximumLength - 3) .. "..."
+		end
+
+		-- 최소 길이 패딩
+		if MinimalLength and #tabname < MinimalLength then
+			local padding = MinimalLength - #tabname - 4 -- 기본 패딩 제외
+			tabname = string.rep(" ", padding / 2) .. tabname .. string.rep(" ", padding / 2)
+		end
+
+		-- 기본 좌우 패딩
+		tabname = "  " .. tabname .. "  "
+
+		local tab_format = "%" .. i .. "T" .. " " .. tabname .. " " -- 기본 포맷
+
+		if i == vim.fn.tabpagenr() then
+			-- 현재 활성 탭
+			if tabname:find("GV") then
+				s = s .. "%#TabLineGVBg#" .. tab_format .. "%#TabLineGVBorder#"
+			elseif tabname:find("sp:") or tabname:find("mv:") then
+				s = s .. "%#TabLineTempBg#" .. tab_format .. "%#TabLineTempBorder#"
+			elseif tabname:find("") then
+				s = s .. "%#TabLineGVBg#" .. tab_format .. "%#TabLineGVBorder#"
+			elseif tabname:find("Oil") then
+				s = s .. "%#TabLineOilBg#" .. tab_format .. "%#TabLineOilBorder#"
+			else
+				s = s .. "%#TabLineSelBg#" .. tab_format .. "%#TabLineSelBorder#"
+			end
+		else
+			-- 비활성 탭
+			s = s .. "%#TabLineNotSel#" .. tab_format
+		end
+
+		if i < vim.fn.tabpagenr("$") + 1 then
+			s = s .. sep
+		end
+	end
+
+	s = s .. "%#TabLineFill#" .. "%="
+
+	return s
+end
+
 -- tabline 설정
-vim.o.tabline = "%!v:lua.MyTabLine_width_fixed()"
+-- vim.o.tabline = "%!v:lua.MyTabLine()"
+-- vim.o.tabline = "%!v:lua.MyTabLine_width_fixed()"
+vim.o.tabline = "%!v:lua.MyTabLine_width_flexible(15, 45)"

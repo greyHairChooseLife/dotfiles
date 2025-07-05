@@ -606,4 +606,9 @@ M.file_exists = function(filepath)
 	return f ~= nil
 end
 
+M.get_tab_id_from_order = function(order_number)
+	local tabpages = vim.api.nvim_list_tabpages()
+	return tabpages[order_number]
+end
+
 return M

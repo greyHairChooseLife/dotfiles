@@ -299,12 +299,43 @@ function NewTabWithPrompt()
 end
 
 function RenameCurrentTab()
-	local tabnr = vim.fn.tabpagenr()
-	local tab_ui_length = 23
 	local current_tabname = vim.t[0].tabname
 	if current_tabname == nil or current_tabname == vim.NIL then
 		current_tabname = ""
 	end
+
+	local prev_tab_ui_length = function(cur_tabnr)
+		local tab_ui_minimum_length = 15 -- File Path: lua/UI/tabline.lua, 211:211
+		local tab_ui_maximum_length = 45 -- File Path: lua/UI/tabline.lua, 211:211
+		if cur_tabnr <= 1 then
+			return 0
+		end
+
+		local prev_tabname = vim.t[utils.get_tab_id_from_order(cur_tabnr - 1)].tabname
+		if prev_tabname == nil or prev_tabname == vim.NIL then
+			prev_tabname = ""
+		end
+		if #prev_tabname > tab_ui_minimum_length then
+			if #prev_tabname < tab_ui_maximum_length then
+				return #prev_tabname + 6
+			else
+				return tab_ui_maximum_length + 6
+			end
+		else
+			return tab_ui_minimum_length + 3
+		end
+	end
+
+	local function accumulated_prev_tabs_length(cur_tabnr)
+		local total_length = 0
+		for i = 2, cur_tabnr do
+			total_length = total_length + prev_tab_ui_length(i)
+		end
+		return total_length
+	end
+
+	local tabnr = vim.fn.tabpagenr()
+	local col = accumulated_prev_tabs_length(tabnr)
 
 	local on_confirm = function(value)
 		if not value or value == "" then
@@ -324,7 +355,7 @@ function RenameCurrentTab()
 				width = 40,
 				title_pos = "left",
 				row = 1,
-				col = tab_ui_length * (tabnr - 1),
+				col = col,
 			},
 		},
 	}, on_confirm)
