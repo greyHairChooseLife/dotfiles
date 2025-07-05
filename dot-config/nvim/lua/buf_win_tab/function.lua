@@ -459,3 +459,19 @@ function OpenFloatWindow(opts)
 
 	return win, buf
 end
+
+function Close_all_hidden_buffers()
+	local listed_buffers = vim.fn.getbufinfo({ buflisted = 1 })
+	local visible_buffers = {}
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		local buf = vim.api.nvim_win_get_buf(win)
+		visible_buffers[buf] = true
+	end
+
+	for _, bufinfo in ipairs(listed_buffers) do
+		local buf = bufinfo.bufnr
+		if not visible_buffers[buf] then
+			vim.api.nvim_buf_delete(buf, {})
+		end
+	end
+end
