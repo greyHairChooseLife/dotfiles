@@ -276,47 +276,58 @@ function FocusFloatingWindow()
 end
 
 function NewTabWithPrompt()
-	local callback = function(tabname)
-		-- BUG::
-		-- If input is nil, it means the user pressed <Esc>, <C-c>, <gq>
-		-- But not working as expected with <Esc>
-		if tabname == nil then
+	local on_confirm = function(value)
+		if not value or value == "" then
 			return
-		elseif tabname == "" then
-			tabname = "no name"
+		else
+			vim.cmd("tabnew")
+			local tabnr = vim.fn.tabpagenr()
+			vim.fn.settabvar(tabnr, "tabname", value)
 		end
-
-		-- Create new tab and set name
-		vim.cmd("tabnew")
-		local tabnr = vim.fn.tabpagenr()
-		vim.fn.settabvar(tabnr, "tabname", tabname)
 	end
 
-	vim.ui.input({
-		prompt = "Enter tab name: ",
-	}, callback)
+	Snacks.input.input({
+		icon = "",
+		prompt = "new tab",
+		default = current_tabname,
+		win = {
+			style = {
+				row = vim.api.nvim_win_get_height(0) / 2 - 3,
+			},
+		},
+	}, on_confirm)
 end
 
 function RenameCurrentTab()
-	-- 현재 탭 번호를 가져옵니다
 	local tabnr = vim.fn.tabpagenr()
-
-	-- 입력 프롬프트를 표시하여 새 탭 이름을 입력받습니다
+	local tab_ui_length = 23
 	local current_tabname = vim.t[0].tabname
 	if current_tabname == nil or current_tabname == vim.NIL then
 		current_tabname = ""
 	end
-	local tabname = vim.fn.input("Enter new tab name: ", current_tabname)
-	if tabname == "" then
-		-- tabname = 'Tab ' .. tabnr
-		-- 입력이 없거나 ESC를 누른 경우, 함수 종료
-		return
+
+	local on_confirm = function(value)
+		if not value or value == "" then
+			return
+		else
+			vim.fn.settabvar(tabnr, "tabname", value)
+			vim.cmd("redrawtabline")
+		end
 	end
 
-	-- 현재 탭의 이름을 설정합니다
-	vim.fn.settabvar(tabnr, "tabname", tabname)
-	-- 탭라인을 업데이트합니다
-	vim.cmd("redrawtabline")
+	Snacks.input.input({
+		icon = "",
+		prompt = "rename",
+		default = current_tabname,
+		win = {
+			style = {
+				width = 40,
+				title_pos = "left",
+				row = 1,
+				col = tab_ui_length * (tabnr - 1),
+			},
+		},
+	}, on_confirm)
 end
 
 function MoveTabLeft()

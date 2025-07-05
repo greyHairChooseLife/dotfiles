@@ -12,6 +12,14 @@ return {
 			picker = require("picker.plugins.configs.snacks-picker"),
 			scroll = require("UI.plugins.configs.snacks-scroll"),
 			bigfile = { enabled = true },
+			styles = {
+				input = { -- https://github.com/folke/snacks.nvim/blob/main/docs/styles.md#input
+					border = "single",
+					row = vim.api.nvim_win_get_height(0) / 2 - 3,
+					relative = "editor", -- "cursor",
+					col = nil,
+				},
+			},
 		})
 	end,
 }
