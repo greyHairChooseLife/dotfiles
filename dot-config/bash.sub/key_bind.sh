@@ -6,3 +6,6 @@ bind -x '"\C-k": ff'
 bind -x '"\e\C-k": ff.'
 bind -x '"\C-j": ffd'
 bind -x '"\e\C-j": ffd.'
+
+# inputrc
+bind '"\C-o": edit-and-execute-command'

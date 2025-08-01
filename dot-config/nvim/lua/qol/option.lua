@@ -62,8 +62,8 @@ vim.filetype.add({
 	},
 })
 
-vim.cmd([[cab db lua Snacks.debug.inspect(<c-e>]])
-vim.cmd([[iab db Snacks.debug.inspect(]])
+vim.cmd([[cab dbg lua Snacks.debug.inspect(<c-e>]])
+vim.cmd([[iab dbg Snacks.debug.inspect(]])
 
 -- common typo
 vim.cmd([[iab teh the]])
