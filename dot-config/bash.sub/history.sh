@@ -12,8 +12,8 @@ export HISTIGNORE="ls:cd:exit:pwd"
 # Function to save only successful commands
 save_successful_history() {
     local exit_code=$?
-    if [[ $exit_code -ne 0 ]]; then
-        # Remove the last command from history if it failed
+    if [[ $exit_code -eq 127 ]]; then
+        # Remove the last command from history if that is typo command
         history -d $(history 1 | awk '{print $1}') 2> /dev/null || true
     else
         # history -a
@@ -29,7 +29,9 @@ save_successful_history() {
 export PROMPT_COMMAND="save_successful_history"
 
 per_process_history() {
-    local pwd_escaped=$(printf '%s ' "'${PWD}\\")
+    local pwd_escaped=$(printf ' %s ' "'${PWD}\\")
+    local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
+
     eval "$(cat ~/.bash_history_dir/pid_$$ 2> /dev/null \
         | awk '{ key=""; for (i=3; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
         | sort \
@@ -39,14 +41,18 @@ per_process_history() {
             --header '<Alt+1>: filter by '${PWD}' ' \
             --prompt 'history -PID- > ' \
             --bind 'ctrl-e:execute(printf "%s" {4..} | xclip -selection clipboard)+abort' \
-            --bind 'ctrl-w:execute(printf "%s" {4..} | xclip -selection clipboard)' \
-            --bind "alt-1:clear-query+put(${pwd_escaped})" \
-        | awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}')"
+            \
+            --bind "alt-1:put(${pwd_escaped})" \
+            --bind "alt-2:put(${today})" \
+        |
+        # --bind 'ctrl-w:execute(printf "%s" {4..} | xclip -selection clipboard)' \
+          awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}')"
 }
 
 # Global history function (using rg)
 global_history() {
-    local pwd_escaped=$(printf '%s ' "'${PWD}\\")
+    local pwd_escaped=$(printf ' %s ' "'${PWD}")
+    local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
 
     eval "$(cat ~/.bash_history_dir/pid_* 2> /dev/null \
         | awk '{ key=""; for (i=4; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
@@ -57,9 +63,12 @@ global_history() {
             --header '<Alt+1>: filter by '${PWD}' ' \
             --prompt 'history -Global- > ' \
             --bind 'ctrl-e:execute(printf "%s" {4..} | xclip -selection clipboard)+abort' \
-            --bind 'ctrl-w:execute(printf "%s" {4..} | xclip -selection clipboard)' \
-            --bind "alt-1:clear-query+put(${pwd_escaped})" \
-        | awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}')"
+            \
+            --bind "alt-1:put(${pwd_escaped})" \
+            --bind "alt-2:put(${today})" \
+        |
+        # --bind 'ctrl-w:execute(printf "%s" {4..} | xclip -selection clipboard)' \
+          awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}')"
 }
 
 # Optional: Cleanup old PID files
