@@ -8,4 +8,5 @@ bind -x '"\C-j": ffd'
 bind -x '"\e\C-j": ffd.'
 
 # inputrc
-bind '"\C-o": edit-and-execute-command'
+# bind '"\C-o": edit-and-execute-command'
+bind -x '"\C-o": edit_and_return_command' # 커스텀 커맨드
