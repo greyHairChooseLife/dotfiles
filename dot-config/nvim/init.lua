@@ -78,7 +78,7 @@ require("lazy").setup({
 				end,
 				desc = "Open terminal in plugin dir",
 			},
-			["z"] = {
+			["Z"] = {
 				function(plugin)
 					vim.cmd(":tcd " .. plugin.dir)
 					vim.fn.feedkeys('0wvv"9y', "x")

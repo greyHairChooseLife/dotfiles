@@ -46,7 +46,7 @@ map("v", "v", "<Esc>")
 
 map({ "n", "v", "i", "c" }, "<leader>t", "<cmd>TTimerlyToggle<cr>")
 
-map({ "n", "v" }, "<C-q>", "<Cmd>Focus<CR>")
+map({ "n", "v" }, "Z", "<Cmd>Focus<CR>")
 map("v", ",<Space>", ":FocusHere<CR>", opt)
 map("n", ",<Space>", "<cmd>FocusClear<CR>", opt)
 map("n", "<Space><Space>", function()
