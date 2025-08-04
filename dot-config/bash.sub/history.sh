@@ -41,53 +41,75 @@ save_successful_history() {
 
 export PROMPT_COMMAND="save_successful_history"
 
+get_full_field_list_per_process() {
+    local pid="${1:-$$}"
+    cat ~/.bash_history_dir/pid_"$pid" 2> /dev/null \
+        | awk '{ key=""; for (i=3; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
+        | sort -n -k1,2
+}
+get_full_field_list_per_process_no_path() {
+    local pid="${1:-$$}"
+    get_full_field_list_per_process $pid | awk '{$3="..."; print $0}'
+}
 per_process_history() {
+    local pid="${1:-$$}"
     local pwd_escaped=$(printf ' %s ' "'${PWD}\\")
     local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
 
-    eval "$(cat ~/.bash_history_dir/pid_$$ 2> /dev/null \
-        | awk '{ key=""; for (i=3; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
-        | sort \
-            -n -k1,2 \
-        | fzf \
-            --tac \
-            --header '<Alt+1>: filter by '${PWD}' ' \
-            --prompt 'history -PID- > ' \
-            --bind 'ctrl-e:execute(printf "%s" {4..} | xclip -selection clipboard)+abort' \
-            \
-            --bind "alt-1:put(${pwd_escaped})" \
-            --bind "alt-2:put(${today})" \
-        |
-        # --bind 'ctrl-w:execute(printf "%s" {4..} | xclip -selection clipboard)' \
-          awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}')"
+    eval "$(
+        get_full_field_list_per_process \
+            | fzf \
+                --tac \
+                --header '<Alt+1>: filter by '${PWD}' ' \
+                --prompt 'history -PID- > ' \
+                --bind 'ctrl-e:execute(printf "%s" {4..} | xclip -selection clipboard)+abort' \
+                --bind 'alt-e:execute(printf "%s" {4..} | xclip -selection clipboard)' \
+                --bind "alt-1:put(${today})" \
+                --bind "alt-2:put(${pwd_escaped})" \
+                --bind "alt-3:reload(get_full_field_list_per_process ${pid})" \
+                --bind "alt-4:reload(get_full_field_list_per_process_no_path ${pid})" \
+            | awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}'
+    )"
 }
 
 # Global history function (using rg)
+get_full_field_list_global() {
+    cat ~/.bash_history_dir/pid_* 2> /dev/null \
+        | awk '{ key=""; for (i=4; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
+        | sort -n -k1,2
+}
+get_full_field_list_global_no_path() {
+    get_full_field_list_global | awk '{$3="..."; print $0}'
+}
 global_history() {
     local pwd_escaped=$(printf ' %s ' "'${PWD}")
     local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
 
-    eval "$(cat ~/.bash_history_dir/pid_* 2> /dev/null \
-        | awk '{ key=""; for (i=4; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
-        | sort \
-            -n -k1,2 \
-        | fzf \
-            --tac \
-            --header '<Alt+1>: filter by '${PWD}' ' \
-            --prompt 'history -Global- > ' \
-            --bind 'ctrl-e:execute(printf "%s" {4..} | xclip -selection clipboard)+abort' \
-            \
-            --bind "alt-1:put(${pwd_escaped})" \
-            --bind "alt-2:put(${today})" \
-        |
-        # --bind 'ctrl-w:execute(printf "%s" {4..} | xclip -selection clipboard)' \
-          awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}')"
+    eval "$(
+        get_full_field_list_global \
+            | fzf \
+                --tac \
+                --header '<Alt+1>: filter by '${PWD}' ' \
+                --prompt 'history -Global- > ' \
+                --bind 'ctrl-e:execute(printf "%s" {4..} | xclip -selection clipboard)+abort' \
+                --bind 'alt-e:execute(printf "%s" {4..} | xclip -selection clipboard)' \
+                --bind "alt-1:put(${today})" \
+                --bind "alt-2:put(${pwd_escaped})" \
+                --bind "alt-3:reload(get_full_field_list_global ${pid})" \
+                --bind "alt-4:reload(get_full_field_list_global_no_path ${pid})" \
+            | awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}'
+    )"
 }
 
 # Optional: Cleanup old PID files
 cleanup_old_history() {
     find ~/.bash_history_dir -name "pid_*" -mtime +7 -delete
 }
+
+export -f get_full_field_list_per_process
+export -f get_full_field_list_per_process_no_path
+export -f get_full_field_list_global
+export -f get_full_field_list_global_no_path
 
 # Command aliases
 alias hip='per_process_history'      # Current process history
