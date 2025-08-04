@@ -143,66 +143,43 @@ M.add_buffer_reference = function()
 			local bufnr = vim.api.nvim_get_current_buf()
 
 			local content = require("codecompanion.utils.buffers").get_content(bufnr, { start_line - 1, end_line })
-			local info = require("codecompanion.utils.buffers").get_info(bufnr)
-			info.start_line_of_rane = start_line
-			info.end_line_of_rane = end_line
 
-			local formatted_content_with_line_numbers =
-				util.format(info, util.add_line_numbers(content, start_line - 1))
-
-			local name = cdc.last_chat().references:make_id_from_buf(bufnr)
+			local name = cdc.last_chat().context:make_id_from_buf(bufnr)
 			if name == "" then
 				name = "Buffer " .. bufnr
 			end
-			local id = "<buf>" .. name .. "</buf>"
 
 			local path = vim.api.nvim_buf_get_name(bufnr)
 			local message = "Here is the content from"
 
-			-- NOTE: 레퍼런스까지 넣어주는게 의미 있을까? 넣을거라면 차라리 해당 버퍼(파일) 전체를 넣어주는게 좋지 않을까?
-			-- 레퍼런스로 넣어주기
-			-- cdc.last_chat():add_message({
-			-- 	role = "user",
-			-- 	content = string.format(
-			-- 		"%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
-			-- 		message,
-			-- 		vim.fn.fnamemodify(path, ":t"),
-			-- 		bufnr,
-			-- 		path,
-			-- 		formatted_content_with_line_numbers
-			-- 	),
-			-- }, { reference = id, visible = false })
-
-			-- cdc.last_chat().references:add({
-			-- 	bufnr = bufnr,
-			-- 	id = id,
-			-- 	path = path,
-			-- 	source = "codecompanion.strategies.chat.slash_commands.buffer",
-			-- 	opts = {},
-			-- })
-
-			-- 채팅 버퍼에도 간단히 표시
-			local formatted_content = require("codecompanion.utils.buffers").format(bufnr, { start_line - 1, end_line })
+			local formatted_content = string.format(
+				"%s `%s:%s-%s`: \n" .. "```%s\n" .. "%s\n" .. "```\n\n",
+				message,
+				vim.fn.fnamemodify(path, ":t"),
+				start_line,
+				end_line,
+				vim.bo[bufnr].filetype,
+				content
+			)
+			-- 채팅 버퍼에 간단히 표시
 			cdc.last_chat():add_buf_message({
 				role = "user",
-				content = string.format(
-					"%s `%s:%s-%s`: \n%s\n\n",
-					message,
-					vim.fn.fnamemodify(path, ":t"),
-					start_line,
-					end_line,
-					formatted_content
-				),
-			})
+				content = formatted_content,
+			}, { visible = true })
 		end)
 	end
 
 	local add_buf_to_last_chat = function()
 		local bufnr = vim.api.nvim_get_current_buf()
-		local content = require("codecompanion.utils.buffers").format_with_line_numbers(bufnr)
+		local buf_utils = require("codecompanion.utils.buffers")
+
+		local content = buf_utils.format_for_llm({
+			bufnr = bufnr,
+			path = buf_utils.get_info(bufnr).path,
+		})
 		local path = vim.api.nvim_buf_get_name(bufnr)
 		local message = "Here is the content from"
-		local name = cdc.last_chat().references:make_id_from_buf(bufnr)
+		local name = cdc.last_chat().context:make_id_from_buf(bufnr)
 
 		if name == "" then
 			name = "Buffer " .. bufnr
@@ -221,9 +198,9 @@ M.add_buffer_reference = function()
 		-- Check for duplicate before adding
 		local chat = cdc.last_chat()
 		if chat then
-			for _, msg in ipairs(chat.references.Chat.agents.messages) do
-				if msg.content == formatted_content then
-					vim.notify("Already in reference!", 2, { render = "minimal" })
+			for _, ctx in ipairs(chat.context.Chat.context_items) do
+				if ctx.id == id then
+					vim.notify("Already in context!", 2, { render = "minimal" })
 					return false
 				end
 			end
@@ -233,15 +210,16 @@ M.add_buffer_reference = function()
 		cdc.last_chat():add_message({
 			role = "user",
 			content = formatted_content,
-		}, { reference = id, visible = false })
+		}, { context_id = id, visible = false })
 
-		cdc.last_chat().references:add({
+		cdc.last_chat().context:add({
 			bufnr = bufnr,
 			id = id,
 			path = path,
 			source = "codecompanion.strategies.chat.slash_commands.buffer",
-			opts = {},
+			opts = { watched = true },
 		})
+
 		cdc.last_chat().ui:set_virtual_text("Added: " .. vim.fn.fnamemodify(path, ":t"))
 	end
 
@@ -291,15 +269,19 @@ M.add_tab_buffers_reference = function()
 
 	for _, win in ipairs(buffers) do
 		local bufnr = vim.api.nvim_win_get_buf(win)
+		local buf_utils = require("codecompanion.utils.buffers")
 		-- local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
 		local buftype = vim.bo[bufnr].buftype
 		local path = vim.api.nvim_buf_get_name(bufnr)
 
 		-- 일반 파일 버퍼만 처리 (특수 버퍼는 제외)
 		if buftype == "" and path ~= "" then
-			local content = require("codecompanion.utils.buffers").format_with_line_numbers(bufnr)
+			local content = buf_utils.format_for_llm({
+				bufnr = bufnr,
+				path = buf_utils.get_info(bufnr).path,
+			})
 			local message = "Here is the content from"
-			local name = chat.references:make_id_from_buf(bufnr)
+			local name = chat.context:make_id_from_buf(bufnr)
 
 			if name == "" then
 				name = "Buffer " .. bufnr
@@ -317,8 +299,8 @@ M.add_tab_buffers_reference = function()
 
 			-- 중복 체크
 			local is_duplicate = false
-			for _, msg in ipairs(chat.references.Chat.agents.messages) do
-				if msg.content == formatted_content then
+			for _, ctx in ipairs(chat.context.Chat.context_items) do
+				if ctx.id == id then
 					is_duplicate = true
 					table.insert(skipped_buffers, vim.fn.fnamemodify(path, ":t"))
 					break
@@ -330,14 +312,14 @@ M.add_tab_buffers_reference = function()
 				chat:add_message({
 					role = "user",
 					content = formatted_content,
-				}, { reference = id, visible = false })
+				}, { context_id = id, visible = false })
 
-				chat.references:add({
+				chat.context:add({
 					bufnr = bufnr,
 					id = id,
 					path = path,
 					source = "codecompanion.strategies.chat.slash_commands.buffer",
-					opts = {},
+					opts = { watched = true },
 				})
 
 				table.insert(added_buffers, vim.fn.fnamemodify(path, ":t"))
@@ -393,7 +375,6 @@ M.codecompanion_breadcrumbs = function()
 
 	-- DEPRECATED:: 2025-05-26 업데이트 이후 해당 key 사라짐
 	-- local reasoning_effort = chat.settings and chat.settings.reasoning_effort or " no"
-	local reasoning_effort = chat._chat_has_reasoning and "yes" or "no" -- deprecated
 	local max_tokens = chat.settings.max_tokens
 	local used_tokens = chat.ui.tokens or 0
 	local percentage_usage = "0"
@@ -402,6 +383,7 @@ M.codecompanion_breadcrumbs = function()
 		percentage_usage = string.format("%.1f", (used_tokens / max_tokens) * 100)
 	end
 
+	-- DEPRECATED:: 2025-05-26 업데이트 이후 관련 key 사라짐
 	-- local result = " " .. reasoning_effort .. "    󰰤  " .. percentage_usage .. "󱉸 (" .. used_tokens .. ")"
 	local result = percentage_usage .. " 󱉸    (used: " .. used_tokens .. ")"
 	local needed_padding = 24 - vim.api.nvim_strwidth(result)
