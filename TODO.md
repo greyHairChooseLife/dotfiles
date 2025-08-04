@@ -76,3 +76,16 @@
 
 
 
+**lualine**
+- lualine의 inactive에서 a_파트를 고정 색이 아니라 만약 현재 탭에 동일한 버퍼가 active인 경우에 똑같이 오렌지색으로 넣어주자.
+
+
+
+
+**render markdown**
+- render markdown todo list 관련 재조정
+  - callout에 todo도 개선
+  - 기존 스티커 형태로 사용하는건 안먹힌다.
+  - cancel, done, todo 등으로 전환하는 키맵도 있어야겠다.
+
+
