@@ -39,6 +39,30 @@ save_successful_history() {
     return $exit_code
 }
 
+delete_history_entry() {
+    local pid="$1"
+    local entry="$2"
+    local histfile="$HOME/.bash_history_dir/pid_$pid"
+    local tmpfile
+    tmpfile=$(mktemp)
+    grep -F -v -- "$entry" "$histfile" > "$tmpfile" && mv "$tmpfile" "$histfile"
+}
+delete_history_entry_global() {
+    local entry="$1"
+    local histdir="$HOME/.bash_history_dir"
+    local tmpfile
+    for file in "$histdir"/pid_*; do
+        [ -e "$file" ] || continue
+        if grep -F -q -- "$entry" "$file"; then
+            tmpfile=$(mktemp)
+            grep -F -v -- "$entry" "$file" > "$tmpfile" && mv "$tmpfile" "$file"
+            rm -f "$tmpfile"
+            return 0
+        fi
+    done
+    return 1
+}
+
 export PROMPT_COMMAND="save_successful_history"
 
 get_full_field_list_per_process() {
@@ -68,6 +92,7 @@ per_process_history() {
                 --bind "alt-2:put(${pwd_escaped})" \
                 --bind "alt-3:reload(get_full_field_list_per_process ${pid})" \
                 --bind "alt-4:reload(get_full_field_list_per_process_no_path ${pid})" \
+                --bind "alt-d:execute(delete_history_entry ${pid} {})+reload(get_full_field_list_per_process ${pid})" \
             | awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}'
     )"
 }
@@ -95,8 +120,9 @@ global_history() {
                 --bind 'alt-e:execute(printf "%s" {4..} | xclip -selection clipboard)' \
                 --bind "alt-1:put(${today})" \
                 --bind "alt-2:put(${pwd_escaped})" \
-                --bind "alt-3:reload(get_full_field_list_global ${pid})" \
-                --bind "alt-4:reload(get_full_field_list_global_no_path ${pid})" \
+                --bind "alt-3:reload(get_full_field_list_global)" \
+                --bind "alt-4:reload(get_full_field_list_global_no_path)" \
+                --bind "alt-d:execute(delete_history_entry_global {})+reload(get_full_field_list_global)" \
             | awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}'
     )"
 }
@@ -106,6 +132,8 @@ cleanup_old_history() {
     find ~/.bash_history_dir -name "pid_*" -mtime +7 -delete
 }
 
+export -f delete_history_entry
+export -f delete_history_entry_global
 export -f get_full_field_list_per_process
 export -f get_full_field_list_per_process_no_path
 export -f get_full_field_list_global
