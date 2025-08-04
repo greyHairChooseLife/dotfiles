@@ -43,6 +43,7 @@ return {
 			path_dispaly = { "tail" },
 		},
 		auto_save_enabled = false,
+		-- ignore_filetypes_on_save = { "checkhealth", "codecompanion" }, -- codecompanion은 내 방식이 더 낫다, 지금은
 		pre_save_cmds = {
 			function()
 				local cdc = require("codecompanion")

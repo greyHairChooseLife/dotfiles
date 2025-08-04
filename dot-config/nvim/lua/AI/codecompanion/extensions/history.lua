@@ -13,6 +13,11 @@ return {
 		delete_on_clearing_chat = false,
 		-- Picker interface ("telescope" or "default")
 		picker = "snacks",
+		picker_keymaps = {
+			rename = { n = "<r>", i = "<A-r>" },
+			delete = { n = "<d>", i = "<A-d>" },
+			-- duplicate = { n = "<C-y>", i = "<C-y>" },
+		},
 		---Enable detailed logging for history extension
 		enable_logging = false,
 		---Directory path to save the chats

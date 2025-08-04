@@ -131,10 +131,10 @@ return {
 					keymaps = {
 						close = { modes = { n = "<C-c>", i = "<C-c>" } },
 						send = { modes = { i = { "<C-s>", "<A-Enter>" } } },
-						stop = { modes = { n = "gs" } },
+						stop = { modes = { n = "<Esc><Esc><Esc>" } },
 						pin = { modes = { n = "grp" } },
 						watch = { modes = { n = "grw" } },
-						goto_file_under_cursor = { modes = { n = "grt" } },
+						goto_file_under_cursor = { modes = { n = "gO" } },
 						clear = { modes = { n = "gX" } },
 						previous_header = { modes = { n = "<C-p>" } },
 						next_header = { modes = { n = "<C-n>" } },
@@ -142,6 +142,7 @@ return {
 						next_chat = { modes = { n = "[[" } },
 						system_prompt = { modes = { n = "gts" } }, -- toggle system prompts
 						regenerate = { modes = { n = "gR" } },
+						copilot_stats = { modes = { n = "gs" } },
 					},
 					adapter = {
 						name = "copilot",
