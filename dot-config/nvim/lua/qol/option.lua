@@ -1,6 +1,7 @@
 local opt = vim.opt
 
 opt.background = "dark"
+opt.cursorline = true
 
 -- 'true color' for tmux with alacritty
 -- ref: https://gist.github.com/andersevenrud/015e61af2fd264371032763d4ed965b6

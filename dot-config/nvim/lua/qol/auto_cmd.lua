@@ -10,6 +10,9 @@ local float_win_group = vim.api.nvim_create_augroup("FloatWinSettings", { clear 
 vim.api.nvim_create_autocmd("WinEnter", {
 	group = float_win_group,
 	callback = function()
+		if vim.bo.buftype == "" or vim.bo.buftype == "help" then
+			vim.wo.cursorline = false
+		end
 		local win = vim.api.nvim_get_current_win()
 		local config = vim.api.nvim_win_get_config(win)
 
@@ -36,8 +39,20 @@ vim.api.nvim_create_autocmd("WinEnter", {
 	end,
 })
 
+vim.api.nvim_create_autocmd("WinLeave", {
+	callback = function()
+		if vim.bo.buftype == "" or vim.bo.buftype == "help" then
+			vim.wo.cursorline = true
+		end
+	end,
+})
+
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	callback = function()
+		if vim.bo.buftype == "" or vim.bo.buftype == "help" then
+			vim.wo.cursorline = false
+		end
+
 		-- reviving session breaks NvimTree buffer sometimes
 		if vim.bo.filetype == "NvimTree" then
 			local api = require("nvim-tree.api")
