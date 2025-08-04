@@ -393,17 +393,17 @@ M.codecompanion_breadcrumbs = function()
 
 	-- DEPRECATED:: 2025-05-26 업데이트 이후 해당 key 사라짐
 	-- local reasoning_effort = chat.settings and chat.settings.reasoning_effort or " no"
-	local reasoning_effort = chat._chat_has_reasoning and "yes" or "no"
+	local reasoning_effort = chat._chat_has_reasoning and "yes" or "no" -- deprecated
 	local max_tokens = chat.settings.max_tokens
-	local used_tokens = chat.ui.tokens
+	local used_tokens = chat.ui.tokens or 0
 	local percentage_usage = "0"
 
 	if used_tokens ~= nil then
 		percentage_usage = string.format("%.1f", (used_tokens / max_tokens) * 100)
 	end
-	used_tokens = 0
 
-	local result = " " .. reasoning_effort .. "    󰰤  " .. percentage_usage .. "󱉸 (" .. used_tokens .. ")"
+	-- local result = " " .. reasoning_effort .. "    󰰤  " .. percentage_usage .. "󱉸 (" .. used_tokens .. ")"
+	local result = percentage_usage .. " 󱉸    (used: " .. used_tokens .. ")"
 	local needed_padding = 24 - vim.api.nvim_strwidth(result)
 
 	if needed_padding > 0 then
