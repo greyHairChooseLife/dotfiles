@@ -98,9 +98,11 @@ per_process_history() {
 }
 
 # Global history function (using rg)
+# datetime으로 시작하는것만 추려
 get_full_field_list_global() {
     cat ~/.bash_history_dir/pid_* 2> /dev/null \
         | awk '{ key=""; for (i=4; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
+        | rg -- '^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}' \
         | sort -n -k1,2
 }
 get_full_field_list_global_no_path() {
