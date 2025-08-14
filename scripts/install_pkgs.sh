@@ -35,7 +35,7 @@ sudo pacman -S --needed \
     magic-wormhole \
     man-db \
     man-pages \
-    neofetch \
+    fastfetch \
     neovim \
     network-manager-applet \
     networkmanager \

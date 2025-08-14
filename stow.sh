@@ -14,6 +14,12 @@ if ! command -v yay &> /dev/null; then
     echo "yay installed successfully."
 fi
 
+read -p "Update mirror server? (y/n): " update_mirror_answer
+if [ "$update_mirror_answer" == 'y' ]; then
+    echo "Starting mirror server updating..."
+    bash scripts/update_mirror.sh
+fi
+
 # Ask if user wants to install packages
 read -p "Install basic packages? (y/n): " install_answer
 if [ "$install_answer" == 'y' ]; then
