@@ -1,16 +1,20 @@
 btkb() {
-    if [ "$HOSTNAME" != "Lenovo-ideapad" ] && [ "$HOSTNAME" != "cbpm-labtop" ]; then
-        exit 0
-    fi
+    case "$HOSTNAME" in
+        "Lenovo-ideapad" | "cbpm-labtop" | "sy-x390") ;;
+        *)
+            echo "Not a recognized hostname"
+            return 1
+            ;;
+    esac
 
-    DEVICE_NAME="AT Translated Set 2 keyboard" # 내장 키보드 이름
+    local DEVICE_NAME="AT Translated Set 2 keyboard" # 내장 키보드 이름
 
     if [ "$1" == "on" ]; then
         echo "Bluetooth 키보드를 사용합니다."
         xinput disable "$DEVICE_NAME"
         setxkbmap -option
-        echo "  - 내장 키보드       : 비활성화"
-        echo "  - ctrl/capsLck swap : 비활성화"
+        echo "  - 내장 키보드       : off"
+        echo "  - ctrl/capsLck swap : off"
 
     elif [ "$1" == "off" ]; then
         echo "내장 키보드를 사용합니다."
@@ -34,8 +38,8 @@ btkb() {
             setxkbmap -device "$DEVICE_ID" -option ctrl:swapcaps
             sleep 0.01
         done
-        echo "  - 내장 키보드       : 활성화"
-        echo "  - ctrl/capsLck swap : 활성화"
+        echo "  - 내장 키보드       : on"
+        echo "  - ctrl/capsLck swap : on"
     else
         echo "사용법: btkb {on|off}"
         return 1 # 오류 반환
