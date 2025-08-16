@@ -21,7 +21,7 @@ dynamic_title = true
 [font]
 # normal.family = "D2Coding"
 normal.family = "D2CodingLigature Nerd Font Propo"
-size = 13.0
+size = 8.0
 offset.x = 1
 
 [keyboard]
@@ -45,7 +45,7 @@ search.matches = { background = "#FFFF00" }
 search.focused_match = { background = "#0000FF" }
 # Colors which should be used to draw the terminal cursor. If these are unset,
 # the cursor color will be the inverse of the cell color.
-cursor = { text = "#000000", cursor = "#32CD32" }
+cursor = { text = "#000000", cursor = "#ffffff" }
 
 [terminal.shell]
 program = "/bin/bash"
