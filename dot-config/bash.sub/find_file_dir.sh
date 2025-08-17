@@ -1,14 +1,35 @@
 fzf_find_file() {
+    # Setup Überzug++
+    case "$(uname -a)" in
+        *Darwin*) UEBERZUG_TMP_DIR="$TMPDIR" ;;
+        *) UEBERZUG_TMP_DIR="/tmp" ;;
+    esac
+
+    cleanup() {
+        ueberzugpp cmd -s "$SOCKET" -a exit
+    }
+    trap cleanup HUP INT QUIT TERM EXIT
+
+    UB_PID_FILE="$UEBERZUG_TMP_DIR/.$(uuidgen)"
+    ueberzugpp layer --no-stdin --silent --use-escape-codes --pid-file "$UB_PID_FILE"
+    UB_PID=$(cat "$UB_PID_FILE")
+
+    export SOCKET="$UEBERZUG_TMP_DIR"/ueberzugpp-"$UB_PID".socket
+
+    # Run fzf with Überzug++ for image previews
     local curr_dir=${PWD/$HOME/\~}
-    fd --type file \
+    fd --type file |sort \
         | sort \
         | fzf --prompt 'Files (--depth=end) & '${curr_dir}'> ' \
             --header '<Alt+1~3>: depth lvl, <Enter>: editr' \
-            --bind 'alt-1:change-prompt(Files (--depth=1) & '${curr_dir}'> )+reload(fd --type file --max-depth 1)' \
-            --bind 'alt-2:change-prompt(Files (--depth=2) & '${curr_dir}'> )+reload(fd --type file --max-depth 2)' \
-            --bind 'alt-3:change-prompt(Files (--depth=end) & '${curr_dir}'> )+reload(fd --type file)' \
-            --bind 'enter:become(nvim {})' \
-            --preview '[[ {} =~ ('.jpg'|'.JPG'|'.jpeg'|'.png'|'.PNG')$ ]] && catimg -r2 -w$COLUMNS {} || [[ $FZF_PROMPT =~ Files ]] && bat --color=always {} || tree -C {}'
+            --bind 'alt-1:change-prompt(Files (--depth=1) & '${curr_dir}'> )+reload(fd --type file --max-depth 1 |sort)' \
+            --bind 'alt-2:change-prompt(Files (--depth=2) & '${curr_dir}'> )+reload(fd --type file --max-depth 2 |sort)' \
+            --bind 'alt-3:change-prompt(Files (--depth=end) & '${curr_dir}'> )+reload(fd --type file |sort)' \
+            --bind 'enter:become(nvim -O {+})' \
+            --preview '[[ {} =~ (".jpg"|".JPG"|".jpeg"|".png"|".PNG"|".svg")$ ]] && ueberzugpp cmd -s $SOCKET -i fzfpreview -a add -x $FZF_PREVIEW_LEFT -y $FZF_PREVIEW_TOP --max-width $FZF_PREVIEW_COLUMNS --max-height $FZF_PREVIEW_LINES -f {} || (ueberzugpp cmd -s $SOCKET -a remove -i fzfpreview && [[ $FZF_PROMPT =~ Files ]] && bat --color=always {} || tree -C {})'
+
+    # Cleanup Überzug++
+    ueberzugpp cmd -s "$SOCKET" -a exit
 }
 
 # include hidden files & gitignored

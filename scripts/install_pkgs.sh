@@ -105,7 +105,9 @@ sudo pacman -S --needed \
     yq \
     cmus \
     rclone \
-    fuse3
+    fuse3 \
+    ueberzugpp \
+    tldr
 
 # Install AUR packages
 yay -S --needed \
@@ -120,7 +122,8 @@ yay -S --needed \
     ttf-dejavu-nerd \
     xbanish \
     vi-mongo \
-    lazydocker
+    lazydocker \
+    localsend-bin
 
 # Enable important services
 sudo systemctl enable NetworkManager
