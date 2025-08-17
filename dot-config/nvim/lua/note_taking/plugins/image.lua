@@ -1,7 +1,7 @@
 return {
   "3rd/image.nvim",
-  -- enabled = require("utils").is_alacritty or false,
-  enabled = false,
+  enabled = require("utils").is_alacritty or false,
+  -- enabled = false,
   dependencies = { "luarocks.nvim" },
   lazy = false,
   cond = function()

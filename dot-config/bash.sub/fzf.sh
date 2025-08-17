@@ -10,7 +10,7 @@ export FZF_DEFAULT_OPTS="
   --bind 'ctrl-d:half-page-down'
   --bind 'alt-k:preview-half-page-up'
   --bind 'alt-j:preview-half-page-down'
-  --bind 'alt-p:toggle-preview'
+  --bind 'alt-p:change-preview-window(right,70%|down,40%,border-horizontal|up,90%,border-horizontal|hidden|right)'
   --bind 'tab:toggle-up'
   --bind 'shift-tab:toggle-down'
   --bind 'ctrl-e:execute(printf "%s" {} | xclip -selection clipboard)+abort'
@@ -24,3 +24,4 @@ export FZF_DEFAULT_OPTS="
 # √
 
 # reference by https://github.com/junegunn/fzf/blob/master/ADVANCED.md
+# https://github.com/junegunn/fzf/wiki/Examples
