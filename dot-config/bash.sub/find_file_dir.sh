@@ -1,4 +1,9 @@
-fzf_find_file() {
+# Unified function that combines both find_file and find_file_hidden
+fzf_find_file_unified() {
+    local show_hidden=${1:-0}  # Default: don't show hidden files
+
+    ueberzugpp cmd -s "$SOCKET" -a exit
+
     # Setup Überzug++
     case "$(uname -a)" in
         *Darwin*) UEBERZUG_TMP_DIR="$TMPDIR" ;;
@@ -18,32 +23,34 @@ fzf_find_file() {
 
     # Run fzf with Überzug++ for image previews
     local curr_dir=${PWD/$HOME/\~}
-    fd --type file |sort \
-        | sort \
-        | fzf --prompt 'Files (--depth=end) & '${curr_dir}'> ' \
-            --header '<Alt+1~3>: depth lvl, <Enter>: editr' \
-            --bind 'alt-1:change-prompt(Files (--depth=1) & '${curr_dir}'> )+reload(fd --type file --max-depth 1 |sort)' \
-            --bind 'alt-2:change-prompt(Files (--depth=2) & '${curr_dir}'> )+reload(fd --type file --max-depth 2 |sort)' \
-            --bind 'alt-3:change-prompt(Files (--depth=end) & '${curr_dir}'> )+reload(fd --type file |sort)' \
+
+    # Set up initial commands based on hidden flag
+    local hidden_flag=""
+    local hidden_prompt=""
+    local toggle_cmd="fzf_find_file_unified 0"
+
+    if [[ "$show_hidden" -eq 1 ]]; then
+        hidden_flag="--hidden -I"
+        hidden_prompt="(+hidden) "
+        toggle_cmd="fzf_find_file_unified 0"
+    else
+        toggle_cmd="fzf_find_file_unified 1"
+    fi
+
+            # --bind "alt-h:abort+execute($toggle_cmd)" \
+    # Initial command
+    fd --type file $hidden_flag | sort \
+        | fzf --prompt "${hidden_prompt}Files (--depth=end) & ${curr_dir}> " \
+            --header '<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: editor' \
+            --bind "alt-h:become($toggle_cmd)" \
+            --bind "alt-1:change-prompt(${hidden_prompt}Files (--depth=1) & ${curr_dir}> )+reload(fd --type file $hidden_flag --max-depth 1 | sort)" \
+            --bind "alt-2:change-prompt(${hidden_prompt}Files (--depth=2) & ${curr_dir}> )+reload(fd --type file $hidden_flag --max-depth 2 | sort)" \
+            --bind "alt-3:change-prompt(${hidden_prompt}Files (--depth=end) & ${curr_dir}> )+reload(fd --type file $hidden_flag | sort)" \
             --bind 'enter:become(nvim -O {+})' \
             --preview '[[ {} =~ (".jpg"|".JPG"|".jpeg"|".png"|".PNG"|".svg")$ ]] && ueberzugpp cmd -s $SOCKET -i fzfpreview -a add -x $FZF_PREVIEW_LEFT -y $FZF_PREVIEW_TOP --max-width $FZF_PREVIEW_COLUMNS --max-height $FZF_PREVIEW_LINES -f {} || (ueberzugpp cmd -s $SOCKET -a remove -i fzfpreview && [[ $FZF_PROMPT =~ Files ]] && bat --color=always {} || tree -C {})'
 
     # Cleanup Überzug++
     ueberzugpp cmd -s "$SOCKET" -a exit
-}
-
-# include hidden files & gitignored
-fzf_find_file_hidden() {
-    local curr_dir=${PWD/$HOME/\~}
-    fd --type file --hidden -I \
-        | sort \
-        | fzf --prompt '(+hidden) Files (--depth=end) & '${curr_dir}'> ' \
-            --header '<Alt+1~3>: depth lvl, <Enter>: editr' \
-            --bind 'alt-1:change-prompt((+hidden) Files (--depth=1) & '${curr_dir}'> )+reload(fd --type file --hidden -I --max-depth 1)' \
-            --bind 'alt-2:change-prompt((+hidden) Files (--depth=2) & '${curr_dir}'> )+reload(fd --type file --hidden -I --max-depth 2)' \
-            --bind 'alt-3:change-prompt((+hidden) Files (--depth=end) & '${curr_dir}'> )+reload(fd --type file --hidden -I)' \
-            --bind 'enter:become(nvim {})' \
-            --preview '[[ {} =~ ('.jpg'|'.JPG'|'.jpeg'|'.png'|'.PNG')$ ]] && catimg -r2 -w$COLUMNS {} || [[ $FZF_PROMPT =~ Files ]] && bat --color=always {} || tree -C {}'
 }
 
 fzf_find_dir() {
@@ -52,7 +59,8 @@ fzf_find_dir() {
     dir=$(fd --type d --max-depth 1 \
         | sort \
         | fzf --prompt 'Dir (--depth=1) & '${curr_dir}'> ' \
-            --header '<Alt+1~3>: depth lvl, <Enter>: CD' \
+            --header '<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: cd into' \
+            --bind "alt-h:become(fzf_find_dir_hidden)" \
             --bind 'alt-1:change-prompt(Dir (--depth=1) & '${curr_dir}'> )+reload(fd --type d --max-depth 1)' \
             --bind 'alt-2:change-prompt(Dir (--depth=2) & '${curr_dir}'> )+reload(fd --type d --max-depth 2)' \
             --bind 'alt-3:change-prompt(Dir (--depth=end) & '${curr_dir}'> )+reload(fd --type d)' \
@@ -71,7 +79,8 @@ fzf_find_dir_hidden() {
     dir=$(fd --type d --hidden -I --max-depth 1 \
         | sort \
         | fzf --prompt '(+hidden) Dir (--depth=1) & '${curr_dir}'> ' \
-            --header '<Alt+1~3>: depth lvl, <Enter>: CD' \
+            --header '<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: cd into' \
+            --bind "alt-h:become(fzf_find_dir)" \
             --bind 'alt-1:change-prompt((+hidden) Dir (--depth=1) & '${curr_dir}'> )+reload(fd --type d --hidden -I --max-depth 1)' \
             --bind 'alt-2:change-prompt((+hidden) Dir (--depth=2) & '${curr_dir}'> )+reload(fd --type d --hidden -I --max-depth 2)' \
             --bind 'alt-3:change-prompt((+hidden) Dir (--depth=end) & '${curr_dir}'> )+reload(fd --type d --hidden -I)' \
@@ -83,6 +92,7 @@ fzf_find_dir_hidden() {
         fi
     fi
 }
+
 
 # Switch between Ripgrep mode and fzf filtering mode (CTRL-T)
 smart_grep() {
@@ -121,9 +131,13 @@ smart_grep_hidden() {
         --bind 'enter:become(nvim {1} +{2})'
 }
 
-alias ff='fzf_find_file'
-alias ff.='fzf_find_file_hidden'
-alias ffd='fzf_find_dir'
-alias ffd.='fzf_find_dir_hidden'
-alias ffg='smart_grep'
+# alias ff='fzf_find_file'
+# alias ff.='fzf_find_file_hidden'
+# alias ffd='fzf_find_dir'
+# alias ffd.='fzf_find_dir_hidden'
+# alias ffg='smart_grep'
 alias ffg.='smart_grep_hidden'
+
+export -f fzf_find_file_unified
+export -f fzf_find_dir
+export -f fzf_find_dir_hidden
