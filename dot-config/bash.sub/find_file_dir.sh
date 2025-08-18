@@ -47,7 +47,7 @@ fzf_find_file_unified() {
             --bind "alt-2:change-prompt(${hidden_prompt}Files (--depth=2) & ${curr_dir}> )+reload(fd --type file $hidden_flag --max-depth 2 | sort)" \
             --bind "alt-3:change-prompt(${hidden_prompt}Files (--depth=end) & ${curr_dir}> )+reload(fd --type file $hidden_flag | sort)" \
             --bind 'enter:become(nvim -O {+})' \
-            --preview '[[ {} =~ (".jpg"|".JPG"|".jpeg"|".png"|".PNG"|".svg")$ ]] && ueberzugpp cmd -s $SOCKET -i fzfpreview -a add -x $FZF_PREVIEW_LEFT -y $FZF_PREVIEW_TOP --max-width $FZF_PREVIEW_COLUMNS --max-height $FZF_PREVIEW_LINES -f {} || (ueberzugpp cmd -s $SOCKET -a remove -i fzfpreview && [[ $FZF_PROMPT =~ Files ]] && bat --color=always {} || tree -C {})'
+            --preview '[[ {} =~ (".jpg"|".JPG"|".jpeg"|".png"|".PNG"|".svg")$ ]] && ueberzugpp cmd -s $SOCKET -i fzfpreview -a add -x $FZF_PREVIEW_LEFT -y $FZF_PREVIEW_TOP --max-width $FZF_PREVIEW_COLUMNS --max-height $FZF_PREVIEW_LINES -f {} || (ueberzugpp cmd -s $SOCKET -a remove -i fzfpreview && [[ $FZF_PROMPT =~ Files ]] && bat --color=always --plain {} || tree -C {})'
 
     # Cleanup Überzug++
     ueberzugpp cmd -s "$SOCKET" -a exit
@@ -92,7 +92,6 @@ fzf_find_dir_hidden() {
         fi
     fi
 }
-
 
 # Switch between Ripgrep mode and fzf filtering mode (CTRL-T)
 smart_grep() {
