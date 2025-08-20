@@ -16,12 +16,25 @@ export FZF_DEFAULT_OPTS="
   --bind 'ctrl-e:execute(printf "%s" {} | xclip -selection clipboard)+abort'
   --bind 'alt-e:execute(printf "%s" {} | xclip -selection clipboard)'
   --bind 'ctrl-alt-w:execute(echo {+} | xargs -d \" \" -I{} printf \"%s\\n\" {} | tac | xclip -selection clipboard)'
-  --color='preview-bg:#222222,hl:#1e90ff,hl+:#1e90ff,bg+:#444444,border:#222222,pointer:#1e90ff,bg+:#444444,scrollbar:#1e90ff,preview-scrollbar:#1e90ff'
-  --pointer=' '
-  --marker='●∙'
+  --color='
+    hl:#1e90ff,
+    hl+:#1e90ff,
+    bg:#000000,
+    gutter:#000000
+    bg+:#444444,
+    scrollbar:#1e90ff,
+    preview-bg:#222222,
+    border:#222222,
+    preview-scrollbar:#1e90ff,
+    pointer:#1e90ff,
+    marker:#1e90ff,
+    header:#ffcc00,
+  '
+  --pointer=''
+  --marker=' '
   --scrollbar='▉'
 "
-# √
+# √ 󰛂 󰜴   󰧂 
 
 # reference by https://github.com/junegunn/fzf/blob/master/ADVANCED.md
 # https://github.com/junegunn/fzf/wiki/Examples
