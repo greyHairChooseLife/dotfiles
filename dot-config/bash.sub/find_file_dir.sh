@@ -42,9 +42,9 @@ fzf_find_file_unified() {
         | fzf --prompt "${hidden_prompt}Files (--depth=end) & ${curr_dir}/" \
             --header '<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: editor' \
             --bind "alt-h:become($toggle_cmd)" \
-            --bind "alt-1:change-prompt(${hidden_prompt}Files (--depth=1) & ${curr_dir}/ )+reload(fd --type file $hidden_flag --max-depth 1 | sort)" \
-            --bind "alt-2:change-prompt(${hidden_prompt}Files (--depth=2) & ${curr_dir}/ )+reload(fd --type file $hidden_flag --max-depth 2 | sort)" \
-            --bind "alt-3:change-prompt(${hidden_prompt}Files (--depth=end) & ${curr_dir}/ )+reload(fd --type file $hidden_flag | sort)" \
+            --bind "alt-1:change-prompt(${hidden_prompt}Files (--depth=1) & ${curr_dir}/)+reload(fd --type file $hidden_flag --max-depth 1 | sort)" \
+            --bind "alt-2:change-prompt(${hidden_prompt}Files (--depth=2) & ${curr_dir}/)+reload(fd --type file $hidden_flag --max-depth 2 | sort)" \
+            --bind "alt-3:change-prompt(${hidden_prompt}Files (--depth=end) & ${curr_dir}/)+reload(fd --type file $hidden_flag | sort)" \
             --bind "enter:become(nvim -O {+})" \
             --preview '[[ {} =~ (".jpg"|".JPG"|".jpeg"|".png"|".PNG"|".svg")$ ]] && ueberzugpp cmd -s $SOCKET -i fzfpreview -a add -x $FZF_PREVIEW_LEFT -y $FZF_PREVIEW_TOP --max-width $FZF_PREVIEW_COLUMNS --max-height $FZF_PREVIEW_LINES -f {} || (ueberzugpp cmd -s $SOCKET -a remove -i fzfpreview && [[ $FZF_PROMPT =~ Files ]] && bat --color=always --plain {} || tree -C {})'
 
