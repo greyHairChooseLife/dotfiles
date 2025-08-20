@@ -21,13 +21,13 @@ dynamic_title = true
 [font]
 # normal.family = "D2Coding"
 normal.family = "D2CodingLigature Nerd Font Propo"
-size = 8.0
+size = 11.0
 offset.x = 1
 
 [keyboard]
 bindings = [
   { key = "c", mods = "Control|Shift", action = "Copy" },
-  { key = "v", mods = "Control|Alt", action = "Paste" },
+  { key = "v", mods = "Control|Shift", action = "Paste" },
   { key = "n", mods = "Control|Shift", action = "SpawnNewInstance" },
   { key = "i", mods = "Alt", action = "ToggleViMode" },
   { key = "Space", mods = "Control", action = "ReceiveChar" },
