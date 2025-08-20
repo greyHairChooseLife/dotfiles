@@ -55,24 +55,22 @@ look_commit() {
 look_graph_log() {
     local command_list=$(
         cat << EOF
-gls   /  git log --oneline --graph                 --all  --decorate --simplify-by-decoration
-glg   /  git log --oneline --graph --pretty=medium --stat
-glga  /  git log --oneline --graph --pretty=medium --all
-glgo  /  git log --oneline --graph
-glgao /  git log --oneline --graph                 --all
-glgP  /  git log --oneline --graph --pretty=medium origin/HEAD..
+total state    :  git log                 --all  --decorate --simplify-by-decoration
+oneline        :  git log
+oneline --all  :  git log                 --all
+medium         :  git log --pretty=medium
+medium  --all  :  git log --pretty=medium --all
+medium  --stat :  git log --pretty=medium        --stat
+fetched        :  git log --pretty=medium               HEAD...FETCH_HEAD
+to push        :  git log --pretty=medium               origin/HEAD..
 EOF
     )
 
-    _extract_git_command() {
-        echo "$1" | sed 's/^[^ ]* - //'
-    }
-
-    local header="<Enter>: run the command"
+    local header="<Enter>: run the command,  common option: '--oneline --graph --color=always'"
 
     local cmd=$(echo "$command_list" | fzf \
         --header="$header" \
-        --preview="echo {} | sed 's/.*\/  //' | sed 's/git log/git log --color=always/' | bash")
+        --preview="echo {} | sed 's/.*:  //' | sed 's/git log/git log --oneline --graph --color=always/' | bash")
 
     eval $(echo "$cmd" | sed 's/.*\/  //')
 }
