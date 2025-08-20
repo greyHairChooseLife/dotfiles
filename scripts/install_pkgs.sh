@@ -123,7 +123,8 @@ yay -S --needed \
     xbanish \
     vi-mongo \
     lazydocker \
-    localsend-bin
+    localsend-bin \
+    wkhtmltopdf-bin
 
 # Enable important services
 sudo systemctl enable NetworkManager
