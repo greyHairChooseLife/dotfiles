@@ -37,16 +37,15 @@ fzf_find_file_unified() {
         toggle_cmd="fzf_find_file_unified 1"
     fi
 
-            # --bind "alt-h:abort+execute($toggle_cmd)" \
     # Initial command
     fd --type file $hidden_flag | sort \
-        | fzf --prompt "${hidden_prompt}Files (--depth=end) & ${curr_dir}> " \
+        | fzf --prompt "${hidden_prompt}Files (--depth=end) & ${curr_dir}/" \
             --header '<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: editor' \
             --bind "alt-h:become($toggle_cmd)" \
-            --bind "alt-1:change-prompt(${hidden_prompt}Files (--depth=1) & ${curr_dir}> )+reload(fd --type file $hidden_flag --max-depth 1 | sort)" \
-            --bind "alt-2:change-prompt(${hidden_prompt}Files (--depth=2) & ${curr_dir}> )+reload(fd --type file $hidden_flag --max-depth 2 | sort)" \
-            --bind "alt-3:change-prompt(${hidden_prompt}Files (--depth=end) & ${curr_dir}> )+reload(fd --type file $hidden_flag | sort)" \
-            --bind 'enter:become(nvim -O {+})' \
+            --bind "alt-1:change-prompt(${hidden_prompt}Files (--depth=1) & ${curr_dir}/ )+reload(fd --type file $hidden_flag --max-depth 1 | sort)" \
+            --bind "alt-2:change-prompt(${hidden_prompt}Files (--depth=2) & ${curr_dir}/ )+reload(fd --type file $hidden_flag --max-depth 2 | sort)" \
+            --bind "alt-3:change-prompt(${hidden_prompt}Files (--depth=end) & ${curr_dir}/ )+reload(fd --type file $hidden_flag | sort)" \
+            --bind "enter:become(nvim -O {+})" \
             --preview '[[ {} =~ (".jpg"|".JPG"|".jpeg"|".png"|".PNG"|".svg")$ ]] && ueberzugpp cmd -s $SOCKET -i fzfpreview -a add -x $FZF_PREVIEW_LEFT -y $FZF_PREVIEW_TOP --max-width $FZF_PREVIEW_COLUMNS --max-height $FZF_PREVIEW_LINES -f {} || (ueberzugpp cmd -s $SOCKET -a remove -i fzfpreview && [[ $FZF_PROMPT =~ Files ]] && bat --color=always --plain {} || tree -C {})'
 
     # Cleanup Überzug++
@@ -54,20 +53,25 @@ fzf_find_file_unified() {
 }
 
 fzf_find_dir() {
-    local curr_dir=${PWD/$HOME/\~}
+    local curr_dir="${PWD/$HOME/\~}"
+    local prompt="Dir (--depth=1) & ${curr_dir}/"
+    local header="<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: cd into"
     local dir
     dir=$(fd --type d --max-depth 1 \
-        | sort \
-        | fzf --prompt 'Dir (--depth=1) & '${curr_dir}'> ' \
-            --header '<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: cd into' \
+        | awk 'BEGIN{print ".."} {print}' \
+        | sort -r \
+        | fzf \
+            --prompt="$prompt" \
+            --header="$header" \
             --bind "alt-h:become(fzf_find_dir_hidden)" \
-            --bind 'alt-1:change-prompt(Dir (--depth=1) & '${curr_dir}'> )+reload(fd --type d --max-depth 1)' \
-            --bind 'alt-2:change-prompt(Dir (--depth=2) & '${curr_dir}'> )+reload(fd --type d --max-depth 2)' \
-            --bind 'alt-3:change-prompt(Dir (--depth=end) & '${curr_dir}'> )+reload(fd --type d)' \
+            --bind "alt-1:change-prompt(Dir (--depth=1) & ${curr_dir}/)+reload(fd --type d --max-depth 1)" \
+            --bind "alt-2:change-prompt(Dir (--depth=2) & ${curr_dir}/)+reload(fd --type d --max-depth 2)" \
+            --bind "alt-3:change-prompt(Dir (--depth=end) & ${curr_dir}/)+reload(fd --type d)" \
             --preview 'tree --gitignore -dC -L 3 {}')
 
     if [ -n "$dir" ]; then
-        cd "$dir" && pwd && if [ $(fd --type d --max-depth 1 | wc -l) -gt 0 ]; then
+        cd "$dir"
+        if [ $(fd --type d --max-depth 1 | wc -l) -gt 0 ]; then
             fzf_find_dir
         fi
     fi
@@ -75,20 +79,25 @@ fzf_find_dir() {
 
 fzf_find_dir_hidden() {
     local curr_dir=${PWD/$HOME/\~}
+    local prompt="(+hidden) Dir (--depth=1) & ${curr_dir}/"
+    local header="<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: cd into"
     local dir
     dir=$(fd --type d --hidden -I --max-depth 1 \
-        | sort \
-        | fzf --prompt '(+hidden) Dir (--depth=1) & '${curr_dir}'> ' \
-            --header '<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: cd into' \
+        | awk 'BEGIN{print ".."} {print}' \
+        | sort -r \
+        | fzf \
+            --prompt="$prompt" \
+            --header="$header" \
             --bind "alt-h:become(fzf_find_dir)" \
-            --bind 'alt-1:change-prompt((+hidden) Dir (--depth=1) & '${curr_dir}'> )+reload(fd --type d --hidden -I --max-depth 1)' \
-            --bind 'alt-2:change-prompt((+hidden) Dir (--depth=2) & '${curr_dir}'> )+reload(fd --type d --hidden -I --max-depth 2)' \
-            --bind 'alt-3:change-prompt((+hidden) Dir (--depth=end) & '${curr_dir}'> )+reload(fd --type d --hidden -I)' \
-            --preview 'tree --gitignore -dC -L 3 {}')
+            --bind "alt-1:change-prompt((+hidden) Dir (--depth=1) & ${curr_dir}/)+reload(fd --type d --hidden -I --max-depth 1)" \
+            --bind "alt-2:change-prompt((+hidden) Dir (--depth=2) & ${curr_dir}/)+reload(fd --type d --hidden -I --max-depth 2)" \
+            --bind "alt-3:change-prompt((+hidden) Dir (--depth=end) & ${curr_dir}/)+reload(fd --type d --hidden -I)" \
+            --preview "tree --gitignore -dC -L 3 {}")
 
     if [ -n "$dir" ]; then
-        cd "$dir" && pwd && if [ $(fd --type d --max-depth 1 --hidden -I | wc -l) -gt 0 ]; then
-            fzf_find_dir
+        cd "$dir"
+        if [ $(fd --type d --max-depth 1 --hidden -I | wc -l) -gt 0 ]; then
+            fzf_find_dir_hidden
         fi
     fi
 }
@@ -100,16 +109,16 @@ smart_grep() {
     local RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
     local INITIAL_QUERY="${*:-}"
     : | fzf --ansi --disabled --query "$INITIAL_QUERY" \
-        --prompt 'ripgrep & '${curr_dir}'> ' \
-        --header '<CTRL-T>: Toggle ripgrep / FZF' \
+        --prompt "ripgrep & ${curr_dir}/" \
+        --header "<CTRL-T>: Toggle ripgrep / FZF" \
         --bind "start:reload:$RG_PREFIX {q}" \
         --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
         --bind 'ctrl-t:transform:[[ ! $FZF_PROMPT =~ ripgrep ]] &&
-        echo "rebind(change)+change-prompt(ripgrep & '${curr_dir}'> )+disable-search+transform-query:echo \{q} > /tmp/rg-fzf-f; cat /tmp/rg-fzf-r" ||
-        echo "unbind(change)+change-prompt(FZF & '${curr_dir}'> )+enable-search+transform-query:echo \{q} > /tmp/rg-fzf-r; cat /tmp/rg-fzf-f"' \
+                echo "rebind(change)+change-prompt(ripgrep & '${curr_dir}'/)+disable-search+transform-query:echo \{q} > /tmp/rg-fzf-f; cat /tmp/rg-fzf-r" ||
+                echo "unbind(change)+change-prompt(FZF & '${curr_dir}'/)+enable-search+transform-query:echo \{q} > /tmp/rg-fzf-r; cat /tmp/rg-fzf-f"' \
         --delimiter : \
-        --preview 'bat --theme=base16 --color=always {1} --highlight-line {2}' \
-        --bind 'enter:become(nvim {1} +{2})'
+        --preview "bat -p --theme=base16 --color=always {1} --highlight-line {2}" \
+        --bind "enter:become(nvim {1} +{2})"
 }
 
 smart_grep_hidden() {
@@ -118,22 +127,22 @@ smart_grep_hidden() {
     local RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "
     local INITIAL_QUERY="${*:-}"
     : | fzf --ansi --disabled --query "$INITIAL_QUERY" \
-        --prompt 'ripgrep & '${curr_dir}'> ' \
-        --header '<CTRL-T>: Toggle ripgrep / FZF' \
+        --prompt "ripgrep & ${curr_dir}/" \
+        --header "<CTRL-T>: Toggle ripgrep / FZF" \
         --bind "start:reload:$RG_PREFIX {q}" \
         --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
         --bind 'ctrl-t:transform:[[ ! $FZF_PROMPT =~ ripgrep ]] &&
-        echo "rebind(change)+change-prompt(ripgrep & '${curr_dir}'> )+disable-search+transform-query:echo \{q} > /tmp/rg-fzf-f; cat /tmp/rg-fzf-r" ||
-        echo "unbind(change)+change-prompt(FZF & '${curr_dir}'> )+enable-search+transform-query:echo \{q} > /tmp/rg-fzf-r; cat /tmp/rg-fzf-f"' \
+                echo "rebind(change)+change-prompt(ripgrep & '${curr_dir}'/)+disable-search+transform-query:echo \{q} > /tmp/rg-fzf-f; cat /tmp/rg-fzf-r" ||
+                echo "unbind(change)+change-prompt(FZF & '${curr_dir}'/)+enable-search+transform-query:echo \{q} > /tmp/rg-fzf-r; cat /tmp/rg-fzf-f"' \
         --delimiter : \
-        --preview 'bat --theme=base16 --color=always {1} --highlight-line {2}' \
-        --bind 'enter:become(nvim {1} +{2})'
+        --preview "bat -p --theme=base16 --color=always {1} --highlight-line {2}" \
+        --bind "enter:become(nvim {1} +{2})"
 }
 
 # alias ff='fzf_find_file'
 # alias ff.='fzf_find_file_hidden'
-# alias ffd='fzf_find_dir'
-# alias ffd.='fzf_find_dir_hidden'
+alias ffd='fzf_find_dir'
+alias ffd.='fzf_find_dir_hidden'
 # alias ffg='smart_grep'
 alias ffg.='smart_grep_hidden'
 
