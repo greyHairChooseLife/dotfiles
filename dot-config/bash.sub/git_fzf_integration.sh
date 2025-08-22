@@ -57,22 +57,22 @@ look_graph_log() {
         cat << EOF
 total state    :  git log                 --all  --decorate --simplify-by-decoration
 oneline        :  git log
-oneline --all  :  git log                 --all
+oneline --all  :  git log --pretty=MY     --all
 medium         :  git log --pretty=medium
 medium  --all  :  git log --pretty=medium --all
 medium  --stat :  git log --pretty=medium        --stat
-fetched        :  git log --pretty=medium               HEAD...FETCH_HEAD
+fetched        :  git log --pretty=medium               HEAD..FETCH_HEAD
 to push        :  git log --pretty=medium               origin/HEAD..
 EOF
     )
 
     local header="<Enter>: run the command,  common option: '--oneline --graph --color=always'"
-
+    local myPretty="--pretty=format:'%C(blue)%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
     local cmd=$(echo "$command_list" | fzf \
         --header="$header" \
-        --preview="echo {} | sed 's/.*:  //' | sed 's/git log/git log --oneline --graph --color=always/' | bash")
+        --preview="echo {} | sed 's/.*:  //' | sed 's/git log/git log --oneline --graph --color=always/' | sed \"s/MY/$myPretty/\" | bash")
 
-    eval $(echo "$cmd" | sed 's/.*\/  //')
+    eval $(echo "$cmd" | sed "s/.*:  //" | sed "s/git log/git log --oneline --graph --color=always/" | sed "s/MY/$myPretty/")
 }
 
 _async_fetch_all() {
