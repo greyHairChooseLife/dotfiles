@@ -107,7 +107,8 @@ sudo pacman -S --needed \
     rclone \
     fuse3 \
     ueberzugpp \
-    tldr
+    tldr \
+    cargo-binstall # Binary installation for rust projects (https://github.com/cargo-bins/cargo-binstall)
 
 # Install AUR packages
 yay -S --needed \
