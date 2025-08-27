@@ -69,7 +69,7 @@
     lineNumber = true
 
 [commit]
-	verbose = true
+	verbose = false
     ; template = /home/etr/.gitmessage
 
 [merge]
