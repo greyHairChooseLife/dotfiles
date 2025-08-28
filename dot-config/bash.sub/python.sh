@@ -18,3 +18,19 @@ _conda_initialize() {
 }
 
 alias conda_activate='_conda_initialize && conda activate'
+
+alias py='python'
+# alias src='source .venv/bin/activate'
+# alias conda='mamba'
+# alias rconda='/opt/miniforge/bin/conda'  # 실제 conda 실행 가능하도록 백업
+
+# initialize miniconda
+# insalled miniconda with AUR, 2025-08-27
+# Version                       : 25.5.1.1-2
+# Description                   : Mini version of Anaconda Python distribution
+# URL                           : https://conda.io/en/latest/miniconda
+# Provides                      : conda
+# AUR URL                       : https://aur.archlinux.org/packages/miniconda3
+init_miniconda() {
+    [ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
+}
