@@ -4,11 +4,6 @@
 
 export NAS_SERVER="/mnt/cb-nas" # 충북프로메이커센터, 미래창업연구소
 
-# about tmux
-export TMUX_CONFIG_DIR="$HOME/.config/tmux"
-export TMUX_PLUGIN_DIR="$HOME/.local/bin/tmux/plugins"
-export TMUX_RESURRECT_DIR="$HOME/.local/state/tmux-resurrects/"
-
 export MANPAGER='nvim +Man!'
 export MANWIDTH=999
 

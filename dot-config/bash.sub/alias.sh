@@ -80,19 +80,6 @@ alias aiu='curl -LsSf https://aider.chat/install.sh | sh'
 alias air='aider --show-repo-map'
 # <<<
 
-# >>> tmux
-alias t='tmux attach \
-  \; choose-tree -swZ -F "#{?pane_format,#[fg=green] #{pane_current_command} #[fg=brightblack]#{pane_current_path},#{?window_format,#[fg=#0000ff]  #[fg=#c1cdc1]#{?#{window_active},#[bg=#181d5f],} #{=|7|...;p10:window_name} #{?window_flags,#[fg=brightblack#,bg=default] 󰇘 #[fg=#0000ff]#{?#{window_last_flag},󰽒, }#{?#{window_zoomed_flag}, , },},#{?session_grouped, (group #{session_group}: #{session_group_list}),}#{?session_attached,#[fg=violet] ,''}#{?#{==:#{@copied_client_session},#{session_name}}, #[fg=brightblack]󰇘 #[fg=brightred]󰋜 now,}}}" \
-  || tmux new-session'
-# <<<
-
-# >>> python
-alias py='python'
-alias src='source .venv/bin/activate'
-alias conda='mamba'
-alias rconda='/opt/miniforge/bin/conda'  # 실제 conda 실행 가능하도록 백업
-# <<<
-
 # >>> etc
 alias youtube-mp3="youtube-dl --extract-audio --audio-format mp3" # usage : youtube-mp3 url
 alias make-mp3="ffmpeg -i"                                        # usage : make-mp3 original-file.mp4 new-name.mp3

@@ -108,7 +108,8 @@ sudo pacman -S --needed \
     fuse3 \
     ueberzugpp \
     tldr \
-    cargo-binstall # Binary installation for rust projects (https://github.com/cargo-bins/cargo-binstall)
+    cargo-binstall \
+    tmuxp
 
 # Install AUR packages
 yay -S --needed \

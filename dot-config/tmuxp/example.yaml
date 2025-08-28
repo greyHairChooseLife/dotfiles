@@ -1,0 +1,31 @@
+session_name: example
+start_directory: ${HOME}
+# before_script: "${HOME}/test.sh"
+shell_command_before:
+    - echo ${PWD}
+    - echo "This is example."
+windows:
+    - window_name: first-win
+      layout: main-horizontal
+      start_directory: docs/
+      options:
+        main-pane-height: 67%
+      panes:
+        - shell_command: man echo
+        - shell_command: ls -la
+          focus: 'true'
+          start_directory: /
+        - shell_command: null
+        - shell_command: null
+    - window_name: second-win
+      focus: true
+      layout: tiled
+      start_directory: ~/Documents/
+      panes:
+        - shell_command:
+            - cmd: nvim .
+        - shell_command:
+            - cmd: cmatrix
+              enter: false
+        - shell_command: null
+        - shell_command: btop
