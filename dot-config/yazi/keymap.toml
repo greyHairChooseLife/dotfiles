@@ -8,8 +8,8 @@ keymap = [
   { on = "<Esc>", run = "escape", desc = "Exit visual mode, clear selection, or cancel search" },
   { on = "<C-[>", run = "escape", desc = "Exit visual mode, clear selection, or cancel search" },
   { on = "q", run = "-", desc = "nothing" },
-  { on = "Q", run = "quit --no-cwd-file", desc = "Quit without outputting cwd-file" },
-  { on = "<C-c>", run = "quit --no-cwd-file", desc = "Quit without outputting cwd-file" },
+  { on = "Q", run = "quit --no-cwd-file", desc = "Quit" },
+  { on = "<C-c>", run = "quit", desc = "Quit without outputting cwd-file" },
   { on = [
     "g",
     "q",
