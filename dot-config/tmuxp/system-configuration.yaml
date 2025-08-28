@@ -3,17 +3,38 @@ start_directory: ${HOME}
 suppress_history: false
 windows:
     - window_name: packages
-      layout: main-horizontal
+      layout: even-vertical
       panes:
         - shell_command: sudo pacman -Syyu
-          focus: 'true'
+          focus: true
         - shell_command: yay -Syyu
+
+    - window_name: bash & subs
+      layout: main-vertical
+      panes:
+        - shell_command: vi ${HOME}/.bashrc
+        - shell_command: vi ${HOME}/.config/bash.sub/
+          focus: true
+
+    - window_name: T-session
+      start_directory: ${TMUXP_CONFIGDIR}
+      panes:
+        - shell_command: vi $(ls --reverse *.yaml | fzf --preview='bat {}')
+
+    - window_name: T-resurrect
+      start_directory: ${TMUX_RESURRECT_DIR}
+      panes:
+        - shell_command: watch -n 1 'ls -l'
+        - shell_command:
+            - cmd: ln -sf "$(ls tmux_resurrect_*.txt | fzf --reverse --preview='bat {}')" last
+              enter: true
 
     - window_name: SSH
       start_directory: ${HOME}/.local/state/bash.sub/
       layout: even-horizontal
       panes:
         - shell_command: vi ssh.sh
+          focus: true
         - shell_command:
             - cd ${HOME}/.ssh/
             - vi $(ls | fzf --preview 'bat {}')
@@ -22,16 +43,3 @@ windows:
       start_directory: ${HOME}/.local/state/bash.sub/
       panes:
         - shell_command: cat api-key.sh | less
-
-    - window_name: tmux-session
-      start_directory: ${HOME}/.tmuxp/
-      panes:
-        - shell_command: vi $(ls *.yaml | fzf --preview='bat {}')
-
-    - window_name: tmux-resurrect
-      start_directory: ${HOME}/.local/state/tmux-resurrects/
-      panes:
-        - shell_command: watch -n 1 'ls -l'
-        - shell_command:
-            - cmd: ln -sf "$(ls tmux_resurrect_*.txt | fzf --reverse --preview='bat {}')" last
-              enter: true

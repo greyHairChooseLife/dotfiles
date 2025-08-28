@@ -9,5 +9,5 @@ alias tt='tmux attach \
   || tmux new-session'
 
 alias tp='tmuxp'
-alias tpl='tmuxp load $(tp ls|fzf --preview "bat --color=always ${TMUXP_CONFIGDIR}/{}.yaml")'
-alias tpe='tmuxp edit $(tp ls|fzf --preview "bat --color=always ${TMUXP_CONFIGDIR}/{}.yaml")'
+alias tpl='tmuxp load $(tp ls | tac | fzf --preview "bat --color=always ${TMUXP_CONFIGDIR}/{}.yaml")'
+alias tpe='tmuxp edit $(tp ls | tac | fzf --preview "bat --color=always ${TMUXP_CONFIGDIR}/{}.yaml")'
