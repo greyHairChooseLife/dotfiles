@@ -1,7 +1,7 @@
 # >>> QOL(quality of life)
-alias ls='lsd --group-directories-first' # pacman -S lsd (https://github.com/lsd-rs/lsd)
-alias ll='ls -lXFt'
-alias lla='ls -lAXtF'
+alias lsd='lsd --group-directories-first' # pacman -S lsd (https://github.com/lsd-rs/lsd)
+alias ll='lsd -lXFt'
+alias lla='lsd -lAXtF'
 alias cp="cp -i"     # confirm before overwriting something
 alias df='df -h'     # human-readable sizes
 alias free='free -m' # show sizes in MB

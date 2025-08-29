@@ -4,7 +4,7 @@ alias py='python'
 # alias src='source .venv/bin/activate'
 # alias conda='mamba'
 # alias rconda='/opt/miniforge/bin/conda'  # 실제 conda 실행 가능하도록 백업
-alias pygg='eval $(${SCRIPT_PATH}/venv_manager.sh)'
+alias pygg='source ${SCRIPT_PATH}/venv_manager.sh && venv_manager'
 
 # MEMO:: miniforge
 
