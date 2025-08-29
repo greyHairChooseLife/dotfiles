@@ -1,3 +1,13 @@
+SCRIPT_PATH=/home/sy/dotfiles/dot-config/bash.sub/scripts/python
+
+alias py='python'
+# alias src='source .venv/bin/activate'
+# alias conda='mamba'
+# alias rconda='/opt/miniforge/bin/conda'  # 실제 conda 실행 가능하도록 백업
+alias pygg='eval $(${SCRIPT_PATH}/venv_manager.sh)'
+
+# MEMO:: miniforge
+
 # conda initialization before activate virtual environment
 _conda_initialize() {
     __conda_setup="$('/opt/miniforge/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
@@ -17,13 +27,9 @@ _conda_initialize() {
     fi
 }
 
-alias conda_activate='_conda_initialize && conda activate'
+alias init_conda_and_activate='_conda_initialize && conda activate'
 
-alias py='python'
-# alias src='source .venv/bin/activate'
-# alias conda='mamba'
-# alias rconda='/opt/miniforge/bin/conda'  # 실제 conda 실행 가능하도록 백업
-
+# MEMO:: miniconda
 # initialize miniconda
 # insalled miniconda with AUR, 2025-08-27
 # Version                       : 25.5.1.1-2

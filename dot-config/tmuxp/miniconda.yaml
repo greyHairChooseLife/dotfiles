@@ -1,0 +1,13 @@
+session_name: miniconda
+start_directory: ${HOME}
+suppress_history: false
+shell_command_before: init_miniconda
+windows:
+    - window_name: code
+      panes:
+        - shell_command: null
+
+    - window_name: lecture-docs
+      start_directory: /home/sy/P/study/Bwc2Bzg7S1SJv0n0kKz7_홍정모의파이썬추월코스_챕터4까지_v17/
+      panes:
+        - shell_command: y
