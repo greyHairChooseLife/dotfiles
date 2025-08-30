@@ -403,8 +403,9 @@ return {
 			error = { raw = "[!ERROR]", rendered = " Error", highlight = "RenderMarkdownRed" },
 			-- My own
 			test = { raw = "[!ts]", rendered = "󰨸 TEST ", highlight = "RenderMarkdownMyTest" },
-			todo = { raw = "[!td]", rendered = "󰗕 TODO ", highlight = "RenderMarkdownMyTodo" },
-			todofin = { raw = "[!dt]", rendered = "󰈼 fin ", highlight = "RenderMarkdownMyTodoFin" },
+			todo = { raw = "[!td]", rendered = " 󰥔 TODO ", highlight = "RenderMarkdownMySimpleTodo" },
+			tododone = { raw = "[!tdd]", rendered = " 󰗠 DONE ", highlight = "RenderMarkdownMySimpleDone" },
+			todocancel = { raw = "[!tdc]", rendered = " 󰜺 CANCEl ", highlight = "RenderMarkdownMySimpleCancel" },
 			my_question = { raw = "[!qt]", rendered = "󰴩.", highlight = "RenderMarkdownMyQuestion" },
 			reference = { raw = "[!rf]", rendered = "󰉢 REFERENCE ", highlight = "RenderMarkdownMyReference" },
 			log = { raw = "[!lg]", rendered = "󰨸 Log ", highlight = "RenderMarkdownMyTest" },
