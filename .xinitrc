@@ -35,6 +35,6 @@ btkb() {
 }
 btkb off &
 
-feh --bg-scale ~/bg.png &
+feh --bg-scale /home/sy/Pictures/bg/bg_1.png &
 
 exec i3
