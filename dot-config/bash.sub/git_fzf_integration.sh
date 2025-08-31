@@ -67,7 +67,7 @@ EOF
     )
 
     local header="<Enter>: run the command,  common option: '--oneline --graph --color=always'"
-    local myPretty="--pretty=format:'%C(blue)%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+    local myPretty="'%C(blue)%h%Creset -%C(brightred)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
     local cmd=$(echo "$command_list" | fzf \
         --header="$header" \
         --preview="echo {} | sed 's/.*:  //' | sed 's/git log/git log --oneline --graph --color=always/' | sed \"s/MY/$myPretty/\" | bash")
