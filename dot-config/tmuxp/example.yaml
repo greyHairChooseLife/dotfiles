@@ -11,7 +11,9 @@ windows:
       options:
         main-pane-height: 67%
       panes:
-        - shell_command: man echo
+        - shell_command:
+            - set_pane_title 'pane_title_comming_here' # set pane name
+            - man echo
         - shell_command: ls -la
           focus: 'true'
           start_directory: /

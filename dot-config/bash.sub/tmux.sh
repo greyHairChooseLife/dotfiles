@@ -17,3 +17,7 @@ alias tpl.='tmuxp load ./tmuxp.yaml'
 alias tpe='sel=$(tp ls | tac | fzf --header="Edit the selected session spec" --preview "bat --color=always ${TMUXP_CONFIGDIR}/{}.yaml"); \
   [ -n "$sel" ] && tmuxp edit "$sel"'
 alias tpe.='tmuxp edit ./tmuxp.yaml'
+
+set_pane_title() {
+    printf '\033]2;%s\033\\' "$1"
+}
