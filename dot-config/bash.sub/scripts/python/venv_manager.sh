@@ -32,7 +32,8 @@ venv_manager() {
 
         read -p "New Venv Name: " name
         python3 -m venv $VENV_HOME/$name
-        echo "# Virtual environment created: $name"
+        # echo "# Virtual environment created: $name"
+        venv_manager
     }
 
     # Function to remove a virtual environment
@@ -45,12 +46,14 @@ venv_manager() {
             return 0
         fi
 
-        rm -r $VENV_HOME/$name
+        rm -r --interactive $VENV_HOME/$name
         echo "# Virtual environment removed: $name"
     }
 
     # Show menu to select action
-    local selected_command=$(printf "activate_venv\\nmake_venv\\nrm_venv" | fzf --header="Choose an action")
+    local selected_command=$(printf "activate_venv\nmake_venv\nrm_venv" | fzf \
+      --header="Choose an action" \
+      --preview="echo -e '=== current venv list ===\n'; ls -o --time-style=long-iso -1 $VENV_HOME | grep -v '^total' | awk '{printf \"%-4s %-20s %-12s %-6s\\n\", NR \".\", \$7, \$5, \$6}'")
 
     if [[ -z $selected_command ]]; then
         return 0
