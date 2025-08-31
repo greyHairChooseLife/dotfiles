@@ -60,9 +60,20 @@ return {
 					show_settings = false, -- Show LLM settings at the top of the chat buffer?
 					show_token_count = false, -- Show the token count for each response?
 					start_in_insert_mode = false, -- Open the chat buffer in insert mode?
+					show_context = true, -- Show context (from slash commands and variables) in the chat buffer?
+					fold_context = false, -- Fold context in the chat buffer?
+					fold_reasoning = true, -- Fold the reasoning content from the LLM in the chat buffer?
+					show_tools_processing = true, -- Show the loading message when tools are being executed?
+
 					icons = {
-						pinned_buffer = " ",
-						watched_buffer = "󰴅 ",
+						-- pinned_buffer = " ",
+						-- watched_buffer = "󰴅 ",
+						buffer_pin = " ",
+						buffer_watch = "󰴅 ", -- 󰂥
+						--chat_context = " ",
+						chat_fold = " ",
+						tool_success = " ",
+						tool_failure = " ",
 					},
 					window = {
 						height = 0.8,
@@ -85,32 +96,34 @@ return {
 				diff = {
 					enabled = true,
 					close_chat_at = 1,
-					provider = "mini_diff",
+					provider = "mini_diff", -- codecompanion의 내장 diff를 제공한다는데 시도해보자. 2025-08-31, 6bc36af feat(diff): native inline diff and super diff
 					opts = { "internal", "filler", "closeoff", "algorithm:patience", "followwrap", "linematch:120" },
 				},
 			},
 			adapters = {
-				opts = {
-					show_defaults = false,
-					show_model_choices = true,
-				},
-				copilot = function()
-					return require("codecompanion.adapters").extend("copilot", {
-						-- github copilot premium request calculation
-						-- https://docs.github.com/en/copilot/about-github-copilot/github-copilot-features#user-content-fnref-2
-						schema = {
-							model = {
-								default = "gpt-4.1",
-								-- default = "claude-sonnet-4",
-								-- default = "claude-3.7-sonnet",
-								-- default = "claude-3.7-sonnet-thought",
+				http = {
+					opts = {
+						show_defaults = false,
+						show_model_choices = true,
+					},
+					copilot = function()
+						return require("codecompanion.adapters").extend("copilot", {
+							-- github copilot premium request calculation
+							-- https://docs.github.com/en/copilot/about-github-copilot/github-copilot-features#user-content-fnref-2
+							schema = {
+								model = {
+									default = "gpt-4.1",
+									-- default = "claude-sonnet-4",
+									-- default = "claude-3.7-sonnet",
+									-- default = "claude-3.7-sonnet-thought",
+								},
 							},
-						},
-					})
-				end,
-				anthropic = function()
-					return require("codecompanion.adapters").extend("anthropic", {})
-				end,
+						})
+					end,
+					anthropic = function()
+						return require("codecompanion.adapters").extend("anthropic", {})
+					end,
+				},
 			},
 			strategies = {
 				chat = {
@@ -165,7 +178,7 @@ return {
 				},
 			},
 			prompt_library = require("AI.codecompanion.prompt_library"),
-			opts = { system_prompt = require("AI.codecompanion.system_prompts.v3") },
+			-- opts = { system_prompt = require("AI.codecompanion.system_prompts.v3") }, -- 기본 제공 시스템 프롬프트로 돌아가자. 2025-08-31
 			extensions = require("AI.codecompanion.extensions"),
 		})
 
