@@ -33,6 +33,7 @@ return {
 		-- Vim modes that will show a rendered view of the markdown file
 		-- All other modes will be uneffected by this plugin
 		render_modes = { "n", "v", "V", "c", "i" },
+		nested = false,
 		on = {
 			-- Called when plugin initially attaches to a buffer.
 			attach = function() end,
@@ -206,13 +207,14 @@ return {
 			style = "full",
 			-- Whether to include the language name next to the icon
 			language_name = true,
+			language_pad = 1,
 			-- Determines where language icon is rendered:
 			--  right: Right side of code block
 			--  left: Left side of code block
 			position = "right",
 			-- An array of language names for which background highlighting will be disabled
 			-- Likely because that language has background highlights itself
-			disable_background = { "markdown", "md" }, -- "diff"
+			disable_background = {}, -- "diff"
 			-- Amount of padding to add to the left of code blocks
 			left_pad = 2,
 			-- Amount of padding to add to the right of code blocks when width is 'block'
@@ -227,6 +229,7 @@ return {
 			--  thick: use the same highlight as the code body
 			--  thin: when lines are empty overlay the above & below icons
 			border = "thick",
+			language_border = "█",
 			-- Used above code blocks for thin border
 			above = "▄",
 			-- Used below code blocks for thin border
@@ -590,7 +593,7 @@ return {
 						right_pad = 0,
 						left_margin = 0,
 						-- min_width = 100,
-						width = "block",
+						width = "full",
 						border = "thick",
 						highlight = "RenderMarkdownCodeCodeCompanion",
 						highlight_border = "RenderMarkdownCodeCodeCompanion",
