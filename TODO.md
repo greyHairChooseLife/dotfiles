@@ -58,6 +58,26 @@
   이를 손쉽게 하기 위해서는 커밋을 잘 활용해야하며, commit 또는 status를 잘 제공하는 방법을 알고 또 세팅해둬야겠다.
 
 
+- global metadata를 제공한다. 토큰 사용량이나 모델 등... 이전에는 내부로 깊게 파고들어서 얻어내어 ui에 활용했는데 이부분을 보다 일반적으로 개선할 수 있겠다.
+   
+  > [!rf]
+  > **f962b2e feat(chat): add global metadata (#1973)**
+  >
+  > CodeCompanion exposes a global dictionary,
+  > `_G.codecompanion_chat_metadata` which users can leverage throughout
+  > their configuration. Using the chat buffer's buffer number as the key, the
+  > dictionary contains:
+  > 
+  > - `adapter` - The `name` and `model` of the chat buffer's current adapter
+  > - `context_items` - The number of context items current in the chat buffer
+  > - `cycles` - The number of cycles (User->LLM->User) that have taken place in the chat buffer
+  > - `id` - The ID of the chat buffer
+  > - `tokens` - The running total of tokens for the chat buffer
+  > - `tools` - The number of tools in the chat buffer
+
+
+
+
 
 
 **LSP**
