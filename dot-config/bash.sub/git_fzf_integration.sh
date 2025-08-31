@@ -14,7 +14,7 @@ look_branch_or_tag() {
     ) || return
 
     target=$(
-        (   
+        (
             echo "$branches"
             echo "$tags"
         ) \
