@@ -145,6 +145,7 @@ vim.cmd([[
   highlight RenderMarkdownCancelScope guifg=#8b8378 gui=strikethrough
 
   highlight RenderMarkdownMyTodoHeader guibg=#954C54 guifg=#FFFFFF gui=bold,italic
+  highlight RenderMarkdownMyTodoFinHeader guibg=#004F4F guifg=#FFFFFF gui=bold,italic
   highlight RenderMarkdownMyReferenceHeader guibg=#C678DD guifg=#FFFFFF gui=bold,italic
 
   highlight RenderMarkdownMyTodo guifg=#CA4500 gui=bold,italic
@@ -157,6 +158,7 @@ vim.cmd([[
   highlight RenderMarkdownMyTest guifg=#B0C4DE gui=bold,italic
   highlight RenderMarkdownMyReference guifg=#C678DD gui=bold,italic
   highlight RenderMarkdownMyLog guifg=#000000 guibg=#B0C4DE gui=bold,italic
+  highlight RenderMarkdownMyNote guifg=#32CD32 gui=bold
 
   highlight RenderMarkdownRed  guifg=#FF3000 gui=bold
   highlight RenderMarkdownBlue   guifg=#4169E1 gui=bold

@@ -188,6 +188,10 @@ return {
           pattern = "TODO",
           background = "RenderMarkdownMyTodoHeader",
         },
+        TODOfin = {
+          pattern = "TODO:fin",
+          background = "RenderMarkdownMyTodoFinHeader",
+        },
         REFERENCE = {
           pattern = "REFERENCE",
           background = "RenderMarkdownMyReferenceHeader",
@@ -389,7 +393,6 @@ return {
       -- | highlight  | highlight for the 'rendered' text and quote markers                 |
       -- | quote_icon | optional override for quote.icon value for individual callout       |
       --  󰓛 󰄱        󱓻강 sdf   sfd  󱓼  󰨔 󰴩     
-      note = { raw = "[!NOTE]", rendered = "󰋽 Note", highlight = "RederMarkdownInfo" },
       tip = { raw = "[!TIP]", rendered = "󰌶 Tip", highlight = "RenderMarkdownSuccess" },
       important = { raw = "[!IMPORTANT]", rendered = "󰅾 Important", highlight = "RenderMarkdownHint" },
       warning = { raw = "[!WARNING]", rendered = "󰀪 Warning", highlight = "RenderMarkdownWarn" },
@@ -413,6 +416,7 @@ return {
       reference = { raw = "[!rf]", rendered = "󰉢 REFERENCE ", highlight = "RenderMarkdownMyReference" },
       log = { raw = "[!lg]", rendered = "󰨸 Log ", highlight = "RenderMarkdownMyTest" },
       concept = { raw = "[!cn]", rendered = "󰃁 개념정리 ", highlight = "RenderMarkdownBlue" },
+      note = { raw = "[!nt]", rendered = "󰌶 Note", highlight = "RenderMarkdownMyNote" },
 
       my_red = { raw = "[!re]", rendered = "⚡ ", highlight = "RenderMarkdownRed" }, -- 
       my_blue = { raw = "[!bl]", rendered = "⚡ ", highlight = "RenderMarkdownBlue" },
