@@ -37,6 +37,11 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.api.nvim_put({ "> " }, "c", false, true)
     end)
 
+    map("i", ",,nt", function()
+      vim.api.nvim_put({ "> [!nt]" }, "l", false, true)
+      vim.api.nvim_put({ "> " }, "c", false, true)
+    end)
+
     map("i", ",,co", function()
       vim.api.nvim_put({ "> [!" }, "c", false, true)
     end)
