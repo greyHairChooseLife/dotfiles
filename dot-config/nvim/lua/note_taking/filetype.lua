@@ -128,19 +128,20 @@ vim.api.nvim_create_autocmd("FileType", {
     map("n", "<CR>", function()
       vim.cmd("VimwikiFollowLink")
 
-      local filepath = vim.fn.expand("%:p")
-      if vim.fn.filereadable(filepath) == 0 and vim.fn.line("$") == 1 and vim.fn.getline(1) == "" then
-        insert_header()
+      -- MEMO::  잠시 사용 중지
+      -- local filepath = vim.fn.expand("%:p")
+      -- if vim.fn.filereadable(filepath) == 0 and vim.fn.line("$") == 1 and vim.fn.getline(1) == "" then
+      --   insert_header()
 
-        local template_path = vim.fn.expand("%:p:h") .. "/template.md"
-        local lines = vim.fn.readfile(template_path)
-        -- local lines = 'hello world!'
+      --   local template_path = vim.fn.expand("%:p:h") .. "/template.md"
+      --   local lines = vim.fn.readfile(template_path)
+      --   -- local lines = 'hello world!'
 
-        -- 템플릿 파일 내용을 현재 버퍼에 삽입
-        vim.api.nvim_buf_set_lines(0, 2, 2, false, lines)
+      --   -- 템플릿 파일 내용을 현재 버퍼에 삽입
+      --   vim.api.nvim_buf_set_lines(0, 2, 2, false, lines)
 
-        vim.cmd("normal! zR")
-      end
+      --   vim.cmd("normal! zR")
+      -- end
     end)
 
     map("n", "<Backspace>", "<cmd>VimwikiGoBackLink<CR>")
