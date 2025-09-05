@@ -1,4 +1,4 @@
-version: 1.0.0
+version: v0.1.30
 log:
     path: /tmp/vi-mongo.log
     level: info
@@ -8,7 +8,7 @@ editor:
     env: EDITOR
 showConnectionPage: true
 showWelcomePage: false
-currentConnection: academic_society-dev
+currentConnection: kiosk-demo
 connections:
     - url: mongodb://localhost:27017
       host: localhost

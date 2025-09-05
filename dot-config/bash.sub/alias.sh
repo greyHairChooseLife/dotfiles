@@ -67,12 +67,6 @@ alias k='kubectl'
 alias ssz='sysz' # forked for customizations, save it under HOME/.local/bin/sysz
 # <<<
 
-# >>> note-taking
-alias docup='update_readme_with_english_study_note && (cd /home/sy/Documents/dev-wiki && git add . && git diff-index --quiet HEAD || git commit -m "write" && git push) && (cd /home/sy/Documents/job-wiki && git add . && git diff-index --quiet HEAD || git commit -m "write" && git push)'
-alias doc1='cd /home/sy/Documents/dev-wiki && nvim -c "VimwikiIndex"'
-alias doc2='cd /home/sy/Documents/job-wiki && nvim -c "2VimwikiIndex"'
-# <<<
-
 # >>> AI
 alias ai='aider --restore-chat-history --chat-mode architect --code-theme monokai --analytics-disable'
 alias ain='aider --chat-mode architect --code-theme monokai --analytics-disable'
