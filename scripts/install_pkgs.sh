@@ -127,7 +127,8 @@ yay -S --needed \
     vi-mongo \
     lazydocker \
     localsend-bin \
-    wkhtmltopdf-bin
+    wkhtmltopdf-bin \
+    python-edge-tts
 
 # Enable important services
 sudo systemctl enable NetworkManager
