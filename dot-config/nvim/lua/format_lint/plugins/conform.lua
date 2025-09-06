@@ -14,9 +14,9 @@ return {
         typescriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
         json = { "prettierd", stop_after_first = true },
         python = {
-          -- "ruff_organize_imports",
-          -- "ruff_fix", -- 사용않는 import 등
-          -- "ruff_format",
+          "ruff_organize_imports",
+          "ruff_fix", -- 사용않는 import 등
+          "ruff_format",
         },
         bash = { "shfmt", stop_after_first = true },
         sh = { "shfmt", stop_after_first = true },
