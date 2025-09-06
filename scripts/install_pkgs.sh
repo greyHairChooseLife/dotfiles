@@ -109,7 +109,8 @@ sudo pacman -S --needed \
     ueberzugpp \
     tldr \
     cargo-binstall \
-    tmuxp
+    tmuxp \
+    time
 
 # Install AUR packages
 yay -S --needed \
