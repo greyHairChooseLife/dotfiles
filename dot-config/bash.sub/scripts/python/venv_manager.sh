@@ -36,6 +36,17 @@ venv_manager() {
         venv_manager
     }
 
+    make_venv_with_flag_site_pkg() {
+        echo "Currently there are..."
+        list_venv
+        echo
+
+        read -p "New Venv Name (--system-site-packages): " name
+        python3 -m venv --system-site-packages $VENV_HOME/$name
+        # echo "# Virtual environment created: $name"
+        venv_manager
+    }
+
     # Function to remove a virtual environment
     rm_venv() {
         local name=$(list_venv \
@@ -51,7 +62,7 @@ venv_manager() {
     }
 
     # Show menu to select action
-    local selected_command=$(printf "activate_venv\nmake_venv\nrm_venv" | fzf \
+    local selected_command=$(printf "activate_venv\nmake_venv\nrm_venv\nmake_venv_with_flag_site_pkg" | fzf \
       --header="Choose an action" \
       --preview="echo -e '=== current venv list ===\n'; ls -o --time-style=long-iso -1 $VENV_HOME | grep -v '^total' | awk '{printf \"%-4s %-20s %-12s %-6s\\n\", NR \".\", \$7, \$5, \$6}'")
 
