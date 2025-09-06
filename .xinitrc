@@ -35,6 +35,6 @@ btkb() {
 }
 btkb off &
 
-feh --bg-scale /home/sy/Pictures/bg/bg_1.png &
+feh --bg-max /home/sy/Pictures/bg/awk_cheat_sheet.jpg &
 
 exec i3
