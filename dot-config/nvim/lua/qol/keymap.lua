@@ -13,15 +13,15 @@ local wk_map = require("utils").wk_map
 -- end, opt)
 
 map("n", "`g", "<cmd>wincmd p<CR>") -- focus previous window & cursor position
-map("v", "p", '"_dP') -- paste without yanking in visual mode
+map("v", "p", '"_dP')               -- paste without yanking in visual mode
 -- map("v", "x", '"_d') -- delete without yanking in visual mode
 map("v", "<leader>s", SearchWithBrowser, opt)
 
 -- 앞글자 대문자로 변환
 map({ "n", "v" }, "gu", function()
-	require("utils").save_cursor_position()
-	vim.cmd("normal! lbvU")
-	require("utils").restore_cursor_position()
+  require("utils").save_cursor_position()
+  vim.cmd("normal! lbvU")
+  require("utils").restore_cursor_position()
 end) -- CamelCase
 
 map({ "n", "v" }, ";", ":")
@@ -50,49 +50,49 @@ map({ "n", "v" }, "Z", "<Cmd>Focus<CR>")
 map("v", ",<Space>", ":FocusHere<CR>", opt)
 map("n", ",<Space>", "<cmd>FocusClear<CR>", opt)
 map("n", "<Space><Space>", function()
-	vim.cmd("NoiceDismiss")
-	BlinkCursorLine()
+  vim.cmd("NoiceDismiss")
+  BlinkCursorLine()
 end)
 map("n", "yp", function()
-	local absolute_path = vim.fn.expand("%:p")
-	vim.fn.setreg("+", absolute_path)
-	vim.notify("Copied path: " .. absolute_path, vim.log.levels.INFO)
+  local absolute_path = vim.fn.expand("%:p")
+  vim.fn.setreg("+", absolute_path)
+  vim.notify("Copied path: " .. absolute_path, vim.log.levels.INFO)
 end)
 
 map("i", "cc<Enter>", function()
-	vim.api.nvim_input("<Esc>cc")
+  vim.api.nvim_input("<Esc>cc")
 end)
 map("i", "zz", function()
-	vim.api.nvim_input("<Esc>zza")
+  vim.api.nvim_input("<Esc>zza")
 end)
 
 -- TODO: <esc> 시뮬레이션 방법을 통일(검증 필요)하고, 함수로 만들어 재사용하자.
 -- Easy Escape
 map({ "i", "c" }, ";j<Space>", function()
-	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
+  vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
 end, { noremap = true })
 map({ "i", "c" }, "gq", function()
-	vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
+  vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
 end, { noremap = true })
 map({ "i", "c" }, ";ㅓ<Space>", function()
-	vim.api.nvim_input("<Esc>") -- 실제 <Esc> 입력을 강제 실행
-	os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
+  vim.api.nvim_input("<Esc>")      -- 실제 <Esc> 입력을 강제 실행
+  os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
 end, { noremap = true })
 map("n", "ㅗ", function()
-	os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
-	vim.api.nvim_input("h")
+  os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
+  vim.api.nvim_input("h")
 end, opt)
 map("n", "ㅓ", function()
-	os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
-	vim.api.nvim_input("j")
+  os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
+  vim.api.nvim_input("j")
 end, opt)
 map("n", "ㅏ", function()
-	os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
-	vim.api.nvim_input("k")
+  os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
+  vim.api.nvim_input("k")
 end, opt)
 map("n", "ㅣ", function()
-	os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
-	vim.api.nvim_input("l")
+  os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
+  vim.api.nvim_input("l")
 end, opt)
 
 map({ "n", "v" }, "<C-e>", "2<C-e>")
@@ -134,10 +134,10 @@ map("n", "zd", "zd<cmd>mkview<CR>")
 -- map({ "n", "v" }, "<C-p>", "[]%zz")
 
 map("n", "n", function()
-	Safe_search("n")
+  Safe_search("n")
 end, opt)
 map("n", "N", function()
-	Safe_search("N")
+  Safe_search("N")
 end, opt)
 
 map("n", ",t", "viw<cmd>Translate ko<CR><Esc>", opt)
@@ -148,94 +148,94 @@ map("n", "yY", "va{Vy", opt)
 
 -- MEMO:: Session
 wk_map({
-	["<leader>s"] = {
-		group = "󱫥  Session",
-		order = { "s", "l" },
-		["s"] = { "<cmd>SessionSave<CR>", desc = "save", mode = "n" },
-		["v"] = {
-			function()
-				vim.cmd("SessionSearch")
-				vim.fn.feedkeys("!json ", "m") -- json 파일에 탭 이름 정보 저장해둠
-			end,
-			desc = "view",
-			mode = "n",
-		},
-	},
+  ["<leader>s"] = {
+    group = "󱫥  Session",
+    order = { "s", "l" },
+    ["s"] = { "<cmd>AutoSession save<CR>", desc = "save", mode = "n" },
+    ["v"] = {
+      function()
+        vim.cmd("SessionSearch")
+        vim.fn.feedkeys("!json ", "m") -- json 파일에 탭 이름 정보 저장해둠
+      end,
+      desc = "view",
+      mode = "n",
+    },
+  },
 })
 
 -- MEMO:: Run Command
 wk_map({
-	["<leader>r"] = {
-		group = "  Run Command",
-		order = { "r", "R", "u" },
-		["u"] = {
-			function()
-				RunBufferWithSh({ selected = true, underline = true })
-			end,
-			desc = "underline",
-			mode = "v",
-		},
-		["r"] = {
-			function()
-				local mode = vim.api.nvim_get_mode().mode
-				if mode == "n" then
-					RunBufferWithSh()
-				else
-					RunBufferWithSh({ selected = true })
-				end
-			end,
-			desc = "run on buffer",
-			mode = { "n", "v" },
-		},
-		["R"] = {
-			function()
-				local mode = vim.api.nvim_get_mode().mode
-				if mode == "n" then
-					RunBufferWithSh({ cover = true })
-				else
-					RunBufferWithSh({ selected = true, cover = true })
-				end
-			end,
-			desc = "run on buffer and cover ",
-			mode = { "n", "v" },
-		},
-	},
+  ["<leader>r"] = {
+    group = "  Run Command",
+    order = { "r", "R", "u" },
+    ["u"] = {
+      function()
+        RunBufferWithSh({ selected = true, underline = true })
+      end,
+      desc = "underline",
+      mode = "v",
+    },
+    ["r"] = {
+      function()
+        local mode = vim.api.nvim_get_mode().mode
+        if mode == "n" then
+          RunBufferWithSh()
+        else
+          RunBufferWithSh({ selected = true })
+        end
+      end,
+      desc = "run on buffer",
+      mode = { "n", "v" },
+    },
+    ["R"] = {
+      function()
+        local mode = vim.api.nvim_get_mode().mode
+        if mode == "n" then
+          RunBufferWithSh({ cover = true })
+        else
+          RunBufferWithSh({ selected = true, cover = true })
+        end
+      end,
+      desc = "run on buffer and cover ",
+      mode = { "n", "v" },
+    },
+  },
 })
 
 -- MEMO:: QuickFix
 wk_map({
-	["<Space>q"] = {
-		group = "Quick Fix",
-		order = { "f", "t", "n", "p" },
-		["f"] = { "<cmd>copen<CR>", desc = "focus", mode = "n" },
-		["t"] = { QF_ToggleList, desc = "toggle", mode = "n" },
-		["n"] = { QF_next, desc = "next", mode = "n" },
-		["p"] = { QF_prev, desc = "prev", mode = "n" },
-	},
+  ["<Space>q"] = {
+    group = "Quick Fix",
+    order = { "f", "t", "n", "p" },
+    ["f"] = { "<cmd>copen<CR>", desc = "focus", mode = "n" },
+    ["t"] = { QF_ToggleList, desc = "toggle", mode = "n" },
+    ["n"] = { QF_next, desc = "next", mode = "n" },
+    ["p"] = { QF_prev, desc = "prev", mode = "n" },
+  },
 })
 vim.keymap.set("n", "qn", QF_next)
 vim.keymap.set("n", "qp", QF_prev)
 
 -- MEMO:: Etc
 wk_map({
-	[","] = {
-		order = { "r", "R", "C" },
-		["r"] = { ReloadLayout, desc = "reload layout", mode = "n" },
-		["R"] = {
-			function()
-				ReloadLayout(true)
-			end,
-			desc = "reload layout force",
-			mode = "n",
-		},
-		["C"] = {
-			function()
-				local word = vim.fn.expand("<cword>")
-				vim.api.nvim_feedkeys(":%s/" .. word .. "//g", "n", false)
-				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true), "n", false)
-			end,
-			desc = "change",
-			mode = "n",
-		},
-	},
+  [","] = {
+    order = { "r", "R", "C" },
+    ["r"] = { ReloadLayout, desc = "reload layout", mode = "n" },
+    ["R"] = {
+      function()
+        ReloadLayout(true)
+      end,
+      desc = "reload layout force",
+      mode = "n",
+    },
+    ["C"] = {
+      function()
+        local word = vim.fn.expand("<cword>")
+        vim.api.nvim_feedkeys(":%s/" .. word .. "//g", "n", false)
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true), "n", false)
+      end,
+      desc = "change",
+      mode = "n",
+    },
+  },
 })

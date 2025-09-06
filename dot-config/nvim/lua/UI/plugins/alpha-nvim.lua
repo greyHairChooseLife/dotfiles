@@ -77,11 +77,11 @@ return {
       end),
       dashboard.button(".", "", ""),
       dashboard.button("D", "                   ---------  doc   ", ":cd ~/Documents | vi .<CR>"),
-      dashboard.button(
-        "dpu",
-        "                           -  pull    ",
-        ":cd ~/Documents/dev-wiki | :Git pull --ff-only | :cd ~/Documents/job-wiki | :Git pull --ff-only<CR>"
-      ),
+      -- dashboard.button(
+      --   "dpu",
+      --   "                           -  pull    ",
+      --   ":cd ~/Documents/dev-wiki | :Git pull --ff-only | :cd ~/Documents/job-wiki | :Git pull --ff-only<CR>"
+      -- ),
       dashboard.button("1", "dev", ":cd ~/Documents/dev-wiki | :VimwikiIndex<CR>"),
       dashboard.button("2", "job", ":cd ~/Documents/job-wiki | :2VimwikiIndex<CR>"),
       dashboard.button(".", "", ""),
@@ -95,7 +95,7 @@ return {
       dashboard.button(".", "", ""),
       dashboard.button("-", "                   ---------  sessions   ", ""),
       dashboard.button("s", "Session", function()
-        vim.cmd("SessionSearch")
+        vim.cmd("AutoSession search")
         vim.fn.feedkeys("!json ", "m") -- json 파일에 탭 이름 정보 저장해둠
       end),
     }
