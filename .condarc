@@ -1,1 +1,24 @@
+# filepath: ~/.condarc
+# Set the default environment location (optional)
+envs_dirs:
+  - $HOME/.local/state/python_miniconda_venvs
+# Set the default location for downloaded packages (optional)
+pkgs_dirs:
+  - $HOME/.local/state/python_miniconda_pkgs
+
+# Set the default channels for package search
+channels:
+  - conda-forge
+  - defaults
+
+# Always ask before updating or removing packages
+always_yes: false
+
+# Show channel URLs when searching/installing
+show_channel_urls: true
+
+# Enable or disable SSL verification (should be true for security)
+ssl_verify: true
+
+# Set the default environment to activate on startup (optional)
 auto_activate_base: false

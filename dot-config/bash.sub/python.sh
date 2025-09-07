@@ -1,4 +1,4 @@
-SCRIPT_PATH=/home/sy/dotfiles/dot-config/bash.sub/scripts/python
+SCRIPT_PATH=${HOME}/dotfiles/dot-config/bash.sub/scripts/python
 
 alias py='python'
 # alias src='source .venv/bin/activate'
@@ -37,6 +37,7 @@ alias init_conda_and_activate='_conda_initialize && conda activate'
 # URL                           : https://conda.io/en/latest/miniconda
 # Provides                      : conda
 # AUR URL                       : https://aur.archlinux.org/packages/miniconda3
-init_miniconda() {
-    [ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
-}
+# venv manager 통합
+# init_miniconda() {
+#     [ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
+# }
