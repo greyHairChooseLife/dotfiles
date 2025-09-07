@@ -154,7 +154,7 @@ vim.cmd([[
   highlight RenderMarkdownMySimpleDone guifg=#ffffff guibg=#004F4F gui=bold,italic
   highlight RenderMarkdownMySimpleCancel guifg=#ffffff guibg=#181818 gui=italic
   highlight RenderMarkdownResult guifg=#ffffff guibg=#3a0ff9 gui=bold,italic
-  highlight RenderMarkdownMyQuestion guifg=#e0af68 gui=bold,italic
+  highlight RenderMarkdownMyQuestion guifg=#FFFF00 gui=bold,italic
   highlight RenderMarkdownMyTest guifg=#B0C4DE gui=bold,italic
   highlight RenderMarkdownMyReference guifg=#C678DD gui=bold,italic
   highlight RenderMarkdownMyLog guifg=#000000 guibg=#B0C4DE gui=bold,italic
