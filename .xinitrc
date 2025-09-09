@@ -3,6 +3,7 @@
 # s off: 화면 보호기 비활성화
 # -dpms: DPMS (Display Power Management Signaling) 비활성화
 xset s off -dpms &
+xset -b &
 
 # MEMO:: swap ctrl:capslock
 btkb() {
