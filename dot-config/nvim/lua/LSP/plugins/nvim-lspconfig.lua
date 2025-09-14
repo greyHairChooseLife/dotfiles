@@ -64,6 +64,8 @@ return {
                 reportUnusedImport = "warning",
                 reportOptionalMemberAccess = "warning",
                 reportOptionalSubscript = "warning",
+                reportCallIssue = "warning",
+                reportArgumentType = "warning",
               },
             },
           },

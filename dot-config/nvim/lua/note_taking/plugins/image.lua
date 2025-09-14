@@ -17,10 +17,11 @@ return {
     integrations = {
       markdown = {
         enabled = true,
-        clear_in_insert_mode = false,
+        clear_in_insert_mode = true,
         download_remote_images = true,
         only_render_image_at_cursor = true,
-        filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
+        only_render_image_at_cursor_mode = "inline", -- "popup" or "inline", defaults to "popup"
+        filetypes = { "markdown", "vimwiki" },       -- markdown extensions (ie. quarto) can go here
       },
     },
     -- max_width = nil,
@@ -28,7 +29,7 @@ return {
     -- max_width_window_percentage = nil,
     -- max_height_window_percentage = 80,
     max_width = 100,                                                          -- tweak to preference
-    max_height = 12,                                                          -- ^
+    max_height = 70,                                                          -- ^
     max_width_window_percentage = math.huge,                                  -- this is necessary for a good experience
     max_height_window_percentage = math.huge,
     window_overlap_clear_enabled = true,                                      -- toggles images when windows are overlapped
@@ -36,6 +37,6 @@ return {
     editor_only_render_when_focused = false,                                  -- auto show/hide images when the editor gains/looses focus
     tmux_show_only_in_active_window = false,                                  -- auto show/hide images in the correct Tmux window (needs visual-activity off)
     hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" }, -- render image files as images when opened
-    scale_factor = 1.0,
+    scale_factor = 1.5,
   },
 }

@@ -111,7 +111,12 @@ sudo pacman -S --needed \
     cargo-binstall \
     tmuxp \
     time \
-    wget
+    wget \
+    zathura \
+    zathura-pdf-poppler \
+    tlp \
+    cmake \
+    cppcheck
 
 # Install AUR packages
 yay -S --needed \

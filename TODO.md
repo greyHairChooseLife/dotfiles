@@ -1,4 +1,8 @@
 
+**fugitive**
+
+- staged/unstaged 목록에서 i누르면 변경내역이 보이듯이, not-pushed list에서도 i누르면 변경 파일이 보이도록 해보자.
+
 
 
 

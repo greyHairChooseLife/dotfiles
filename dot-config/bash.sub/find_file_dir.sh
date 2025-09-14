@@ -1,4 +1,73 @@
 # Unified function that combines both find_file and find_file_hidden
+fzf_find_image_file2() {
+    # Setup Überzug++
+    case "$(uname -a)" in
+        *Darwin*) UEBERZUG_TMP_DIR="$TMPDIR" ;;
+        *) UEBERZUG_TMP_DIR="/tmp" ;;
+    esac
+
+    cleanup() {
+        ueberzugpp cmd -s "$SOCKET" -a exit
+    }
+    trap cleanup HUP INT QUIT TERM EXIT
+
+    UB_PID_FILE="$UEBERZUG_TMP_DIR/.$(uuidgen)"
+    ueberzugpp layer --no-stdin --silent --use-escape-codes --pid-file "$UB_PID_FILE"
+    UB_PID=$(cat "$UB_PID_FILE")
+
+    export SOCKET="$UEBERZUG_TMP_DIR"/ueberzugpp-"$UB_PID".socket
+
+    # Only find image files
+    fd --type file -e jpg -e jpeg -e png -e svg | sort \
+        | fzf --prompt "Images: " \
+            --header '<Enter>: open in nvim (vertical split)' \
+            --preview-window=up:70%:wrap \
+            --bind "enter:become(nvim -o {+})" \
+            --preview 'ueberzugpp cmd -s $SOCKET -i fzfpreview -a add -x $FZF_PREVIEW_LEFT -y $FZF_PREVIEW_TOP --max-width $FZF_PREVIEW_COLUMNS --max-height $FZF_PREVIEW_LINES -f {}'
+
+    # Cleanup Überzug++
+    ueberzugpp cmd -s "$SOCKET" -a exit
+}
+
+fzf_find_image_file() {
+    # Setup Überzug++
+    case "$(uname -a)" in
+        *Darwin*) UEBERZUG_TMP_DIR="$TMPDIR" ;;
+        *) UEBERZUG_TMP_DIR="/tmp" ;;
+    esac
+
+    cleanup() {
+        ueberzugpp cmd -s "$SOCKET" -a exit
+    }
+    trap cleanup HUP INT QUIT TERM EXIT
+
+    UB_PID_FILE="$UEBERZUG_TMP_DIR/.$(uuidgen)"
+    ueberzugpp layer --no-stdin --silent --use-escape-codes --pid-file "$UB_PID_FILE"
+    UB_PID=$(cat "$UB_PID_FILE")
+
+    export SOCKET="$UEBERZUG_TMP_DIR"/ueberzugpp-"$UB_PID".socket
+
+    fd --type file -e jpg -e jpeg -e png -e svg | sort \
+        | FZF_PREVIEW_IMAGE_WIDTH=40 \
+          fzf --prompt "Images: " \
+            --header '<Enter>: open in nvim (vertical split)' \
+            --layout=default \
+            --preview-window=up:70%:wrap \
+            --bind "enter:become(nvim -o {+})" \
+            --preview '
+                IMAGE_WIDTH=${FZF_PREVIEW_IMAGE_WIDTH:-40}
+                X=$((FZF_PREVIEW_LEFT + FZF_PREVIEW_COLUMNS - IMAGE_WIDTH))
+                ueberzugpp cmd -s $SOCKET -i fzfpreview -a add \
+                    -x $X \
+                    -y $FZF_PREVIEW_TOP \
+                    --max-width $IMAGE_WIDTH \
+                    --max-height $FZF_PREVIEW_LINES \
+                    -f {}
+            '
+
+    ueberzugpp cmd -s "$SOCKET" -a exit
+}
+
 fzf_find_file_unified() {
     local show_hidden=${1:-0}  # Default: don't show hidden files
 
@@ -148,6 +217,7 @@ alias j.='fzf_find_dir_hidden'
 # alias ffg='smart_grep'
 alias ffg.='smart_grep_hidden'
 
+export -f fzf_find_image_file
 export -f fzf_find_file_unified
 export -f fzf_find_dir
 export -f fzf_find_dir_hidden
