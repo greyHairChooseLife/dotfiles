@@ -22,6 +22,7 @@ return {
         sh = { "shfmt", stop_after_first = true },
         yaml = { "yamlfmt" },
         toml = { "taplo" },
+        c = { "clang-format" }
       },
       formatters = {
         kulala = {
@@ -36,7 +37,21 @@ return {
         yamlfmt = {}, -- $HOME/.config/yamlfmt/.yamlfmt.yml
         -- ruff_organize_imports = {
         -- 	args = { "order-by-type = false" },
-        -- },
+        ["clang-format"] = {
+          -- ref:
+          -- https://www.youtube.com/watch?v=upeAH74q0q4&t=61s
+          -- https://github.com/ProgrammingRainbow/NvChad-2.5?tab=readme-ov-file#conform
+          -- https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+          prepend_args = {
+            "-style={ \
+                IndentWidth: 4, \
+                TabWidth: 4, \
+                UseTab: Never, \
+                AccessModifierOffset: 0, \
+                IndentAccessModifiers: true, \
+                PackConstructorInitializers: Never}",
+          },
+        }, -- },
       },
       format_on_save = {
         timeout_ms = 500,

@@ -76,6 +76,7 @@ return {
       yamlls = {},
       dockerls = {},
       bashls = {},
+      clangd = {},
     }
     local disabled_server = {
       "pylsp",

@@ -117,7 +117,8 @@ sudo pacman -S --needed \
     tlp \
     cmake \
     cppcheck \
-    gdb
+    gdb \
+    python-debugpy
 
 # Install AUR packages
 yay -S --needed \

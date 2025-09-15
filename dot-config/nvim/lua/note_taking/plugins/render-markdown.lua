@@ -247,9 +247,9 @@ return {
     dash = {
       -- Turn on / off thematic break rendering
       enabled = true,
-      -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'
+      -- Replaces '---'|'***'|'___'|'* * *' of 'thematic_break'    〰️ ▔
       -- The icon gets repeated across the window's width
-      icon = "▔",
+      icon = "",
       -- icon = "",
       -- Width of the generated line:
       --  <integer>: a hard coded width value
