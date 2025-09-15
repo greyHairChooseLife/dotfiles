@@ -219,7 +219,7 @@ function ManageBuffer_gq(bufnr, winid)
       print("quit: 2")
     else
       -- vim.api.nvim_win_close(winid or 0, false) -- win_id가 주어지지 않으면 그냥 현재 윈도우
-      -- print("quit: 3")
+      -- print("quit: 3")adl
       vim.defer_fn(function()
         vim.api.nvim_win_close(winid or 0, false)
         print("quit: 3")
