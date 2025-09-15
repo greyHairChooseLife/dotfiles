@@ -116,7 +116,8 @@ sudo pacman -S --needed \
     zathura-pdf-poppler \
     tlp \
     cmake \
-    cppcheck
+    cppcheck \
+    gdb
 
 # Install AUR packages
 yay -S --needed \

@@ -202,7 +202,8 @@ function ManageBuffer_gq(bufnr, winid)
       and not excluded_filetype
       and not excluded_buftype
   then
-    if #vim.api.nvim_list_wins() == 1 then
+    -- if #vim.api.nvim_list_wins() == 1 then  -- 왠진 몰라도 3개 4개 나온다. 실제로는 1개만 보이는데도
+    if #vim.fn.getbufinfo({ buflisted = 1 }) == 1 then
       return vim.cmd("q")
     end
     close_if_last_with_nvimtree()

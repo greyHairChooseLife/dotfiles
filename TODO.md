@@ -1,4 +1,9 @@
 
+
+
+
+
+
 **fugitive**
 
 - staged/unstaged 목록에서 i누르면 변경내역이 보이듯이, not-pushed list에서도 i누르면 변경 파일이 보이도록 해보자.
@@ -10,6 +15,9 @@
 
 - 현재 열린 버퍼 또는 QF에 담긴 버퍼에서만 grep을 실행할 수 있으면 좋겠다.
   - 현재 탭 내에서도
+
+- ignored file search
+  - [ ] 내 find file 명령어(Ctrl+k)에 맵핑된것도 ignored파일 볼 수 있는 방식으로 전환 가능하게
 
 
 
