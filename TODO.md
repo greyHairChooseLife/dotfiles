@@ -1,5 +1,26 @@
 
 
+```
+   Error  11:11:53 AM msg_show.emsg
+
+E5108: Error executing lua: /home/sy/.config/nvim/lua/buf_win_tab/function.lua:210: User Autocommands for "GitSignsUpdate": Vim(append):Error executing lua callback: .../nvim/lazy/nvim-tree.lua/lua/nvim-tree/renderer/init.lua:46: E565: Not allowed to change text or change window
+stack traceback:
+	[C]: in function 'nvim_buf_set_lines'
+	.../nvim/lazy/nvim-tree.lua/lua/nvim-tree/renderer/init.lua:46: in function '_draw'
+	.../nvim/lazy/nvim-tree.lua/lua/nvim-tree/renderer/init.lua:110: in function 'draw'
+	.../nvim/lazy/nvim-tree.lua/lua/nvim-tree/explorer/init.lua:490: in function 'reload'
+	/home/sy/.config/nvim/lua/git_diff/plugins/gitsigns.lua:46: in function </home/sy/.config/nvim/lua/git_diff/plugins/gitsigns.lua:45>
+	[C]: in function 'nvim_exec_autocmds'
+	...al/share/nvim/lazy/gitsigns.nvim/lua/gitsigns/status.lua:15: in function 'autocmd_update'
+	...al/share/nvim/lazy/gitsigns.nvim/lua/gitsigns/status.lua:49: in function 'clear'
+	...al/share/nvim/lazy/gitsigns.nvim/lua/gitsigns/attach.lua:430: in function 'detach'
+	...al/share/nvim/lazy/gitsigns.nvim/lua/gitsigns/attach.lua:74: in function <...al/share/nvim/lazy/gitsigns.nvim/lua/gitsigns/attach.lua:72>
+	[C]: in function 'bdelete'
+	/home/sy/.config/nvim/lua/buf_win_tab/function.lua:210: in function </home/sy/.config/nvim/lua/buf_win_tab/function.lua:180>
+stack traceback:
+	[C]: in function 'bdelete'
+	/home/sy/.config/nvim/lua/buf_win_tab/function.lua:210: in function </home/sy/.config/nvim/lua/buf_win_tab/function.lua:180>
+```
 
 
 
@@ -121,3 +142,109 @@
   - cancel, done, todo 등으로 전환하는 키맵도 있어야겠다.
 
 
+
+
+- codecompanion에서 내가 쓰던 내부 api를 날렸다. 그래서 commit  고정해둠
+
+```
+M lua/codecompanion/utils/buffers.lua
+@@ -77,6 +77,101 @@ function M.get_open(ft)
+   return buffers
+ end
+ 
++---Format buffer content with XML wrapper for LLM consumption
++---@param selected table Buffer info { bufnr: number, path: string, name?: string }
++---@param opts? table Options { message?: string, range?: table }
++---@return string content The XML-wrapped content
++---@return string id The buffer context ID
++---@return string filename The buffer filename
++function M.format_for_llm(selected, opts)
++  opts = opts or {}
++  local bufnr = selected.bufnr
++  local path = selected.path
++
++  -- Handle unloaded buffers
++  local content
++  if not api.nvim_buf_is_loaded(bufnr) then
++    local file_content = require("plenary.path").new(path):read()
++    if file_content == "" then
++      error("Could not read the file: " .. path)
++    end
++    content = string.format(
++      [[```%s
++%s
++```]],
++      vim.filetype.match({ filename = path }),
++      M.add_line_numbers(vim.trim(file_content))
++    )
++  else
++    content = string.format(
++      [[```%s
++%s
++```]],
++      M.get_info(bufnr).filetype,
++      M.add_line_numbers(M.get_content(bufnr, opts.range))
++    )
++  end
++
++  local filename = vim.fn.fnamemodify(path, ":t")
++  local relative_path = vim.fn.fnamemodify(path, ":.")
++
++  -- Generate consistent ID
++  local id = "<buf>" .. relative_path .. "</buf>"
++
++  local message = opts.message or "File content"
++
++  local formatted_content = string.format(
++    [[<attachment filepath="%s" buffer_number="%s">%s:
++%s</attachment>]],
++    relative_path,
++    bufnr,
++    message,
++    content
++  )
++
++  return formatted_content, id, filename
++end
++
++---Format viewport content with XML wrapper for LLM consumption
++---@param buf_lines table Buffer lines from get_visible_lines()
++---@return string content The XML-wrapped content for all visible buffers
++function M.format_viewport_for_llm(buf_lines)
++  local formatted = {}
++
++  for bufnr, ranges in pairs(buf_lines) do
++    local info = M.get_info(bufnr)
++    local relative_path = vim.fn.fnamemodify(info.path, ":.")
++
++    for _, range in ipairs(ranges) do
++      local start_line, end_line = range[1], range[2]
++
++      local buffer_content = M.get_content(bufnr, { start_line - 1, end_line })
++      local content = string.format(
++        [[```%s
++%s
++```]],
++        info.filetype,
++        buffer_content
++      )
++
++      local excerpt_info = string.format("Excerpt from %s, lines %d to %d", relative_path, start_line, end_line)
++
++      local formatted_content = string.format(
++        [[<attachment filepath="%s" buffer_number="%s">%s:
++%s</attachment>]],
++        relative_path,
++        bufnr,
++        excerpt_info,
++        content
++      )
++
++      table.insert(formatted, formatted_content)
++    end
++  end
++
++  return table.concat(formatted, "\n\n")
++end
++
+```

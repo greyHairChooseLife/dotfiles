@@ -361,6 +361,7 @@ vim.cmd([[
   highlight CodeCompanionH5Bg guibg=NONE guifg=#8b8378 gui=bold
   highlight CodeCompanionH6Bg guibg=NONE guifg=#B0C4DE gui=bold
 
+
   " MEMO:: Snacks
   highlight SnacksPickerInputTitle guibg=#000000 guifg=#A1C98A
   " highlight SnacksPickerListCursorLine guibg=#242024 guifg=NONE
@@ -370,6 +371,13 @@ vim.cmd([[
   highlight SnacksPickerPreviewBorder guibg=#24283B guifg=#24283B
   highlight SnacksPickerCursorLine guibg=#24283B guifg=NONE
   highlight SnacksPickerMatch guifg=#FF4500
+
+
+  " MEMO:: Snacks
+  highlight DebugBreakPointText guifg=#FF4500 guibg=NONE
+  highlight DebugBreakPointRejectedText guifg=#9932cc guibg=NONE
+  highlight DebugStoppedText guifg=#32CD32 guibg=NONE
+  highlight DebugStoppedLine guifg=NONE guibg=#000000
 ]])
 
 --

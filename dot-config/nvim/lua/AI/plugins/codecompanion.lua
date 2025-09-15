@@ -1,6 +1,7 @@
 return {
   "olimorris/codecompanion.nvim",
   event = "VeryLazy",
+  commit = "a869f19", -- util function lost
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
@@ -30,6 +31,7 @@ return {
     {
       "HakonHarnes/img-clip.nvim",
       event = "VeryLazy",
+      enabled = false,
       opts = {
         filetypes = {
           codecompanion = {
@@ -155,6 +157,7 @@ return {
             previous_chat = { modes = { n = "]]" } },
             next_chat = { modes = { n = "[[" } },
             system_prompt = { modes = { n = "gts" } }, -- toggle system prompts
+            yolo_mode = { modes = { n = "gta" } },     -- toggle auto tool mode
             regenerate = { modes = { n = "gR" } },
             copilot_stats = { modes = { n = "gs" } },
           },
