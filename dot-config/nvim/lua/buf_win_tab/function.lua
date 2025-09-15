@@ -251,6 +251,10 @@ function ManageBuffer_gQ() -- loaded buffer를 모두 닫는다.
   if vim.api.nvim_buf_is_valid(bufnr) then
     vim.api.nvim_buf_delete(bufnr, { force = true }) -- bwipeout
   end
+
+  -- vim.defer_fn(function()
+  --   require("nvim-tree.api").tree.reload()
+  -- end, 2)
 end
 
 function ManageBuffer_gE() -- 저장 후, loaded buffer를 모두 닫는다.
