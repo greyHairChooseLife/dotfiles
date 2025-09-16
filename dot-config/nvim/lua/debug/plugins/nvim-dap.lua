@@ -36,7 +36,6 @@ return {
           })
         end,
       },
-      "mfussenegger/nvim-dap-python",
     },
     config = function()
       local dap = require("dap")
@@ -135,10 +134,6 @@ return {
           require('utils').switch_to_normal_mode()
         end, 100)
       end
-
-      -- MEMO:: python
-      local dap_python = require("dap-python")
-      dap_python.setup("python3")
 
       -- MEMO:: bash
       dap.adapters.bashdb = {

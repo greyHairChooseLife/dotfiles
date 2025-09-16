@@ -6,7 +6,7 @@ local dapui = require("dapui")
 wk_map({
   ["<Space>d"] = {
     group = "Debug",
-    order = { "b", "B", "c", "l", "h", "H", "i", "O", "Q", "t", "v" },
+    order = { "b", "B", "c", "l", "h", "H", "i", "O", "j", "f", "Q", "t", "v" },
     ["b"] = {
       function() dap.toggle_breakpoint() end,
       desc = "Toggle breakpoint",
