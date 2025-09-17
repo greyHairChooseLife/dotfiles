@@ -2,7 +2,7 @@
 ratio = [1, 2, 4]
 
 [opener]
-zathura = [{ run = 'zathura "$@"', block = true, for = "unix" }]
+zathura = [{ run = 'zathura "$@"', block = false, for = "unix" }]
 
 [open]
-rules = [{ mime = "application/pdf", use = "zathura" }]
+append_rules = [{ mime = "application/pdf", use = "zathura" }]

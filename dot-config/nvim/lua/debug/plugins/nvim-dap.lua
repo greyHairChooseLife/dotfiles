@@ -51,10 +51,10 @@ return {
         },
         layouts = { {
           elements = {
-            {
-              id = "scopes",
-              size = 0.5
-            },
+            -- {
+            --   id = "scopes",
+            --   size = 0.6
+            -- },
             --   {
             --   id = "breakpoints",
             --   size = 0.25
@@ -62,29 +62,30 @@ return {
             {
               id = "watches",
               -- size = 0.25
-              size = 0.25
+              size = 1
+            },
+          },
+          position = "left",
+          size = 80
+        }, {
+          elements = {
+            {
+              id = "console",
+              -- size = 0.5
+              size = 0.5
             },
             {
               id = "stacks",
-              size = 0.25
+              size = 0.5
               -- size = 0.25
-            }
-          },
-          position = "bottom",
-          size = 30
-        }, {
-          elements = {
+            },
             -- {
             --   id = "repl",
             --   size = 0.5
             -- },
-            {
-              id = "console",
-              -- size = 0.5
-              size = 1
-            } },
-          position = "left",
-          size = 40
+          },
+          position = "right",
+          size = 35
         } },
 
         mappings = {
@@ -129,6 +130,7 @@ return {
       -- Automatically open/close DAP UI
       dap.listeners.after.event_initialized["dapui_config"] = function()
         vim.bo.readonly = true
+        vim.bo.modifiable = false
         dapui.open()
         vim.defer_fn(function()
           require('utils').switch_to_normal_mode()
