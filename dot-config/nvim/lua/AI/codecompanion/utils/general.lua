@@ -171,12 +171,10 @@ M.add_buffer_reference = function()
 
   local add_buf_to_last_chat = function()
     local bufnr = vim.api.nvim_get_current_buf()
+    local chat_helpers = require("codecompanion.strategies.chat.helpers.init")
     local buf_utils = require("codecompanion.utils.buffers")
 
-    local content = buf_utils.format_for_llm({
-      bufnr = bufnr,
-      path = buf_utils.get_info(bufnr).path,
-    })
+    local content = chat_helpers.format_buffer_for_llm(bufnr, buf_utils.get_info(bufnr).path)
     local path = vim.api.nvim_buf_get_name(bufnr)
     local message = "Here is the content from"
     local name = cdc.last_chat().context:make_id_from_buf(bufnr)
@@ -270,16 +268,14 @@ M.add_tab_buffers_reference = function()
   for _, win in ipairs(buffers) do
     local bufnr = vim.api.nvim_win_get_buf(win)
     local buf_utils = require("codecompanion.utils.buffers")
+    local chat_helpers = require("codecompanion.strategies.chat.helpers.init")
     -- local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
     local buftype = vim.bo[bufnr].buftype
     local path = vim.api.nvim_buf_get_name(bufnr)
 
     -- 일반 파일 버퍼만 처리 (특수 버퍼는 제외)
     if buftype == "" and path ~= "" then
-      local content = buf_utils.format_for_llm({
-        bufnr = bufnr,
-        path = buf_utils.get_info(bufnr).path,
-      })
+      local content = chat_helpers.format_buffer_for_llm(bufnr, buf_utils.get_info(bufnr).path)
       local message = "Here is the content from"
       local name = chat.context:make_id_from_buf(bufnr)
 

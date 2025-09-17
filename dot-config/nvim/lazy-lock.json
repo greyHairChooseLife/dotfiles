@@ -5,7 +5,7 @@
   "auto-session": { "branch": "main", "commit": "5a269bb5bec50b8b60564aa00f6454d9e82fbe8d" },
   "blink.cmp": { "branch": "main", "commit": "bae4bae0eedd1fa55f34b685862e94a222d5c6f8" },
   "codecompanion-history.nvim": { "branch": "main", "commit": "eb99d256352144cf3b6a1c45608ec25544a0813d" },
-  "codecompanion.nvim": { "branch": "main", "commit": "a869f190f627123de8bf97df9e9b5bd6f61645f9" },
+  "codecompanion.nvim": { "branch": "main", "commit": "4d174f5b20af95805e9d710f845aca6db15b3309" },
   "conform.nvim": { "branch": "master", "commit": "b4aab989db276993ea5dcb78872be494ce546521" },
   "copilot.lua": { "branch": "master", "commit": "8aebaa3a102125fedf08c98773a0a8def92fff37" },
   "csvview.nvim": { "branch": "main", "commit": "bbab4c2f808fd8e11ec8dfdd128251aadba566a1" },

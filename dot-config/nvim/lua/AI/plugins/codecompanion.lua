@@ -1,7 +1,7 @@
 return {
   "olimorris/codecompanion.nvim",
   event = "VeryLazy",
-  commit = "a869f19", -- util function lost
+  -- commit = "a869f19", -- util function lost
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
