@@ -118,7 +118,10 @@ sudo pacman -S --needed \
     cmake \
     cppcheck \
     gdb \
-    python-debugpy
+    python-debugpy \
+    ghostscript \
+    lldb \
+    pwndbg
 
 # Install AUR packages
 yay -S --needed \
