@@ -8,7 +8,7 @@ xset -b &
 # MEMO:: swap ctrl:capslock
 btkb() {
     case "$HOSTNAME" in
-        "Lenovo-ideapad" | "cbpm-labtop" | "sy-x390") ;;
+        "sy-Lenovo-ideapad" | "cbpm-labtop" | "sy-x390") ;;
         *) return 1
     esac
 

@@ -1,6 +1,6 @@
 btkb() {
     case "$HOSTNAME" in
-        "Lenovo-ideapad" | "cbpm-labtop" | "sy-x390") ;;
+        "sy-Lenovo-ideapad" | "cbpm-labtop" | "sy-x390") ;;
         *)
             echo "Not a recognized hostname"
             return 1
