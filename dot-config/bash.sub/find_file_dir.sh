@@ -210,6 +210,8 @@ smart_grep_hidden() {
 
 # alias ff='fzf_find_file'
 # alias ff.='fzf_find_file_hidden'
+
+alias fff='fzf_find_file_unified'
 alias ffd='fzf_find_dir'
 alias ffd.='fzf_find_dir_hidden'
 alias j='fzf_find_dir'
