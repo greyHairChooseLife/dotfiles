@@ -88,7 +88,7 @@ end
 -- MEMO:: keymap
 local wk_map = require("utils").wk_map
 wk_map({
-  ["<leader>D"] = {
+  ["<leader>d"] = {
     group = "󰷉  Document",
     order = { "c", "s" },
     ["c"] = {

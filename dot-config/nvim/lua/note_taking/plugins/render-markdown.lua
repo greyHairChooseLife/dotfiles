@@ -188,10 +188,11 @@ return {
           pattern = "TODO",
           background = "RenderMarkdownMyTodoHeader",
         },
-        TODOfin = {
-          pattern = "TODO:fin",
-          background = "RenderMarkdownMyTodoFinHeader",
-        },
+        -- 다 했으면 그런 헤더는 사라져야지?
+        -- TODOfin = {
+        --   pattern = "TODO:fin",
+        --   background = "RenderMarkdownMyTodoFinHeader",
+        -- },
         REFERENCE = {
           pattern = "REFERENCE",
           background = "RenderMarkdownMyReferenceHeader",
