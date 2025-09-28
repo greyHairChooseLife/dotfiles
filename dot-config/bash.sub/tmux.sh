@@ -18,6 +18,24 @@ alias tpe='sel=$(tp ls | tac | fzf --header="Edit the selected session spec" --p
   [ -n "$sel" ] && tmuxp edit "$sel"'
 alias tpe.='tmuxp edit ./tmuxp.yaml'
 
-set_pane_title() {
-    printf '\033]2;%s\033\\' "$1"
+# 외않되
+# set_pane_title() {
+#     printf '\033]2;%s\033\\' "$1"
+# }
+
+tm.1_title() {
+  local name="${1:-$(ps -o comm= -p "$PPID")}"
+  [ -n "$TMUX" ] && tmux set -p @mytitle "$name"
 }
+
+tm.2_toggle_border() {
+    current=$(tmux show -svg @pane_border_toggle 2>/dev/null)
+    if [ "$current" = "on" ]; then
+        tmux set -s @pane_border_toggle ""
+    else
+        tmux set -s @pane_border_toggle on
+    fi
+}
+
+alias 1='tm.1_title'
+alias 2='tm.2_toggle_border'

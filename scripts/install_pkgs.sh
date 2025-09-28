@@ -121,7 +121,8 @@ sudo pacman -S --needed \
     python-debugpy \
     ghostscript \
     lldb \
-    pwndbg
+    pwndbg \
+    ipython
 
 # Install AUR packages
 yay -S --needed \
