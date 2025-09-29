@@ -2,8 +2,8 @@ source /usr/share/pwndbg/gdbinit.py
 
 set context-clear-screen on
 set disassembly-flavor att
-set context-output tty
 set show-tips off
+set context-code-lines 20
 
 set chain-arrow-left 
 set chain-arrow-right 

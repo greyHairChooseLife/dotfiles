@@ -81,5 +81,6 @@ alias make-mp3="ffmpeg -i"                                        # usage : make
 alias b='btop'
 alias time='/usr/bin/time -f $"========== time report ==========\n실행시간: %E\nCPU: %P\n메모리: %M KB\n========== end =========="'
 alias nnd='~/.local/bin/nnd'
-alias D='pwndbg-lldb'
+alias dbg='gdb --quiet'
+alias gdb='gdb --quiet'
 # <<<

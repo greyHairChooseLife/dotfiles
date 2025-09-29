@@ -21,7 +21,7 @@ panes = {
     # Split horizontal to make the main window at the bottom
     "disasm": os.popen(
         # 'tmux split-window -vb -P -F "#{pane_id}:#{pane_tty}" -l 75% -d "tmux set -p @mytitle hoho; cat -"'
-        'tmux split-window -v -P -F "#{pane_id}:#{pane_tty}" -l 80% -t {top-left} -d "cat -"'
+        'tmux split-window -v -P -F "#{pane_id}:#{pane_tty}" -l 70% -t {top-left} -d "cat -"'
     )
     .read()
     .strip()
@@ -29,6 +29,12 @@ panes = {
     # Split horizontal to make the disasm + regs on the top, stack + stacktrace on bottom
     "backtrace": os.popen(
         'tmux split-window -v -P -F "#{pane_id}:#{pane_tty}" -l 15% -t {top-right} -d "cat -"'
+    )
+    .read()
+    .strip()
+    .split(":"),
+    "args": os.popen(
+        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -l 40% -t :.+4 -d "cat -"'
     )
     .read()
     .strip()
@@ -46,8 +52,14 @@ panes = {
     .read()
     .strip()
     .split(":"),
-    "ipython": os.popen(
-        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -t {bottom} -l 45% -d "ipython --no-banner"'
+    "expressions": os.popen(
+        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -l 60% -t {bottom} -d "cat -"'
+    )
+    .read()
+    .strip()
+    .split(":"),
+    "Ipython": os.popen(
+        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -t {bottom} -l 50% -d "ipython --no-banner"'
     )
     .read()
     .strip()
@@ -63,7 +75,7 @@ for section, p in panes.items():
 # Also add the sections legend and expressions to already existing panes
 # contextoutput("code", panes["disasm"][1], True, "top")
 contextoutput("legend", panes["regs"][1], True)
-contextoutput("expressions", panes["regs"][1], True, "top", False)
+# contextoutput("expressions", panes["regs"][1], True, "top", False)
 
 os.system('xdotool type "tty /dev/pts/"')
 
