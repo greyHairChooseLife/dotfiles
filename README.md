@@ -34,6 +34,21 @@ dotfiles/
 
 ## Tmux
 
+### REFERENCE
+
+> You can capture the current window layout using display-message
+> 
+> layout=$( tmux display-message -p "#{window_layout}" ) Note that this
+> works in tmux version 1.7 or later. If you are using an older version, you
+> could try extracting the layout string from the list-windows command. One way
+> to do it is as follows:
+> 
+> layout=$( tmux list-windows | sed -e 's/^.*\[layout \(\S*\)].*$/\1/' )
+> and now you can use that variable, to restore your layout at a later time,
+> with select-layout:
+> 
+> tmux select-layout "$layout"
+
 ### TODO
 
 - tmux resurrection 이거 내가 원하는 시점으로 이동하고, 필요시 스냅샷을 제거할 수 있도록
