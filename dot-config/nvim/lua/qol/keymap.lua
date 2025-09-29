@@ -173,7 +173,7 @@ wk_map({
 wk_map({
   ["<leader>r"] = {
     group = "  Run Command",
-    order = { "r", "R", "u" },
+    order = { "r", "R", "u", "x", "c" },
     ["u"] = {
       function()
         RunBufferWithSh({ selected = true, underline = true })
@@ -204,6 +204,22 @@ wk_map({
       end,
       desc = "run on buffer and cover ",
       mode = { "n", "v" },
+    },
+    ["x"] = {
+      function()
+        CompileAndRun()
+      end
+      ,
+      desc = "Complile and Execute",
+      mode = "n"
+    },
+    ["c"] = {
+      function()
+        TypeCompilecommand()
+      end
+      ,
+      desc = "Compile",
+      mode = "n"
     },
   },
 })
