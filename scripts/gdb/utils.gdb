@@ -38,8 +38,11 @@ document contextwatchfile
 end
 
 alias wa = watch
-alias waf = watchfile
-alias cwf = contextwatchfile
+alias wa_file = watchfile
+alias cw = contextwatch
+alias cw_file = contextwatchfile
+alias cw_ev = contextwatch execute
+alias cw_del = contextunwatch
 
 # record 실행 시점부터 되감기가 가능하다.
 # tmux로 단축키 만들어둠
@@ -69,3 +72,13 @@ alias cwf = contextwatchfile
 # ```
 # (gdb) info proc mappings
 # ```
+
+# ```
+# x/32xb 0x주소
+# ```
+# 이렇게 입력하면 **해당 주소의 1바이트 값을 16진수(hex)로 출력**합니다.
+
+# - `x` : examine(메모리 보기)
+# - `/x` : 16진수로 출력
+# - `b` : 바이트 단위(byte)
+# - `0x주소` : 확인하고 싶은 메모리 주소

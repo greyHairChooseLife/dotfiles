@@ -83,4 +83,5 @@ alias time='/usr/bin/time -f $"========== time report ==========\n실행시간: 
 alias nnd='~/.local/bin/nnd'
 alias dbg='gdb --quiet'
 alias gdb='gdb --quiet'
+alias xx='xargs'
 # <<<
