@@ -8,6 +8,10 @@ _G.markdown_fold_text = function(foldstart, foldend, foldlevel)
     line_start_icon = "    󱞪 "
   elseif foldlevel == 4 then
     line_start_icon = "       󱞪 "
+  elseif foldlevel == 5 then
+    line_start_icon = "         󱞪 "
+  elseif foldlevel == 6 then
+    line_start_icon = "           󱞪 "
   end
   local line_end_icon = ""
   local line_icon = "░"
@@ -20,6 +24,10 @@ _G.markdown_fold_text = function(foldstart, foldend, foldlevel)
     total_width = 99
   elseif foldlevel == 4 then
     total_width = 97
+  elseif foldlevel == 5 then
+    total_width = 95
+  elseif foldlevel == 6 then
+    total_width = 50
   end
   local line_icon_fill = string.rep(line_icon, total_width - #line_start_icon / 2)
   local line_fill = line_start_icon .. line_icon_fill .. line_end_icon
@@ -46,6 +54,7 @@ _G.markdown_fold_expr = function(lnum)
   local is_lv3_header = string.match(prev_line, "^###%s")
   local is_lv4_header = string.match(prev_line, "^####%s")
   local is_lv5_header = string.match(prev_line, "^#####%s")
+  local is_lv6_header = string.match(prev_line, "^######%s")
 
   if is_lv2_header then
     return "1"
@@ -59,6 +68,12 @@ _G.markdown_fold_expr = function(lnum)
   if is_lv5_header then
     return "4"
   end
+  if is_lv5_header then
+    return "5"
+  end
+  if is_lv6_header then
+    return "6"
+  end
   if string.match(curr_line, "^%s*$") and string.match(next_line, "^###%s") then
     return "1"
   end
@@ -67,6 +82,12 @@ _G.markdown_fold_expr = function(lnum)
   end
   if string.match(curr_line, "^%s*$") and string.match(next_line, "^#####%s") then
     return "3"
+  end
+  if string.match(curr_line, "^%s*$") and string.match(next_line, "^######%s") then
+    return "4"
+  end
+  if string.match(curr_line, "^%s*$") and string.match(next_line, "^#######%s") then
+    return "5"
   end
   -- if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next2_line, "^##%s") then
   if curr_line == last_line or string.match(curr_line, "^%s*$") and string.match(next_line, "^##%s") then

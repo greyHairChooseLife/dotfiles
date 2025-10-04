@@ -25,8 +25,10 @@ alias tpe.='tmuxp edit ./tmuxp.yaml'
 
 tm.1_title() {
   local name="${1:-$(ps -o comm= -p "$PPID")}"
-  [ -n "$TMUX" ] && tmux set -p @mytitle "$name"
+  # [ -n "$TMUX" ] && tmux set -p @mytitle "$name"
+  [ -n "$TMUX" ] && tmux set -p -t "$TMUX_PANE" @mytitle "$name"
 }
+
 
 tm.2_toggle_border() {
     current=$(tmux show -svg @pane_border_toggle 2>/dev/null)

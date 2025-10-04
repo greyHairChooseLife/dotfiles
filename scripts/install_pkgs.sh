@@ -122,7 +122,9 @@ sudo pacman -S --needed \
     ghostscript \
     lldb \
     pwndbg \
-    ipython
+    ipython \
+    i3exit \
+    rustnet-bin
 
 # Install AUR packages
 yay -S --needed \

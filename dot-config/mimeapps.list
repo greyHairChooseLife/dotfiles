@@ -2,3 +2,4 @@
 audio/mpeg=cmus.desktop
 audio/mp3=cmus.desktop
 x-scheme-handler/webcal=brave-browser.desktop
+application/pdf=zathura.desktop

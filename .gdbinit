@@ -16,6 +16,7 @@ set backtrace limit 0
 set logging file dbg.log
 set logging enabled on
 set debuginfod enabled on
+set history save off
 
 # pwndbg: 스택이 위에서 아래로 자라게 표시 외?않?되?
 # set context-stack-lines-reverse on

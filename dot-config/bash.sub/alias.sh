@@ -54,6 +54,13 @@ alias glgoa='glgao'
 alias glgF='glg HEAD..' # check fetched
 alias glgP='glg origin/HEAD..' # check to be pushed
 alias glMM='git log --pretty=format:"COMMIT : %h%nTITLE  : %s%nMESSAGE: %b%n%cd==================================== %ae%n%n" --date=short'
+
+git-root() {
+  git rev-parse --show-toplevel 2>/dev/null || {
+    echo "Error: Not inside a git repository." >&2
+    return 1
+  }
+}
 # <<<
 
 # >>> docker

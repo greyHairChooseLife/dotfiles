@@ -135,6 +135,9 @@ return {
                 .. table.concat(sections, ".")
                 .. ". "
           end
+          if #sections == 5 then
+            return " ▁▁▁▁ "
+          end
           return table.concat(sections, ".") .. ". "
         end
       end,

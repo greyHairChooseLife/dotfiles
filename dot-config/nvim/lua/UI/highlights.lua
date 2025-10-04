@@ -174,7 +174,7 @@ vim.cmd([[
   highlight RenderMarkdownH4Bg guibg=NONE guifg=#e0af68 gui=italic
   highlight RenderMarkdownH5Bg guibg=NONE guifg=#8b8378 gui=italic
   " highlight RenderMarkdownH5Bg guibg=#AF4500
-  " highlight RenderMarkdownH6Bg guibg=#4e4451
+  highlight RenderMarkdownH6Bg guibg=NONE guifg=#AF4500 gui=italic
 
   highlight RenderMarkdownH1 guifg=#FFFFFF
   highlight RenderMarkdownH2 guifg=#4169E1

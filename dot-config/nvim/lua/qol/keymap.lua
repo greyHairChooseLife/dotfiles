@@ -69,8 +69,19 @@ map("i", "cc<Enter>", function()
   vim.api.nvim_input("<Esc>cc")
 end)
 map("i", "zz", function()
-  vim.api.nvim_input("<Esc>zza")
+  vim.api.nvim_input("<Esc>zzA")
 end)
+
+map('i', '<M-b>', '<C-Left>')
+map('i', '<M-f>', '<C-Right>')
+map('i', '<C-a>', '<Home>')
+map('i', '<C-e>', '<End>')
+map('i', '<C-l>', '<Del>')
+map('c', '<M-b>', '<C-Left>')
+map('c', '<M-f>', '<C-Right>')
+map('c', '<C-a>', '<Home>')
+map('c', '<C-e>', '<End>')
+map('c', '<C-l>', '<Del>')
 
 -- TODO: <esc> 시뮬레이션 방법을 통일(검증 필요)하고, 함수로 만들어 재사용하자.
 -- Easy Escape
@@ -81,6 +92,21 @@ map({ "i", "c" }, "gq", function()
   vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
 end, { noremap = true })
 map({ "i", "c" }, ";ㅓ<Space>", function()
+  vim.api.nvim_input("<Esc>")      -- 실제 <Esc> 입력을 강제 실행
+  os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
+end, { noremap = true })
+-- jk or kj as well
+map({ "i", "c" }, "jk", function()
+  vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
+end, { noremap = true })
+map({ "i", "c" }, "kj", function()
+  vim.api.nvim_input("<C-c>") -- cmdwin에서는 <Esc>로 동작하도록
+end, { noremap = true })
+map({ "i", "c" }, "ㅓㅏ", function()
+  vim.api.nvim_input("<Esc>")      -- 실제 <Esc> 입력을 강제 실행
+  os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
+end, { noremap = true })
+map({ "i", "c" }, "ㅏㅓ", function()
   vim.api.nvim_input("<Esc>")      -- 실제 <Esc> 입력을 강제 실행
   os.execute("xdotool key Escape") -- 영어 입력 모드로 전환 (kime에 ESC 입력 보내기), keyboard layout to English
 end, { noremap = true })
@@ -103,7 +129,8 @@ end, opt)
 
 map({ "n", "v" }, "<C-e>", "2<C-e>")
 map({ "n", "v" }, "<C-y>", "2<C-y>")
-map("n", ",.<ESC>", "<Nop>") -- do nothing
+map("n", ",.<ESC>", "<Nop>")   -- do nothing
+map("n", ",.<Space>", "<Nop>") -- do nothing
 
 -- 선택한 줄 이동
 map("x", "<A-k>", ":move '<-2<CR>gv-gv")
