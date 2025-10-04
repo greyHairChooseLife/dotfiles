@@ -616,4 +616,16 @@ M.switch_to_normal_mode = function()
   vim.api.nvim_feedkeys(escape_key, "n", true)
 end
 
+M.feed_keys_with_delay = function(keys, delay)
+  local i = 1
+  local function feed_next()
+    if i <= #keys then
+      vim.api.nvim_feedkeys(keys[i], "n", false)
+      i = i + 1
+      vim.defer_fn(feed_next, delay)
+    end
+  end
+  feed_next()
+end
+
 return M
