@@ -67,9 +67,9 @@ return {
       end),
       -- dashboard.button("n", "New", ":ene <BAR> startinsert <CR>"),
       dashboard.button("n", "New", ":ene<CR>"),
-      dashboard.button("f", "File", ":Telescope find_files<CR>"),
-      dashboard.button("w", "Word", ":Telescope live_grep<CR>"),
-      dashboard.button("o", "Old", ":Telescope oldfiles<CR>"),
+      -- dashboard.button("f", "File", ":Telescope find_files<CR>"),
+      -- dashboard.button("w", "Word", ":Telescope live_grep<CR>"),
+      -- dashboard.button("o", "Old", ":Telescope oldfiles<CR>"),
       dashboard.button("c", "  Copilot", function()
         local cdc_func = require("AI.codecompanion.utils.general")
         cdc_func.create_new()

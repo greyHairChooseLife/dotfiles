@@ -2,7 +2,7 @@ local map = vim.keymap.set
 local opt = { noremap = true, silent = true }
 
 local snp = require("snacks").picker
-local telescope = require("telescope.builtin")
+-- local telescope = require("telescope.builtin")
 local utils = require("utils")
 
 map("n", "K", function()
@@ -71,16 +71,17 @@ map("n", "gR", function()
   local config = { include_declaration = false, auto_confirm = false }
   snp.lsp_references(config)
 end, opt)
-map("n", "gI", function()
-  telescope.lsp_incoming_calls({
-    show_line = false, -- 결과 텍스트 표시
-  })
-end, opt)
-map("n", "gO", function()
-  telescope.lsp_outgoing_calls({
-    show_line = false, -- 결과 텍스트 표시
-  })
-end, opt)
+-- MEMO:: sonner or later
+-- map("n", "gI", function()
+--   telescope.lsp_incoming_calls({
+--     show_line = false, -- 결과 텍스트 표시
+--   })
+-- end, opt)
+-- map("n", "gO", function()
+--   telescope.lsp_outgoing_calls({
+--     show_line = false, -- 결과 텍스트 표시
+--   })
+-- end, opt)
 
 local wk_map = require("utils").wk_map
 wk_map({

@@ -159,14 +159,14 @@ return {
         },
         lualine_y = {
           {
-            "harpoon2",
-            icon = "", -- 󰀱 󰃀 󰃃  󰆡  
-            indicators = { "", "", "", "", "", "" },
-            active_indicators = { "", "", "", "", "", "" },
-            color_active = { fg = colors.orange, bg = colors.bg, gui = "bold" },
-            _separator = "", --  󱋰 󰇜 󰇼 󱗘 󰑅 󱒖 󰩮 󰦟 󰓡    
-            no_harpoon = "Harpoon not loaded",
-            padding = { left = 1, right = 1 },
+            -- "harpoon2",
+            -- icon = "", -- 󰀱 󰃀 󰃃  󰆡  
+            -- indicators = { "", "", "", "", "", "" },
+            -- active_indicators = { "", "", "", "", "", "" },
+            -- color_active = { fg = colors.orange, bg = colors.bg, gui = "bold" },
+            -- _separator = "", --  󱋰 󰇜 󰇼 󱗘 󰑅 󱒖 󰩮 󰦟 󰓡    
+            -- no_harpoon = "Harpoon not loaded",
+            -- padding = { left = 1, right = 1 },
           },
         },
         lualine_z = {
@@ -268,14 +268,14 @@ return {
         },
         lualine_z = {
           {
-            "harpoon2",
-            -- icon = '♥',
-            icon = "",
-            indicators = { "", "", "", "", "", "" },
-            active_indicators = { "", "", "", "", "", "" },
-            color_active = { fg = colors.orange, bg = colors.bg, gui = "bold" },
-            _separator = "", --  󱋰 󰇜 󰇼 󱗘 󰑅 󱒖 󰩮 󰦟 󰓡    
-            no_harpoon = "Harpoon not loaded",
+            -- "harpoon2",
+            -- -- icon = '♥',
+            -- icon = "",
+            -- indicators = { "", "", "", "", "", "" },
+            -- active_indicators = { "", "", "", "", "", "" },
+            -- color_active = { fg = colors.orange, bg = colors.bg, gui = "bold" },
+            -- _separator = "", --  󱋰 󰇜 󰇼 󱗘 󰑅 󱒖 󰩮 󰦟 󰓡    
+            -- no_harpoon = "Harpoon not loaded",
           },
         },
       },

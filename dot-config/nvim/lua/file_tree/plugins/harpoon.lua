@@ -1,6 +1,8 @@
 return {
   "ThePrimeagen/harpoon",
   lazy = false,
+  -- event = "VeryLazy",
+  enabled = false,
   branch = "harpoon2",
   dependencies = { "nvim-lua/plenary.nvim" },
   config = function()
