@@ -33,13 +33,17 @@ return {
     bypass_save_filetypes = { "alpha", "codecompanion" }, -- not working
     auto_session_suppress_dirs = { "~/", "~/test", "~/Downloads", "/*" },
     session_lens = {
+      picker = "snacks",
       -- buftypes_to_ignore = {}, -- list of buffer types what should not be deleted from current session
       -- load_on_setup = true,
-      -- theme = "ivy", -- default is dropdown
-      theme_conf = {
-        border = true,
+      picker_opts = {
+        preset = "select",
+        preview = false,
+        layout = {
+          width = 0.4,
+          height = 0.4,
+        },
       },
-      -- previewer = true,
       path_dispaly = { "tail" },
     },
     auto_save_enabled = false,

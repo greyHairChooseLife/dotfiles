@@ -187,7 +187,7 @@ wk_map({
     ["s"] = { "<cmd>AutoSession save<CR>", desc = "save", mode = "n" },
     ["v"] = {
       function()
-        vim.cmd("SessionSearch")
+        vim.cmd("AutoSession search")
         vim.fn.feedkeys("!json ", "m") -- json 파일에 탭 이름 정보 저장해둠
       end,
       desc = "view",

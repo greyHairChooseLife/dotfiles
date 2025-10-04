@@ -1,3 +1,9 @@
+
+
+  width = math.floor(vim.o.columns * 0.4),
+  col = math.floor(vim.o.columns * 0.5),
+
+
 ## 유용한 아이콘
 
 ```txt

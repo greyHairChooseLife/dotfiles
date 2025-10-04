@@ -1,7 +1,7 @@
 return {
   'mfussenegger/nvim-dap-python',
   dependencies = { 'mfussenegger/nvim-dap' },
-  enabled = true,
+  enabled = false, -- https://www.reddit.com/r/neovim/comments/1nw8luw/failures_installing_nvimdappython/
   lazy = true,
   ft = { 'python' },
   config = function()

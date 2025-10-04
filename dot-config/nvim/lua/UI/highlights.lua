@@ -1,6 +1,6 @@
 vim.cmd([[
   " MEMO:: Basic
-  highlight LineNr guifg=#9ece6a ctermfg=red
+  highlight LineNr guifg=#4e4451 ctermfg=red
   highlight TabLine guifg=lightgrey gui=bold guibg=black
   highlight TabLineFill guibg=#24283b
   highlight TabLineNotSel guibg=#4e4451
@@ -15,7 +15,7 @@ vim.cmd([[
   highlight Search guibg=#FFFF00 guifg=#1d202f
   highlight CurSearch gui=bold guibg=#0000FF guifg=white
   highlight Visual guibg=#4d6652 guifg=NONE
-  highlight CursorLine guibg=#242024 guifg=NONE
+  highlight CursorLine guibg=#1d202f guifg=NONE
   highlight Folded guibg=#24283b guifg=#4d6652 gui=italic
   highlight StatusLine guibg=#24283b
   highlight StatusLineNC guibg=#24283b
@@ -368,9 +368,10 @@ vim.cmd([[
   highlight SnacksPickerListCursorLine guibg=#000080 guifg=NONE
   " highlight SnacksPickerPreviewCursorLine guibg=NONE
   highlight SnacksPickerInputBorder guibg=#000000 guifg=#000000
-  highlight SnacksPickerPreviewBorder guibg=#24283B guifg=#24283B
+  highlight SnacksPickerPreviewBorder guibg=NONE guifg=#007F7F
   highlight SnacksPickerCursorLine guibg=#24283B guifg=NONE
   highlight SnacksPickerMatch guifg=#FF4500
+  highlight SnacksPickerPreview guibg=#24283B guifg=NONE
 
 
   " MEMO:: Snacks
