@@ -1,6 +1,7 @@
 local map = vim.keymap.set
 
 local my_picker_src = require("picker.modules.picker_sources")
+local extra = require("picker.modules.extra_sources")
 local snp = require("snacks").picker
 
 -- Git
@@ -29,6 +30,9 @@ map("n", ",.z", my_picker_src.grep_current_buffer)
 -- Diagnostics
 map("n", ",.d", snp.diagnostics)
 map("n", ",..d", snp.diagnostics_buffer)
+map("n", ",.l", function()
+  snp.lsp_symbols({ layout = "right" })
+end)
 
 -- Etc
 map("n", ",.,.", snp.pick)
@@ -39,5 +43,11 @@ map("n", ",.m", snp.marks)
 map("n", ",.R", snp.resume)
 map("n", ",.H", snp.help)
 map("n", ",.N", function()
-	snp.pick({ source = "noice" })
+  snp.pick({ source = "noice" })
+end)
+
+map("n", ",.P", extra.pull_requests)
+map("n", ",.M", function()
+  -- extra.markdown_headings({ layout = "vscode" })
+  extra.markdown_headings()
 end)

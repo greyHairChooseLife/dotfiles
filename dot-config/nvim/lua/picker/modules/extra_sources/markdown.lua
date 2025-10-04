@@ -109,7 +109,10 @@ function M.markdown_headings(opts)
     format = format_headings,
     confirm = function(picker, item)
       picker:close()
+      item.pos[1] = item.pos[1] + 1
       vim.api.nvim_win_set_cursor(0, item.pos)
+
+      require("utils").feed_keys_with_delay({ "zo", "zo", "zo", "zo", "zo", "zz" }, 10)
     end,
     preview = function(ctx)
       local lines = vim.api.nvim_buf_get_lines(
