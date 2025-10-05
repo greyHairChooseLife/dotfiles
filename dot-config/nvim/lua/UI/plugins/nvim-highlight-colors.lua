@@ -1,5 +1,5 @@
 return {
-	"brenoprata10/nvim-highlight-colors",
-	event = "BufReadPre",
-	opts = {},
+    "brenoprata10/nvim-highlight-colors",
+    event = "BufReadPre",
+    opts = {},
 }

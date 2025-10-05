@@ -3,392 +3,368 @@ local M = {}
 local cdc = require("codecompanion")
 
 local util = {
-  ---Add line numbers to the table of content
-  ---@param content string The content from method get_content(File Path: lua/codecompanion/utils/buffers.lua, 83:83)
-  ---@param start_line number
-  ---@return string
-  add_line_numbers = function(content, start_line)
-    local formatted = {}
+    ---Add line numbers to the table of content
+    ---@param content string The content from method get_content(File Path: lua/codecompanion/utils/buffers.lua, 83:83)
+    ---@param start_line number
+    ---@return string
+    add_line_numbers = function(content, start_line)
+        local formatted = {}
 
-    content = vim.split(content, "\n")
-    for i, line in ipairs(content) do
-      table.insert(formatted, string.format("%d:  %s", i + start_line, line))
-    end
+        content = vim.split(content, "\n")
+        for i, line in ipairs(content) do
+            table.insert(formatted, string.format("%d:  %s", i + start_line, line))
+        end
 
-    return table.concat(formatted, "\n")
-  end,
+        return table.concat(formatted, "\n")
+    end,
 
-  ---Formats the content of a buffer into a markdown string
-  ---@param buffer table The buffer data to include
-  ---@param formatted string after add_line_numbers
-  ---@return string
-  format = function(buffer, formatted)
-    return string.format(
-      "Buffer Number: %d\n"
-      .. "Name: %s\n"
-      .. "Path: %s\n"
-      .. "Filetype: %s\n"
-      .. "Range start(linenumber): %s\n"
-      .. "Range end(linenumber): %s\n"
-      .. "Content:\n"
-      .. "```%s\n"
-      .. "%s\n"
-      .. "```\n",
-      buffer.number,
-      buffer.name,
-      buffer.path,
-      buffer.filetype,
-      buffer.start_line_of_rane,
-      buffer.end_line_of_rane,
-      buffer.filetype,
-      formatted
-    )
-  end,
+    ---Formats the content of a buffer into a markdown string
+    ---@param buffer table The buffer data to include
+    ---@param formatted string after add_line_numbers
+    ---@return string
+    format = function(buffer, formatted)
+        return string.format(
+            "Buffer Number: %d\n"
+                .. "Name: %s\n"
+                .. "Path: %s\n"
+                .. "Filetype: %s\n"
+                .. "Range start(linenumber): %s\n"
+                .. "Range end(linenumber): %s\n"
+                .. "Content:\n"
+                .. "```%s\n"
+                .. "%s\n"
+                .. "```\n",
+            buffer.number,
+            buffer.name,
+            buffer.path,
+            buffer.filetype,
+            buffer.start_line_of_rane,
+            buffer.end_line_of_rane,
+            buffer.filetype,
+            formatted
+        )
+    end,
 
-  back_to_normal_mode = function()
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
-  end,
+    back_to_normal_mode = function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false) end,
 }
 
 M.inspect = function()
-  local chat_buf = cdc.buf_get_chat()
-  local is_chat_visible = next(chat_buf) ~= nil
-  print(is_chat_visible and "있다" or "없다. ")
-  print(vim.inspect(chat_buf))
+    local chat_buf = cdc.buf_get_chat()
+    local is_chat_visible = next(chat_buf) ~= nil
+    print(is_chat_visible and "있다" or "없다. ")
+    print(vim.inspect(chat_buf))
 
-  -- REF::
-  --   {
-  --     actions = <function 1>,
-  --     add = <function 2>,
-  --     buf_get_chat = <function 3>,
-  --     chat = <function 4>,
-  --     last_chat = <function 8>,
-  --     close_last_chat = <function 5>, 제거는 안함
-  --     toggle = <function 12>, 제거는 안함, 마지막 것만 닫음
-  --     cmd = <function 6>,
-  --     inline = <function 7>,
-  --     prompt = <function 9>,
-  --     prompt_library = <function 10>,
-  --     setup = <function 11>,
-  --     workspace_schema = <function 13>
-  --   }
+    -- REF::
+    --   {
+    --     actions = <function 1>,
+    --     add = <function 2>,
+    --     buf_get_chat = <function 3>,
+    --     chat = <function 4>,
+    --     last_chat = <function 8>,
+    --     close_last_chat = <function 5>, 제거는 안함
+    --     toggle = <function 12>, 제거는 안함, 마지막 것만 닫음
+    --     cmd = <function 6>,
+    --     inline = <function 7>,
+    --     prompt = <function 9>,
+    --     prompt_library = <function 10>,
+    --     setup = <function 11>,
+    --     workspace_schema = <function 13>
+    --   }
 
-  -- if chat.chat:visible() then
-  -- 	chat.chat:close()
-  -- else
-  -- 	require("utils").save_cursor_position()
-  -- 	chat.open()
-  -- 	require("utils").restore_cursor_position()
-  -- end
+    -- if chat.chat:visible() then
+    -- 	chat.chat:close()
+    -- else
+    -- 	require("utils").save_cursor_position()
+    -- 	chat.open()
+    -- 	require("utils").restore_cursor_position()
+    -- end
 end
 
 M.test = function()
-  -- 	chat.add({
-  --   })
-  -- local bufnr = vim.api.nvim_get_current_buf()
+    -- 	chat.add({
+    --   })
+    -- local bufnr = vim.api.nvim_get_current_buf()
 
-  -- local content = require("codecompanion.utils.buffers").format_with_line_numbers(bufnr)
+    -- local content = require("codecompanion.utils.buffers").format_with_line_numbers(bufnr)
 
-  -- local chat = cdc.last_chat()
-  -- if chat.ui:is_visible() then
-  --   return chat.ui:hide()
-  -- end
-  print(vim.inspect())
+    -- local chat = cdc.last_chat()
+    -- if chat.ui:is_visible() then
+    --   return chat.ui:hide()
+    -- end
+    print(vim.inspect())
 end
 
 M.create_new = function()
-  local windows = vim.api.nvim_list_wins()
+    local windows = vim.api.nvim_list_wins()
 
-  if #windows == 1 and vim.bo.filetype == "codecompanion" then
-    vim.cmd("vnew")
-    cdc.chat()
-    vim.cmd("only")
-  else
-    cdc.chat()
-  end
+    if #windows == 1 and vim.bo.filetype == "codecompanion" then
+        vim.cmd("vnew")
+        cdc.chat()
+        vim.cmd("only")
+    else
+        cdc.chat()
+    end
 end
 
 M.toggle_last_chat = function()
-  require("utils").save_cursor_position()
-  cdc.toggle()
-  require("utils").restore_cursor_position()
+    require("utils").save_cursor_position()
+    cdc.toggle()
+    require("utils").restore_cursor_position()
 end
 
 M.focus_last_chat = function()
-  local chat = cdc.last_chat()
+    local chat = cdc.last_chat()
 
-  if not chat then
-    return cdc.chat()
-  end
+    if not chat then return cdc.chat() end
 
-  if chat.ui:is_visible() and not chat.ui:is_active() then
-    vim.api.nvim_set_current_win(chat.ui.winnr)
-  else
-    chat.ui:open()
-  end
+    if chat.ui:is_visible() and not chat.ui:is_active() then
+        vim.api.nvim_set_current_win(chat.ui.winnr)
+    else
+        chat.ui:open()
+    end
 end
 
 M.add_buffer_reference = function()
-  local add_selected_to_last_chat = function()
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
-    vim.schedule(function()
-      local start_line, _ = unpack(vim.api.nvim_buf_get_mark(0, "<"))
-      local end_line, _ = unpack(vim.api.nvim_buf_get_mark(0, ">"))
+    local add_selected_to_last_chat = function()
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+        vim.schedule(function()
+            local start_line, _ = unpack(vim.api.nvim_buf_get_mark(0, "<"))
+            local end_line, _ = unpack(vim.api.nvim_buf_get_mark(0, ">"))
 
-      -- 정렬 (위에서 아래로)
-      if start_line > end_line then
-        start_line, end_line = end_line, start_line
-      end
+            -- 정렬 (위에서 아래로)
+            if start_line > end_line then
+                start_line, end_line = end_line, start_line
+            end
 
-      local bufnr = vim.api.nvim_get_current_buf()
+            local bufnr = vim.api.nvim_get_current_buf()
 
-      local content = require("codecompanion.utils.buffers").get_content(bufnr, { start_line - 1, end_line })
+            local content = require("codecompanion.utils.buffers").get_content(bufnr, { start_line - 1, end_line })
 
-      local name = cdc.last_chat().context:make_id_from_buf(bufnr)
-      if name == "" then
-        name = "Buffer " .. bufnr
-      end
+            local name = cdc.last_chat().context:make_id_from_buf(bufnr)
+            if name == "" then name = "Buffer " .. bufnr end
 
-      local path = vim.api.nvim_buf_get_name(bufnr)
-      local message = "Here is the content from"
+            local path = vim.api.nvim_buf_get_name(bufnr)
+            local message = "Here is the content from"
 
-      local formatted_content = string.format(
-        "%s `%s:%s-%s`: \n" .. "```%s\n" .. "%s\n" .. "```\n\n",
-        message,
-        vim.fn.fnamemodify(path, ":t"),
-        start_line,
-        end_line,
-        vim.bo[bufnr].filetype,
-        content
-      )
-      -- 채팅 버퍼에 간단히 표시
-      cdc.last_chat():add_buf_message({
-        role = "user",
-        content = formatted_content,
-      }, { visible = true })
-    end)
-  end
-
-  local add_buf_to_last_chat = function()
-    local bufnr = vim.api.nvim_get_current_buf()
-    local chat_helpers = require("codecompanion.strategies.chat.helpers.init")
-    local buf_utils = require("codecompanion.utils.buffers")
-
-    local content = chat_helpers.format_buffer_for_llm(bufnr, buf_utils.get_info(bufnr).path)
-    local path = vim.api.nvim_buf_get_name(bufnr)
-    local message = "Here is the content from"
-    local name = cdc.last_chat().context:make_id_from_buf(bufnr)
-
-    if name == "" then
-      name = "Buffer " .. bufnr
+            local formatted_content = string.format(
+                "%s `%s:%s-%s`: \n" .. "```%s\n" .. "%s\n" .. "```\n\n",
+                message,
+                vim.fn.fnamemodify(path, ":t"),
+                start_line,
+                end_line,
+                vim.bo[bufnr].filetype,
+                content
+            )
+            -- 채팅 버퍼에 간단히 표시
+            cdc.last_chat():add_buf_message({
+                role = "user",
+                content = formatted_content,
+            }, { visible = true })
+        end)
     end
-    local id = "<buf>" .. name .. "</buf>"
 
-    local formatted_content = string.format(
-      "%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
-      message,
-      vim.fn.fnamemodify(path, ":t"),
-      bufnr,
-      path,
-      content
-    )
+    local add_buf_to_last_chat = function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        local chat_helpers = require("codecompanion.strategies.chat.helpers.init")
+        local buf_utils = require("codecompanion.utils.buffers")
 
-    -- Check for duplicate before adding
-    local chat = cdc.last_chat()
-    if chat then
-      for _, ctx in ipairs(chat.context.Chat.context_items) do
-        if ctx.id == id then
-          vim.notify("Already in context!", 2, { render = "minimal" })
-          return false
+        local content = chat_helpers.format_buffer_for_llm(bufnr, buf_utils.get_info(bufnr).path)
+        local path = vim.api.nvim_buf_get_name(bufnr)
+        local message = "Here is the content from"
+        local name = cdc.last_chat().context:make_id_from_buf(bufnr)
+
+        if name == "" then name = "Buffer " .. bufnr end
+        local id = "<buf>" .. name .. "</buf>"
+
+        local formatted_content = string.format(
+            "%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
+            message,
+            vim.fn.fnamemodify(path, ":t"),
+            bufnr,
+            path,
+            content
+        )
+
+        -- Check for duplicate before adding
+        local chat = cdc.last_chat()
+        if chat then
+            for _, ctx in ipairs(chat.context.Chat.context_items) do
+                if ctx.id == id then
+                    vim.notify("Already in context!", 2, { render = "minimal" })
+                    return false
+                end
+            end
         end
-      end
+
+        -- Add reference if not duplicate
+        cdc.last_chat():add_message({
+            role = "user",
+            content = formatted_content,
+        }, { context_id = id, visible = false })
+
+        cdc.last_chat().context:add({
+            bufnr = bufnr,
+            id = id,
+            path = path,
+            source = "codecompanion.strategies.chat.slash_commands.buffer",
+            opts = { watched = true },
+        })
+
+        cdc.last_chat().ui:set_virtual_text("Added: " .. vim.fn.fnamemodify(path, ":t"))
     end
 
-    -- Add reference if not duplicate
-    cdc.last_chat():add_message({
-      role = "user",
-      content = formatted_content,
-    }, { context_id = id, visible = false })
-
-    cdc.last_chat().context:add({
-      bufnr = bufnr,
-      id = id,
-      path = path,
-      source = "codecompanion.strategies.chat.slash_commands.buffer",
-      opts = { watched = true },
-    })
-
-    cdc.last_chat().ui:set_virtual_text("Added: " .. vim.fn.fnamemodify(path, ":t"))
-  end
-
-  local chat = cdc.last_chat()
-  local mode = vim.fn.mode()
-  if mode == "n" then
-    if not chat or not chat.ui:is_visible() then
-      M.toggle_last_chat()
-    end
-
-    add_buf_to_last_chat()
-  else
-    if not chat or not chat.ui:is_visible() then
-      util.back_to_normal_mode()
-      vim.schedule(function()
-        M.toggle_last_chat()
-      end)
-      vim.api.nvim_feedkeys("gv", "n", true)
-    end
-
-    add_selected_to_last_chat()
-  end
-
-  -- UI redraw
-  vim.schedule(function()
-    require("utils").save_cursor_position()
-    M.focus_last_chat()
+    local chat = cdc.last_chat()
+    local mode = vim.fn.mode()
     if mode == "n" then
-      require("utils").restore_cursor_position()
+        if not chat or not chat.ui:is_visible() then M.toggle_last_chat() end
+
+        add_buf_to_last_chat()
+    else
+        if not chat or not chat.ui:is_visible() then
+            util.back_to_normal_mode()
+            vim.schedule(function() M.toggle_last_chat() end)
+            vim.api.nvim_feedkeys("gv", "n", true)
+        end
+
+        add_selected_to_last_chat()
     end
-  end)
+
+    -- UI redraw
+    vim.schedule(function()
+        require("utils").save_cursor_position()
+        M.focus_last_chat()
+        if mode == "n" then require("utils").restore_cursor_position() end
+    end)
 end
 
 -- 현재 탭의 모든 버퍼를 컨텍스트로 추가하는 함수
 M.add_tab_buffers_reference = function()
-  local chat = cdc.last_chat()
-  if not chat or not chat.ui:is_visible() then
-    M.toggle_last_chat()
-    chat = cdc.last_chat()
-  end
-
-  -- 현재 탭의 모든 버퍼를 가져옴
-  local current_tab = vim.api.nvim_get_current_tabpage()
-  local buffers = vim.api.nvim_tabpage_list_wins(current_tab)
-  local added_buffers = {}
-  local skipped_buffers = {}
-
-  for _, win in ipairs(buffers) do
-    local bufnr = vim.api.nvim_win_get_buf(win)
-    local buf_utils = require("codecompanion.utils.buffers")
-    local chat_helpers = require("codecompanion.strategies.chat.helpers.init")
-    -- local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
-    local buftype = vim.bo[bufnr].buftype
-    local path = vim.api.nvim_buf_get_name(bufnr)
-
-    -- 일반 파일 버퍼만 처리 (특수 버퍼는 제외)
-    if buftype == "" and path ~= "" then
-      local content = chat_helpers.format_buffer_for_llm(bufnr, buf_utils.get_info(bufnr).path)
-      local message = "Here is the content from"
-      local name = chat.context:make_id_from_buf(bufnr)
-
-      if name == "" then
-        name = "Buffer " .. bufnr
-      end
-      local id = "<buf>" .. name .. "</buf>"
-
-      local formatted_content = string.format(
-        "%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
-        message,
-        vim.fn.fnamemodify(path, ":t"),
-        bufnr,
-        path,
-        content
-      )
-
-      -- 중복 체크
-      local is_duplicate = false
-      for _, ctx in ipairs(chat.context.Chat.context_items) do
-        if ctx.id == id then
-          is_duplicate = true
-          table.insert(skipped_buffers, vim.fn.fnamemodify(path, ":t"))
-          break
-        end
-      end
-
-      -- 중복이 아니면 추가
-      if not is_duplicate then
-        chat:add_message({
-          role = "user",
-          content = formatted_content,
-        }, { context_id = id, visible = false })
-
-        chat.context:add({
-          bufnr = bufnr,
-          id = id,
-          path = path,
-          source = "codecompanion.strategies.chat.slash_commands.buffer",
-          opts = { watched = true },
-        })
-
-        table.insert(added_buffers, vim.fn.fnamemodify(path, ":t"))
-      end
+    local chat = cdc.last_chat()
+    if not chat or not chat.ui:is_visible() then
+        M.toggle_last_chat()
+        chat = cdc.last_chat()
     end
-  end
 
-  -- 결과 알림
-  if #added_buffers > 0 then
-    local added_msg = "Added: " .. table.concat(added_buffers, ", ")
-    chat.ui:set_virtual_text(added_msg)
-    vim.notify(added_msg, 2, { render = "minimal" })
-  end
+    -- 현재 탭의 모든 버퍼를 가져옴
+    local current_tab = vim.api.nvim_get_current_tabpage()
+    local buffers = vim.api.nvim_tabpage_list_wins(current_tab)
+    local added_buffers = {}
+    local skipped_buffers = {}
 
-  if #skipped_buffers > 0 then
-    vim.notify("Skipped (already in context): " .. table.concat(skipped_buffers, ", "), 2, { render = "minimal" })
-  end
+    for _, win in ipairs(buffers) do
+        local bufnr = vim.api.nvim_win_get_buf(win)
+        local buf_utils = require("codecompanion.utils.buffers")
+        local chat_helpers = require("codecompanion.strategies.chat.helpers.init")
+        -- local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+        local buftype = vim.bo[bufnr].buftype
+        local path = vim.api.nvim_buf_get_name(bufnr)
 
-  -- UI redraw
-  vim.schedule(function()
-    require("utils").save_cursor_position()
-    M.focus_last_chat()
-    require("utils").restore_cursor_position()
-  end)
+        -- 일반 파일 버퍼만 처리 (특수 버퍼는 제외)
+        if buftype == "" and path ~= "" then
+            local content = chat_helpers.format_buffer_for_llm(bufnr, buf_utils.get_info(bufnr).path)
+            local message = "Here is the content from"
+            local name = chat.context:make_id_from_buf(bufnr)
+
+            if name == "" then name = "Buffer " .. bufnr end
+            local id = "<buf>" .. name .. "</buf>"
+
+            local formatted_content = string.format(
+                "%s `%s` (which has a buffer number of _%d_ and a filepath of `%s`): \n\n%s",
+                message,
+                vim.fn.fnamemodify(path, ":t"),
+                bufnr,
+                path,
+                content
+            )
+
+            -- 중복 체크
+            local is_duplicate = false
+            for _, ctx in ipairs(chat.context.Chat.context_items) do
+                if ctx.id == id then
+                    is_duplicate = true
+                    table.insert(skipped_buffers, vim.fn.fnamemodify(path, ":t"))
+                    break
+                end
+            end
+
+            -- 중복이 아니면 추가
+            if not is_duplicate then
+                chat:add_message({
+                    role = "user",
+                    content = formatted_content,
+                }, { context_id = id, visible = false })
+
+                chat.context:add({
+                    bufnr = bufnr,
+                    id = id,
+                    path = path,
+                    source = "codecompanion.strategies.chat.slash_commands.buffer",
+                    opts = { watched = true },
+                })
+
+                table.insert(added_buffers, vim.fn.fnamemodify(path, ":t"))
+            end
+        end
+    end
+
+    -- 결과 알림
+    if #added_buffers > 0 then
+        local added_msg = "Added: " .. table.concat(added_buffers, ", ")
+        chat.ui:set_virtual_text(added_msg)
+        vim.notify(added_msg, 2, { render = "minimal" })
+    end
+
+    if #skipped_buffers > 0 then vim.notify("Skipped (already in context): " .. table.concat(skipped_buffers, ", "), 2, { render = "minimal" }) end
+
+    -- UI redraw
+    vim.schedule(function()
+        require("utils").save_cursor_position()
+        M.focus_last_chat()
+        require("utils").restore_cursor_position()
+    end)
 end
 
 -- work while adapter is 'copilot'
 ---@param model string adapter.model
 M.chage_model = function(model)
-  local chat = require("codecompanion").last_chat()
+    local chat = require("codecompanion").last_chat()
 
-  if chat and chat.adapter and chat.adapter.name == "copilot" then
-    chat:apply_model(model)
-  end
+    if chat and chat.adapter and chat.adapter.name == "copilot" then chat:apply_model(model) end
 end
 
 M.codecompanion_breadcrumbs = function()
-  local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
-  if not chat then
-    return nil
-  end
+    local chat = require("codecompanion").buf_get_chat(vim.api.nvim_get_current_buf())
+    if not chat then return nil end
 
-  -- REF:
-  -- vim.notify(vim.inspect(chat.settings))
-  -- {
-  --   max_tokens = 15000,
-  --   model = "gemini-2.5-pro",
-  --   n = 1,
-  --   reasoning_effort = "medium",
-  --   temperature = 0,
-  --   top_p = 1
-  -- }
+    -- REF:
+    -- vim.notify(vim.inspect(chat.settings))
+    -- {
+    --   max_tokens = 15000,
+    --   model = "gemini-2.5-pro",
+    --   n = 1,
+    --   reasoning_effort = "medium",
+    --   temperature = 0,
+    --   top_p = 1
+    -- }
 
-  -- DEPRECATED:: 2025-05-26 업데이트 이후 해당 key 사라짐
-  -- local reasoning_effort = chat.settings and chat.settings.reasoning_effort or " no"
-  local max_tokens = chat.settings.max_tokens
-  local used_tokens = chat.ui.tokens or 0
-  local percentage_usage = "0"
+    -- DEPRECATED:: 2025-05-26 업데이트 이후 해당 key 사라짐
+    -- local reasoning_effort = chat.settings and chat.settings.reasoning_effort or " no"
+    local max_tokens = chat.settings.max_tokens
+    local used_tokens = chat.ui.tokens or 0
+    local percentage_usage = "0"
 
-  if used_tokens ~= nil then
-    percentage_usage = string.format("%.1f", (used_tokens / max_tokens) * 100)
-  end
+    if used_tokens ~= nil then percentage_usage = string.format("%.1f", (used_tokens / max_tokens) * 100) end
 
-  -- DEPRECATED:: 2025-05-26 업데이트 이후 관련 key 사라짐
-  -- local result = " " .. reasoning_effort .. "    󰰤  " .. percentage_usage .. "󱉸 (" .. used_tokens .. ")"
-  local result = percentage_usage .. " 󱉸    (used: " .. used_tokens .. ")"
-  local needed_padding = 24 - vim.api.nvim_strwidth(result)
+    -- DEPRECATED:: 2025-05-26 업데이트 이후 관련 key 사라짐
+    -- local result = " " .. reasoning_effort .. "    󰰤  " .. percentage_usage .. "󱉸 (" .. used_tokens .. ")"
+    local result = percentage_usage .. " 󱉸    (used: " .. used_tokens .. ")"
+    local needed_padding = 24 - vim.api.nvim_strwidth(result)
 
-  if needed_padding > 0 then
-    return string.rep(" ", needed_padding) .. result
-  else
-    return result
-  end
+    if needed_padding > 0 then
+        return string.rep(" ", needed_padding) .. result
+    else
+        return result
+    end
 end
 
 return M

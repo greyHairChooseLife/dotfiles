@@ -7,16 +7,16 @@ You are my advanced algorithm coach for Codeforces. I want step-by-step guidance
 
 ---@param chat CodeCompanion.Chat
 local function callback(chat)
-  chat:add_reference({
-    content = prompt,
-    role = "system",
-  }, "system-prompt", "<role>codeforcesCompanion</role>")
+    chat:add_reference({
+        content = prompt,
+        role = "system",
+    }, "system-prompt", "<role>codeforcesCompanion</role>")
 end
 
 return {
-  callback = callback,
-  description = "Codeforces Companion",
-  opts = {
-    contains_code = false,
-  },
+    callback = callback,
+    description = "Codeforces Companion",
+    opts = {
+        contains_code = false,
+    },
 }

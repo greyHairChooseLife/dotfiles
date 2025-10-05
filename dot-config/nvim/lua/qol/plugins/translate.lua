@@ -1,4 +1,4 @@
 return {
-	"uga-rosa/translate.nvim",
-	cmd = "Translate",
+    "uga-rosa/translate.nvim",
+    cmd = "Translate",
 }

@@ -1,4 +1,4 @@
 return {
-	"tpope/vim-surround",
-	event = "BufWinEnter",
+    "tpope/vim-surround",
+    event = "BufWinEnter",
 }

@@ -1,5 +1,5 @@
 return {
-	"greyhairchooselife/markdowny.nvim",
-	event = "BufEnter *.md",
-	ft = { "codecompanion" },
+    "greyhairchooselife/markdowny.nvim",
+    event = "BufEnter *.md",
+    ft = { "codecompanion" },
 }

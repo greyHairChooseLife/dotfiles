@@ -54,30 +54,30 @@ Goal: Professional specification documents with all requirements properly docume
 ]]
 
 return {
-	strategy = "chat",
-	description = "",
-	opts = {
-		is_default = true, -- don't show on action palette
-		is_slash_cmd = true,
-		short_name = "workspace generator",
-		auto_submit = false,
-		user_prompt = true,
-		ignore_system_prompt = true,
-		stop_context_insertion = true,
-	},
-	prompts = {
-		{
-			role = "user",
-			opts = { contains_code = true },
-			content = function()
-				-- Enable turbo mode!!!
-				vim.g.codecompanion_auto_tool_mode = true
+    strategy = "chat",
+    description = "",
+    opts = {
+        is_default = true, -- don't show on action palette
+        is_slash_cmd = true,
+        short_name = "workspace generator",
+        auto_submit = false,
+        user_prompt = true,
+        ignore_system_prompt = true,
+        stop_context_insertion = true,
+    },
+    prompts = {
+        {
+            role = "user",
+            opts = { contains_code = true },
+            content = function()
+                -- Enable turbo mode!!!
+                vim.g.codecompanion_auto_tool_mode = true
 
-				local chage_model = require("AI.codecompanion.utils.general").chage_model
-				chage_model("gemini-2.5-pro")
+                local chage_model = require("AI.codecompanion.utils.general").chage_model
+                chage_model("gemini-2.5-pro")
 
-				return user_role_content
-			end,
-		},
-	},
+                return user_role_content
+            end,
+        },
+    },
 }

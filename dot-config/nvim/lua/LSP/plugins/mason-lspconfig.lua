@@ -28,27 +28,27 @@
 --     :lua local mappings = require('mason-lspconfig').get_mappings(); print(vim.inspect(mappings))
 
 return {
-	"williamboman/mason-lspconfig.nvim",
-	lazy = false,
-	config = function()
-		require("mason-lspconfig").setup({
-			ensure_installed = {
-				"lua_ls",
-				"html",
-				"superhtml",
-				"biome",
-				"ts_ls",
-				"pylsp",
-				"ruff",
-				"basedpyright",
-				"taplo",
-				"yamlls",
-				"dockerls", -- "dockerfile-language-server",
-				"docker_compose_language_service", -- "docker-compose-language-service",
-				"bashls",
-			},
-			---@type boolean | string[] | { exclude: string[] }
-			automatic_enable = false,
-		})
-	end,
+    "williamboman/mason-lspconfig.nvim",
+    lazy = false,
+    config = function()
+        require("mason-lspconfig").setup({
+            ensure_installed = {
+                "lua_ls",
+                "html",
+                "superhtml",
+                "biome",
+                "ts_ls",
+                "pylsp",
+                "ruff",
+                "basedpyright",
+                "taplo",
+                "yamlls",
+                "dockerls", -- "dockerfile-language-server",
+                "docker_compose_language_service", -- "docker-compose-language-service",
+                "bashls",
+            },
+            ---@type boolean | string[] | { exclude: string[] }
+            automatic_enable = false,
+        })
+    end,
 }

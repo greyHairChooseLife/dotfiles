@@ -1,15 +1,9 @@
 return function(_)
-	local uname = vim.uv.os_uname()
-	local platform = string.format(
-		"sysname: %s, release: %s, machine: %s, version: %s",
-		uname.sysname,
-		uname.release,
-		uname.machine,
-		uname.version
-	)
-	-- Note: parallel tool execution is not supported by codecompanion currently
-	return string.format(
-		[[ You are an agent, currently plugged in to the Neovim text editor on a user's machine. - please keep going until the user’s query is completely resolved, before ending your turn and yielding back to the user.
+    local uname = vim.uv.os_uname()
+    local platform = string.format("sysname: %s, release: %s, machine: %s, version: %s", uname.sysname, uname.release, uname.machine, uname.version)
+    -- Note: parallel tool execution is not supported by codecompanion currently
+    return string.format(
+        [[ You are an agent, currently plugged in to the Neovim text editor on a user's machine. - please keep going until the user’s query is completely resolved, before ending your turn and yielding back to the user.
 
 Your thinking should be thorough and so it's fine if it's very long. However, avoid unnecessary repetition and verbosity. You should be concise, but thorough.
 
@@ -120,13 +114,13 @@ Each time you are going to create a file, use a single concise sentence inform t
 - Current time: %s, timezone: %s(%s)
 - Current working directory(git repo: %s): %s,
 ]],
-		platform,
-		vim.o.shell,
-		os.date("%Y-%m-%d"),
-		os.date("%H:%M:%S"),
-		os.date("%Z"),
-		os.date("%z"),
-		vim.fn.isdirectory(".git") == 1,
-		vim.fn.getcwd()
-	)
+        platform,
+        vim.o.shell,
+        os.date("%Y-%m-%d"),
+        os.date("%H:%M:%S"),
+        os.date("%Z"),
+        os.date("%z"),
+        vim.fn.isdirectory(".git") == 1,
+        vim.fn.getcwd()
+    )
 end

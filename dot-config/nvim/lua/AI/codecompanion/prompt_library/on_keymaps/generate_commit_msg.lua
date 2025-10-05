@@ -43,57 +43,52 @@ You are a commit assistant.
 ]]
 
 return {
-	strategy = "chat",
-	description = "",
-	opts = {
-		is_default = true, -- don't show on action palette
-		is_slash_cmd = false,
-		-- modes = { "v" },
-		short_name = "generate_commit_msg",
-		auto_submit = true,
-		user_prompt = false,
-		ignore_system_prompt = true,
-		stop_context_insertion = true,
-		adapter = {
-			name = "copilot",
-			-- MEMO:: github copilot is not unlimited anymore
-			-- model = "claude-3.5-sonnet",
-			model = "gpt-4.1",
-		},
-	},
-	prompts = {
-		{
-			role = "system",
-			opts = { visible = false },
-			content = system_role_content,
-		},
-		{
-			role = "user",
-			opts = { contains_code = true },
-			content = function()
-				local handle_staged = io.popen("git --no-pager diff --no-ext-diff --staged")
+    strategy = "chat",
+    description = "",
+    opts = {
+        is_default = true, -- don't show on action palette
+        is_slash_cmd = false,
+        -- modes = { "v" },
+        short_name = "generate_commit_msg",
+        auto_submit = true,
+        user_prompt = false,
+        ignore_system_prompt = true,
+        stop_context_insertion = true,
+        adapter = {
+            name = "copilot",
+            -- MEMO:: github copilot is not unlimited anymore
+            -- model = "claude-3.5-sonnet",
+            model = "gpt-4.1",
+        },
+    },
+    prompts = {
+        {
+            role = "system",
+            opts = { visible = false },
+            content = system_role_content,
+        },
+        {
+            role = "user",
+            opts = { contains_code = true },
+            content = function()
+                local handle_staged = io.popen("git --no-pager diff --no-ext-diff --staged")
 
-				if handle_staged == nil then
-					return nil
-				end
+                if handle_staged == nil then return nil end
 
-				local staged = ""
-				if handle_staged ~= nil then
-					staged = handle_staged:read("*a")
-					handle_staged:close()
-				end
+                local staged = ""
+                if handle_staged ~= nil then
+                    staged = handle_staged:read("*a")
+                    handle_staged:close()
+                end
 
-				local git_status = "### Git Staged\n\n"
+                local git_status = "### Git Staged\n\n"
 
-				if #staged > 0 then
-					git_status = git_status
-						.. "#### Staged Changes Start(`git diff --no-ext-diff --staged`)\n````diff\n"
-						.. staged
-						.. "````\n\n"
-				end
+                if #staged > 0 then
+                    git_status = git_status .. "#### Staged Changes Start(`git diff --no-ext-diff --staged`)\n````diff\n" .. staged .. "````\n\n"
+                end
 
-				return git_status
-			end,
-		},
-	},
+                return git_status
+            end,
+        },
+    },
 }

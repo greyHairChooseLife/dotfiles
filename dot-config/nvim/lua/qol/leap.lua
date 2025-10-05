@@ -7,14 +7,14 @@ local timer = nil
 
 -- Function to execute leap-forward
 local function execute_leap_forward()
-	local leap_forward = vim.api.nvim_replace_termcodes("<Plug>(leap-forward)", true, false, true)
-	vim.api.nvim_feedkeys(leap_forward, "n", false)
+    local leap_forward = vim.api.nvim_replace_termcodes("<Plug>(leap-forward)", true, false, true)
+    vim.api.nvim_feedkeys(leap_forward, "n", false)
 end
 
 -- Function to execute leap-backward
 local function execute_leap_backward()
-	local leap_backward = vim.api.nvim_replace_termcodes("<Plug>(leap-backward)", true, false, true)
-	vim.api.nvim_feedkeys(leap_backward, "n", false)
+    local leap_backward = vim.api.nvim_replace_termcodes("<Plug>(leap-backward)", true, false, true)
+    vim.api.nvim_feedkeys(leap_backward, "n", false)
 end
 
 -- MEMO:: 당초 jk/kj에 맵핑하느라 생각해낸 방식이고, 아래처럼 시도하면 'gg'를 쓰기 힘들다.

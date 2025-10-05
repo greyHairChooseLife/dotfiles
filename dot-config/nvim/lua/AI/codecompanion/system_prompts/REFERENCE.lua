@@ -1,15 +1,9 @@
 return function(_)
-	local uname = vim.uv.os_uname()
-	local platform = string.format(
-		"sysname: %s, release: %s, machine: %s, version: %s",
-		uname.sysname,
-		uname.release,
-		uname.machine,
-		uname.version
-	)
-	-- Note: parallel tool execution is not supported by codecompanion currently
-	return string.format(
-		[[
+    local uname = vim.uv.os_uname()
+    local platform = string.format("sysname: %s, release: %s, machine: %s, version: %s", uname.sysname, uname.release, uname.machine, uname.version)
+    -- Note: parallel tool execution is not supported by codecompanion currently
+    return string.format(
+        [[
 You are an AI expert plugged into user's code editor. Follow the instructions below to assist the user.
 
 ⚠️ FATAL IMPORTANT: SAY YOU DO NOT KNOW IF YOU DO NOT KNOW. NEVER LIE. NEVER BE OVER CONFIDENT. ALWAYS THINK/ACT STEP BY STEP. ALWAYS BE CAUTIOUS.⚠️
@@ -242,16 +236,16 @@ IMPORTANT: Only tools with explicit sequential execution support are allowed to 
 - Current working directory(git repo: %s): %s,
 ]],
 
-		"content1",
-		"<![CDATA[content2]]>",
-		"<![CDATA[content]]>",
-		platform,
-		vim.o.shell,
-		os.date("%Y-%m-%d"),
-		os.date("%H:%M:%S"),
-		os.date("%Z"),
-		os.date("%z"),
-		vim.fn.isdirectory(".git") == 1,
-		vim.fn.getcwd()
-	)
+        "content1",
+        "<![CDATA[content2]]>",
+        "<![CDATA[content]]>",
+        platform,
+        vim.o.shell,
+        os.date("%Y-%m-%d"),
+        os.date("%H:%M:%S"),
+        os.date("%Z"),
+        os.date("%z"),
+        vim.fn.isdirectory(".git") == 1,
+        vim.fn.getcwd()
+    )
 end

@@ -1,15 +1,9 @@
 return function(_)
-	local uname = vim.uv.os_uname()
-	local platform = string.format(
-		"sysname: %s, release: %s, machine: %s, version: %s",
-		uname.sysname,
-		uname.release,
-		uname.machine,
-		uname.version
-	)
-	-- Note: parallel tool execution is not supported by codecompanion currently
-	return string.format(
-		[[ You are an AI programming assistant named "CodeCompanion". You are currently plugged in to the Neovim text editor on a user's machine.
+    local uname = vim.uv.os_uname()
+    local platform = string.format("sysname: %s, release: %s, machine: %s, version: %s", uname.sysname, uname.release, uname.machine, uname.version)
+    -- Note: parallel tool execution is not supported by codecompanion currently
+    return string.format(
+        [[ You are an AI programming assistant named "CodeCompanion". You are currently plugged in to the Neovim text editor on a user's machine.
 
 Your core tasks include:
 - Answering general programming questions.
@@ -70,13 +64,13 @@ Additionally, take care of these as well if you think it is needed:
 - Current time: %s, timezone: %s(%s)
 - Current working directory(git repo: %s): %s,
 ]],
-		platform,
-		vim.o.shell,
-		os.date("%Y-%m-%d"),
-		os.date("%H:%M:%S"),
-		os.date("%Z"),
-		os.date("%z"),
-		vim.fn.isdirectory(".git") == 1,
-		vim.fn.getcwd()
-	)
+        platform,
+        vim.o.shell,
+        os.date("%Y-%m-%d"),
+        os.date("%H:%M:%S"),
+        os.date("%Z"),
+        os.date("%z"),
+        vim.fn.isdirectory(".git") == 1,
+        vim.fn.getcwd()
+    )
 end

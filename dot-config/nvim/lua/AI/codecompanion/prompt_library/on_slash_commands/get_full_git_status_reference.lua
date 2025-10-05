@@ -29,31 +29,31 @@ Use the @cmd_runner tool.
 ]]
 
 return {
-	strategy = "chat",
-	description = "Get full files for references that are related git status.",
-	opts = {
-		is_default = true, -- don't show on action palette
-		is_slash_cmd = true,
-		short_name = "load full file contents for analyzing commit",
-		auto_submit = true,
-		user_prompt = false,
-		ignore_system_prompt = true,
-		stop_context_insertion = true,
-		adapter = {
-			name = "copilot",
-			model = "claude-3.5-sonnet",
-		},
-	},
-	prompts = {
-		{
-			role = "user",
-			opts = { contains_code = true },
-			content = function()
-				-- Enable turbo mode!!!
-				vim.g.codecompanion_auto_tool_mode = true
+    strategy = "chat",
+    description = "Get full files for references that are related git status.",
+    opts = {
+        is_default = true, -- don't show on action palette
+        is_slash_cmd = true,
+        short_name = "load full file contents for analyzing commit",
+        auto_submit = true,
+        user_prompt = false,
+        ignore_system_prompt = true,
+        stop_context_insertion = true,
+        adapter = {
+            name = "copilot",
+            model = "claude-3.5-sonnet",
+        },
+    },
+    prompts = {
+        {
+            role = "user",
+            opts = { contains_code = true },
+            content = function()
+                -- Enable turbo mode!!!
+                vim.g.codecompanion_auto_tool_mode = true
 
-				return user_role_content
-			end,
-		},
-	},
+                return user_role_content
+            end,
+        },
+    },
 }

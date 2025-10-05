@@ -25,16 +25,16 @@ When you want to show pictures in graphviz, follow with following rules:
 
 ---@param chat CodeCompanion.Chat
 local function callback(chat)
-  chat:add_reference({
-    content = prompt,
-    role = "system",
-  }, "system-prompt", "<tips>graphviz</tips>")
+    chat:add_reference({
+        content = prompt,
+        role = "system",
+    }, "system-prompt", "<tips>graphviz</tips>")
 end
 
 return {
-  description = "Generate pictures with graphviz",
-  callback = callback,
-  opts = {
-    contains_code = false,
-  },
+    description = "Generate pictures with graphviz",
+    callback = callback,
+    opts = {
+        contains_code = false,
+    },
 }

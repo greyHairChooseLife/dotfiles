@@ -28,6 +28,4 @@ map({ "n", "v", "t" }, "<C-\\><C-\\>", "<Cmd>ToggleTerm direction=float name=gen
 
 -- map({ "n", "v", "t" }, "<C-\\><C-i>", "<Cmd>ToggleTerm dir=~/Download direction=vertical name=image<CR>")
 
-
-
 -- vim.api.nvim_set_keymap("n", "<leader>G", "<cmd>lua _yes()<CR>", { noremap = true, silent = true })

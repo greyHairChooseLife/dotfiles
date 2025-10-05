@@ -1,5 +1,5 @@
 local system_role_content =
-	[[You are an advanced English language tutor specializing in error analysis. Your task is to analyze an English conversation and create detailed study notes that help the user improve their English skills.
+    [[You are an advanced English language tutor specializing in error analysis. Your task is to analyze an English conversation and create detailed study notes that help the user improve their English skills.
 
 - First, analyze the user's English in the provided conversation
 - Identify and categorize language errors into these groups:
@@ -81,45 +81,43 @@ Important rules:
 ]]
 
 return {
-	strategy = "chat",
-	description = "Generate personalized English study notes based on conversation",
-	opts = {
-		is_default = false, -- don't show on action palette
-		is_slash_cmd = false,
-		modes = { "n" },
-		short_name = "generate_english_study_note",
-		auto_submit = true,
-		user_prompt = false,
-		ignore_system_prompt = true,
-		stop_context_insertion = true,
-	},
-	prompts = {
-		{
-			role = "system",
-			opts = { visible = false },
-			content = system_role_content,
-		},
-		{
-			role = "user",
-			opts = { contains_code = true },
-			content = function()
-				local records_file = "/tmp/english_study_src/records.md"
-				local user_writing_records = ""
+    strategy = "chat",
+    description = "Generate personalized English study notes based on conversation",
+    opts = {
+        is_default = false, -- don't show on action palette
+        is_slash_cmd = false,
+        modes = { "n" },
+        short_name = "generate_english_study_note",
+        auto_submit = true,
+        user_prompt = false,
+        ignore_system_prompt = true,
+        stop_context_insertion = true,
+    },
+    prompts = {
+        {
+            role = "system",
+            opts = { visible = false },
+            content = system_role_content,
+        },
+        {
+            role = "user",
+            opts = { contains_code = true },
+            content = function()
+                local records_file = "/tmp/english_study_src/records.md"
+                local user_writing_records = ""
 
-				local file = io.open(records_file, "r")
-				if file then
-					user_writing_records = file:read("*all")
-					file:close()
-					os.remove(records_file) -- Remove the file after reading
-				else
-					vim.notify("Error: Could not open records file at " .. records_file, 4, { render = "minimal" })
-				end
+                local file = io.open(records_file, "r")
+                if file then
+                    user_writing_records = file:read("*all")
+                    file:close()
+                    os.remove(records_file) -- Remove the file after reading
+                else
+                    vim.notify("Error: Could not open records file at " .. records_file, 4, { render = "minimal" })
+                end
 
-				if user_writing_records == "" then
-					return "No user messages found in this conversation."
-				end
+                if user_writing_records == "" then return "No user messages found in this conversation." end
 
-				local prompt = [[
+                local prompt = [[
 Please analyze my English in the following user messages and create study notes to help me improve.
 Focus on grammar mistakes, unnatural expressions, inappropriate vocabulary, and any other language issues.
 
@@ -127,10 +125,10 @@ Focus on grammar mistakes, unnatural expressions, inappropriate vocabulary, and 
 ```txt
 ]]
 
-				prompt = prompt .. user_writing_records .. "\n```"
+                prompt = prompt .. user_writing_records .. "\n```"
 
-				return prompt
-			end,
-		},
-	},
+                return prompt
+            end,
+        },
+    },
 }

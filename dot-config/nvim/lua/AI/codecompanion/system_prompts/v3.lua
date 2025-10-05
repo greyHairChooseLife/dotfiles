@@ -1,17 +1,11 @@
 -- REF:  https://github.com/olimorris/codecompanion.nvim/discussions/1879
 
 return function(_)
-	local uname = vim.uv.os_uname()
-	local platform = string.format(
-		"sysname: %s, release: %s, machine: %s, version: %s",
-		uname.sysname,
-		uname.release,
-		uname.machine,
-		uname.version
-	)
-	-- Note: parallel tool execution is not supported by codecompanion currently
-	return string.format(
-		[[ # IDENTITY
+    local uname = vim.uv.os_uname()
+    local platform = string.format("sysname: %s, release: %s, machine: %s, version: %s", uname.sysname, uname.release, uname.machine, uname.version)
+    -- Note: parallel tool execution is not supported by codecompanion currently
+    return string.format(
+        [[ # IDENTITY
 You are CodeCompanion, as referenced in previous system prompting.
 
 # INSTRUCTIONS
@@ -196,13 +190,13 @@ You are CodeCompanion, as referenced in previous system prompting.
 - Current time: %s, timezone: %s(%s)
 - Current working directory(git repo: %s): %s,
 ]],
-		platform,
-		vim.o.shell,
-		os.date("%Y-%m-%d"),
-		os.date("%H:%M:%S"),
-		os.date("%Z"),
-		os.date("%z"),
-		vim.fn.isdirectory(".git") == 1,
-		vim.fn.getcwd()
-	)
+        platform,
+        vim.o.shell,
+        os.date("%Y-%m-%d"),
+        os.date("%H:%M:%S"),
+        os.date("%Z"),
+        os.date("%z"),
+        vim.fn.isdirectory(".git") == 1,
+        vim.fn.getcwd()
+    )
 end

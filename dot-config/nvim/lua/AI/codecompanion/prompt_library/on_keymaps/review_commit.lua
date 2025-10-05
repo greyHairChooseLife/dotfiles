@@ -33,60 +33,52 @@ Notice: Before you answer, if full of related files contents might be needed for
 ]]
 
 return {
-	strategy = "chat",
-	description = "",
-	opts = {
-		modes = { "n", "v" },
-		is_default = true, -- don't show on action palette
-		is_slash_cmd = false,
-		short_name = "review_commit",
-		auto_submit = true,
-		user_prompt = false,
-		ignore_system_prompt = true,
-		stop_context_insertion = true,
-		adapter = {
-			-- name = "anthropic",
-			-- model = "claude-3-7-sonnet-20250219", -- think
-			-- model = "claude-3-5-sonnet-20241022", -- thinkless
-			name = "copilot",
-			-- MEMO:: github copilot is not unlimited anymore
-			-- model = "claude-3.7-sonnet",
-			model = "gpt-4.1",
-		},
-	},
-	prompts = {
-		{
-			role = "system",
-			opts = { visible = false },
-			content = system_role_content,
-		},
-		{
-			role = "user",
-			opts = { contains_code = true },
-			content = function(context)
-				local commit_hash = context.is_visual and context.lines[1] or "HEAD"
+    strategy = "chat",
+    description = "",
+    opts = {
+        modes = { "n", "v" },
+        is_default = true, -- don't show on action palette
+        is_slash_cmd = false,
+        short_name = "review_commit",
+        auto_submit = true,
+        user_prompt = false,
+        ignore_system_prompt = true,
+        stop_context_insertion = true,
+        adapter = {
+            -- name = "anthropic",
+            -- model = "claude-3-7-sonnet-20250219", -- think
+            -- model = "claude-3-5-sonnet-20241022", -- thinkless
+            name = "copilot",
+            -- MEMO:: github copilot is not unlimited anymore
+            -- model = "claude-3.7-sonnet",
+            model = "gpt-4.1",
+        },
+    },
+    prompts = {
+        {
+            role = "system",
+            opts = { visible = false },
+            content = system_role_content,
+        },
+        {
+            role = "user",
+            opts = { contains_code = true },
+            content = function(context)
+                local commit_hash = context.is_visual and context.lines[1] or "HEAD"
 
-				local log_cmd = "git --no-pager log --no-ext-diff --format='%H%nAuthor: %an <%ae>%nDate: %ad%n%n    %s%n%n    %b' "
-					.. commit_hash
-					.. "^.."
-					.. commit_hash
-				local log_output = vim.fn.system(log_cmd)
-				local log_block = "```gitcommit\n" .. log_output .. "```"
+                local log_cmd = "git --no-pager log --no-ext-diff --format='%H%nAuthor: %an <%ae>%nDate: %ad%n%n    %s%n%n    %b' "
+                    .. commit_hash
+                    .. "^.."
+                    .. commit_hash
+                local log_output = vim.fn.system(log_cmd)
+                local log_block = "```gitcommit\n" .. log_output .. "```"
 
-				local diff_cmd = "git --no-pager diff --no-ext-diff " .. commit_hash .. "^.." .. commit_hash
-				local diff_output = vim.fn.system(diff_cmd)
-				local diff_block = "```diff\n" .. diff_output .. "```"
+                local diff_cmd = "git --no-pager diff --no-ext-diff " .. commit_hash .. "^.." .. commit_hash
+                local diff_output = vim.fn.system(diff_cmd)
+                local diff_block = "```diff\n" .. diff_output .. "```"
 
-				return "### Here is git log (`"
-					.. log_cmd
-					.. "`)\n"
-					.. log_block
-					.. "\n\n### Here is git diff (`"
-					.. diff_cmd
-					.. "`)\n"
-					.. diff_block
-					.. "\n\n"
-			end,
-		},
-	},
+                return "### Here is git log (`" .. log_cmd .. "`)\n" .. log_block .. "\n\n### Here is git diff (`" .. diff_cmd .. "`)\n" .. diff_block .. "\n\n"
+            end,
+        },
+    },
 }
