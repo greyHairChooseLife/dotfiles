@@ -100,7 +100,7 @@ M.nvim_tree_on_attach = function(bufnr)
 	map("n", "ya", api.fs.copy.absolute_path, opts("Copy Absolute Path"))
 	map("n", "yr", api.fs.copy.relative_path, opts("Copy Relative Path"))
 	map("n", "yf", api.fs.copy.filename, opts("Copy Name"))
-	map("n", "yp", function()
+	map("n", "yd", function()
 		local node = api.tree.get_node_under_cursor()
 		local dir_path = node.absolute_path:match("(.*/)") or ""
 		vim.fn.system("echo -n '" .. dir_path .. "' | xclip -selection clipboard")
