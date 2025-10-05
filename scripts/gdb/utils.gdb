@@ -41,8 +41,9 @@ alias wa = watch
 alias wa_file = watchfile
 alias cw = contextwatch
 alias cw_file = contextwatchfile
-alias cw_ev = contextwatch execute
+alias cw_ex = contextwatch execute
 alias cw_del = contextunwatch
+alias hx = hexdump
 
 # record 실행 시점부터 되감기가 가능하다.
 # tmux로 단축키 만들어둠
