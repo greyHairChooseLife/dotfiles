@@ -61,6 +61,7 @@ local log_actions = {
 M.git_log = function()
 	local config = {
 		actions = log_actions,
+		layout = { fullscreen = true },
 		win = {
 			input = {
 				keys = {
@@ -78,6 +79,7 @@ M.git_log_line = function()
 	-- vim.cmd("normal! <Esc>")
 	local config = {
 		actions = log_actions,
+		layout = { fullscreen = true },
 		win = {
 			input = {
 				keys = {
@@ -94,6 +96,7 @@ end
 M.git_log_file = function()
 	local config = {
 		actions = log_actions,
+		layout = { fullscreen = true },
 		win = {
 			input = {
 				keys = {
@@ -109,6 +112,7 @@ M.git_log_file = function()
 end
 M.git_diff = function()
 	local config = {
+		layout = { fullscreen = true },
 		-- preview = "diff",
 	}
 	snp.git_diff(config)
