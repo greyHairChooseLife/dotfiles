@@ -39,7 +39,7 @@ map("n", ",.r", function() snp.registers({ layout = "select" }) end)
 map("n", ",.q", function() snp.qflist({ layout = "right" }) end)
 map("n", ",.m", function() snp.marks({ layout = "dropdown" }) end)
 map("n", ",.R", snp.resume)
-map("n", ",.H", function() snp.help({ layout = "ivy_split" }) end)
+map("n", ",.H", function() snp.help({ layout = "sidebar" }) end)
 map("n", ",.N", function() snp.pick({ source = "noice", layout = "ivy_split" }) end)
 
 map("n", "<BS>", snp.snippets)

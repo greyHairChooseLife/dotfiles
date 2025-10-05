@@ -107,18 +107,29 @@ local layouts = {
             backdrop = false,
             -- position = "bottom",
             width = 0.4,
-            row = 0.05,
+            row = 0.02,
             col = 0.55,
             min_width = 55,
-            height = 0.8,
+            height = 0.95,
             min_height = 3,
             box = "vertical",
             border = "rounded",
             title = "{title}",
             title_pos = "center",
-            { win = "input", height = 1, border = "bottom" },
+            { win = "input", height = 2, border = "none" },
             { win = "list", border = "none" },
-            -- { win = "preview", title = "{preview}", height = 0.7,     border = "top" },
+            {
+                win = "preview",
+                title = "",
+                height = 0.5,
+                border = "none",
+                wo = {
+                    winhighlight = {
+                        NormalFloat = "SnacksPickerPreview",
+                        FloatBorder = "SnacksPickerDropdownPreview",
+                    },
+                },
+            },
         },
     },
 }
@@ -493,6 +504,45 @@ local sources = {
     },
     snippets = require("picker.modules.extra_sources.luasnip"),
     pull_requests = require("picker.modules.extra_sources.pull_requests"),
+    lsp_symbols = {
+        -- preview = "floating",
+        filter = {
+            default = {
+                "Class",
+                "Constructor",
+                "Enum",
+                "Field",
+                "Function",
+                "Interface",
+                "Method",
+                "Module",
+                "Namespace",
+                "Package",
+                "Property",
+                "Struct",
+                "Trait",
+            },
+            -- set to `true` to include all symbols
+            markdown = true,
+            help = true,
+            -- you can specify a different filter for each filetype
+            lua = {
+                "Class",
+                "Constructor",
+                "Enum",
+                "Field",
+                "Function",
+                "Interface",
+                "Method",
+                "Module",
+                "Namespace",
+                -- "Package", -- remove package since luals uses it for control flow structures
+                "Property",
+                "Struct",
+                "Trait",
+            },
+        },
+    },
 }
 
 local config = {

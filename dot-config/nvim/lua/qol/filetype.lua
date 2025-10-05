@@ -33,15 +33,22 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
-vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(args)
-        local bufnr = args.buf
-        local ft = vim.bo[bufnr].filetype
-        if ft == "c" or ft == "cpp" or ft == "h" then
-            vim.bo[bufnr].tabstop = 4
-            vim.bo[bufnr].shiftwidth = 4
-            vim.bo[bufnr].softtabstop = 4
-            vim.bo[bufnr].expandtab = true
-        end
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "c", "cpp", "h" },
+    callback = function()
+        vim.opt.tabstop = 4 -- 탭을 2칸으로 설정
+        vim.opt.shiftwidth = 4 -- 자동 들여쓰기 2칸
+        vim.opt.softtabstop = 4 -- 백스페이스로 2칸씩 지우기
+        vim.opt.expandtab = true -- 탭을 공백으로 변환
+    end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "lua" },
+    callback = function()
+        vim.opt.tabstop = 4 -- 탭을 2칸으로 설정
+        vim.opt.shiftwidth = 4 -- 자동 들여쓰기 2칸
+        vim.opt.softtabstop = 4 -- 백스페이스로 2칸씩 지우기
+        vim.opt.expandtab = true -- 탭을 공백으로 변환
     end,
 })
