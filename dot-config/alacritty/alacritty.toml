@@ -34,6 +34,8 @@ bindings = [
   { key = "n", mods = "Control|Shift", action = "SpawnNewInstance" },
   { key = "i", mods = "Alt", action = "ToggleViMode" },
   { key = "Space", mods = "Control", action = "ReceiveChar" },
+  { key = "'", mode = "Vi", action = "SemanticSearchForward" },
+  # { key = "'", mode = "Vi", action = "SemanticSearchBackward" },
   # { key = "[", mods = "Control", chars = "\u001b[" }
   { key = "[", mods = "Control", chars = "\u001b[27;5;91~" },
 ]
@@ -43,7 +45,7 @@ style = { shape = "Block", blinking = "Off" }
 unfocused_hollow = true
 
 [colors]
-vi_mode_cursor = { background = "#FFA500" }
+vi_mode_cursor = { cursor = "#FF3333" }
 search.matches = { background = "#FFFF00" }
 search.focused_match = { background = "#0000FF" }
 # Colors which should be used to draw the terminal cursor. If these are unset,

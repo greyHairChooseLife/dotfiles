@@ -124,7 +124,9 @@ sudo pacman -S --needed \
     pwndbg \
     ipython \
     i3exit \
-    rustnet-bin
+    rust \
+    rustnet-bin \
+    ruby
 
 # Install AUR packages
 yay -S --needed \
