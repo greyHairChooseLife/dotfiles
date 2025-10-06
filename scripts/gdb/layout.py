@@ -59,7 +59,13 @@ panes = {
     .strip()
     .split(":"),
     "Ipython": os.popen(
-        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -t {bottom} -l 50% -d "ipython --no-banner"'
+        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -t {bottom} -l 20% -d "ipython --no-banner"'
+    )
+    .read()
+    .strip()
+    .split(":"),
+    "heap_tracker": os.popen(
+        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -t {bottom} -l 20% -d "cat -"'
     )
     .read()
     .strip()
