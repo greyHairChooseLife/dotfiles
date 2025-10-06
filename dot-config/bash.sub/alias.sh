@@ -91,4 +91,5 @@ alias nnd='~/.local/bin/nnd'
 alias dbg='gdb --quiet'
 alias gdb='gdb --quiet'
 alias xx='xargs'
+alias dot='cd $HOME/dotfiles'
 # <<<

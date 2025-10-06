@@ -14,6 +14,7 @@ map("i", "<A-l>", function()
 end, opt)
 
 -- MEMO:: STT & TTS
+map("n", ",v", "<cmd>Vocal<CR>", opt)
 map("v", ",v", "<cmd>TTS<CR>", opt)
 
 -- MEMO:: CodeCompanion

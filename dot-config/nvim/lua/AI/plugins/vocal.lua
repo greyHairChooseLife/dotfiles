@@ -13,7 +13,7 @@ return {
     },
     {
         "kyza0d/vocal.nvim",
-        event = "VeryLazy",
+        -- event = "VeryLazy",
         cmd = { "Vocal" },
         dependencies = {
             "nvim-lua/plenary.nvim",
@@ -24,13 +24,14 @@ return {
                 api_key = nil,
 
                 -- Directory to save recordings
-                recording_dir = os.getenv("HOME") .. "/recordings",
+                recording_dir = os.getenv("HOME") .. "/Music/recordings",
 
                 -- Delete recordings after transcription
                 delete_recordings = true,
 
                 -- Keybinding to trigger :Vocal (set to nil to disable)
-                keymap = ",v",
+                -- keymap = ",v",
+                keymap = nil,
 
                 -- Local model configuration (set this to use local model instead of API)
                 --
