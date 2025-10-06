@@ -24,4 +24,5 @@ set context-sections regs disasm code ghidra stack backtrace expressions threads
 
 source /home/sy/dotfiles/scripts/gdb/layout.py
 source /home/sy/dotfiles/scripts/gdb/utils.gdb
+source /home/sy/dotfiles/scripts/gdb/disasline_auto.py
 

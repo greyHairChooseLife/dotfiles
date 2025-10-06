@@ -45,6 +45,8 @@ alias cw_ex = contextwatch execute
 alias cw_del = contextunwatch
 alias hx = hexdump
 
+alias dis_cur_line = python disas_current_line(None)
+
 # record 실행 시점부터 되감기가 가능하다.
 # tmux로 단축키 만들어둠
 
