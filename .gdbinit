@@ -17,6 +17,7 @@ set logging file dbg.log
 set logging enabled on
 set debuginfod enabled on
 set history save off
+set context-sections regs disasm code ghidra stack backtrace expressions threads heap_tracker args
 
 # pwndbg: 스택이 위에서 아래로 자라게 표시 외?않?되?
 # set context-stack-lines-reverse on

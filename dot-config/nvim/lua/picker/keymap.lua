@@ -42,6 +42,6 @@ map("n", ",.R", snp.resume)
 map("n", ",.H", function() snp.help({ layout = "sidebar" }) end)
 map("n", ",.N", function() snp.pick({ source = "noice", layout = "ivy_split" }) end)
 
-map("n", "<BS>", snp.snippets)
+map("n", "<Space>s", snp.snippets)
 map("n", ",.P", snp.pull_requests)
 map("n", ",.M", function() extra.markdown_headings() end)
