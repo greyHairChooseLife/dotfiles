@@ -253,7 +253,10 @@ return {
                         -- get_bufnrs = vim.api.nvim_list_bufs
                         -- or (RECOMMENDED) filter to only "normal" buffers
                         get_bufnrs = function()
-                            return vim.tbl_filter(function(bufnr) return vim.bo[bufnr].buftype == "" end, vim.api.nvim_list_bufs())
+                            return vim.tbl_filter(
+                                function(bufnr) return vim.bo[bufnr].buftype == "" or vim.bo[bufnr].filetype == "codecompanion" end,
+                                vim.api.nvim_list_bufs()
+                            )
                         end,
                     },
                 },
