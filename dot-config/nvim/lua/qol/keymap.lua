@@ -64,14 +64,16 @@ map("i", "zz", function() vim.api.nvim_input("<Esc>zzA") end)
 
 map("i", "<M-b>", "<C-Left>")
 map("i", "<M-f>", "<C-Right>")
+map("i", "<C-b>", "<Left>")
+map("i", "<C-f>", "<Right>")
 map("i", "<C-a>", "<Home>")
 map("i", "<C-e>", "<End>")
-map("i", "<C-l>", "<Del>")
+map("i", "<C-d>", "<Del>")
 map("c", "<M-b>", "<C-Left>")
 map("c", "<M-f>", "<C-Right>")
 map("c", "<C-a>", "<Home>")
 map("c", "<C-e>", "<End>")
-map("c", "<C-l>", "<Del>")
+map("c", "<C-d>", "<Del>")
 
 -- TODO: <esc> 시뮬레이션 방법을 통일(검증 필요)하고, 함수로 만들어 재사용하자.
 -- Easy Escape
