@@ -112,7 +112,7 @@ function CompileAndRun()
         direction = "float",
         close_on_exit = false,
         hidden = true,
-        cmd = info.compile_cmd .. " && " .. "./" .. info.exe_path,
+        cmd = info.compile_cmd .. " && " .. info.exe_path,
         float_opts = {
             border = "solid",
             width = math.floor(vim.o.columns * 0.4),
