@@ -114,7 +114,8 @@ return {
                             -- https://docs.github.com/en/copilot/about-github-copilot/github-copilot-features#user-content-fnref-2
                             schema = {
                                 model = {
-                                    default = "gpt-4.1",
+                                    default = "grok-code-fast-1",
+                                    -- default = "gpt-4.1",
                                     -- default = "claude-sonnet-4",
                                     -- default = "claude-3.7-sonnet",
                                     -- default = "claude-3.7-sonnet-thought",
@@ -157,7 +158,8 @@ return {
                     },
                     adapter = {
                         name = "copilot",
-                        model = "gpt-4.1",
+                        -- model = "gpt-4.1",
+                        model = "grok-code-fast-1",
                     },
                     slash_commands = require("AI.codecompanion.slash_commands"),
                     tools = require("AI.codecompanion.tools"),
@@ -166,7 +168,8 @@ return {
                 inline = {
                     adapter = {
                         name = "copilot",
-                        model = "gpt-4.1",
+                        -- model = "gpt-4.1",
+                        model = "grok-code-fast-1",
                     },
                     keymaps = {
                         accept_change = { modes = { n = "ca" } },
