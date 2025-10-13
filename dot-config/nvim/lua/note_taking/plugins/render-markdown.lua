@@ -279,6 +279,7 @@ return {
         checkbox = {
             -- Turn on / off checkbox state rendering
             enabled = true,
+            left_pad = 0,
             right_pad = 1, -- 체크박스 오른쪽에 추가할 여백
             unchecked = {
                 -- Replaces '[ ]' of 'task_list_marker_unchecked'
