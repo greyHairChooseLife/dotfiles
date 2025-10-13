@@ -141,7 +141,7 @@ return {
                     treesitter = { "lsp" },
 
                     -- Components to render, grouped by column
-                    columns = { { "kind_icon" }, { "label", "source_name", gap = 5 } },
+                    columns = { { "kind_icon" }, { "label", gap = 1 }, { "source_name", gap = 5 } },
 
                     -- Definitions for possible components to render. Each defines:
                     --   ellipsis: whether to add an ellipsis when truncating the text
@@ -165,41 +165,48 @@ return {
                                 return icon .. ctx.icon_gap
                             end,
                         },
-
                         label = {
-                            width = { fill = true, max = 60 },
-                            text = function(ctx) return ctx.label .. ctx.label_detail end,
-                            highlight = function(ctx)
-                                -- label and label details
-                                local highlights = {
-                                    {
-                                        0,
-                                        #ctx.label,
-                                        group = ctx.deprecated and "BlinkCmpLabelDeprecated" or "BlinkCmpLabel",
-                                    },
-                                }
-                                if ctx.label_detail then
-                                    table.insert(highlights, {
-                                        #ctx.label,
-                                        #ctx.label + #ctx.label_detail,
-                                        group = "BlinkCmpLabelDetail",
-                                    })
-                                end
-
-                                -- characters matched on the label by the fuzzy matcher
-                                for _, idx in ipairs(ctx.label_matched_indices) do
-                                    table.insert(highlights, { idx, idx + 1, group = "BlinkCmpLabelMatch" })
-                                end
-
-                                return highlights
-                            end,
+                            text = function(ctx) return require("colorful-menu").blink_components_text(ctx) end,
+                            highlight = function(ctx) return require("colorful-menu").blink_components_highlight(ctx) end,
                         },
 
-                        label_description = {
-                            width = { max = 30 },
-                            text = function(ctx) return ctx.label_description end,
-                            highlight = "BlinkCmpLabelDescription",
-                        },
+                        -- DEPRECATED:: 2025-10-14
+                        -- use colorful-menu.nvim
+                        --
+                        -- label = {
+                        --     width = { fill = true, max = 60 },
+                        --     text = function(ctx) return ctx.label .. ctx.label_detail end,
+                        --     highlight = function(ctx)
+                        --         -- label and label details
+                        --         local highlights = {
+                        --             {
+                        --                 0,
+                        --                 #ctx.label,
+                        --                 group = ctx.deprecated and "BlinkCmpLabelDeprecated" or "BlinkCmpLabel",
+                        --             },
+                        --         }
+                        --         if ctx.label_detail then
+                        --             table.insert(highlights, {
+                        --                 #ctx.label,
+                        --                 #ctx.label + #ctx.label_detail,
+                        --                 group = "BlinkCmpLabelDetail",
+                        --             })
+                        --         end
+
+                        --         -- characters matched on the label by the fuzzy matcher
+                        --         for _, idx in ipairs(ctx.label_matched_indices) do
+                        --             table.insert(highlights, { idx, idx + 1, group = "BlinkCmpLabelMatch" })
+                        --         end
+
+                        --         return highlights
+                        --     end,
+                        -- },
+
+                        -- label_description = {
+                        --     width = { max = 30 },
+                        --     text = function(ctx) return ctx.label_description end,
+                        --     highlight = "BlinkCmpLabelDescription",
+                        -- },
 
                         source_name = {
                             width = { max = 30 },
