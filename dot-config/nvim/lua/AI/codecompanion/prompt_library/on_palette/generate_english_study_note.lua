@@ -92,6 +92,10 @@ return {
         user_prompt = false,
         ignore_system_prompt = true,
         stop_context_insertion = true,
+        adapter = {
+            name = "copilot",
+            model = "gpt-4.1",
+        },
     },
     prompts = {
         {
@@ -110,7 +114,9 @@ return {
                 if file then
                     user_writing_records = file:read("*all")
                     file:close()
-                    os.remove(records_file) -- Remove the file after reading
+                    local timestamp = os.date("%Y%m%d_%H%M%S")
+                    local new_records_file = records_file .. "_" .. timestamp .. ".md"
+                    os.rename(records_file, new_records_file)
                 else
                     vim.notify("Error: Could not open records file at " .. records_file, 4, { render = "minimal" })
                 end
