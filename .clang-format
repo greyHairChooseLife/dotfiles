@@ -2,6 +2,10 @@ BasedOnStyle: Chromium
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
-AllowShortBlocksOnASingleLine: true
+BreakBeforeBraces: Attach
+
+AllowShortLoopsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: All
+AllowShortBlocksOnASingleLine: false
