@@ -125,8 +125,9 @@ sudo pacman -S --needed \
     ipython \
     i3exit \
     rust \
-    rustnet-bin \
-    ruby
+    ruby \
+    autorandr \
+    perf
 
 # Install AUR packages
 yay -S --needed \
@@ -144,7 +145,10 @@ yay -S --needed \
     lazydocker \
     localsend-bin \
     wkhtmltopdf-bin \
-    python-edge-tts
+    rustnet-bin \
+    python-edge-tts \
+    libtexprintf \
+    ytdl
 
 # Enable important services
 sudo systemctl enable NetworkManager
