@@ -93,7 +93,7 @@ M.nvim_tree_on_attach = function(bufnr)
 
     map("n", "zr", api.tree.expand_all, opts("Expand All"))
     map("n", "zm", api.tree.collapse_all, opts("Collapse"))
-    map("n", "ya", api.fs.copy.absolute_path, opts("Copy Absolute Path"))
+    map("n", "yA", api.fs.copy.absolute_path, opts("Copy Absolute Path"))
     map("n", "yr", api.fs.copy.relative_path, opts("Copy Relative Path"))
     map("n", "yf", api.fs.copy.filename, opts("Copy Name"))
     map("n", "yd", function()
