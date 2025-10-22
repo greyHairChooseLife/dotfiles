@@ -37,6 +37,17 @@ document contextwatchfile
     contextwatchfile <파일명> : 지정한 파일의 각 줄에 watchpoint를 걸고 contextwatch를 활성화합니다.
 end
 
+define sizedHexDump
+    if $argc == 1
+        hexdump &$arg0 sizeof($arg0)
+    else
+        hexdump &$arg0 $arg1
+    end
+end
+document sizedHexDump
+    sizedHexDump <variable> [size] : Dump [size] bytes of the memory of the specified variable using hexdump (address and sizeof).
+end
+
 alias wa = watch
 alias wa_file = watchfile
 alias cw = contextwatch
@@ -44,12 +55,23 @@ alias cw_file = contextwatchfile
 alias cw_ex = contextwatch execute
 alias cw_del = contextunwatch
 alias hx = hexdump
+alias hxs = sizedHexDump
+alias rmt = target extended-remote localhost:1234
 
 alias dis_cur_line = python disas_current_line(None)
 
 # record 실행 시점부터 되감기가 가능하다.
 # tmux로 단축키 만들어둠
 
+define tmp_remote_target
+	  directory .
+    target extended-remote localhost:1234
+    record
+    b RecursiveReverse
+    cw_file cw
+end
+
+alias ttt = tmp_remote_target
 
 
 # ### 1. pwndbg의 `vmmap` 명령

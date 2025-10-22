@@ -127,7 +127,8 @@ sudo pacman -S --needed \
     rust \
     ruby \
     autorandr \
-    perf
+    perf \
+    bear
 
 # Install AUR packages
 yay -S --needed \

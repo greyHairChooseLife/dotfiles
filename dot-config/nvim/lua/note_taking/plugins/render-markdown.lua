@@ -68,9 +68,10 @@ return {
         },
         latex = {
             -- Whether LaTeX should be rendered, mainly used for health check
-            enabled = false, -- 안쓸껄?
+            enabled = true,
+            render_modes = { "n", "v", "V", "c" },
             -- Executable used to convert latex formula to rendered unicode
-            converter = "latex2text",
+            converter = { "utftex", "latex2text" },
             -- Highlight for LaTeX blocks
             highlight = "RenderMarkdownMath",
             -- Amount of empty lines above LaTeX blocks
@@ -273,6 +274,8 @@ return {
             right_pad = 0,
             -- Highlight for the bullet icon
             highlight = "RenderMarkdownBullet",
+            -- scope_highlight = { "RenderMarkdownBulletItem", "Normal", "Normal", "Normal", "Normal", "Normal" },
+            -- scope_priority = 5,
         },
         -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
         -- There are two special states for unchecked & checked defined in the markdown grammar

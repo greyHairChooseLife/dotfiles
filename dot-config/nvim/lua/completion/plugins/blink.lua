@@ -141,7 +141,7 @@ return {
                     treesitter = { "lsp" },
 
                     -- Components to render, grouped by column
-                    columns = { { "kind_icon" }, { "label", gap = 1 }, { "source_name", gap = 5 } },
+                    columns = { { "kind_icon" }, { "label", gap = 1 }, { "source_name" } },
 
                     -- Definitions for possible components to render. Each defines:
                     --   ellipsis: whether to add an ellipsis when truncating the text
@@ -210,7 +210,10 @@ return {
 
                         source_name = {
                             width = { max = 30 },
-                            text = function(ctx) return ctx.source_name end,
+                            -- text = function(ctx) return ctx.source_name end,
+                            text = function(ctx)
+                                if ctx.source_name == "Buffer" then return "     Buf" end
+                            end,
                             highlight = "BlinkCmpSource",
                         },
                     },

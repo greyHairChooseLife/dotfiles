@@ -7,7 +7,8 @@ alias df='df -h'     # human-readable sizes
 alias free='free -m' # show sizes in MB
 alias rm='trash'
 # alias cat='bat'
-alias grep='rg --ignore-case'
+# alias grep='rg --ignore-case'
+alias gr='rg --ignore-case'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias m='pwd | xclip -selection clipboard'
@@ -56,10 +57,10 @@ alias glgP='glg origin/HEAD..' # check to be pushed
 alias glMM='git log --pretty=format:"COMMIT : %h%nTITLE  : %s%nMESSAGE: %b%n%cd==================================== %ae%n%n" --date=short'
 
 git-root() {
-  git rev-parse --show-toplevel 2>/dev/null || {
-    echo "Error: Not inside a git repository." >&2
-    return 1
-  }
+    git rev-parse --show-toplevel 2> /dev/null || {
+        echo "Error: Not inside a git repository." >&2
+        return 1
+    }
 }
 # <<<
 
@@ -92,4 +93,6 @@ alias dbg='gdb --quiet'
 alias gdb='gdb --quiet'
 alias xx='xargs'
 alias dot='cd $HOME/dotfiles'
+alias atr='autorandr'
+alias mk='make -s'
 # <<<

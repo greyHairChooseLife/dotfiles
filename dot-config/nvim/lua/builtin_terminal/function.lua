@@ -117,7 +117,7 @@ function CompileAndRun()
             border = "solid",
             width = math.floor(vim.o.columns * 0.4),
             col = math.floor(vim.o.columns * 0.5),
-            winblend = 50,
+            winblend = 0,
         },
     })
     term:toggle()
@@ -135,7 +135,7 @@ function TypeCompilecommand()
             border = "solid",
             width = math.floor(vim.o.columns * 0.3),
             height = math.floor(vim.o.lines * 0.2),
-            winblend = 50,
+            winblend = 0,
         },
     })
     term:toggle()
