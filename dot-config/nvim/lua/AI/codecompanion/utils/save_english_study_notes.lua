@@ -40,10 +40,8 @@ function M.setup()
 
             local study_notes = nil
             local last_message = messages[#messages]
-
-            if last_message.role == "llm" and last_message.content and last_message.content:match("# English Study Notes") then
-                study_notes = last_message.content
-            end
+            -- if last_message.role == "llm" and last_message.content and last_message.content:match("# English Study Notes") then
+            if last_message.content and last_message.content:match("# English Study Notes") then study_notes = last_message.content end
 
             -- If study notes were found, save them
             if study_notes then
