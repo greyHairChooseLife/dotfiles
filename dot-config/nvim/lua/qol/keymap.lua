@@ -161,7 +161,11 @@ map("n", "zd", "zd<cmd>mkview<CR>")
 map("n", "n", function() Safe_search("n") end, opt)
 map("n", "N", function() Safe_search("N") end, opt)
 
-map("n", ",t", "viw<cmd>Translate ko<CR><Esc>", opt)
+-- map("n", ",t", "viw<cmd>Translate ko<CR><Esc>", opt)
+map("n", ",t", function()
+    vim.api.nvim_input("heak<BS>")
+    vim.defer_fn(function() vim.api.nvim_input("<A-o>") end, 10)
+end, opt)
 map("v", ",t", "<cmd>Translate ko<CR>", opt)
 
 -- { 중괄호 }로 묶인 영역 통째로 복사
