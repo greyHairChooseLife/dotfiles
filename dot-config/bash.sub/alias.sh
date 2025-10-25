@@ -95,4 +95,5 @@ alias xx='xargs'
 alias dot='cd $HOME/dotfiles'
 alias atr='autorandr'
 alias mk='make -s'
+alias a='eval $(cat .commands | sed '/^#/d' | fzf --reverse)'
 # <<<

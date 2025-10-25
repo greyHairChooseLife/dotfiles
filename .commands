@@ -1,0 +1,105 @@
+vi ~/.commands
+---------------------------------------------------------------------------------------------------- git & github
+# List repositories for a specific user or organization
+gh repo list <username/org>
+# Clone a repository from one of your organizations
+gh org list
+gh repo clone $(gh org list | fzf) <dir_name>
+
+# Rename the current branch
+git branch -m <new-branch-name>
+git push origin --delete <branch-name>
+
+gh pr create --base <base-branch>
+gh pr merge <pr-number>
+
+# something with | delta
+gh pr diff <pr-number>
+gh pr checkout <pr-number>
+
+---------------------------------------------------------------------------------------------------- gh gist
+gh gist edit $(gh gist list | column -t -s $'\t' | fzf | awk '{print $1}')
+gh gist clone $(gh gist list | column -t -s $'\t' | fzf | awk '{print $1}')
+
+---------------------------------------------------------------------------------------------------- appendix
+| column -t -s $'\t'
+| awk '{print $3}'
+| sed -i 's/old-string/new-string/g'
+
+---------------------------------------------------------------------------------------------------- misc
+# grep around 5 lines
+rg -C 5 "pattern" /path/to/file
+# Replace a string in a file (in-place) using sed
+# Print the 9th column of a command's output (useful for `ls -l`)
+sed -i 's/old-string/new-string/g' filename.txt
+ls -l | awk '{print $3}'
+# Monitor a command's output, updating every second
+watch -n 1 'command'
+
+# Set the desktop background with feh
+feh --bg-scale /path/to/image.jpg
+# Extract a range of pages from a PDF
+pdfseparate -f <first_page_number> -l <last_page_number> input.pdf page_%d.pdf
+pdfunite page_*.pdf output.pdf
+# Compress a PDF to a smaller size (for ebooks)
+ghostscript -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -o small.pdf large.pdf
+# Combine multiple PDF files into one
+pdfunite file1.pdf file2.pdf output.pdf
+
+---------------------------------------------------------------------------------------------------- hardware
+# Save the current display layout to a profile with autorandr
+autorandr --save <profile-name>
+# Load a saved display profile
+autorandr --load <profile-name>
+# Let autorandr automatically detect and apply the correct profile
+autorandr --change
+# Check battery status and charge thresholds
+tlp-stat -b
+sudo tlp fullcharge
+# Set battery charge thresholds (e.g., start at 75%, stop at 80%)
+sudo tlp setcharge 75 80 BAT0
+# Calibrate the battery (run on AC power)
+sudo tlp recalibrate
+# Get detailed CPU information
+lscpu
+# Show memory usage details
+cat /proc/meminfo
+# List block devices (disks and partitions)
+lsblk
+# Show kernel version and system info
+uname -a
+# View a process tree
+pstree
+
+---------------------------------------------------------------------------------------------------- C-language
+# Compile a C file with debug symbols and no optimizations
+gcc -g -O0 main.c -o main.out
+# Generate a `compile_commands.json` file for a make-based project
+bear -- make
+
+---------------------------------------------------------------------------------------------------- debugging
+# Disassemble an executable and interleave with source code, view in less
+objdump -d -S a.out | less
+
+---------------------------------------------------------------------------------------------------- Docker
+# --- Docker ---
+# Build a Docker image from a Dockerfile in the 'config' directory
+docker build -t <my-image-name> -f <path/to/Dockerfile>
+# Run a container in detached mode with a volume mount
+docker run -d --name <container_name> -v </host/path>:</container/path> <img_name>
+# Execute a shell inside a running container
+docker exec -it <container_name> bash
+# List all containers (running and stopped)
+docker ps -a
+
+
+
+---------------------------------------------------------------------------------------------------- Networking
+# Connect to a Wi-Fi network, prompting for a password
+nmcli device wifi connect <SSID> --ask
+nmcli -s -g 802-11-wireless-security.psk connection show $(nmcli connection show | grep -i wifi |awk '{print $1 "\t" $3 "\t"  $4}'| column -t -s $'\t' | fzf | awk '{print $1}')
+
+# Check network link status for a specific interface
+ip link show
+
+

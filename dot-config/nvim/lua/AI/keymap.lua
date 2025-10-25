@@ -26,6 +26,7 @@ local predefined = {
     code_workflow = "/cw",
     review_commit = "/review_commit",
     generate_commit_msg = "/generate_commit_msg",
+    simplify_paragraph = "/simplify_paragraph",
     -- DEPRECATED:: 2025-05-09
     -- agsfc = "/analyze_git_status_for_commits",
 }
@@ -100,7 +101,7 @@ wk_map({
 wk_map({
     ["<leader>ce"] = {
         group = "Prefill",
-        order = { "d", "e", "l", "f", "g", "n", "i", "I", "c", "R" },
+        order = { "d", "e", "l", "f", "g", "n", "i", "I", "s", "R" },
         ["e"] = { gen_command("pre", predefined.explain), desc = "explain", mode = { "v" } },
         ["l"] = { gen_command("pre", predefined.lsp), desc = "lsp", mode = { "v" } },
         ["f"] = { gen_command("pre", predefined.fix), desc = "fix", mode = { "v" } },
@@ -116,6 +117,11 @@ wk_map({
             gen_command("pre", predefined.review_commit),
             desc = "Review commit: HEAD or CommitHash",
             mode = { "n", "v" },
+        },
+        ["s"] = {
+            gen_command("pre", predefined.simplify_paragraph),
+            desc = "simplify paragraph",
+            mode = { "v" },
         },
 
         ["n"] = { gen_command("inline", inline.better_naming), desc = "󰊈 better naming", mode = { "v" } },

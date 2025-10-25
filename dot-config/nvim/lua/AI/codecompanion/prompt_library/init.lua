@@ -21,6 +21,7 @@ return {
     -- off action palette & keymap only
     ["ok1"] = require(on_keymaps .. "review_commit"),
     ["ok2"] = require(on_keymaps .. "generate_commit_msg"),
+    ["ok3"] = require(on_keymaps .. "simplify_paragraph"),
 
     -- on action palette
     ["Analyze git status         "] = require(on_palette .. "analyze_git_status"),
