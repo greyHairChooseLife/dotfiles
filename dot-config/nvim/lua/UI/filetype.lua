@@ -105,22 +105,37 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
-vim.api.nvim_create_autocmd("BufWinEnter", {
-    pattern = "*",
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "codecompanion",
     callback = function()
-        if vim.bo.filetype == "codecompanion" then
-            setOpt(
-                "winhighlight",
-                "Normal:CodeCompanionNormal," .. "SignColumn:CodeCompanionSignColumn," .. "EndOfBuffer:CodeCompanionEOB," .. "Folded:CodeCompanionFolded"
-            )
+        setOpt(
+            "winhighlight",
+            "Normal:CodeCompanionNormal," .. "SignColumn:CodeCompanionSignColumn," .. "EndOfBuffer:CodeCompanionEOB," .. "Folded:CodeCompanionFolded"
+        )
 
-            vim.opt_local.foldmethod = "expr"
-            vim.opt_local.foldenable = true
-            vim.opt_local.foldtext = "v:lua.codecompanion_fold_text(v:foldstart, v:foldend, v:foldlevel)"
-            vim.opt_local.foldexpr = "v:lua.codecompanion_fold_expr(v:lnum)"
-        end
+        vim.opt_local.foldmethod = "expr"
+        vim.opt_local.foldenable = true
+        vim.opt_local.foldtext = "v:lua.codecompanion_fold_text(v:foldstart, v:foldend, v:foldlevel)"
+        vim.opt_local.foldexpr = "v:lua.codecompanion_fold_expr(v:lnum)"
     end,
 })
+-- DEPRECATED:: 2025-10-26
+-- vim.api.nvim_create_autocmd("BufWinEnter", {
+--     pattern = "*",
+--     callback = function()
+--         if vim.bo.filetype == "codecompanion" then
+--             setOpt(
+--                 "winhighlight",
+--                 "Normal:CodeCompanionNormal," .. "SignColumn:CodeCompanionSignColumn," .. "EndOfBuffer:CodeCompanionEOB," .. "Folded:CodeCompanionFolded"
+--             )
+
+--             vim.opt_local.foldmethod = "expr"
+--             vim.opt_local.foldenable = true
+--             vim.opt_local.foldtext = "v:lua.codecompanion_fold_text(v:foldstart, v:foldend, v:foldlevel)"
+--             vim.opt_local.foldexpr = "v:lua.codecompanion_fold_expr(v:lnum)"
+--         end
+--     end,
+-- })
 
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "terminal",
