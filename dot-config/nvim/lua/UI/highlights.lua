@@ -357,12 +357,12 @@ vim.cmd([[
   highlight CodeCompanionSignColumn guibg=#242024  guifg=NONE
   highlight CodeCompanionEOB  guibg=NONE guifg=#242024
   highlight CodeCompanionFolded guibg=#242024 guifg=#8b8378 gui=italic
-  highlight CodeCompanionH1Bg guibg=NONE guifg=#FFFFFF gui=italic,bold
-  highlight CodeCompanionH2Bg guibg=NONE guifg=#FFFF0a gui=bold,italic
-  highlight CodeCompanionH3Bg guibg=NONE guifg=#1e90ff gui=bold
-  highlight CodeCompanionH4Bg guibg=NONE guifg=#e0af68 gui=bold
-  highlight CodeCompanionH5Bg guibg=NONE guifg=#8b8378 gui=bold
-  highlight CodeCompanionH6Bg guibg=NONE guifg=#B0C4DE gui=bold
+  highlight CodeCompanionH1Bg guibg=#242024 guifg=#FFFFFF gui=italic,bold
+  highlight CodeCompanionH2Bg guibg=#242024 guifg=#FFFF0a gui=bold,italic
+  highlight CodeCompanionH3Bg guibg=#242024 guifg=#1e90ff gui=bold
+  highlight CodeCompanionH4Bg guibg=#242024 guifg=#e0af68 gui=bold
+  highlight CodeCompanionH5Bg guibg=#242024 guifg=#8b8378 gui=bold
+  highlight CodeCompanionH6Bg guibg=#242024 guifg=#B0C4DE gui=bold
 
 
   " MEMO:: Snacks
