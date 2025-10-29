@@ -1,5 +1,5 @@
-vim.cmd([[cab dbg lua Snacks.debug.inspect(<c-e>]])
-vim.cmd([[iab dbg Snacks.debug.inspect(]])
+vim.cmd([[cab sdbg lua Snacks.debug.inspect(<c-e>]])
+vim.cmd([[iab sdbg Snacks.debug.inspect(]])
 
 -- common typo
 vim.cmd([[iab teh the]])
