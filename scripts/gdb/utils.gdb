@@ -29,7 +29,7 @@ document watchfile
 end
 
 define contextwatchfile
-    shell while read var; do echo "contextwatch $var"; done < $arg0 > .gdb_watchcmds
+    shell while read var; do echo "contextwatch execute $var"; done < $arg0 > .gdb_watchcmds
     source .gdb_watchcmds
     shell rm .gdb_watchcmds
 end
