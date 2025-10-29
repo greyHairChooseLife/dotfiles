@@ -21,7 +21,7 @@ end
 
 function M.setup()
     vim.api.nvim_create_autocmd({ "User" }, {
-        pattern = "CodeCompanionRequestFinished",
+        pattern = "CodeCompanionChatDone",
         callback = function(_)
             -- Get the messages from the closed chat
             local cdc = require("codecompanion")

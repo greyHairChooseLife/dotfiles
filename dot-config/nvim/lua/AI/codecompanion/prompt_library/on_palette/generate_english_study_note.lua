@@ -127,11 +127,14 @@ return {
 Please analyze my English in the following user messages and create study notes to help me improve.
 Focus on grammar mistakes, unnatural expressions, inappropriate vocabulary, and any other language issues.
 
+IMPORTANT: Generated note should be readable in 5 minutes long. If the provided contents is too long, consider the priority based on common and fundamental elements.
+IMPORTANT: Ignore language other than English.
+
 ### User Messages (for analysis):
-```txt
+`````txt
 ]]
 
-                prompt = prompt .. user_writing_records .. "\n```"
+                prompt = prompt .. user_writing_records .. "\n`````"
 
                 return prompt
             end,
