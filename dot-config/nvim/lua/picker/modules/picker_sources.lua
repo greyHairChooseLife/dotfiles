@@ -310,6 +310,13 @@ M.grep_current_buffer = function()
     local config = {}
     snp.lines(config)
 end
+M.grep_current_buffer_visual = function()
+    local search_text = g_utils.get_visual_text()
+    local config = {
+        on_show = function() vim.api.nvim_put({ search_text .. " " }, "c", true, true) end,
+    }
+    snp.lines(config)
+end
 M.grep_current_buffers = function()
     local config = { need_search = true }
     snp.grep_buffers(config)
@@ -321,7 +328,7 @@ M.grep_visual = function()
     }
     snp.grep(config)
 end
-M.grep_visual_current_buffers = function()
+M.grep_current_buffers_visual = function()
     local search_text = g_utils.get_visual_text()
     local config = {
         on_show = function() vim.api.nvim_put({ search_text .. " " }, "c", true, true) end,
