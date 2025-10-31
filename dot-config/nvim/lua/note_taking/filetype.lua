@@ -73,16 +73,16 @@ vim.api.nvim_create_autocmd("FileType", {
         -- delete keymap
         vim.keymap.del("n", "<Esc>") -- 노멀모드에서 esc 누르면 sibling heading을 찾는다.
 
-        map({ "n", "v" }, "W", "<Esc>WviWo")
-        map({ "n", "v" }, "B", "<Esc>BviWo")
+        map({ "n", "v" }, "<Right>", "<Esc>WviWo")
+        map({ "n", "v" }, "<Left>", "<Esc>BviWo")
     end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
     pattern = { "markdown" },
     callback = function()
-        map({ "n", "v" }, "W", "<Esc>WviWo")
-        map({ "n", "v" }, "B", "<Esc>BviWo")
+        map({ "n", "v" }, "<Right>", "<Esc>WviWo")
+        map({ "n", "v" }, "<Left>", "<Esc>BviWo")
         local function deprecated_ToggleBracket()
             local cursor_pos = vim.api.nvim_win_get_cursor(0)
             local line_num = cursor_pos[1]
