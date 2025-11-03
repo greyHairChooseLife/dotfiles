@@ -89,13 +89,14 @@ alias air='aider --show-repo-map'
 alias youtube-mp3="youtube-dl --extract-audio --audio-format mp3" # usage : youtube-mp3 url
 alias make-mp3="ffmpeg -i"                                        # usage : make-mp3 original-file.mp4 new-name.mp3
 alias b='btop'
+alias h='htop'
 alias time='/usr/bin/time -f $"========== time report ==========\n실행시간: %E\nCPU: %P\n메모리: %M KB\n========== end =========="'
 alias nnd='~/.local/bin/nnd'
 alias dbg='gdb --quiet'
 alias gdb='gdb --quiet'
 alias xx='xargs'
 alias dot='cd $HOME/dotfiles'
-alias atr='autorandr'
 alias mk='make -s'
-alias a='eval $(cat .commands | sed '/^#/d' | fzf --reverse)'
+alias a='eval $(cat ~/.commands | sed '/^#/d' | fzf --reverse)'
+alias fzf='fzf --ansi'
 # <<<
