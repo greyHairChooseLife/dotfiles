@@ -377,6 +377,12 @@ vim.cmd([[
   highlight SnacksPickerPreview guibg=#24283B guifg=NONE
   highlight SnacksPickerDropdownPreview guibg=#000000 guifg=NONE
 
+  highlight SnacksGhNormal guibg=#000000 guifg=NONE
+  highlight SnacksGhNormalFloat guibg=#000000 guifg=NONE
+  highlight SnacksGhBorder guibg=#000000 guifg=#FF4500
+  highlight SnacksGhTitle guibg=#000000 guifg=NONE
+  highlight SnacksGhFooter guibg=#000000 guifg=NONE
+
 
   " MEMO:: Snacks
   highlight DebugBreakPointText guifg=#FF4500 guibg=NONE

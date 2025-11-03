@@ -11,6 +11,7 @@ git branch -m <new-branch-name>
 git push origin --delete <branch-name>
 
 gh pr create --base <base-branch>
+gh pr create --repo greyHairChooseLife/jg-websocket --base main
 gh pr merge <pr-number>
 
 # something with | delta

@@ -156,6 +156,7 @@ M.git_status = function()
 end
 M.git_branches = function()
     local config = {
+        all = true,
         layout = { fullscreen = true },
     }
     snp.git_branches(config)

@@ -74,6 +74,27 @@ local layouts = {
             },
         },
     },
+    right_dropdown = {
+        layout = {
+            backdrop = true,
+            row = 0.5,
+            width = 0.7,
+            min_width = 80,
+            col = 0.3,
+            height = 100,
+            border = "none",
+            box = "vertical",
+            { win = "preview", title = "{preview}", height = 0.8, border = "single" },
+            {
+                box = "vertical",
+                border = "none",
+                title = "{title} {live} {flags}",
+                title_pos = "center",
+                { win = "input", height = 1, border = "bottom" },
+                { win = "list", border = "none" },
+            },
+        },
+    },
     my_telescope_top = {
         layout = {
             box = "horizontal",
@@ -542,6 +563,14 @@ local sources = {
                 "Trait",
             },
         },
+    },
+    gh_issue = {
+        -- your gh_issue picker configuration comes here
+        -- or leave it empty to use the default settings
+    },
+    gh_pr = {
+        -- your gh_pr picker configuration comes here
+        -- or leave it empty to use the default settings
     },
 }
 
