@@ -178,10 +178,10 @@ vim.cmd([[
   " highlight RenderMarkdownH5Bg guibg=#AF4500
   highlight RenderMarkdownH6Bg guibg=NONE guifg=#AF4500 gui=italic
 
-  highlight RenderMarkdownH1 guifg=#FFFFFF
-  highlight RenderMarkdownH2 guifg=#4169E1
-  highlight RenderMarkdownH3 guifg=#867300
-  highlight RenderMarkdownH4 guifg=#4169E1
+  highlight RenderMarkdownH1 guifg=#FFFFFF guibg=NONE
+  highlight RenderMarkdownH2 guifg=#4169E1 guibg=NONE
+  highlight RenderMarkdownH3 guifg=#867300 guibg=NONE
+  highlight RenderMarkdownH4 guifg=#4169E1 guibg=NONE
   " highlight RenderMarkdownH5 guifg=#FFFFFF gui=bold
   " highlight RenderMarkdownH6 guifg=#FFFFFF gui=bold
 

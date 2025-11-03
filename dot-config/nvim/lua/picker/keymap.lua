@@ -16,7 +16,7 @@ map("n", ",.gbr", my_picker_src.git_branches)
 map("n", ",.ghi", function() snp.gh_issue() end)
 map("n", ",.ghI", function() snp.gh_issue({ state = "all" }) end)
 map("n", ",.ghp", function() snp.gh_pr({ layout = "right_dropdown" }) end)
-map("n", ",.ghP", function() snp.gh_pr({ layout = { fullscreen = true }, state = "all" }) end)
+map("n", ",.ghP", function() snp.gh_pr({ layout = "right_dropdown", state = "all" }) end)
 -- Find
 map("n", ",.f", my_picker_src.files)
 map("v", ",.f", my_picker_src.files_visual)
