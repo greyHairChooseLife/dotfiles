@@ -171,19 +171,17 @@ vim.cmd([[
 
   highlight RenderMarkdownH1Bg guibg=#DCDCAA gui=bold,italic
   highlight RenderMarkdownH2Bg guibg=#1c2d5f guifg=#FFFF00 gui=bold
-  " highlight RenderMarkdownH3Bg guibg=#404000 gui=bold
-  highlight RenderMarkdownH3Bg guibg=NONE guifg=#1e90ff gui=italic
-  highlight RenderMarkdownH4Bg guibg=NONE guifg=#e0af68 gui=italic
-  highlight RenderMarkdownH5Bg guibg=NONE guifg=#8b8378 gui=italic
-  " highlight RenderMarkdownH5Bg guibg=#AF4500
-  highlight RenderMarkdownH6Bg guibg=NONE guifg=#AF4500 gui=italic
+  highlight RenderMarkdownH3Bg guibg=#24283b guifg=#1e90ff gui=italic
+  highlight RenderMarkdownH4Bg guibg=#24283b guifg=#e0af68 gui=italic
+  highlight RenderMarkdownH5Bg guibg=#24283b guifg=#8b8378 gui=italic
+  highlight RenderMarkdownH6Bg guibg=#24283b guifg=#AF4500 gui=italic
 
-  highlight RenderMarkdownH1 guifg=#FFFFFF guibg=NONE
-  highlight RenderMarkdownH2 guifg=#4169E1 guibg=NONE
-  highlight RenderMarkdownH3 guifg=#867300 guibg=NONE
-  highlight RenderMarkdownH4 guifg=#4169E1 guibg=NONE
-  " highlight RenderMarkdownH5 guifg=#FFFFFF gui=bold
-  " highlight RenderMarkdownH6 guifg=#FFFFFF gui=bold
+  highlight RenderMarkdownH1 guifg=#24283b guibg=#24283b
+  highlight RenderMarkdownH2 guifg=#24283b guibg=#24283b
+  highlight RenderMarkdownH3 guifg=#24283b guibg=#24283b
+  highlight RenderMarkdownH4 guifg=#24283b guibg=#24283b
+  highlight RenderMarkdownH5 guifg=#24283b guibg=#24283b    gui=bold
+  highlight RenderMarkdownH6 guifg=#24283b guibg=#24283b    gui=bold
 
   highlight RenderMarkdownDocLink guifg=#FFBF00 gui=bold
   highlight RenderMarkdownWebLink guifg=#4169E1 gui=bold
