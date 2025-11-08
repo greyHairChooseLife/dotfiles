@@ -1,3 +1,7 @@
+-- ref - run: so /usr/share/nvim/runtime/syntax/hitest.vim
+-- ref - run: so $VIMRUNTIME/syntax/hitest.vim
+-- ref - https://www.youtube.com/watch?v=CXVDfg3W9Jk
+
 vim.cmd([[
   " MEMO:: Basic
   highlight LineNr guifg=#4e4451 ctermfg=red

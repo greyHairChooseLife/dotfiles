@@ -6,5 +6,7 @@ return {
         -- https://www.lazyvim.org/extras/editor/leap#vim-repeat
         "tpope/vim-repeat",
     },
-    opts = {},
+    opts = {
+        case_sensitive = false,
+    },
 }
