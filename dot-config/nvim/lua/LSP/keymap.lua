@@ -37,51 +37,23 @@ map("n", "gD", function()
     snp.lsp_declarations(config)
 end, opt)
 map("n", "gd", function()
-    -- telescope.lsp_definitions({
-    -- 	jump_type = "never", -- 항상 preview 띄우기
-    -- 	show_line = false, -- 결과 텍스트 표시
-    -- 	trim_text = false, -- 텍스트 트림 비활성화
-    -- })
     local config = { auto_confirm = false }
     snp.lsp_definitions(config)
 end, opt)
-map("n", "gy", function()
-    -- telescope.lsp_type_definition({
-    -- 	jump_type = "never", -- 항상 preview 띄우기
-    -- 	show_line = false, -- 결과 텍스트 표시
-    -- 	trim_text = false, -- 텍스트 트림 비활성화
-    -- })
-    snp.lsp_type_definitions()
-end, opt)
-map("n", "gi", function()
-    -- telescope.lsp_implementation({
-    -- 	jump_type = "never", -- 항상 preview 띄우기
-    -- 	show_line = false, -- 결과 텍스트 표시
-    -- 	trim_text = false, -- 텍스트 트림 비활성화
-    -- })
-    snp.lsp_implementations()
-end, opt)
+map("n", "gy", function() snp.lsp_type_definitions() end, opt)
+map("n", "gI", function() snp.lsp_implementations() end, opt)
 map("n", "gR", function()
-    -- telescope.lsp_references({
-    -- 	show_line = false, -- 결과 텍스트 표시
-    -- 	include_declaration = true,
-    -- 	include_current_line = false, --> false: ()커서가 위치한 요소도 결과에)포함, ture: 제외
-    -- })
-
     local config = { include_declaration = false, auto_confirm = false }
     snp.lsp_references(config)
 end, opt)
--- MEMO:: sonner or later
--- map("n", "gI", function()
---   telescope.lsp_incoming_calls({
---     show_line = false, -- 결과 텍스트 표시
---   })
--- end, opt)
--- map("n", "gO", function()
---   telescope.lsp_outgoing_calls({
---     show_line = false, -- 결과 텍스트 표시
---   })
--- end, opt)
+map("n", "gi", function()
+    local config = { auto_confirm = false }
+    snp.lsp_incoming_calls(config)
+end, opt)
+map("n", "go", function()
+    local config = { auto_confirm = false }
+    snp.lsp_outgoing_calls(config)
+end, opt)
 
 local wk_map = require("utils").wk_map
 wk_map({
@@ -98,6 +70,6 @@ wk_map({
         group = "expand",
         order = { "n", "s" },
         ["n"] = { vim.lsp.buf.rename, desc = "reName ", mode = "n" },
-        ["s"] = { "<cmd>LspRestart<CR>", desc = "reStart", mode = "n" },
+        ["s"] = { "<cmd>LspRestart ", desc = "reStart", mode = "n" },
     },
 })
