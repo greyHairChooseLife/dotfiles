@@ -248,6 +248,7 @@ wk_map({
 })
 vim.keymap.set("n", "qn", QF_next)
 vim.keymap.set("n", "qp", QF_prev)
+vim.keymap.set("n", "q<Space>", QF_append)
 
 -- MEMO:: Etc
 wk_map({

@@ -317,6 +317,11 @@ function QF_MovePrev()
     vim.cmd("wincmd p")
 end
 
+function QF_append()
+    vim.notify("Added to QuickFix")
+    vim.cmd("caddexpr printf('%s:%d:%s', expand('%'), line('.'), getline('.'))")
+end
+
 function QF_prev()
     -- if quickfix is empty, do nothing
     if #vim.fn.getqflist() == 0 then return end
