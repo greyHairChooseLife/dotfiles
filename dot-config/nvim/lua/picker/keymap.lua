@@ -36,6 +36,7 @@ map("v", ",.z", my_picker_src.grep_current_buffer_visual)
 map("n", ",.d", function() snp.diagnostics_buffer({ layout = "ivy_split" }) end)
 map("n", ",.D", function() snp.diagnostics({ layout = "ivy_split" }) end)
 map("n", ",.s", function() snp.lsp_symbols({ layout = "lsp_select" }) end)
+map("n", ",.S", function() snp.lsp_workspace_symbols() end)
 
 -- Etc
 map("n", ",.,.", function() snp.pick({ layout = "select" }) end)
