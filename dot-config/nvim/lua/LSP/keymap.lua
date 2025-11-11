@@ -40,8 +40,14 @@ map("n", "gd", function()
     local config = { auto_confirm = false }
     snp.lsp_definitions(config)
 end, opt)
-map("n", "gy", function() snp.lsp_type_definitions() end, opt)
-map("n", "gI", function() snp.lsp_implementations() end, opt)
+map("n", "gy", function()
+    local config = { auto_confirm = false }
+    snp.lsp_type_definitions(config)
+end, opt)
+map("n", "gI", function()
+    local config = { auto_confirm = false }
+    snp.lsp_implementations(config)
+end, opt)
 map("n", "gR", function()
     local config = { include_declaration = false, auto_confirm = false }
     snp.lsp_references(config)
