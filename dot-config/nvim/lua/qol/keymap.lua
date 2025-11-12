@@ -149,6 +149,8 @@ map("n", "zR", "zR<cmd>mkview<CR>")
 map("n", "zf", "zf<cmd>mkview<CR>")
 map("n", "zd", "zd<cmd>mkview<CR>")
 
+map("v", "V", "<Esc>^v$h")
+
 -- TODO: tmux랑 겹친다. 새로운 keymap 또는 접근법을 찾아야한다.
 -- FOLD MOVE
 -- map({ "n", "v" }, "<C-j>", "zjw")
@@ -239,16 +241,16 @@ wk_map({
 wk_map({
     ["<Space>q"] = {
         group = "Quick Fix",
-        order = { "f", "t", "n", "p" },
+        order = { "f", "t", "n", "p", "q" },
         ["f"] = { "<cmd>copen<CR>", desc = "focus", mode = "n" },
         ["t"] = { QF_ToggleList, desc = "toggle", mode = "n" },
         ["n"] = { QF_next, desc = "next", mode = "n" },
         ["p"] = { QF_prev, desc = "prev", mode = "n" },
+        ["q"] = { QF_append, desc = "append", mode = "n" },
     },
 })
 vim.keymap.set("n", "qn", QF_next)
 vim.keymap.set("n", "qp", QF_prev)
-vim.keymap.set("n", "q<Space>", QF_append)
 
 -- MEMO:: Etc
 wk_map({
