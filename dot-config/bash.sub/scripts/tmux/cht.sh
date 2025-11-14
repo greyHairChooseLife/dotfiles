@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 CHEAT_LANGUAES=${HOME}/dotfiles/dot-config/bash.sub/scripts/tmux/tmux-cht-languages
 CHEAT_COMMAND=${HOME}/dotfiles/dot-config/bash.sub/scripts/tmux/tmux-cht-command
 

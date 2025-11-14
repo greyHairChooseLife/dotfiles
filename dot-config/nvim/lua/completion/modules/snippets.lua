@@ -20,6 +20,10 @@ ls.add_snippets("c", {
         i(2, "variable"),
         t(");"),
     }),
+    -- MEMO:: printf
+    s("printf_A", { t('printf("AAAAAAAAAAAAAAAAAAAA\\n");') }),
+    s("printf_B", { t('printf("BBBBBBBBBBBBBBBBBBBB\\n");') }),
+    s("printf_C", { t('printf("CCCCCCCCCCCCCCCCCCCC\\n");') }),
     -- MEMO:: for
     s("for", {
         t("for (int "),

@@ -1,3 +1,5 @@
+-- https://github.com/mikavilpas/blink-ripgrep.nvim
+
 local bf = require("completion.modules.blink-function")
 
 return {
@@ -334,6 +336,7 @@ return {
             per_filetype = {
                 -- DEPRECATED:: 2025-05-21 codecompanion works out of box
                 codecompanion = { "codecompanion", "dictionary" },
+                -- gitcommit = { "dictionary" }, // wtf, why not?
 
                 -- add `dadbod` source for sql files
                 sql = { "dadbod", "buffer" },

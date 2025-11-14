@@ -51,5 +51,5 @@ map("n", ",.N", function() snp.pick({ source = "noice", layout = "ivy_split" }) 
 
 map("n", "<Space>s", snp.snippets)
 -- DEPRECATED:: 2025-11-03
--- map("n", ",.P", snp.pull_requests)
+map("n", ",.P", snp.pull_requests)
 map("n", ",.M", function() extra.markdown_headings() end)

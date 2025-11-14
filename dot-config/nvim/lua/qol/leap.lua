@@ -64,6 +64,9 @@ end
 -- 	end
 -- end, {})
 
+map({ "n", "v" }, "S", "<Plug>(leap-anywhere)")
+-- map({ "n", "v" }, "gj", "<Plug>(leap-anywhere)")
+-- map({ "n", "v" }, "gk", "<Plug>(leap-anywhere)")
 map({ "n", "v" }, "gj", "<Plug>(leap-forward)")
 map({ "n", "v" }, "gk", "<Plug>(leap-backward)")
 map({ "n" }, ",l", "<Plug>(leap-from-window)")

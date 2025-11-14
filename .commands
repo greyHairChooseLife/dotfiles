@@ -6,9 +6,22 @@ gh repo list <username/org>
 gh org list
 gh repo clone $(gh org list | fzf) <dir_name>
 
+# Create branch from git rev
+git checkout -b <new-branch-name> [<start-point>]
+
+# branch 관리: 로컬에서 필요없는 remote upstream 지우기
+git branch -d -r <remote-name>/<bracnh-name>
+git push origin --delete <branch-name>
+
+# local branch가 어떤 remote branch와 연결되었지 (있다면)표시
+git branch -vv
+# local branch와 연결된 upstream 제거(git push하면 자동으로 upstream 설정으로 upload됨)
+git branch --unset-upstream <local-branch-name>
 # Rename the current branch
 git branch -m <new-branch-name>
-git push origin --delete <branch-name>
+
+# 다운받기 전에 확인만
+git fetch --dry-run
 
 gh pr create --base <base-branch>
 gh pr create --repo greyHairChooseLife/jg-websocket --base main
@@ -19,17 +32,24 @@ gh pr diff <pr-number>
 gh pr checkout <pr-number>
 
 ---------------------------------------------------------------------------------------------------- gh gist
-gh gist edit $(gh gist list | column -t -s $'\t' | fzf | awk '{print $1}')
-gh gist clone $(gh gist list | column -t -s $'\t' | fzf | awk '{print $1}')
+gh gist edit $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
+gh gist clone $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
 
 ---------------------------------------------------------------------------------------------------- appendix
 | column -t -s $'\t'
 | awk '{print $3}'
 | sed -i 's/old-string/new-string/g'
-
+# Delete the 2nd line:
+| sed '2d'
+# Delete lines 2 to 4:
+| sed '2,4d'
+# Delete lines matching a pattern (e.g., starting with "my"):
+| sed '/^my/d'
 ---------------------------------------------------------------------------------------------------- misc
 # grep around 5 lines
 rg -C 5 "pattern" /path/to/file
+# NOT starting with "test"
+rg -v "^test" file.txt
 # Replace a string in a file (in-place) using sed
 # Print the 9th column of a command's output (useful for `ls -l`)
 sed -i 's/old-string/new-string/g' filename.txt

@@ -51,7 +51,8 @@
 	autocorrect = prompt
 
 [push]
-  default = upstream
+  ; default = upstream
+  default = simple
 	autoSetupRemote = true # main 외 branches들을 remote에 push를 기본적으로 허용. 이거 안하면 매번 물어봄.
 
 [web]
@@ -86,6 +87,7 @@
 
 [diff]
 	algorithm = histogram # 기본값인 myers보다 블록 단위 이동(리팩토링 등)에 강점을 보인다.
+  ; external = difft --display side-by-side --color always
 
 [maintenance]
 	auto = true
