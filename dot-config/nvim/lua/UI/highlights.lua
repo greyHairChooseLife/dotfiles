@@ -88,6 +88,11 @@ vim.cmd([[
   highlight VimwikiTodo guifg=#000000 guibg=#87CEFA gui=bold
   highlight VimwikiFoldColumn guifg=#24283B
 
+  " MEMO:: Warp aka. harpoon
+  highlight WarpFloatBorder guifg=#f1502f guibg=NONE
+  highlight WarpAdded guifg=#40cd52 guibg=NONE
+
+
 
   " MEMO:: GitSigns
   highlight GitSignsAdd guifg=#40cd52

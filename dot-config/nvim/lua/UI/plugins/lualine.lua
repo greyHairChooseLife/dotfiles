@@ -57,11 +57,24 @@ return {
                             unnamed = "New", -- Text to show for unnamed buffers.
                             newfile = "New", -- Text to show for newly created file before first write
                         },
-                        color = {
-                            fg = colors.bg,
-                            gui = "bold",
-                        },
+                        color = function()
+                            local bufnr = vim.fn.bufnr("%")
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            if warpItem then
+                                return {
+                                    fg = colors.white,
+                                    bg = colors.warp,
+                                    gui = "bold",
+                                }
+                            else
+                                return {
+                                    fg = colors.bg,
+                                    gui = "bold",
+                                }
+                            end
+                        end,
                         separator = { right = "" },
+                        padding = { left = 1, right = 0 },
                     },
                     {
                         function()
@@ -70,16 +83,22 @@ return {
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                 return " "
                             else
-                                return " "
+                                return "  "
                             end
                         end,
                         padding = { left = 0, right = 1 },
                         color = function()
                             if vim.bo.modified then
+                                local bufnr = vim.fn.bufnr("%")
+                                local warpItem = require("warp").get_item_by_buf(bufnr)
+                                if warpItem then return { bg = colors.warp, fg = colors.git_change } end
                                 return { fg = colors.red2 }
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-                                return { fg = colors.black }
+                                return { fg = colors.bg }
                             else
+                                local bufnr = vim.fn.bufnr("%")
+                                local warpItem = require("warp").get_item_by_buf(bufnr)
+                                if warpItem then return { bg = colors.warp } end
                                 return {}
                             end
                         end,
@@ -138,15 +157,15 @@ return {
                         "lsp_status",
                         icon = "󰌚",
                         symbols = {
-                            done = "",
+                            done = " ",
                             -- Delimiter inserted between LSP names:
                             separator = " & ",
                         },
                         -- List of LSP names to ignore (e.g., `null-ls`):
                         ignore_lsp = { "copilot" },
                         color = {
-                            bg = colors.greenbg,
-                            fg = colors.black,
+                            bg = colors.bg,
+                            fg = colors.git_add,
                         },
                     },
                     {
@@ -175,8 +194,40 @@ return {
                         padding = { left = 1, right = 1 },
                         color = { bg = colors.purple, fg = colors.black, gui = "bold" },
                     },
-                    { "location", padding = { left = 1, right = 1 } },
-                    { "progress", padding = { left = 0, right = 1 } },
+                    {
+                        "location",
+                        padding = { left = 1, right = 1 },
+                        color = function()
+                            local bufnr = vim.fn.bufnr("%")
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            if warpItem then return { bg = colors.warp, fg = colors.white } end
+                        end,
+                    },
+                    {
+                        "progress",
+                        padding = { left = 0, right = 1 },
+
+                        color = function()
+                            local bufnr = vim.fn.bufnr("%")
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            if warpItem then return { bg = colors.warp, fg = colors.white } end
+                        end,
+                    },
+                    {
+                        function()
+                            local bufnr = vim.fn.bufnr("%")
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            local count = require("warp").count()
+                            if warpItem then return "󰀱 " .. warpItem.index .. "/" .. count end
+                            return ""
+                        end,
+                        padding = { left = 1, right = 1 },
+                        color = function()
+                            local bufnr = vim.fn.bufnr("%")
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            if warpItem then return { bg = colors.warp, fg = colors.white, gui = "bold" } end
+                        end,
+                    },
                 },
             },
             inactive_sections = {
@@ -214,7 +265,7 @@ return {
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                 return { fg = colors.wwhite, bg = colors.bblack }
                             else
-                                return { bg = colors.bblack }
+                                return { bg = colors.bg }
                             end
                         end,
                     },

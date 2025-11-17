@@ -2,6 +2,7 @@
 local M = {}
 
 M.colors = {
+    warp = "#f1502f",
     real_blue = "#0020fc",
     blue = "#61afef",
     git_add = "#40cd52",
@@ -33,7 +34,7 @@ M.theme = {
     normal = {
         a = { fg = M.colors.orange, bg = M.colors.orange },
         b = { fg = M.colors.orange, bg = M.colors.bg },
-        c = { fg = M.colors.black, bg = M.colors.greenbg },
+        c = { fg = M.colors.black, bg = M.colors.bg },
         x = { fg = M.colors.black, bg = M.colors.orange },
         y = { fg = M.colors.wwhite, bg = M.colors.bg },
         z = { fg = M.colors.bg, bg = M.colors.orange },
@@ -87,11 +88,12 @@ function M.this_is_fugitive() return "- Fugitive -" end
 
 function M.harpoon_length()
     -- get the length of the harpoon list
-    local items = require("harpoon"):list():length()
+    -- local items = require("harpoon"):list():length()
+    local items = require("warp").count()
     if items == 0 then
         return ""
     else
-        return "󰀱 " .. items
+        return "󰀱  " .. items
     end
 end
 
@@ -174,13 +176,16 @@ M.my_nvimTree = {
         lualine_a = {
             {
                 M.get_git_branch,
-                color = { bg = M.colors.orange, fg = M.colors.nvimTree, gui = "bold,italic" },
-                padding = { left = 3 },
+                color = { bg = M.colors.bg, fg = M.colors.orange, gui = "bold,italic" },
+                padding = { left = 2 },
+                separator = { right = "" },
             },
+        },
+        lualine_x = {
             {
                 M.harpoon_length,
-                color = { bg = M.colors.orange, fg = M.colors.nvimTree, gui = "bold,italic" },
-                padding = { left = 22, right = 4 },
+                color = { bg = M.colors.bg, fg = M.colors.warp, gui = "bold,italic" },
+                padding = { right = 2 },
             },
         },
     },
@@ -189,14 +194,15 @@ M.my_nvimTree = {
             {
                 M.get_git_branch,
                 color = { bg = M.colors.nvimTree, fg = M.colors.orange, gui = "bold,italic" },
-                padding = { left = 3 },
+                padding = { left = 2 },
+                separator = { right = "" },
             },
         },
-        lualine_z = {
+        lualine_x = {
             {
                 M.harpoon_length,
-                color = { bg = M.colors.nvimTree, fg = M.colors.orange, gui = "bold,italic" },
-                padding = { left = 22, right = 4 },
+                color = { bg = M.colors.nvimTree, fg = M.colors.warp, gui = "bold,italic" },
+                padding = { right = 2 },
             },
         },
     },
