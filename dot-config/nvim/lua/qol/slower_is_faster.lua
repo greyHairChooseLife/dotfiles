@@ -17,17 +17,18 @@ vim.keymap.set({ "n", "v" }, "l", function()
     end
 end, { expr = true })
 
-vim.keymap.set("n", "j", function()
+vim.keymap.set({ "n", "v" }, "j", function()
     if vim.v.count == 0 then
-        -- move mark up & down
-        -- vim.notify("normal! " .. vim.v.count .. "j")
-        -- vim.cmd("normal! " .. vim.v.count .. "j")
-        -- return "j"
+        return "`"
     else
         return "j"
     end
 end, { expr = true })
 
-vim.keymap.set("n", "k", function()
-    if vim.v.count ~= 0 then return "k" end
+vim.keymap.set({ "n", "v" }, "k", function()
+    if vim.v.count == 0 then
+        return "@"
+    else
+        return "k"
+    end
 end, { expr = true })

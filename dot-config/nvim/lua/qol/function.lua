@@ -55,7 +55,7 @@ end
 
 function BlinkCursorLine(duration)
     duration = duration or 50 -- 기본값 50ms
-    vim.cmd("highlight CursorLine guibg=#2CB67D")
+    vim.cmd("highlight CursorLine guibg=#ffff00")
     vim.wo.cursorline = true
     vim.defer_fn(function()
         if vim.bo.filetype == "NvimTree" then

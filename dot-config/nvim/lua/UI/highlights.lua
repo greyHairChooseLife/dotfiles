@@ -391,6 +391,8 @@ vim.cmd([[
   highlight SnacksGhFooter guibg=#000000 guifg=NONE
 
 
+  highlight MarkSignHL guifg=#FF4500 guibg=NONE gui=italic
+
   " MEMO:: Snacks
   highlight DebugBreakPointText guifg=#FF4500 guibg=NONE
   highlight DebugBreakPointRejectedText guifg=#9932cc guibg=NONE

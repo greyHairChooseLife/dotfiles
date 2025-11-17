@@ -29,6 +29,8 @@ map({ "n", "v" }, ";", ":")
 map({ "n", "v" }, ":", ";")
 map({ "n", "v" }, "Q", ",")
 
+map({ "n", "v" }, "zk", "10<C-e>")
+map({ "n", "v" }, "zj", "10<C-y>")
 map({ "n", "v" }, "zo", "za") -- toggle fold uni-key
 -- map({ "n", "v" }, "zz", "zz5<C-e>") -- toggle fold uni-key
 -- map({ "n", "v" }, "zZ", "zz", { noremap = true }) -- toggle fold uni-key
@@ -273,3 +275,35 @@ wk_map({
         },
     },
 })
+
+-- vim.keymap.set({ "n", "v" }, "m.", "<cmd>Markit mark toggle<cr>")
+-- vim.keymap.set({ "n", "v" }, "mk", "<cmd>Markit mark prev<cr>")
+-- vim.keymap.set({ "n", "v" }, "mj", "<cmd>Markit mark next<cr>")
+--
+vim.keymap.set({ "n", "v" }, "m;", "<Plug>(Marks-toggle)")
+-- vim.keymap.set({ "n", "v" }, "dm.", "<Plug>(Marks-delete)")
+vim.keymap.set({ "n", "v" }, "dmm", "<Plug>(Marks-deleteline)")
+vim.keymap.set({ "n", "v" }, "dmM", "<Plug>(Marks-deletebuf)")
+vim.keymap.set({ "n", "v" }, "mj", "<Plug>(Marks-next)")
+vim.keymap.set({ "n", "v" }, "mk", "<Plug>(Marks-prev)")
+-- vim.keymap.set({ "n", "v" }, "mj", "<Plug>(Marks-next):lua BlinkCursorLine(30)<cr>")
+-- vim.keymap.set({ "n", "v" }, "mk", "<Plug>(Marks-prev):lua BlinkCursorLine(30)<cr>")
+--
+-- <Plug>(Marks-set)
+-- <Plug>(Marks-setnext)
+-- <Plug>(Marks-toggle)
+-- <Plug>(Marks-delete)
+-- <Plug>(Marks-deleteline)
+-- <Plug>(Marks-deletebuf)
+-- <Plug>(Marks-preview)
+-- <Plug>(Marks-next)
+-- <Plug>(Marks-prev)
+--
+-- <Plug>(Marks-delete-bookmark)
+-- <Plug>(Marks-next-bookmark)
+-- <Plug>(Marks-prev-bookmark)
+-- <Plug>(Marks-set-bookmark[0-9])
+-- <Plug>(Marks-delete-bookmark[0-9])
+-- <Plug>(Marks-toggle-bookmark[0-9])
+-- <Plug>(Marks-next-bookmark[0-9])
+-- <Plug>(Marks-prev-bookmark[0-9])
