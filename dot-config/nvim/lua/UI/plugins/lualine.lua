@@ -86,12 +86,12 @@ return {
                                 return "  "
                             end
                         end,
-                        padding = { left = 0, right = 1 },
+                        padding = { left = 1, right = 1 },
                         color = function()
                             if vim.bo.modified then
                                 local bufnr = vim.fn.bufnr("%")
                                 local warpItem = require("warp").get_item_by_buf(bufnr)
-                                if warpItem then return { bg = colors.warp, fg = colors.git_change } end
+                                if warpItem then return { bg = colors.warp, fg = colors.real_blue } end
                                 return { fg = colors.red2 }
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                 return { fg = colors.bg }
@@ -149,13 +149,13 @@ return {
                         lualine_components.winfix_status,
                         padding = { left = 1, right = 1 },
                         color = {
-                            -- bg = colors.bg,
-                            fg = colors.black,
+                            bg = colors.bg,
+                            fg = colors.orange,
                         },
                     },
                     {
                         "lsp_status",
-                        icon = "󰌚",
+                        icon = "", -- "󰌚",
                         symbols = {
                             done = " ",
                             -- Delimiter inserted between LSP names:
@@ -305,8 +305,8 @@ return {
                         lualine_components.winfix_status,
                         padding = { left = 1, right = 1 },
                         color = {
-                            -- bg = colors.bg,
-                            fg = colors.black,
+                            bg = colors.grey,
+                            fg = colors.orange,
                         },
                     },
                     {

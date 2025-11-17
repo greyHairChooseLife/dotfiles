@@ -99,7 +99,7 @@ end
 
 function M.winfix_status()
     if vim.wo.winfixwidth and vim.wo.winfixheight then
-        return "" -- 🔒 고정 표시
+        return "(   )" -- 🔒 고정 표시
     else
         return ""
     end
