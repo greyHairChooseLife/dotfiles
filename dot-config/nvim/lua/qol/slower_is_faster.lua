@@ -27,7 +27,8 @@ end, { expr = true })
 
 vim.keymap.set({ "n", "v" }, "k", function()
     if vim.v.count == 0 then
-        return "@"
+        vim.cmd("NoiceDismiss")
+        BlinkCursorLine()
     else
         return "k"
     end
