@@ -39,11 +39,11 @@ return {
                 ignore_focus = {},
                 always_divide_middle = false,
                 globalstatus = false,
-                refresh = {
-                    statusline = 50,
-                    tabline = 1000,
-                    winbar = 1000,
-                },
+                -- refresh = {
+                --     statusline = 50,
+                --     tabline = 1000,
+                --     winbar = 1000,
+                -- },
             },
             sections = {
                 lualine_a = {
@@ -242,10 +242,16 @@ return {
                             unnamed = "New", -- Text to show for unnamed buffers.
                             newfile = "New", -- Text to show for newly created file before first write
                         },
-                        color = {
-                            fg = colors.wwhite,
-                            gui = "italic",
-                        },
+                        color = function()
+                            local bufnr = vim.fn.bufnr()
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            if warpItem then return { bg = colors.bg, fg = colors.warp, gui = "bold,italic" } end
+                            return {
+                                bg = colors.bg,
+                                fg = colors.wwhite,
+                                gui = "italic",
+                            }
+                        end,
                         separator = { right = "" },
                     },
                     {
@@ -255,7 +261,7 @@ return {
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                 return " "
                             else
-                                return " "
+                                return "  "
                             end
                         end,
                         padding = { left = 0, right = 1 },
@@ -318,6 +324,21 @@ return {
                     },
                 },
                 lualine_z = {
+                    {
+                        function()
+                            local bufnr = vim.fn.bufnr("")
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            local count = require("warp").count()
+                            if warpItem then return "󰀱 " .. warpItem.index .. "/" .. count end
+                            return ""
+                        end,
+                        padding = { left = 1, right = 1 },
+                        color = function()
+                            local bufnr = vim.fn.bufnr("")
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            if warpItem then return { bg = colors.grey, fg = colors.warp, gui = "bold" } end
+                        end,
+                    },
                     {
                         -- "harpoon2",
                         -- -- icon = '♥',
