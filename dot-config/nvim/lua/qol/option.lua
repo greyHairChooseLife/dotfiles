@@ -32,6 +32,10 @@ opt.fillchars = {
     horizdown = "┳", -- 수평-수직 교차점
     vertleft = "┫", -- 수직-수평 교차점
     vertright = "┣", -- 수직-수평 교차점
+    -- https://www.reddit.com/r/neovim/comments/1dlrgnd/how_to_achieve_this_in_lualinenvim/
+    -- status line
+    stl = "─",
+    stlnc = "─",
 }
 opt.splitright = true -- Open vertical splits to the right
 opt.splitbelow = true
