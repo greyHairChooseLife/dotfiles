@@ -10,10 +10,6 @@ return {
         local lualine_components = require("UI.modules/lualine_components")
         local colors = lualine_components.colors
         local my_theme = lualine_components.theme
-        local isWarpBuf = function()
-            local bufnr = vim.fn.bufnr("")
-            return require("warp").get_item_by_buf(bufnr)
-        end
 
         require("lualine").setup({
             options = {
@@ -23,8 +19,7 @@ return {
                 -- section_separators = { left = '', right = '' },
                 -- component_separators = { left = ' 󰪍󰪍 ', right = '' },
                 -- section_separators = { left = '', right = '' },󰪍󰪍
-                -- component_separators = { left = "%#CustomSeparator#█", right = "" },
-                component_separators = { left = "", right = "" },
+                component_separators = { left = "%#CustomSeparator#█", right = "" },
                 section_separators = { left = "", right = " " },
                 disabled_filetypes = {
                     statusline = {
@@ -63,14 +58,23 @@ return {
                             newfile = "New", -- Text to show for newly created file before first write
                         },
                         color = function()
-                            return {
-                                fg = colors.white1,
-                                bg = isWarpBuf() and colors.warpBG or colors.white1,
-                                gui = "bold",
-                            }
+                            local bufnr = vim.fn.bufnr("%")
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            if warpItem then
+                                return {
+                                    fg = colors.white,
+                                    bg = colors.warp,
+                                    gui = "bold",
+                                }
+                            else
+                                return {
+                                    fg = colors.bg,
+                                    gui = "bold",
+                                }
+                            end
                         end,
                         separator = { right = "" },
-                        padding = { left = 1, right = 1 },
+                        padding = { left = 1, right = 0 },
                     },
                     {
                         function()
@@ -79,19 +83,23 @@ return {
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                 return " "
                             else
-                                return ""
+                                return "  "
                             end
                         end,
                         padding = { left = 1, right = 1 },
                         color = function()
                             if vim.bo.modified then
-                                return {
-                                    fg = isWarpBuf() and colors.purpule1 or colors.red1,
-                                    bg = isWarpBuf() and colors.warpBG or colors.white1,
-                                    gui = "bold",
-                                }
+                                local bufnr = vim.fn.bufnr("%")
+                                local warpItem = require("warp").get_item_by_buf(bufnr)
+                                if warpItem then return { bg = colors.warp, fg = colors.real_blue } end
+                                return { fg = colors.red2 }
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-                                return { fg = colors.white1 }
+                                return { fg = colors.bg }
+                            else
+                                local bufnr = vim.fn.bufnr("%")
+                                local warpItem = require("warp").get_item_by_buf(bufnr)
+                                if warpItem then return { bg = colors.warp } end
+                                return {}
                             end
                         end,
                     },
@@ -298,24 +306,6 @@ return {
                         },
                     },
                 },
-                lualine_c = {
-                    {
-                        "",
-                        color = {
-                            bg = colors.bg,
-                            fg = colors.brightgrey,
-                        },
-                    },
-                },
-                lualine_x = {
-                    {
-                        "",
-                        color = {
-                            bg = colors.bg,
-                            fg = colors.brightgrey,
-                        },
-                    },
-                },
                 lualine_y = {
                     {
                         lualine_components.winfix_status,
@@ -346,7 +336,7 @@ return {
                         color = function()
                             local bufnr = vim.fn.bufnr("")
                             local warpItem = require("warp").get_item_by_buf(bufnr)
-                            if warpItem then return { bg = colors.bg, fg = colors.warp, gui = "bold" } end
+                            if warpItem then return { bg = colors.grey, fg = colors.warp, gui = "bold" } end
                         end,
                     },
                     {

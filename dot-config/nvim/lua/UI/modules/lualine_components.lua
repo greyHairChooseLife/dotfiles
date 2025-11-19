@@ -2,58 +2,57 @@
 local M = {}
 
 M.colors = {
-    normalBG = "#24283b", -- normal bg color
-    -- git
-    gitAdd = "#40cd52",
-    gitChange = "#ffcc00",
-    gitDelete = "#f1502f",
-    -- colors
-    black1 = "#000000",
-    black2 = "#282c34",
-    black3 = "#333342",
-    black4 = "#8b8378",
-    black5 = "#abb2bf",
-    white1 = "#ffffff",
-    blue1 = "#0020fc",
-    blue2 = "#61afef",
-    green1 = "#98c379",
-    orange1 = "#FF8C00",
-    orange2 = "#cd853f",
+    warp = "#f1502f",
+    real_blue = "#0020fc",
+    blue = "#61afef",
+    git_add = "#40cd52",
+    git_change = "#ffcc00",
+    git_delete = "#f1502f",
+    greenbg = "#98c379",
+    purple = "#c678dd",
+    orange = "#FF8C00",
+    orange_deep = "#cd853f",
+    wwhite = "#abb2bf",
+    white = "#ffffff",
+    bblack = "#282c34",
+    black = "#000000",
+    terminal_bg = "#0c0c0c",
+    grey = "#333342",
+    bg = "#24283b",
+    bg2 = "#242024", -- this is note bg color
+    active_qf = "#db4b4b",
+    qf_bg = "#201010",
+    nvimTree = "#333342",
+    active_oil = "#BDB80B",
+    oil_bg = "#1A1601",
     purple1 = "#A020F0",
-    purple2 = "#c678dd",
-    red1 = "#DC143C",
-    yellow1 = "#ffff00",
-    -- plugin specific
-    warpBG = "#f1502f",
-    termBG = "#0c0c0c",
-    noteBG = "#242024", -- note bg color
-    qfBG = "#201010",
-    qfFG = "#db4b4b",
-    nvimtreeBG = "#333342",
-    oilBG = "#1A1601",
-    oilFG = "#BDB80B",
+    red2 = "#DC143C",
+    search = "#ffff00",
 }
 
 M.theme = {
     normal = {
-        a = { fg = M.colors.orange1, bg = M.colors.normalBG },
-        b = { fg = M.colors.orange1, bg = M.colors.normalBG },
-        c = { fg = M.colors.orange1, bg = M.colors.normalBG },
-        x = { fg = M.colors.orange1, bg = M.colors.normalBG },
-        y = { fg = M.colors.orange1, bg = M.colors.normalBG },
-        z = { fg = M.colors.orange1, bg = M.colors.normalBG },
+        a = { fg = M.colors.orange, bg = M.colors.orange },
+        b = { fg = M.colors.orange, bg = M.colors.bg },
+        c = { fg = M.colors.black, bg = M.colors.bg },
+        x = { fg = M.colors.black, bg = M.colors.orange },
+        y = { fg = M.colors.wwhite, bg = M.colors.bg },
+        z = { fg = M.colors.bg, bg = M.colors.orange },
     },
     inactive = {
-        a = { fg = M.colors.black3, bg = M.colors.normalBG },
-        b = { fg = M.colors.black3, bg = M.colors.normalBG },
-        c = { fg = M.colors.black3, bg = M.colors.normalBG },
-        x = { fg = M.colors.black3, bg = M.colors.normalBG },
-        y = { fg = M.colors.black3, bg = M.colors.normalBG },
-        z = { fg = M.colors.black3, bg = M.colors.normalBG },
+        a = { fg = M.colors.orange, bg = M.colors.bg },
+        b = { fg = M.colors.orange, bg = M.colors.bg },
+        c = { fg = M.colors.grey, bg = M.colors.grey },
+        x = { fg = M.colors.grey, bg = M.colors.grey },
+        y = { fg = M.colors.grey, bg = M.colors.grey },
+        z = { fg = M.colors.wwhite, bg = M.colors.grey },
     },
 }
 
 -- Helper functions for lualine components
+function M.empty() return "" end
+
+function M.this_is_space() return "                                                                                                     " end
 
 function M.search_counter()
     local sc = vim.fn.searchcount({ maxcount = 9999 })
@@ -132,7 +131,7 @@ M.my_terminal = {
         lualine_a = {
             {
                 "filetype",
-                color = { bg = M.colors.white1, fg = M.colors.termBG, gui = "bold,italic" },
+                color = { bg = M.colors.white, fg = M.colors.terminal_bg, gui = "bold,italic" },
                 padding = { left = 1, right = 5 },
             },
         },
@@ -141,7 +140,7 @@ M.my_terminal = {
         lualine_a = {
             {
                 "filetype",
-                color = { bg = M.colors.termBG, fg = M.colors.white1, gui = "italic" },
+                color = { bg = M.colors.terminal_bg, fg = M.colors.white, gui = "italic" },
                 padding = { left = 1, right = 5 },
             },
         },
@@ -154,7 +153,7 @@ M.my_quickfix = {
         lualine_a = {
             {
                 "filetype",
-                color = { bg = M.colors.qfFG, fg = M.colors.white1, gui = "bold,italic" },
+                color = { bg = M.colors.active_qf, fg = M.colors.white, gui = "bold,italic" },
                 padding = { left = 3, right = 5 },
             },
         },
@@ -163,11 +162,11 @@ M.my_quickfix = {
         lualine_a = {
             {
                 "filetype",
-                color = { bg = M.colors.qfFG, fg = M.colors.white1, gui = "bold,italic" },
+                color = { bg = M.colors.active_qf, fg = M.colors.white, gui = "bold,italic" },
                 padding = { left = 3, right = 5 },
             },
         },
-        lualine_b = M.fill_color(M.colors.qfBG),
+        lualine_b = M.fill_color(M.colors.qf_bg),
     },
 }
 
@@ -177,27 +176,15 @@ M.my_nvimTree = {
         lualine_a = {
             {
                 M.get_git_branch,
-                color = { bg = M.colors.nvimtreeBG, fg = M.colors.orange1, gui = "bold,italic" },
+                color = { bg = M.colors.bg, fg = M.colors.orange, gui = "bold,italic" },
                 padding = { left = 2 },
                 separator = { right = "" },
-            },
-        },
-        lualine_b = {
-            {
-                "",
-                color = { bg = M.colors.nvimtreeBG, fg = M.colors.nvimtreeBG, gui = "bold,italic" },
-            },
-        },
-        lualine_c = {
-            {
-                "",
-                color = { bg = M.colors.nvimtreeBG, fg = M.colors.nvimtreeBG, gui = "bold,italic" },
             },
         },
         lualine_x = {
             {
                 M.harpoon_length,
-                color = { bg = M.colors.normalBG, fg = M.colors.warpBG, gui = "bold,italic" },
+                color = { bg = M.colors.bg, fg = M.colors.warp, gui = "bold,italic" },
                 padding = { right = 2 },
             },
         },
@@ -206,7 +193,7 @@ M.my_nvimTree = {
         lualine_a = {
             {
                 M.get_git_branch,
-                color = { bg = M.colors.nvimtreeBG, fg = M.colors.orange1, gui = "bold,italic" },
+                color = { bg = M.colors.nvimTree, fg = M.colors.orange, gui = "bold,italic" },
                 padding = { left = 2 },
                 separator = { right = "" },
             },
@@ -214,7 +201,7 @@ M.my_nvimTree = {
         lualine_x = {
             {
                 M.harpoon_length,
-                color = { bg = M.colors.nvimtreeBG, fg = M.colors.warpBG, gui = "bold,italic" },
+                color = { bg = M.colors.nvimTree, fg = M.colors.warp, gui = "bold,italic" },
                 padding = { right = 2 },
             },
         },
@@ -227,7 +214,7 @@ M.my_fugitive = {
         lualine_a = {
             {
                 M.get_git_branch,
-                color = { bg = M.colors.orange1, fg = M.colors.black2, gui = "bold" },
+                color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
                 padding = { left = 1, right = 5 },
             },
         },
@@ -237,7 +224,7 @@ M.my_fugitive = {
         lualine_a = {
             {
                 M.get_git_branch,
-                color = { bg = M.colors.orange1, fg = M.colors.black2, gui = "bold" },
+                color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
                 padding = { left = 1, right = 5 },
                 -- separator = { right = "" },
             },
@@ -252,7 +239,7 @@ M.my_oil = {
         lualine_a = {
             {
                 "filetype",
-                color = { bg = M.colors.oilFG, fg = M.colors.black2, gui = "bold,italic" },
+                color = { bg = M.colors.active_oil, fg = M.colors.bblack, gui = "bold,italic" },
                 padding = { left = 3, right = 5 },
             },
         },
@@ -261,12 +248,12 @@ M.my_oil = {
         lualine_a = {
             {
                 "filetype",
-                color = { bg = M.colors.oilFG, fg = M.colors.black2, gui = "bold,italic" },
+                color = { bg = M.colors.active_oil, fg = M.colors.bblack, gui = "bold,italic" },
                 padding = { left = 3, right = 5 },
                 -- separator = { right = " " },
             },
         },
-        lualine_b = M.fill_color(M.colors.oilBG),
+        lualine_b = M.fill_color(M.colors.oil_bg),
     },
 }
 
@@ -300,17 +287,17 @@ M.my_codecompanion = {
         lualine_a = {
             {
                 codecompanion_current_model_name,
-                color = { fg = M.colors.orange1, bg = M.colors.noteBG, gui = "italic" },
+                color = { fg = M.colors.orange, bg = M.colors.bg2, gui = "italic" },
                 padding = { left = 2, right = 0 },
             },
             {
                 codecompanion_adapter_name,
-                color = { fg = M.colors.orange2, bg = M.colors.noteBG, gui = "italic" },
+                color = { fg = M.colors.orange_deep, bg = M.colors.bg2, gui = "italic" },
                 padding = { left = 1, right = 5 },
             },
             {
                 require("AI.codecompanion.utils.lualine_component.active"),
-                color = { fg = M.colors.orange1, bg = M.colors.noteBG },
+                color = { fg = M.colors.orange, bg = M.colors.bg2 },
             },
         },
     },
@@ -318,17 +305,17 @@ M.my_codecompanion = {
         lualine_a = {
             {
                 codecompanion_current_model_name,
-                color = { fg = M.colors.orange1, bg = M.colors.noteBG, gui = "italic" },
+                color = { fg = M.colors.orange, bg = M.colors.bg2, gui = "italic" },
                 padding = { left = 2, right = 0 },
             },
             {
                 codecompanion_adapter_name,
-                color = { fg = M.colors.orange2, bg = M.colors.noteBG, gui = "italic" },
+                color = { fg = M.colors.orange_deep, bg = M.colors.bg2, gui = "italic" },
                 padding = { left = 1, right = 5 },
             },
             {
                 require("AI.codecompanion.utils.lualine_component.inactive"),
-                color = { fg = M.colors.orange1, bg = M.colors.noteBG },
+                color = { fg = M.colors.orange, bg = M.colors.bg2 },
             },
         },
     },
