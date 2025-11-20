@@ -34,8 +34,8 @@ M.theme = {
     normal = {
         a = { fg = M.colors.orange, bg = M.colors.orange },
         b = { fg = M.colors.orange, bg = M.colors.bg },
-        c = { fg = M.colors.black, bg = M.colors.bg },
-        x = { fg = M.colors.black, bg = M.colors.orange },
+        c = { fg = M.colors.orange, bg = M.colors.bg },
+        x = { fg = M.colors.orange, bg = M.colors.orange },
         y = { fg = M.colors.wwhite, bg = M.colors.bg },
         z = { fg = M.colors.bg, bg = M.colors.orange },
     },

@@ -173,6 +173,7 @@ return {
                         padding = { left = 2, right = 1 },
                         color = {
                             bg = colors.search,
+                            fg = colors.black,
                         },
                     },
                 },
