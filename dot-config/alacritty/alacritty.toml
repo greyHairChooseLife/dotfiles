@@ -21,7 +21,7 @@ dynamic_title = true
 [font]
 # normal.family = "D2Coding"
 normal.family = "D2CodingLigature Nerd Font Propo"
-size = 15.0                                        # current
+size = 11.0  # current
 # size = 11.0  # cbpm labtop
 # size = 9.0 # x390
 # size = 15.0 # portable monitor

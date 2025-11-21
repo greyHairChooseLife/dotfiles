@@ -151,3 +151,64 @@ stack traceback:
 
 [touch fugitive](https://github.com/justinmk/vim-ug)
 
+
+
+
+## lualine
+
+
+M.colors = {
+    normalBG = "#24283b", -- normal bg color
+    -- git
+    gitAdd = "#40cd52",
+    gitChange = "#ffcc00",
+    gitDelete = "#f1502f",
+    -- colors
+    black1 = "#000000",
+    black2 = "#282c34",
+    black3 = "#333342",
+    black4 = "#8b8378",
+    black5 = "#abb2bf",
+    white1 = "#ffffff",
+    blue1 = "#0020fc",
+    blue2 = "#61afef",
+    green1 = "#98c379",
+    orange1 = "#FF8C00",
+    orange2 = "#cd853f",
+    purple1 = "#A020F0",
+    purple2 = "#c678dd",
+    red1 = "#DC143C",
+    yellow1 = "#ffff00",
+    -- plugin specific
+    warpBG = "#f1502f",
+    termBG = "#0c0c0c",
+    noteBG = "#242024", -- note bg color
+    qfBG = "#201010",
+    qfFG = "#db4b4b",
+    nvimtreeBG = "#333342",
+    oilBG = "#1A1601",
+    oilFG = "#BDB80B",
+}
+
+
+- File Path: lua/qol/option.lua, 22:39
+  ```lua
+  opt.fillchars = {
+      vert = "┃", -- 수직 창 구분선
+      fold = "·", -- 접힌 텍스트 표시
+      foldopen = "▾", -- 펼쳐진 fold 표시
+      foldsep = "│", -- fold 열 구분선
+      foldclose = "▸", -- 접힌 fold 표시
+      -- diff = "", -- diff 모드 삭제된 라인
+      eob = " ", -- 버퍼 끝의 빈 라인 (~) 대체
+      horiz = "━", -- 수평 창 구분선
+      horizup = "┻", -- 수평-수직 교차점
+      horizdown = "┳", -- 수평-수직 교차점
+      vertleft = "┫", -- 수직-수평 교차점
+      vertright = "┣", -- 수직-수평 교차점
+      -- https://www.reddit.com/r/neovim/comments/1dlrgnd/how_to_achieve_this_in_lualinenvim/
+      -- status line
+      stl = "─",
+      stlnc = "─",
+  }
+  ```
