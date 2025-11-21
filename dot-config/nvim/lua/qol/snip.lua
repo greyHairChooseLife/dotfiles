@@ -30,8 +30,7 @@ local function Insert_comment(comment)
 
     vim.api.nvim_buf_set_lines(0, current_line - 1, current_line, false, { indent_word })
     vim.api.nvim_put({ comment }, "c", true, false)
-    require("Comment.api").comment.linewise.current()
-    vim.cmd("startinsert!")
+    vim.api.nvim_input("<Esc>gccA")
 end
 
 map("i", ",,T", function() Insert_comment("TODO:: ") end)
