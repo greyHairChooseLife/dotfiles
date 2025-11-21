@@ -49,8 +49,8 @@ require("lazy").setup({
             disabled_plugins = { -- 기본 플러그인
                 "netrw",
                 "netrwPlugin",
-                "gzip",
-                "zipPlugin",
+                -- "gzip",
+                -- "zipPlugin",
                 "tutor",
             },
         },

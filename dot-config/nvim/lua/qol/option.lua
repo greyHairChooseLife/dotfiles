@@ -63,7 +63,3 @@ vim.filetype.add({
         ["%.env%..*"] = "sh",
     },
 })
-
--- load default plugin
-vim.cmd("runtime plugin/zipPlugin.vim")
-vim.cmd("runtime plugin/gzip.vim")
