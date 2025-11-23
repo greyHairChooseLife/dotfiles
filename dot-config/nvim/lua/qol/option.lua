@@ -33,6 +33,7 @@ opt.fillchars = {
     vertleft = "┫", -- 수직-수평 교차점
     vertright = "┣", -- 수직-수평 교차점
     stl = "─",
+    stlnc = "-",
 }
 opt.splitright = true -- Open vertical splits to the right
 opt.splitbelow = true

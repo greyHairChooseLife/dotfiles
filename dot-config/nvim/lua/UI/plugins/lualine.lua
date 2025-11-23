@@ -20,7 +20,7 @@ return {
                 -- component_separators = { left = ' 󰪍󰪍 ', right = '' },
                 -- section_separators = { left = '', right = '' },󰪍󰪍
                 component_separators = { left = "%#CustomSeparator#█", right = "" },
-                section_separators = { left = "", right = " " },
+                section_separators = { left = "", right = "" },
                 disabled_filetypes = {
                     statusline = {
                         "packer",
@@ -74,7 +74,7 @@ return {
                             end
                         end,
                         separator = { right = "" },
-                        padding = { left = 1, right = 0 },
+                        padding = { left = 4, right = 2 },
                     },
                     {
                         function()
@@ -86,7 +86,7 @@ return {
                                 return "  "
                             end
                         end,
-                        padding = { left = 1, right = 1 },
+                        padding = { left = 0, right = 1 },
                         color = function()
                             if vim.bo.modified then
                                 local bufnr = vim.fn.bufnr("%")
@@ -253,6 +253,7 @@ return {
                                 gui = "italic",
                             }
                         end,
+                        padding = { left = 4, right = 2 },
                         separator = { right = "" },
                     },
                     {
@@ -272,7 +273,7 @@ return {
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                 return { fg = colors.wwhite, bg = colors.bblack }
                             else
-                                return { bg = colors.bg }
+                                return { fg = colors.orange, bg = colors.bg }
                             end
                         end,
                     },
@@ -307,6 +308,11 @@ return {
                         },
                     },
                 },
+
+                -- lualine_c = lualine_components.fill_color2("#242024", "#242024", lualine_components.get_git_branch, function() return "- fugitive -" end, 13),
+                -- lualine_c = lualine_components.fill_color2(colors.orange, colors.bg, lualine_components.get_git_branch, function() return "" end, 50),
+                lualine_c = {}, -- Remove line numbers from right
+                lualine_x = {}, -- Remove line numbers from right
                 lualine_y = {
                     {
                         lualine_components.winfix_status,
@@ -321,6 +327,7 @@ return {
                         padding = { left = 2, right = 1 },
                         color = {
                             bg = colors.search,
+                            fg = colors.orange,
                         },
                     },
                 },
@@ -331,13 +338,14 @@ return {
                             local warpItem = require("warp").get_item_by_buf(bufnr)
                             local count = require("warp").count()
                             if warpItem then return "󰀱 " .. warpItem.index .. "/" .. count end
-                            return ""
+                            return " "
                         end,
                         padding = { left = 1, right = 1 },
                         color = function()
                             local bufnr = vim.fn.bufnr("")
                             local warpItem = require("warp").get_item_by_buf(bufnr)
-                            if warpItem then return { bg = colors.grey, fg = colors.warp, gui = "bold" } end
+                            if warpItem then return { bg = colors.bg, fg = colors.warp, gui = "bold" } end
+                            return { bg = colors.bg, fg = colors.bg, gui = "bold" }
                         end,
                     },
                     {

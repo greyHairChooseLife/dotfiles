@@ -28,6 +28,7 @@ M.colors = {
     purple1 = "#A020F0",
     red2 = "#DC143C",
     search = "#ffff00",
+    sepNC = "#5F5F5F",
 }
 
 M.theme = {
@@ -36,23 +37,18 @@ M.theme = {
         b = { fg = M.colors.orange, bg = M.colors.bg },
         c = { fg = M.colors.orange, bg = M.colors.bg },
         x = { fg = M.colors.orange, bg = M.colors.orange },
-        y = { fg = M.colors.wwhite, bg = M.colors.bg },
+        y = { fg = M.colors.orange, bg = M.colors.bg },
         z = { fg = M.colors.bg, bg = M.colors.orange },
     },
     inactive = {
-        a = { fg = M.colors.orange, bg = M.colors.bg },
-        b = { fg = M.colors.orange, bg = M.colors.bg },
-        c = { fg = M.colors.grey, bg = M.colors.grey },
-        x = { fg = M.colors.grey, bg = M.colors.grey },
-        y = { fg = M.colors.grey, bg = M.colors.grey },
-        z = { fg = M.colors.wwhite, bg = M.colors.grey },
+        a = { fg = M.colors.wwhite, bg = M.colors.bg },
+        b = { fg = M.colors.wwhite, bg = M.colors.bg },
+        c = { fg = M.colors.sepNC, bg = M.colors.bg },
+        x = { fg = M.colors.sepNC, bg = M.colors.bg },
+        y = { fg = M.colors.sepNC, bg = M.colors.bg },
+        z = { fg = M.colors.wwhite, bg = M.colors.bg },
     },
 }
-
--- Helper functions for lualine components
-function M.empty() return "" end
-
-function M.this_is_space() return "                                                                                                     " end
 
 function M.search_counter()
     local sc = vim.fn.searchcount({ maxcount = 9999 })
@@ -84,26 +80,12 @@ function M.get_git_branch()
     return "branch: " .. branch:gsub("%s+", "")
 end
 
-function M.this_is_fugitive() return "- Fugitive -" end
-
 function M.harpoon_length()
-    -- get the length of the harpoon list
-    -- local items = require("harpoon"):list():length()
     local items = require("warp").count()
-    if items == 0 then
-        return ""
-    else
-        return "󰀱  " .. items
-    end
+    return (items and items ~= 0) and ("󰀱  " .. items) or ""
 end
 
-function M.winfix_status()
-    if vim.wo.winfixwidth and vim.wo.winfixheight then
-        return "" -- 🔒 고정 표시
-    else
-        return ""
-    end
-end
+function M.winfix_status() return vim.wo.winfixwidth and vim.wo.winfixheight and "" or "" end
 
 function M.register_recording()
     local register = vim.fn.reg_recording()
@@ -119,7 +101,24 @@ function M.fill_color(color)
         {
             function() return "" end,
             draw_empty = true,
-            color = { bg = color },
+            color = { bg = color, fg = color },
+            -- color = { fg = color, bg = color },
+        },
+    }
+end
+
+function M.fill_color2(fgColor, bgColor, left, right, padding)
+    return {
+        {
+            function()
+                local total_width = vim.api.nvim_win_get_width(0) -- Current window width
+                local leftLen = #left() -- Estimate for lualine_a (adjust based on content)
+                local rightLen = #right() -- Estimate for lualine_z (adjust based on content)
+                local filler_width = math.max(0, total_width - leftLen - rightLen - padding + 1)
+                -- Snacks.debug.inspect('t' .. total_width .. 'a' .. a_width .. 'z' .. z_width .. 'fil' .. filler_width)
+                return string.rep(" ", filler_width)
+            end,
+            color = { fg = fgColor, bg = bgColor },
         },
     }
 end
@@ -176,16 +175,17 @@ M.my_nvimTree = {
         lualine_a = {
             {
                 M.get_git_branch,
-                color = { bg = M.colors.bg, fg = M.colors.orange, gui = "bold,italic" },
-                padding = { left = 2 },
-                separator = { right = "" },
+                color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
+                padding = { left = 2, right = 2 },
             },
         },
-        lualine_x = {
+        lualine_b = M.fill_color2(M.colors.orange, M.colors.orange, M.get_git_branch, M.harpoon_length, 8),
+        lualine_z = {
             {
                 M.harpoon_length,
-                color = { bg = M.colors.bg, fg = M.colors.warp, gui = "bold,italic" },
-                padding = { right = 2 },
+                color = { bg = M.colors.warp, fg = M.colors.bblack, gui = "bold,italic" },
+                padding = { left = 2, right = 2 },
+                -- separator = { left = "  " },
             },
         },
     },
@@ -194,15 +194,16 @@ M.my_nvimTree = {
             {
                 M.get_git_branch,
                 color = { bg = M.colors.nvimTree, fg = M.colors.orange, gui = "bold,italic" },
-                padding = { left = 2 },
-                separator = { right = "" },
+                padding = { left = 2, right = 2 },
+                separator = { right = "  " },
             },
         },
+        lualine_b = M.fill_color2(M.colors.grey, M.colors.grey, M.get_git_branch, M.harpoon_length, 8),
         lualine_x = {
             {
                 M.harpoon_length,
                 color = { bg = M.colors.nvimTree, fg = M.colors.warp, gui = "bold,italic" },
-                padding = { right = 2 },
+                padding = { left = 2, right = 2 },
             },
         },
     },
@@ -215,16 +216,24 @@ M.my_fugitive = {
             {
                 M.get_git_branch,
                 color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
-                padding = { left = 1, right = 5 },
+                padding = { left = 3, right = 3 },
+                separator = { right = "" },
             },
         },
-        -- lualine_z = { { M.this_is_fugitive, color = { bg = M.colors.orange, fg = M.colors.bblack } } },
+        lualine_b = M.fill_color2("#242024", "#242024", M.get_git_branch, function() return "- fugitive -" end, 13),
+        lualine_z = {
+            {
+                function() return "- fugitive -" end,
+                color = { fg = M.colors.orange, bg = M.colors.bg2 },
+                padding = { left = 2, right = 2 },
+            },
+        },
     },
     inactive_sections = {
         lualine_a = {
             {
                 M.get_git_branch,
-                color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
+                color = { fg = M.colors.orange, bg = M.colors.bg2, gui = "bold" },
                 padding = { left = 1, right = 5 },
                 -- separator = { right = "" },
             },
