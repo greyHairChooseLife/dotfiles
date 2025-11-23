@@ -1,63 +1,33 @@
 [global]
 monitor = 1   # 0번이 첫번째다.
-follow = none
-indicate_hidden = no
-shrink = yes
-separator_height = 1
-padding = 8
 frame_width = 2
-# width = 450
-# height = 100
-sort = no
-idle_threshold = 120
 font = D2CodingLigature Nerd Font Propo 12
-transparency = 15
-markup = full
-format = "<b>%a: %s</b>\n%b\n%p"
 alignment = right
-show_age_threshold = -1
 word_wrap = yes
-ignore_newline = no
 stack_duplicates = false
 hide_duplicate_count = true
-show_indicators = yes
-# The height of a single line.  If the height is smaller than the
-# font height, it will get raised to the font height.
-# This adds empty space above and under the text.
-line_height = 0
-icon_path = "$HOME"/.config/dunst/icons/
-icon_position = left
-max_icon_size = 86
-sticky_history = false
-history_length = 0
-always_run_script = true
-title = Dunst
-class = Dunst
-corner_radius = 1
-origin = top-right
-mouse_left_click = do_action, close_current
-mouse_right_click = close_current
-notification_limit = 3
-
-[global]
+transparency = 20
+markup = full
+separator_height = 1
+padding = 5
+horizontal_padding = 20
+corner_radius = 2
 frame_color = "#89b4fa"
-separator_color= frame
+background = "#00215E"
+foreground = "#eeeeee"
+timeout = 5
 
 [urgency_low]
-timeout = 10
-background = "#1e1e2e"
-foreground = "#cdd6f4"
-default_icon = ./icons/low.png
+background = "#00215E"
+foreground = "#eeeeee"
+frame_color = "#00215E"
 
 [urgency_normal]
-timeout = 10
-background = "#1e1e2e"
-foreground = "#cdd6f4"
-default_icon = /home/sy/.config/dunst/icons/normal.png
+background = "#00215E"
+foreground = "#eeeeee"
+frame_color = "#00215E"
 
 [urgency_critical]
-timeout = 0
-background = "#1e1e2e"
-foreground = "#cdd6f4"
-frame_color = "#fab387"
-default_icon = ./icons/critical.png
+background = "#B42222"
+foreground = "#ffffff"
+frame_color = "#B42222"
