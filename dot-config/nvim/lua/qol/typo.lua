@@ -9,3 +9,4 @@ vim.cmd([[iab Depreacted Deprecated]])
 vim.cmd([[iab reutrn return]])
 
 vim.cmd([[iab null NULL]])
+vim.cmd([[iab prinft printf]])
