@@ -179,8 +179,17 @@ map("n", "yY", "va{Vy", opt)
 wk_map({
     ["<leader>s"] = {
         group = "󱫥  Session",
-        order = { "s", "l" },
-        ["s"] = { "<cmd>AutoSession save<CR>", desc = "save", mode = "n" },
+        order = { "s", "l", "c" },
+        ["s"] = {
+            function()
+                vim.ui.input({ prompt = "Session name: " }, function(input)
+                    if input and input ~= "" then vim.cmd("AutoSession save " .. input) end
+                end)
+            end,
+            desc = "save",
+            mode = "n",
+        },
+        ["c"] = { "<cmd>AutoSession save<CR>", desc = "save current", mode = "n" },
         ["v"] = {
             function()
                 vim.cmd("AutoSession search")
