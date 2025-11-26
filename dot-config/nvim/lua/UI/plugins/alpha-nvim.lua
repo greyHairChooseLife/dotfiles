@@ -4,6 +4,7 @@ return {
     config = function()
         local alpha = require("alpha")
         local dashboard = require("alpha.themes.dashboard")
+        local picker = require("picker.modules.picker_sources")
 
         -- MEMO:: header
         local function header()
@@ -67,9 +68,11 @@ return {
             end),
             -- dashboard.button("n", "New", ":ene <BAR> startinsert <CR>"),
             dashboard.button("n", "New", ":ene<CR>"),
-            -- dashboard.button("f", "File", ":Telescope find_files<CR>"),
-            -- dashboard.button("w", "Word", ":Telescope live_grep<CR>"),
-            -- dashboard.button("o", "Old", ":Telescope oldfiles<CR>"),
+            dashboard.button("f", "File", function() picker.files() end),
+            dashboard.button("w", "Word grep", function() picker.grep() end),
+            dashboard.button("o", "old", function() picker.recent() end),
+            dashboard.button("O", "Old (global)", function() picker.recent_global() end),
+            dashboard.button(".", "", ""),
             dashboard.button("sc", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
             dashboard.button("c", "  Copilot", function()
                 local cdc_func = require("AI.codecompanion.utils.general")
