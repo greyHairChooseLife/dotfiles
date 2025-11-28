@@ -232,53 +232,32 @@ return {
                 },
             },
             inactive_sections = {
-                lualine_a = {
+                lualine_a = {},
+                lualine_b = {},
+
+                -- lualine_c = lualine_components.fill_color2("#242024", "#242024", lualine_components.get_git_branch, function() return "- fugitive -" end, 13),
+                -- lualine_c = lualine_components.fill_color2(colors.orange, colors.bg, lualine_components.get_git_branch, function() return "" end, 50),
+                lualine_c = {}, -- Remove line numbers from right
+                lualine_x = {}, -- Remove line numbers from right
+                lualine_y = {
                     {
-                        "filename",
-                        file_status = false,
-                        newfile_status = false,
-                        symbols = {
-                            modified = "󰈸", -- Text to show when the file is modified.
-                            readonly = "", -- Text to show when the file is non-modifiable or readonly.
-                            unnamed = "New", -- Text to show for unnamed buffers.
-                            newfile = "New", -- Text to show for newly created file before first write
+                        lualine_components.winfix_status,
+                        padding = { left = 1, right = 1 },
+                        color = {
+                            bg = colors.bg,
+                            fg = colors.orange,
                         },
-                        color = function()
-                            local bufnr = vim.fn.bufnr()
-                            local warpItem = require("warp").get_item_by_buf(bufnr)
-                            if warpItem then return { bg = colors.bg, fg = colors.warp, gui = "bold,italic" } end
-                            return {
-                                bg = colors.bg,
-                                fg = colors.wwhite,
-                                gui = "italic",
-                            }
-                        end,
-                        padding = { left = 4, right = 2 },
-                        separator = { right = "" },
                     },
                     {
-                        function()
-                            if vim.bo.modified then
-                                return "󰈸󰈸󰈸"
-                            elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-                                return " "
-                            else
-                                return "  "
-                            end
-                        end,
-                        padding = { left = 0, right = 1 },
-                        color = function()
-                            if vim.bo.modified then
-                                return { fg = colors.red2, bg = colors.bblack }
-                            elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-                                return { fg = colors.wwhite, bg = colors.bblack }
-                            else
-                                return { fg = colors.orange, bg = colors.bg }
-                            end
-                        end,
+                        lualine_components.search_counter,
+                        padding = { left = 2, right = 1 },
+                        color = {
+                            bg = colors.search,
+                            fg = colors.black,
+                        },
                     },
                 },
-                lualine_b = {
+                lualine_z = {
                     {
                         "diff",
                         diff_color = {
@@ -307,34 +286,53 @@ return {
                             info = utils.icons.diagnostics.Info .. " ",
                         },
                     },
-                },
-
-                -- lualine_c = lualine_components.fill_color2("#242024", "#242024", lualine_components.get_git_branch, function() return "- fugitive -" end, 13),
-                -- lualine_c = lualine_components.fill_color2(colors.orange, colors.bg, lualine_components.get_git_branch, function() return "" end, 50),
-                lualine_c = {}, -- Remove line numbers from right
-                lualine_x = {}, -- Remove line numbers from right
-                lualine_y = {
-                    {
-                        lualine_components.winfix_status,
-                        padding = { left = 1, right = 1 },
-                        color = {
-                            bg = colors.grey,
-                            fg = colors.orange,
-                        },
-                    },
-                    {
-                        lualine_components.search_counter,
-                        padding = { left = 2, right = 1 },
-                        color = {
-                            bg = colors.search,
-                            fg = colors.black,
-                        },
-                    },
-                },
-                lualine_z = {
                     {
                         function()
-                            local bufnr = vim.fn.bufnr("")
+                            if vim.bo.modified then
+                                return "󰈸󰈸󰈸"
+                            elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
+                                return " "
+                            else
+                                return ""
+                            end
+                        end,
+                        padding = { left = 0, right = 0 },
+                        color = function()
+                            if vim.bo.modified then
+                                return { fg = colors.red2, bg = colors.bblack }
+                            elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
+                                return { fg = colors.wwhite, bg = colors.bblack }
+                            else
+                                return { fg = colors.orange, bg = colors.bg }
+                            end
+                        end,
+                    },
+                    {
+                        "filename",
+                        file_status = false,
+                        newfile_status = false,
+                        symbols = {
+                            modified = "󰈸", -- Text to show when the file is modified.
+                            readonly = "", -- Text to show when the file is non-modifiable or readonly.
+                            unnamed = "New", -- Text to show for unnamed buffers.
+                            newfile = "New", -- Text to show for newly created file before first write
+                        },
+                        color = function()
+                            local bufnr = vim.fn.bufnr()
+                            local warpItem = require("warp").get_item_by_buf(bufnr)
+                            if warpItem then return { bg = colors.bg, fg = colors.warp, gui = "bold,italic" } end
+                            return {
+                                bg = colors.bg,
+                                fg = colors.wwhite,
+                                gui = "italic",
+                            }
+                        end,
+                        padding = { left = 1, right = 1 },
+                        separator = { right = "" },
+                    },
+                    {
+                        function()
+                            local bufnr = vim.fn.bufnr()
                             local warpItem = require("warp").get_item_by_buf(bufnr)
                             local count = require("warp").count()
                             if warpItem then return "󰀱 " .. warpItem.index .. "/" .. count end
@@ -342,21 +340,11 @@ return {
                         end,
                         padding = { left = 1, right = 1 },
                         color = function()
-                            local bufnr = vim.fn.bufnr("")
+                            local bufnr = vim.fn.bufnr()
                             local warpItem = require("warp").get_item_by_buf(bufnr)
                             if warpItem then return { bg = colors.bg, fg = colors.warp, gui = "bold" } end
-                            return { bg = colors.bg, fg = colors.bg, gui = "bold" }
+                            return { bg = colors.bg, fg = colors.warp, gui = "bold" }
                         end,
-                    },
-                    {
-                        -- "harpoon2",
-                        -- -- icon = '♥',
-                        -- icon = "",
-                        -- indicators = { "", "", "", "", "", "" },
-                        -- active_indicators = { "", "", "", "", "", "" },
-                        -- color_active = { fg = colors.orange, bg = colors.bg, gui = "bold" },
-                        -- _separator = "", --  󱋰 󰇜 󰇼 󱗘 󰑅 󱒖 󰩮 󰦟 󰓡    
-                        -- no_harpoon = "Harpoon not loaded",
                     },
                 },
             },

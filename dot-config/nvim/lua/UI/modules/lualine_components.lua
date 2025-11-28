@@ -43,9 +43,9 @@ M.theme = {
     inactive = {
         a = { fg = M.colors.wwhite, bg = M.colors.bg },
         b = { fg = M.colors.wwhite, bg = M.colors.bg },
-        c = { fg = M.colors.sepNC, bg = M.colors.bg },
-        x = { fg = M.colors.sepNC, bg = M.colors.bg },
-        y = { fg = M.colors.sepNC, bg = M.colors.bg },
+        c = { fg = M.colors.orange, bg = M.colors.bg },
+        x = { fg = M.colors.orange, bg = M.colors.bg },
+        y = { fg = M.colors.orange, bg = M.colors.bg },
         z = { fg = M.colors.wwhite, bg = M.colors.bg },
     },
 }
