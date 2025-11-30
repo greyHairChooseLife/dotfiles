@@ -1,7 +1,9 @@
 return {
     "olimorris/codecompanion.nvim",
     event = "VeryLazy",
-    -- commit = "a869f19", -- util function lost
+    -- [WARN] CodeCompanion.nvim will experience breaking changes soon. Pin to version v17.33.0 or earlier to avoid this.
+    -- See: https://github.com/olimorris/codecompanion.nvim/pull/2439
+    commit = "8ad65ee",
     dependencies = {
         "nvim-lua/plenary.nvim",
         "nvim-treesitter/nvim-treesitter",
