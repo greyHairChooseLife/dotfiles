@@ -2,7 +2,8 @@ return {
     "3rd/image.nvim",
     enabled = require("utils").is_alacritty,
     dependencies = { "luarocks.nvim" },
-    lazy = false,
+    -- lazy = false,
+    ft = { "markdown", "vimwiki" },
     cond = function()
         -- SSH 연결 여부 확인
         local is_ssh = os.getenv("SSH_CLIENT") ~= nil or os.getenv("SSH_TTY") ~= nil or os.getenv("SSH_CONNECTION") ~= nil
