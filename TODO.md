@@ -145,6 +145,11 @@ stack traceback:
   - cancel, done, todo 등으로 전환하는 키맵도 있어야겠다.
 
 
+https://www.youtube.com/watch?v=KMgnFDaIhBs
+https://www.youtube.com/watch?v=xgbjLq_R52o
+https://www.youtube.com/watch?v=Rwnr5UjV2FY
+http://www.kocw.net/home/search/kemView.do?kemId=1046323
+
 
 
 ## new plugin
