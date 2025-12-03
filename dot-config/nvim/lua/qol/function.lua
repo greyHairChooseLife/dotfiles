@@ -391,3 +391,28 @@ function Format_json_with_jq()
     vim.cmd("'<,'>delete")
     vim.fn.delete(temp_name)
 end
+
+-- 현재 파일의 GitHub 링크 생성 함수
+local function github_link()
+    local file = vim.fn.expand("%:p")
+    local line = vim.fn.line(".")
+    local repo_root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+    if not repo_root or repo_root == "" then
+        print("Git 리포지토리 안이 아닙니다.")
+        return
+    end
+
+    local relpath = vim.fn.fnamemodify(file, ":~:."):gsub(repo_root .. "/", "")
+    local branch = vim.fn.systemlist("git rev-parse --abbrev-ref HEAD")[1]
+    local remote_url = vim.fn.systemlist("git remote get-url origin")[1]
+
+    -- GitHub 주소 변환
+    local github_url = remote_url:gsub("git@github.com:", "https://github.com/"):gsub("%.git$", ""):gsub("https://github.com/", "https://github.com/")
+
+    local url = string.format("%s/blob/%s/%s?plain=1#L%d", github_url, branch, relpath, line)
+    print(url)
+    vim.fn.setreg("+", url) -- 클립보드에 복사
+end
+
+-- 명령어로 등록
+vim.api.nvim_create_user_command("GithubLink", github_link, {})

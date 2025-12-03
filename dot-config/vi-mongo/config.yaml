@@ -8,7 +8,7 @@ editor:
     env: EDITOR
 showConnectionPage: true
 showWelcomePage: false
-currentConnection: kiosk-demo
+currentConnection: academic_society-dev
 connections:
     - url: mongodb://localhost:27017
       host: localhost

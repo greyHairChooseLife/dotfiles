@@ -129,7 +129,8 @@ sudo pacman -S --needed \
     autorandr \
     perf \
     bear \
-    valgrind
+    valgrind \
+    entr
 
 # Install AUR packages
 yay -S --needed \

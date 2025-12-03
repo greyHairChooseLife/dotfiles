@@ -3,7 +3,8 @@ return {
     event = "VeryLazy",
     -- [WARN] CodeCompanion.nvim will experience breaking changes soon. Pin to version v17.33.0 or earlier to avoid this.
     -- See: https://github.com/olimorris/codecompanion.nvim/pull/2439
-    commit = "8ad65ee",
+    -- commit = "8ad65ee",
+    version = "17.33.0", -- Pin to this version
     dependencies = {
         "nvim-lua/plenary.nvim",
         "nvim-treesitter/nvim-treesitter",
@@ -182,6 +183,7 @@ return {
             prompt_library = require("AI.codecompanion.prompt_library"),
             -- opts = { system_prompt = require("AI.codecompanion.system_prompts.v3") }, -- 기본 제공 시스템 프롬프트로 돌아가자. 2025-08-31
             extensions = require("AI.codecompanion.extensions"),
+            ignore_warnings = true,
         })
 
         -- MEMO:: setup custom utils

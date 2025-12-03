@@ -4,7 +4,7 @@ vi ~/.commands
 gh repo list <username/org>
 # Clone a repository from one of your organizations
 gh org list
-gh repo clone $(gh org list | fzf) <dir_name>
+gh repo clone $(gh repo list $(gh org list | fzf)) <dir_name>
 
 # Create branch from git rev
 git checkout -b <new-branch-name> [<start-point>]
@@ -18,7 +18,10 @@ git branch -vv
 # local branch와 연결된 upstream 제거(git push하면 자동으로 upstream 설정으로 upload됨)
 git branch --unset-upstream <local-branch-name>
 # Rename the current branch
-git branch -m <new-branch-name>
+git branch -m [<old-branch>] <new-branch>
+
+# 직전 revision 되돌리기(기록 남기면서). 구간 지정도 가능한데, conflict 발생 가능하다.
+git revert HEAD
 
 # 다운받기 전에 확인만
 git fetch --dry-run
@@ -45,6 +48,10 @@ gh gist clone $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}'
 | sed '2,4d'
 # Delete lines matching a pattern (e.g., starting with "my"):
 | sed '/^my/d'
+# case sensitive
+| grep -s "Call stack"
+# only matched (instead of entire line)
+| grep -o -- "0x.*[0-9a-f]"
 ---------------------------------------------------------------------------------------------------- misc
 # grep around 5 lines
 rg -C 5 "pattern" /path/to/file
@@ -92,6 +99,12 @@ uname -a
 # View a process tree
 pstree
 
+
+# 모니터
+mons -S 0,7:R
+xrandr --output DP-2-2 --mode 1920x1200 --rotate left
+
+
 ---------------------------------------------------------------------------------------------------- C-language
 # Compile a C file with debug symbols and no optimizations
 gcc -g -O0 main.c -o main.out
@@ -124,3 +137,30 @@ nmcli -s -g 802-11-wireless-security.psk connection show $(nmcli connection show
 ip link show
 
 
+
+
+---------------------------------------------------------------------------------------------------- find & fd
+# Find all .txt files in current directory
+find . -name "*.txt"
+# Find files modified in last 7 days
+find . -mtime -7
+# Find and delete .log files
+find . -name "*.log" -exec rm {} \;
+# Find directories only
+find . -type d
+# file a or b
+find . -name '*.c' -o -name '*.h'
+
+
+# Find all .md files with fd
+fd "\.md$"
+# Find files with 'test' in name
+fd test
+# Find .txt files and open with vim
+fd -e txt -x vim {}
+# Case-insensitive search in specific dir
+fd -i pattern /path/to/dir
+# fd: Find .md files AND larger than 1KB
+fd -e md --size +1k
+# fd: Find files with 'test' OR 'example' in name
+fd "test|example"
