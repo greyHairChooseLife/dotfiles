@@ -1,7 +1,7 @@
 local map = vim.keymap.set
 
 -- Define disallowed filetypes and buftypes (customize as needed)
-local disallowed_filetypes = { "help", "qf", "markdown", "vimwiki", "oil", "fugitive", "gitcommit" }
+local disallowed_filetypes = { "help", "qf", "markdown", "vimwiki", "oil", "fugitive", "gitcommit", "git" }
 local disallowed_buftypes = { "nofile", "terminal" }
 
 local function is_disabled()
