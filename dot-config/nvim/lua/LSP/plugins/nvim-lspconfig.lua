@@ -15,7 +15,7 @@ return {
     },
     config = function()
         local servers = {
-            lua_ls = {},
+            emmylua_ls = { settings = { Lua = { diagnostics = { globals = { "vim" } } } } },
             html = {},
             superhtml = {},
             ts_ls = {},
