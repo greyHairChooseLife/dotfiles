@@ -44,7 +44,8 @@ wk_map({
                 if mode == "n" then
                     vim.cmd("DiffviewFileHistory")
                 else
-                    DiffviewOpenWithVisualHash()
+                    vim.fn.feedkeys(":'<,'>DiffviewFileHistory", "n")
+                    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "c", false)
                 end
             end,
             desc = "normal or visual-selected",
