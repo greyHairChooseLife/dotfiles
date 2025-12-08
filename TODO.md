@@ -38,36 +38,6 @@ stack traceback:
 
 
 
-**neovim.picker**
-
-- ignored file search
-  - [ ] 내 find file 명령어(Ctrl+k)에 맵핑된것도 ignored파일 볼 수 있는 방식으로 전환 가능하게
-
-
-
-
-**auto-session**
-
-- 지금은 현재 cwd에 저장이 되는데, 이걸 임의 지정할 수 있으면 좋겠다. ui_input에서 현재 cwd를 default로 가지고, 내가 확인하는 식
-- 동일 기준점(cwd 등)에 대하여 다수의 named session이 필요할 수 있겠다.
-
-
-
-
-
-**window layout & size**
-
-- 현재는 각 window 마다 fix할 수 있는 방식이다.
-- 근데 마치 사진을 찍듯이 찍어놔도 좋겠다. 이때 기본 기능을 활용해 fix하기보다,
-    그냥 윈도우별 사이즈를 런타임 메모리에 저장하고,
-      이후 필요시 그것을 가져오는 방식이면 좋을듯??
-
-
-
-
-
-
-
 
 **buffer**
 
@@ -113,17 +83,6 @@ stack traceback:
 
 
 
-
-
-
-**LSP**
-
-- 이놈이 먹는 메모리가 상당하다. 어떻게 관리해야할까?
-  - 특히 세션을 관리할 때 문제가 된다. 동일 경로에 세션은 하나뿐이니, 그냥 켜두는 방식으로 하는데, 이러면 lsp 서버가 시스템 메모리를 상당히 먹는다.
-  - 에디터가 포커스를 완전히 잃게 될 때마다 lsp서버를 중단? LspStop은 시도해봐도 별 소득이 없다.
-
-
-
 **gitsign**
 
 - gpr로 prev 볼 때, hunk단위가 이상하다. cn, cp로 hunk를 이동할땐 +/-/~ 모두 연속되면 한 덩어리로 보는데, prev 볼 땐 이걸 또 다 나눠놓는다. 한덩어리로 보여야 한다.
@@ -138,13 +97,6 @@ stack traceback:
 
 
 
-**render markdown**
-- render markdown todo list 관련 재조정
-  - callout에 todo도 개선
-  - 기존 스티커 형태로 사용하는건 안먹힌다.
-  - cancel, done, todo 등으로 전환하는 키맵도 있어야겠다.
-
-
 https://www.youtube.com/watch?v=KMgnFDaIhBs
 https://www.youtube.com/watch?v=xgbjLq_R52o
 https://www.youtube.com/watch?v=Rwnr5UjV2FY
@@ -157,66 +109,4 @@ http://www.kocw.net/home/search/kemView.do?kemId=1046323
 [Hex.nvim](https://github.com/RaafatTurki/hex.nvim)
 [tiny-code-action.nvim](https://github.com/rachartier/tiny-code-action.nvim)
 
-[touch fugitive](https://github.com/justinmk/vim-ug)
 
-
-
-
-## lualine
-
-
-M.colors = {
-    normalBG = "#24283b", -- normal bg color
-    -- git
-    gitAdd = "#40cd52",
-    gitChange = "#ffcc00",
-    gitDelete = "#f1502f",
-    -- colors
-    black1 = "#000000",
-    black2 = "#282c34",
-    black3 = "#333342",
-    black4 = "#8b8378",
-    black5 = "#abb2bf",
-    white1 = "#ffffff",
-    blue1 = "#0020fc",
-    blue2 = "#61afef",
-    green1 = "#98c379",
-    orange1 = "#FF8C00",
-    orange2 = "#cd853f",
-    purple1 = "#A020F0",
-    purple2 = "#c678dd",
-    red1 = "#DC143C",
-    yellow1 = "#ffff00",
-    -- plugin specific
-    warpBG = "#f1502f",
-    termBG = "#0c0c0c",
-    noteBG = "#242024", -- note bg color
-    qfBG = "#201010",
-    qfFG = "#db4b4b",
-    nvimtreeBG = "#333342",
-    oilBG = "#1A1601",
-    oilFG = "#BDB80B",
-}
-
-
-- File Path: lua/qol/option.lua, 22:39
-  ```lua
-  opt.fillchars = {
-      vert = "┃", -- 수직 창 구분선
-      fold = "·", -- 접힌 텍스트 표시
-      foldopen = "▾", -- 펼쳐진 fold 표시
-      foldsep = "│", -- fold 열 구분선
-      foldclose = "▸", -- 접힌 fold 표시
-      -- diff = "", -- diff 모드 삭제된 라인
-      eob = " ", -- 버퍼 끝의 빈 라인 (~) 대체
-      horiz = "━", -- 수평 창 구분선
-      horizup = "┻", -- 수평-수직 교차점
-      horizdown = "┳", -- 수평-수직 교차점
-      vertleft = "┫", -- 수직-수평 교차점
-      vertright = "┣", -- 수직-수평 교차점
-      -- https://www.reddit.com/r/neovim/comments/1dlrgnd/how_to_achieve_this_in_lualinenvim/
-      -- status line
-      stl = "─",
-      stlnc = "─",
-  }
-  ```
