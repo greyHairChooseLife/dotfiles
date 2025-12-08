@@ -164,3 +164,18 @@ fd -i pattern /path/to/dir
 fd -e md --size +1k
 # fd: Find files with 'test' OR 'example' in name
 fd "test|example"
+
+
+---------------------------------------------------------------------------------------------------- disasm
+
+# Display private headers (program headers) of the ELF file
+objdump -p <file> | vi -c "set ft=asm"
+
+# Disassemble the executable sections of the ELF file
+objdump -d <file> | vi -c "set ft=asm"
+
+# Display file header information of the ELF file
+objdump -f <file> | vi -c "set ft=asm"
+
+# Display program headers and segment information using readelf
+readelf -l <file> | vi -c "set ft=asm"
