@@ -57,24 +57,29 @@ google_sheet_new() {
     browser --app="https://docs.google.com/spreadsheets/u/0/"
     exit
 }
+google_notebooklm() {
+    browser --app="https://notebooklm.google.com/"
+    exit
+}
 
 alias G='G_services'
 G_services() {
     local services choices browser_cmd
     declare -A services=(
-         ["1.Mail"]="https://www.gmail.com"
-         ["2.Calendar"]="https://calendar.google.com/calendar/u/0/r/month"
-         ["3.Tasks"]="https://tasks.google.com/embed/?origin=https://calendar.google.com"
-         ["4.Keep"]="https://keep.google.com"
-         ["5.Drive"]="https://drive.google.com/drive/my-drive"
-         ["-.Docs"]="https://docs.new"
-         ["-.Sheet"]="https://docs.google.com/spreadsheets/u/0/"
-         ["-.Hwp"]="https://hwp.polarisoffice.com"
-         ["-.All"]="all"
+           ["1.Mail"]="https://www.gmail.com"
+           ["2.Calendar"]="https://calendar.google.com/calendar/u/0/r/month"
+           ["3.Tasks"]="https://tasks.google.com/embed/?origin=https://calendar.google.com"
+           ["4.Keep"]="https://keep.google.com"
+           ["5.Drive"]="https://drive.google.com/drive/my-drive"
+           ["-.Docs"]="https://docs.new"
+           ["-.Sheet"]="https://docs.google.com/spreadsheets/u/0/"
+           ["-.Hwp"]="https://hwp.polarisoffice.com"
+           ["-.notebookLM"]="https://notebooklm.google.com/"
+           ["-.All"]="all"
     )
 
     # 순서를 정의하는 인덱스 배열
-    local order=("1.Mail" "2.Calendar" "3.Tasks" "4.Keep" "5.Drive" "-.Docs" "-.Sheet" "-.Hwp" "-.All")
+    local order=("1.Mail" "2.Calendar" "3.Tasks" "4.Keep" "5.Drive" "-.Docs" "-.Sheet" "-.Hwp" "-.notebookLM" "-.All")
 
     # fzf를 사용하여 서비스 선택
     choices=$(for i in "${order[@]}"; do echo "$i"; done | fzf --padding 20% --reverse --multi --bind 'tab:toggle-down' --bind 'shift-tab:toggle-up' --header='')
