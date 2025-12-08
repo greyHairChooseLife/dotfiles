@@ -20,3 +20,13 @@ map("n", "gq", function()
     if vim.bo.buftype ~= "nofile" then vim.wo.cursorline = false end
 end, opts) -- close buffer, saving memory
 map("n", "i", function() vim.cmd("normal =") end, opts)
+
+map("n", "L", function()
+    vim.fn.feedkeys("0", "x")
+    local gitRevision = vim.fn.expand("<cword>")
+    gitRevision = require("utils").get_valid_rev(gitRevision)
+
+    local git_log = vim.fn.system("git --no-pager show --stat " .. gitRevision .. " | sed '$d'")
+
+    require("utils").create_floating_window(git_log, "git", 100, 20)
+end, opts)

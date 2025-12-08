@@ -623,4 +623,53 @@ M.copy_path = function(mode)
     vim.notify("Copied " .. mode .. " path: " .. path, vim.log.levels.INFO)
 end
 
+M.create_floating_window = function(content, filetype, width, height, row, col)
+    local lines
+    if type(content) == "string" then
+        lines = vim.split(content, "\n", { plain = true })
+    elseif type(content) == "table" then
+        lines = content
+    else
+        lines = { "Invalid content" }
+    end
+
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+    if filetype then vim.api.nvim_buf_set_option(buf, "filetype", filetype) end
+
+    local opts = {
+        relative = "editor",
+        width = width or 40,
+        height = height or #lines, -- Adjust height to content
+        row = row or math.floor((vim.o.lines - (height or #lines)) / 2),
+        col = col or math.floor((vim.o.columns - (width or 40)) / 2),
+        style = "minimal",
+        border = "rounded",
+    }
+
+    local win = vim.api.nvim_open_win(buf, true, opts)
+
+    M.setOpt("signcolumn", "yes")
+    M.setOpt("winhighlight", "SignColumn:DiffviewMessageSignColumn")
+
+    return win, buf
+end
+
+M.get_valid_rev = function(rev)
+    -- Check if the provided rev is valid
+    local result = vim.fn.system({ "git", "rev-parse", "--verify", rev })
+    if vim.v.shell_error == 0 then
+        return rev -- Return the original if valid
+    else
+        -- Default to HEAD and verify it (to be safe)
+        local head_result = vim.fn.system({ "git", "rev-parse", "--verify", "HEAD" })
+        if vim.v.shell_error == 0 then
+            return "HEAD"
+        else
+            error("Neither the provided rev nor HEAD is valid in this repository")
+        end
+    end
+end
+
 return M
