@@ -32,12 +32,71 @@ wk_map({
     },
 })
 wk_map({
-    -- git review
-    ["<leader>gr"] = {
-        group = "Review",
-        order = { "w", "s", "<Space>", "f", "a", "F" },
-        ["w"] = { "<cmd>DiffviewOpen<CR>", desc = "working on", mode = { "n" } },
+    -- diffview open (file tree style)
+    ["<leader>gd"] = {
+        group = "󰕜  Diff (file tree style)",
+        order = { "w", "s", "R", "r", "?" },
+        ["w"] = { "<cmd>DiffviewOpen --imply-local<CR>", desc = "working on", mode = { "n" } },
         ["s"] = { "<cmd>DiffviewOpen --staged<CR>", desc = "staged", mode = { "n" } },
+        ["R"] = {
+            function()
+                vim.fn.feedkeys(":DiffviewOpen origin/main..", "n")
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "c", false)
+            end,
+            desc = "origin/main..",
+            mode = { "n" },
+        },
+        ["r"] = {
+            function()
+                vim.fn.feedkeys(":DiffviewOpen ", "n")
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "c", false)
+            end,
+            desc = "range select",
+            mode = { "n" },
+        },
+        ["?"] = {
+            function()
+                local example = [[
+
+Examples:
+
+    " Diff the working tree against the index:
+    :DiffviewOpen
+
+    " Diff the working tree against a specific commit:
+    :DiffviewOpen HEAD~2
+    :DiffviewOpen d4a7b0d
+
+    " Diff a commit range:
+    :DiffviewOpen HEAD~4..HEAD~2
+    :DiffviewOpen d4a7b0d..519b30e
+
+    " Diff the changes introduced by a specific commit (kind of like
+    " `git show d4a7b0d`):
+    :DiffviewOpen d4a7b0d^!
+
+    " Diff HEAD against it's merge base in origin/main:
+    :DiffviewOpen origin/main...HEAD
+
+    " Limit the scope to the given paths:
+    :DiffviewOpen HEAD~2 -- lua/diffview plugin
+
+    " Hide untracked files:
+    :DiffviewOpen -uno
+]]
+                require("utils").create_floating_window(example, "vim", 80, 40)
+            end,
+            desc = "help",
+            mode = { "n" },
+        },
+    },
+})
+
+wk_map({
+    -- diffview history
+    ["<leader>gh"] = {
+        group = "  History",
+        order = { "<Space>", "f", "r", "s", "m", "g", "a", "b", "B", "?" },
         ["<Space>"] = {
             function()
                 local mode = vim.fn.mode()
@@ -51,15 +110,67 @@ wk_map({
             desc = "normal or visual-selected",
             mode = { "n", "v" },
         },
-        ["f"] = { "<cmd>DiffviewFileHistory %<CR>", desc = "file", mode = { "n" } },
-        ["a"] = { "<cmd>DiffviewFileHistory --all<CR>", desc = "all", mode = { "n" } },
-        ["F"] = { "<cmd>DiffviewFileHistory --reverse --range=HEAD...FETCH_HEAD<CR>", desc = "fetched", mode = { "n" } },
+        ["f"] = { "<cmd>DiffviewFileHistory % --follow<CR>", desc = "file", mode = { "n" } },
         ["r"] = {
             function()
                 vim.fn.feedkeys(":DiffviewFileHistory --range=", "n")
                 vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "c", false)
             end,
             desc = "range select",
+            mode = { "n" },
+        },
+        ["s"] = { "<cmd>DiffviewFileHistory -g --range=stash<CR>", desc = "stash", mode = { "n" } },
+        ["m"] = { "<cmd>DiffviewFileHistory --merges<CR>", desc = "merges", mode = { "n" } },
+        ["g"] = {
+            function() vim.fn.feedkeys(":DiffviewFileHistory --grep=", "n") end,
+            desc = "grep",
+            mode = { "n" },
+        },
+        ["a"] = {
+            function() vim.fn.feedkeys(":DiffviewFileHistory --author=", "n") end,
+            desc = "author",
+            mode = { "n" },
+        },
+        ["b"] = { "<cmd>DiffviewFileHistory --walk-reflogs<CR>", desc = "reflog", mode = { "n" } },
+        ["B"] = { "<cmd>DiffviewFileHistory --reflog<CR>", desc = "reflog all reachable", mode = { "n" } },
+        ["?"] = {
+            function()
+                local example = [[
+
+Examples:
+
+    " History for the current branch:
+    :DiffviewFileHistory
+
+    " History for the current file:
+    :DiffviewFileHistory %
+
+    " History for a specific file:
+    :DiffviewFileHistory path/to/some/file.txt
+
+    " History for a specific directory:
+    :DiffviewFileHistory path/to/some/directory
+
+    " History for multiple paths:
+    :DiffviewFileHistory multiple/paths foo/bar baz/qux
+
+    " Compare history against a fixed base:
+    :DiffviewFileHistory --base=HEAD~4
+    :DiffviewFileHistory --base=LOCAL
+
+    " History for a specific rev range:
+    :DiffviewFileHistory --range=origin..HEAD
+    :DiffviewFileHistory --range=feat/some-branch
+
+    " Inspect diffs for Git stashes:
+    :DiffviewFileHistory -g --range=stash
+
+    " Trace the line evolution for the current visual selection:
+    :'<,'>DiffviewFileHistory
+]]
+                require("utils").create_floating_window(example, "vim", 80, 40)
+            end,
+            desc = "help",
             mode = { "n" },
         },
     },
