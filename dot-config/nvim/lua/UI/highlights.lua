@@ -137,6 +137,7 @@ vim.cmd([[
   highlight DiffviewStatusRenamed guifg=#6183BB guibg=NONE
   highlight DiffviewStatusModified guifg=#6183BB guibg=NONE
   highlight DiffviewCursorLine guifg=NONE guibg=#14283B
+  highlight DiffviewMessageSignColumn guifg=NONE guibg=#000000
 
   " MEMO:: render-markdown
   highlight RenderMarkdownCode guibg=#181818 guifg=NONE

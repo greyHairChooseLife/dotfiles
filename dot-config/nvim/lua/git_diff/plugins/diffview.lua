@@ -85,7 +85,9 @@ return {
                 },
             },
             commit_log_panel = {
-                win_config = {}, -- See |diffview-config-win_config|
+                win_config = {
+                    win_opts = { winhighlight = "SignColumn:DiffviewMessageSignColumn" },
+                }, -- See |diffview-config-win_config|
             },
             default_args = { -- Default args prepended to the arg-list for the listed commands
                 DiffviewOpen = {},
