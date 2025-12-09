@@ -32,59 +32,6 @@ alias pacup='sudo pacman -Syyu'
 alias yayup='yay -Syyu'
 # <<<
 
-# >>> git
-alias ga='git add'
-alias gco='git commit'
-alias gch='git checkout'
-alias gch!='git checkout $(git branch | fzf)'
-alias gp='git push'
-alias gt='git tag'
-# alias gf='git fetch --all &'
-alias gfd='git fetch --dry-run'
-function gf() {
-    fetch_cmd=$(git fetch --dry-run --all 2>&1 \
-                | tac \
-                | fzf \
-                | awk '/new branch/ {split($NF,a,"/"); remote=a[1]; branch=a[2]; print "git fetch " remote " " branch ":refs/remotes/" remote "/" branch}')
-
-    if [[ -z $fetch_cmd ]]; then
-        exit 0
-    fi
-
-    eval $fetch_cmd
-}
-
-alias gb='git branch'
-alias gba='git branch --all'
-alias gs='git status'
-alias gl='git log'
-# alias gd='git --no-pager diff | delta --diff-so-fancy'
-function gd() {
-    git --no-pager diff "$@" | delta --diff-so-fancy
-}
-alias gst='git stash'
-
-alias gls='git log --oneline --simplify-by-decoration --all'
-alias glo='git log --oneline'
-alias gloa='git log --oneline --all'
-alias glao='gloa'
-alias glg='git log --oneline --graph --pretty=medium --stat'
-alias glgo='git log --oneline --graph'
-alias glga='git log --graph --all --pretty=medium'
-alias glgao='git log --oneline --graph --all'
-alias glgoa='glgao'
-alias glgF='glg HEAD..' # check fetched
-alias glgP='glg origin/HEAD..' # check to be pushed
-alias glMM='git log --pretty=format:"COMMIT : %h%nTITLE  : %s%nMESSAGE: %b%n%cd==================================== %ae%n%n" --date=short'
-
-git-root() {
-    git rev-parse --show-toplevel 2> /dev/null || {
-        echo "Error: Not inside a git repository." >&2
-        return 1
-    }
-}
-# <<<
-
 # >>> docker
 alias d='docker'
 alias di='docker images'
