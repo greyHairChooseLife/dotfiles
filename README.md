@@ -212,26 +212,11 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 - 원하는 대로 리스트를 담은 메뉴를 만들 수 있다. 말하자면, vim.ui.select의 Wrapper
   https://github.com/leath-dub/snipe.nvim
 
-- speach to text with chatGPT api
-  https://github.com/kyza0d/vocal.nvim
-
-- better picker!
-  - keymap: telescope 에서 <C-q>로 선택한 파일을 qf에 추가한다. 근데 이거 곧바로 qflist 버퍼를 띄우기보단 그냥 log만 남겨주는게 좋을듯
-
-
-
-- https://github.com/jmacadie/telescope-hierarchy.nvim
-- https://www.reddit.com/r/neovim/comments/1h25lal/what_are_your_favorite_underappreciated_neovim/
-
 - [snacks.scope](https://github.com/folke/snacks.nvim/blob/main/docs/scope.md)
   : 조건문, 반복문 등도 treesitter에 등록시켜주나? 그래서 aerial에서도 확인 할 수 있나?
 
 - new plugin: [gitgraph](https://github.com/isakbm/gitgraph.nvim)
 
-- image on buffer: [github 1](https://github.com/Toprun123/PicVim) & [github 2](https://github.com/Skardyy/neo-img)
-
-- `folke/trouble.nvim`
-  coc.nvim과 함게는 쓰기 어렵고, 내장 lsp 매니저(?)로 전환할 때 활용하자
 
 - http client inside neovim
 
@@ -239,9 +224,7 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
   - https://www.reddit.com/r/neovim/comments/1eh0yr6/restnvim_is_back/
   - https://github.com/mistweaverco/kulala.nvim
 
-- indent or chunk marker(visualizer)
 
-  - https://github.com/shellRaining/hlchunk.nvim
 
 - crawling web pages, rendering them to Markdown or JSON, and inserting the content into new buffers. It also supports asynchronous search functionality.
 
@@ -251,44 +234,5 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
 
   - https://www.reddit.com/r/neovim/comments/1gzid9o/browshernvim_create_commit_pinned_githubgitlab/
   - https://github.com/claydugo/browsher.nvim
-
-- smooth scroll without neovide or kitty + smear cursor
-    - from reddit
-
-- jremmen/vim-ripgrep	
-  ```lua
-  "jremmen/vim-ripgrep",
-      cmd = "Rg",
-      init = function()
-        vim.keymap.set("n", "<C-h>", ":Rg<space>")
-        vim.keymap.set("n", "<C-*>", "<cmd>Rg<space><CR>")
-        vim.keymap.set("n", "<C-g>", "<cmd> lua require('utils').replace_grep()<CR>")
-      end,
-  ```
-
-- [scope.nvim](https://github.com/tiagovla/scope.nvim)
-  원래는 tab과 buffer는 별 관련이 없다. 근데 텝마다 별도의 buffer그룹을 가졌으면... 하고 생각할 때가 있다. 이런 아이디어를 구현한 플러그인
-  - 현재 탭에서 qq 또는 덮어씌워져서 hidden 표시된 버퍼를 현재 탭 내에서 관리하는거 빨랑 만들자.
-    <Alt-Enter><Space>, <Tab>, <S-Tab>  따위에도 적용해야한다.
-    - `gq`로 지워질 때 그냥  :quit은 탭에 저장 안하고, 오로지 `qq`로 지울 때만 현재 탭의 사족으로 남기자.
-    - (예전 버전)현재 tab에서 loaded / inactive / active 버퍼 리스트를 얻을 수 있는 나만의 utils를 만들어두면 좋겠다. 
-      -> scope.nvim
-
-
-
-
-
-### maybe one-day
-
-- harpoon은 자꾸 내가 지정한걸 까먹는다.
-- harpoon으로 열린 버퍼는 BufReadPost로 실행하고있는 :loadview가 제대로 안된다. cursor_position등 정보를 harpoon이 별도로 저장하고 사용해서 그런듯.
-
-## ETC
-
-
-- db tui: [rainfrong: TUI DB](https://github.com/achristmascarl/rainfrog)
-
-- tmux: tmuxinator
-- tmux: default path를 확인하는 방법, 그냥 new pane 하면 자꾸 특정 path가 열린다.
 
 

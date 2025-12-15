@@ -2,14 +2,19 @@ session_name: music and youtube
 start_directory: ${HOME}/Music
 # before_script: "${HOME}/test.sh"
 windows:
-  - window_name: first-win
-    layout: main-vertical
-    options:
-      main-pane-height: 50%
-    panes:
-      - focus: "true"
-        shell_command:
-          - tm.1_title 'cmus player'
-          - cmus
-      - shell_command: ytdl
-      - shell_command: bash
+    - window_name: player
+      layout: main-vertical
+      options:
+        main-pane-height: 50%
+      panes:
+        - focus: "true"
+          shell_command:
+            - tm.1_title 'mpv player'
+            - mpv --no-video .
+        - shell_command: ytdl
+        - shell_command: bash
+    - window_name: config
+      panes:
+        - focus: "true"
+          shell_command:
+            - vi ~/dotfiles/dot-config/tmuxp/music.yaml

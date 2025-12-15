@@ -97,10 +97,6 @@ stack traceback:
 
 
 
-https://www.youtube.com/watch?v=KMgnFDaIhBs
-https://www.youtube.com/watch?v=xgbjLq_R52o
-https://www.youtube.com/watch?v=Rwnr5UjV2FY
-http://www.kocw.net/home/search/kemView.do?kemId=1046323
 
 
 
@@ -108,5 +104,3 @@ http://www.kocw.net/home/search/kemView.do?kemId=1046323
 
 [Hex.nvim](https://github.com/RaafatTurki/hex.nvim)
 [tiny-code-action.nvim](https://github.com/rachartier/tiny-code-action.nvim)
-
-
