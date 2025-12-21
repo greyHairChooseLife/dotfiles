@@ -13,6 +13,7 @@ return {
     },
     {
         "kyza0d/vocal.nvim",
+        enabled = false, -- utilized globally 2025-12-22
         -- event = "VeryLazy",
         cmd = { "Vocal" },
         dependencies = {
