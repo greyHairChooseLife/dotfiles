@@ -23,6 +23,7 @@ return {
                 yaml = { "yamlfmt" },
                 toml = { "taplo" },
                 c = { "clang-format" },
+                terraform = { "terraform" },
             },
             formatters = {
                 kulala = {
@@ -30,10 +31,12 @@ return {
                     args = { "format", "$FILENAME" },
                     stdin = false,
                 },
-                biome = {
-                    require_cwd = true,
-                },
+                biome = { require_cwd = true },
                 shfmt = { args = { "-i=4", "-ci", "-bn", "-sr", "-kp" } },
+                terraform = {
+                    command = "terraform",
+                    args = { "fmt", "-" },
+                },
                 yamlfmt = {}, -- $HOME/.config/yamlfmt/.yamlfmt.yml
                 -- ruff_organize_imports = {
                 -- 	args = { "order-by-type = false" },
