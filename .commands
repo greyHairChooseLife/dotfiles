@@ -4,7 +4,7 @@ vi ~/.commands
 gh repo list <username/org>
 # Clone a repository from one of your organizations
 gh org list
-gh repo clone $(gh repo list $(gh org list | fzf)) <dir_name>
+org=$(gh org list | fzf) && repo=$(gh repo list "$org" | fzf | awk '{print $1}') && gh repo clone "$repo"
 
 # Create branch from git rev
 git checkout -b <new-branch-name> [<start-point>]
@@ -179,3 +179,76 @@ objdump -f <file> | vi -c "set ft=asm"
 
 # Display program headers and segment information using readelf
 readelf -l <file> | vi -c "set ft=asm"
+
+
+---------------------------------------------------------------------------------------------------- aws configuration
+# 기본 리전 설정 (설정 후에는 --region 생략 가능)
+aws configure set region ap-northeast-2
+# 설정된 프로필 확인
+aws configure list
+# 현재 IAM 자격 증명 확인
+aws sts get-caller-identity
+
+---------------------------------------------------------------------------------------------------- aws ec2 (Read -> Manage)
+# [조회] 실행 중인 인스턴스 목록 (ID, 이름, 상태, IP, 타입)
+aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" --query "Reservations[*].Instances[*].{ID:InstanceId,Name:Tags[?Key=='Name']|[0].Value,State:State.Name,IP:PublicIpAddress,Type:InstanceType}" --output table
+
+# [조회] 사용 가능한 AMI 목록 (내 계정 소유)
+aws ec2 describe-images --owners self --query "Images[*].{ID:ImageId,Name:Name,Created:CreationDate}" --output table
+
+# [관리] 인스턴스 시작/중지/재부팅
+aws ec2 start-instances --instance-ids <instance-id>
+aws ec2 stop-instances --instance-ids <instance-id>
+aws ec2 reboot-instances --instance-ids <instance-id>
+
+# [관리] 인스턴스 생성 (최소 설정)
+aws ec2 run-instances --image-id <ami-id> --count 1 --instance-type t2.micro --key-name <key-pair-name>
+
+# [삭제] 인스턴스 종료 (삭제)
+aws ec2 terminate-instances --instance-ids <instance-id>
+
+---------------------------------------------------------------------------------------------------- aws key-pair & security-group
+# [조회] 키 페어 목록 (이름, 지문)
+aws ec2 describe-key-pairs --query "KeyPairs[*].{Name:KeyName,Fingerprint:KeyFingerprint}" --output table
+# [관리] 키 페어 생성 (생성된 키는 파일로 저장해야 함)
+aws ec2 create-key-pair --key-name <new-key-name> --query "KeyMaterial" --output text > <new-key-name>.pem
+# [삭제] 키 페어 삭제
+aws ec2 delete-key-pair --key-name <key-name>
+
+# [조회] 보안 그룹 목록 (ID, 이름, 설명, VPC ID)
+aws ec2 describe-security-groups --query "SecurityGroups[*].{ID:GroupId,Name:GroupName,Desc:Description,VpcId:VpcId}" --output table
+# [조회] 특정 보안 그룹의 인바운드 규칙 확인
+aws ec2 describe-security-groups --group-ids <sg-id> --query "SecurityGroups[*].IpPermissions"
+# [관리] 보안 그룹 생성
+aws ec2 create-security-group --group-name <sg-name> --description "My security group"
+# [관리] 인바운드 규칙 추가 (예: SSH 22번 포트 허용)
+aws ec2 authorize-security-group-ingress --group-id <sg-id> --protocol tcp --port 22 --cidr 0.0.0.0/0
+# [삭제] 보안 그룹 삭제
+aws ec2 delete-security-group --group-id <sg-id>
+
+---------------------------------------------------------------------------------------------------- aws lambda (Read -> Manage)
+# [조회] 함수 목록 확인 (이름, 런타임, 마지막 수정일)
+aws lambda list-functions --query "Functions[*].{Name:FunctionName,Runtime:Runtime,LastModified:LastModified}" --output table
+# [조회] 특정 함수 상세 정보
+aws lambda get-function --function-name <function-name>
+# [관리] 함수 실행 (결과는 response.json에 저장)
+aws lambda invoke --function-name <function-name> response.json
+# [관리] 함수 코드 업데이트 (zip 파일 업로드)
+aws lambda update-function-code --function-name <function-name> --zip-file fileb://function.zip
+# [삭제] 함수 삭제
+aws lambda delete-function --function-name <function-name>
+
+---------------------------------------------------------------------------------------------------- aws s3 (Read -> Manage)
+# [조회] 버킷 목록
+aws s3 ls
+# [조회] 버킷 내용 확인
+aws s3 ls s3://<bucket-name>
+# [관리] 버킷 생성
+aws s3 mb s3://<new-bucket-name>
+# [관리] 파일 업로드/다운로드/동기화
+aws s3 cp <local-file> s3://<bucket-name>/
+aws s3 cp s3://<bucket-name>/<file> <local-path>
+aws s3 sync <local-dir> s3://<bucket-name>/
+# [삭제] 객체 삭제 및 버킷 삭제
+aws s3 rm s3://<bucket-name>/<file-path>
+aws s3 rb s3://<bucket-name> --force
