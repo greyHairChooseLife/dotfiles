@@ -77,6 +77,7 @@ return {
             dockerls = {},
             bashls = {},
             clangd = {},
+            terraformls = {},
         }
         local disabled_server = {
             "pylsp",
