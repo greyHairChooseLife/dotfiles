@@ -17,6 +17,20 @@ MODEL_API="whisper-1"
 MODEL_LOCAL="base"
 MODEL_PATH="$HOME/whisper"
 
+# --- 취소 ---
+if [ "$1" = "cancel" ]; then
+    if pgrep -x "rec" > /dev/null; then
+        pkill -x "rec"
+        if [ -f "$NOTIFY_ID_FILE" ]; then
+            LAST_ID=$(cat "$NOTIFY_ID_FILE")
+            notify-send -r "$LAST_ID" -h string:bgcolor:#f1502f -h string:fgcolor:#333342 -t 1500 "Vocal" "Recording cancelled"
+        fi
+        rm -f "$AUDIO_FILE" "$NOTIFY_ID_FILE"
+    fi
+    exit 0
+fi
+
+# --- 녹음 중단(완료) ---
 if pgrep -x "rec" > /dev/null; then
     # 1. 녹음 중단
     pkill -x "rec"
@@ -28,7 +42,7 @@ if pgrep -x "rec" > /dev/null; then
     if [ -f "$NOTIFY_ID_FILE" ]; then
         LAST_ID=$(cat "$NOTIFY_ID_FILE")
         # 기존 알림을 갱신하여 "변환 중" 메시지 표시 (노란색 느낌을 위해 critical 사용 가능, 혹은 일반)
-        notify-send -r "$LAST_ID" -h string:bgcolor:#FFA500 -h string:fgcolor:#333342 "Vocal" "Transcribing..."
+        notify-send -r "$LAST_ID" -h string:bgcolor:#50cd5a -h string:fgcolor:#333342 "Vocal" "Transcribing..."
     else
         notify-send "Vocal" "Transcribing..."
     fi

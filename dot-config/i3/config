@@ -87,6 +87,7 @@ bindsym $mod+Shift+F3 exec pcmanfm_pkexec
 bindsym $mod+Mod1+4 exec --no-startup-id "brave --app=https://notebooklm.google.com"
 bindsym $mod+F5 exec terminal -e 'mocp'
 bindsym $mod+i exec --no-startup-id bash ~/dotfiles/dot-config/bash.sub/vocal/vocal.sh
+bindsym $mod+Shift+i exec --no-startup-id bash ~/dotfiles/dot-config/bash.sub/vocal/vocal.sh cancel
 # bindsym $mod+t exec --no-startup-id pkill picom
 bindsym $mod+Ctrl+t exec --no-startup-id picom -b
 bindsym $mod+Shift+d --release exec "killall dunst; exec notify-send 'restart dunst'"
