@@ -1,3 +1,9 @@
+# TMUX 환경 여부에 따라 복사 명령어 결정
+_fzf_copy_cmd="xclip -selection clipboard"
+if [[ -n "$TMUX" ]]; then
+    _fzf_copy_cmd="tmux load-buffer -w -"
+fi
+
 export FZF_DEFAULT_OPTS="
   --multi
   --bind 'ctrl-r:clear-query'
@@ -11,8 +17,8 @@ export FZF_DEFAULT_OPTS="
   --bind 'alt-p:change-preview-window(right,70%|down,40%,border-horizontal|up,90%,border-horizontal|hidden|right)'
   --bind 'tab:toggle-up'
   --bind 'shift-tab:toggle-down'
-  --bind 'ctrl-e:execute(printf "%s" {} | xclip -selection clipboard)+abort'
-  --bind 'alt-e:execute(printf "%s" {} | xclip -selection clipboard)'
+  --bind 'ctrl-e:execute(printf "%s" {} | $_fzf_copy_cmd)+abort'
+  --bind 'alt-e:execute(printf "%s" {} | $_fzf_copy_cmd)'
   --bind 'ctrl-alt-w:execute(echo {+} | xargs -d \" \" -I{} printf \"%s\\n\" {} | tac | xclip -selection clipboard)'
   --color='
     hl:#1e90ff,

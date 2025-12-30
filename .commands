@@ -4,6 +4,7 @@ vi ~/.commands
 gh repo list <username/org>
 # Clone a repository from one of your organizations
 gh org list
+
 org=$(gh org list | fzf) && repo=$(gh repo list "$org" | fzf | awk '{print $1}') && gh repo clone "$repo"
 
 # Create branch from git rev
@@ -11,6 +12,7 @@ git checkout -b <new-branch-name> [<start-point>]
 
 # branch 관리: 로컬에서 필요없는 remote upstream 지우기
 git branch -d -r <remote-name>/<bracnh-name>
+
 git push origin --delete <branch-name>
 
 # local branch가 어떤 remote branch와 연결되었지 (있다면)표시
@@ -27,20 +29,26 @@ git revert HEAD
 git fetch --dry-run
 
 gh pr create --base <base-branch>
+
 gh pr create --repo greyHairChooseLife/jg-websocket --base main
+
 gh pr merge <pr-number>
 
 # something with | delta
 gh pr diff <pr-number>
+
 gh pr checkout <pr-number>
 
 ---------------------------------------------------------------------------------------------------- gh gist
 gh gist edit $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
+
 gh gist clone $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
 
 ---------------------------------------------------------------------------------------------------- appendix
 | column -t -s $'\t'
+
 | awk '{print $3}'
+
 | sed -i 's/old-string/new-string/g'
 # Delete the 2nd line:
 | sed '2d'
@@ -60,6 +68,7 @@ rg -v "^test" file.txt
 # Replace a string in a file (in-place) using sed
 # Print the 9th column of a command's output (useful for `ls -l`)
 sed -i 's/old-string/new-string/g' filename.txt
+
 ls -l | awk '{print $3}'
 # Monitor a command's output, updating every second
 watch -n 1 'command'
@@ -68,6 +77,7 @@ watch -n 1 'command'
 feh --bg-scale /path/to/image.jpg
 # Extract a range of pages from a PDF
 pdfseparate -f <first_page_number> -l <last_page_number> input.pdf page_%d.pdf
+
 pdfunite page_*.pdf output.pdf
 # Compress a PDF to a smaller size (for ebooks)
 ghostscript -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -o small.pdf large.pdf
@@ -83,6 +93,7 @@ autorandr --load <profile-name>
 autorandr --change
 # Check battery status and charge thresholds
 tlp-stat -b
+
 sudo tlp fullcharge
 # Set battery charge thresholds (e.g., start at 75%, stop at 80%)
 sudo tlp setcharge 75 80 BAT0
@@ -102,6 +113,7 @@ pstree
 
 # 모니터
 mons -S 0,7:R
+
 xrandr --output DP-2-2 --mode 1920x1200 --rotate left
 
 
@@ -131,6 +143,7 @@ docker ps -a
 ---------------------------------------------------------------------------------------------------- Networking
 # Connect to a Wi-Fi network, prompting for a password
 nmcli device wifi connect <SSID> --ask
+
 nmcli -s -g 802-11-wireless-security.psk connection show $(nmcli connection show | grep -i wifi |awk '{print $1 "\t" $3 "\t"  $4}'| column -t -s $'\t' | fzf | awk '{print $1}')
 
 # Check network link status for a specific interface
@@ -212,8 +225,11 @@ aws ec2 describe-instance-types --output json | jq '.InstanceTypes[] | {Instance
 
 # [관리] 인스턴스 시작/중지/재부팅
 aws ec2 start-instances --instance-ids <instance-id>
+
 aws ec2 stop-instances --instance-ids <instance-id>
+
 aws ec2 reboot-instances --instance-ids <instance-id>
+
 aws ec2 modify-instance-attribute --instance-id <instance-id> --instance-type <instance-type>
 
 # [관리] 인스턴스 생성 (최소 설정)
@@ -289,8 +305,11 @@ aws s3 ls s3://<bucket-name>
 aws s3 mb s3://<new-bucket-name>
 # [관리] 파일 업로드/다운로드/동기화
 aws s3 cp <local-file> s3://<bucket-name>/
+
 aws s3 cp s3://<bucket-name>/<file> <local-path>
+
 aws s3 sync <local-dir> s3://<bucket-name>/
 # [삭제] 객체 삭제 및 버킷 삭제
 aws s3 rm s3://<bucket-name>/<file-path>
+
 aws s3 rb s3://<bucket-name> --force
