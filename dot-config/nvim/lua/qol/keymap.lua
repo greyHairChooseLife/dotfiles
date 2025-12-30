@@ -205,7 +205,7 @@ wk_map({
 wk_map({
     ["<leader>r"] = {
         group = "  Run Command",
-        order = { "r", "R", "u", "x", "c" },
+        order = { "r", "R", "u", "x", "c", "a" },
         ["u"] = {
             function() RunBufferWithSh({ selected = true, underline = true }) end,
             desc = "underline",
@@ -243,6 +243,11 @@ wk_map({
         ["c"] = {
             function() TypeCompilecommand() end,
             desc = "Compile",
+            mode = "n",
+        },
+        ["a"] = {
+            function() RunCommandsWithTermBuffer() end,
+            desc = "From ~/.commands",
             mode = "n",
         },
     },

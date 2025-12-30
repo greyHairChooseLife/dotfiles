@@ -416,3 +416,84 @@ end
 
 -- 명령어로 등록
 vim.api.nvim_create_user_command("GithubLink", github_link, {})
+
+function RunCommandsWithTermBuffer()
+    -- 1. 하단에 새로운 터미널 창 열기 (높이 20)
+    vim.cmd("botright 20new")
+    -- FLOAT
+    -- local buf = vim.api.nvim_create_buf(false, true)
+    -- local w = math.min(math.floor(vim.o.columns * 1), 120)
+    -- local h = math.min(math.floor(vim.o.lines * 0.5), 40)
+    -- local win = vim.api.nvim_open_win(buf, true, {
+    --     relative = "editor",
+    --     width = w,
+    --     height = h,
+    --     col = math.floor(w / 2),
+    --     row = math.floor(h / 2),
+    --     style = "minimal",
+    --     border = "rounded",
+    -- })
+
+    -- 2. 실행할 쉘 스크립트 정의
+    -- 중요: Lua의 [[ ]] 와 Bash의 [[ ]] 충돌 방지를 위해 [=[ ... ]=] 사용
+    local cmd = [=[
+    selected=$(grep -vE "^(#|$)" ~/.commands | fzf \
+        --ansi \
+        --border \
+        --padding 0 \
+        --preview "grep -B 1 -F -- {} ~/.commands | bat --color=always --style=plain --language=sh" \
+        --preview-window='top:2')
+
+    if [[ -n "$selected" ]]; then
+        # ANSI 코드 제거
+        selected=$(echo "$selected" | sed "s/\x1b\[[0-9;]*m//g")
+
+        echo -e "\033[1;32mExecuting:\033[0m $selected"
+        # 실행 결과를 캡처 (stdout과 stderr 모두)
+        output=$(eval "$selected" 2>&1)
+        echo "$output"
+
+        echo ""
+        echo -e "\033[1;32mPress ENTER to close , or any other key to copy to buffer...\033[0m"
+        read -n 1 key
+        if [[ "$key" == "" ]]; then
+            # 다른 키를 누르면 결과를 임시 파일에 저장
+            echo "$output" > /tmp/term_output.txt
+        fi
+    else
+        echo ""
+        echo "Press ENTER to close..."
+        read
+    fi
+    ]=]
+
+    -- 3. 터미널에서 스크립트 실행
+    vim.fn.termopen({ "bash", "-c", cmd }, {
+        on_exit = function()
+            -- 종료 시 창 닫기
+            if vim.api.nvim_buf_is_valid(0) then vim.cmd("bdelete!") end
+            -- float 종료
+            -- if vim.api.nvim_win_is_valid(win) then vim.api.nvim_win_close(win, true) end
+            -- if vim.api.nvim_buf_is_valid(buf) then vim.api.nvim_buf_delete(buf, { force = true }) end
+            -- 결과를 버퍼에 복사 (파일이 존재하면)
+            local output_file = "/tmp/term_output.txt"
+            if vim.fn.filereadable(output_file) == 1 then
+                -- local lines = vim.fn.readfile(output_file)
+                -- local new_buf = vim.api.nvim_create_buf(true, false)
+                -- vim.api.nvim_buf_set_lines(new_buf, 0, -1, false, lines)
+                -- vim.api.nvim_set_current_buf(new_buf)
+                local lines = vim.fn.readfile(output_file)
+                local output = table.concat(lines, "\n")
+                -- 클립보드에 복사 (Linux의 xclip 사용, 설치 필요)
+                -- vim.fn.system("echo '" .. vim.fn.shellescape(output) .. "' | xclip -selection clipboard")
+                vim.fn.system("echo -n '" .. output .. "' | xclip -selection clipboard")
+                vim.notify("Copied:\r\n -------\r\n" .. output)
+                -- 임시 파일 삭제
+                vim.fn.delete(output_file)
+            end
+        end,
+    })
+
+    -- 4. 입력 모드로 진입
+    vim.cmd("startinsert")
+end
