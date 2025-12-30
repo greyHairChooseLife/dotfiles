@@ -196,16 +196,58 @@ aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" -
 # [조회] 사용 가능한 AMI 목록 (내 계정 소유)
 aws ec2 describe-images --owners self --query "Images[*].{ID:ImageId,Name:Name,Created:CreationDate}" --output table
 
+# Ubuntu (Canonical) AMI
+aws ec2 describe-images --owners 099720109477 --output json
+
+ aws ec2 describe-images --owners 099720109477 --output json | jq '.Images[] | select(.Description | contains("amd64"))'
+
+# Amazon Linux AMI
+aws ec2 describe-images --owners amazon --output json
+
+# instance type 조회
+aws ec2 describe-instance-types --output json
+
+# instance type 주요 요소 조회 및 필터링
+aws ec2 describe-instance-types --output json | jq '.InstanceTypes[] | {InstanceType, CurrentGeneration, FreeTierEligible, ProcessorInfo, VCpuInfo, MemoryInfo, NetworkInfo} | select(.InstanceType | contains("t3."))'
+
 # [관리] 인스턴스 시작/중지/재부팅
 aws ec2 start-instances --instance-ids <instance-id>
 aws ec2 stop-instances --instance-ids <instance-id>
 aws ec2 reboot-instances --instance-ids <instance-id>
+aws ec2 modify-instance-attribute --instance-id <instance-id> --instance-type <instance-type>
 
 # [관리] 인스턴스 생성 (최소 설정)
 aws ec2 run-instances --image-id <ami-id> --count 1 --instance-type t2.micro --key-name <key-pair-name>
 
 # [삭제] 인스턴스 종료 (삭제)
 aws ec2 terminate-instances --instance-ids <instance-id>
+
+
+# 인스턴스 태그 create/update
+aws ec2 create-tags --resources <instance-id> --tags Key=<tag-name>,Value=<tag-value>
+# 인스턴스 태그 delete
+aws ec2 delete-tags --resources <instance-id> --tags Key=<tag-name>
+
+# [조회] EBS 볼륨 목록 (ID, 크기, 상태, 타입, 연결된 인스턴스)
+aws ec2 describe-volumes --query "Volumes[*].{ID:VolumeId,Size:Size,State:State,Type:VolumeType,InstanceId:Attachments[0].InstanceId}" --output table
+
+# [조회] 특정 EBS 볼륨 상세 정보
+aws ec2 describe-volumes --volume-ids <volume-id>
+
+# [관리] EBS 볼륨 생성 (예: 10GB gp3 타입, 특정 가용 영역)
+aws ec2 create-volume --size 10 --volume-type gp3 --availability-zone <availability-zone>
+
+# [관리] EBS 볼륨 연결 (인스턴스에 /dev/sdf로 연결)
+aws ec2 attach-volume --volume-id <volume-id> --instance-id <instance-id> --device /dev/sdf
+
+# [관리] EBS 볼륨 분리
+aws ec2 detach-volume --volume-id <volume-id>
+
+# [관리] EBS 볼륨 크기 수정 (예: 20GB로 확장)
+aws ec2 modify-volume --volume-id <volume-id> --size 20
+
+# [삭제] EBS 볼륨 삭제
+aws ec2 delete-volume --volume-id <volume-id>
 
 ---------------------------------------------------------------------------------------------------- aws key-pair & security-group
 # [조회] 키 페어 목록 (이름, 지문)
