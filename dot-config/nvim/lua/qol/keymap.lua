@@ -18,6 +18,8 @@ map("v", "p", '"_dP') -- paste without yanking in visual mode
 -- map("v", "x", '"_d') -- delete without yanking in visual mode
 map("v", "<leader>s", SearchWithBrowser, opt)
 
+map("n", "gJ", "kJ") -- 역방향 J
+
 -- 앞글자 대문자로 변환
 map({ "n", "v" }, "gu", function()
     utils.save_cursor_position()
