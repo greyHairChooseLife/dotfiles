@@ -104,7 +104,7 @@ end)
 
 map("i", ",,rf", function() vim.api.nvim_put({ "> [!rf]", "> ", "> " }, "c", false, true) end)
 
-map("i", ",,nt", function() vim.api.nvim_put({ "> [!nt]", ">", "> " }, "c", false, true) end)
+map("i", ",,nt", function() vim.api.nvim_put({ "> [!NOTE]", ">", "> " }, "c", false, true) end)
 
 map("i", ",,lg", function()
     local date = vim.fn.system('date "+%Y-%m-%d"')

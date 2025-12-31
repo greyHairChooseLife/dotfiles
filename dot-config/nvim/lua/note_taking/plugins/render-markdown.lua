@@ -411,6 +411,7 @@ return {
             example = { raw = "[!EXAMPLE]", rendered = "󰉹 Example", highlight = "RenderMarkdownHint" },
             quote = { raw = "[!QUOTE]", rendered = "󱆨 Quote", highlight = "RenderMarkdownQuote" },
             error = { raw = "[!ERROR]", rendered = " Error", highlight = "RenderMarkdownRed" },
+            note2 = { raw = "[!NOTE]", rendered = "󰋽 Note", highlight = "RenderMarkdownInfo", category = "github" },
             -- My own
             test = { raw = "[!ts]", rendered = "󰨸 TEST ", highlight = "RenderMarkdownMyTest" },
             todo = { raw = "[!td]", rendered = " 󰥔 TODO ", highlight = "RenderMarkdownMySimpleTodo" },

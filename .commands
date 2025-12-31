@@ -301,15 +301,19 @@ aws lambda delete-function --function-name <function-name>
 aws s3 ls
 # [조회] 버킷 내용 확인
 aws s3 ls s3://<bucket-name>
+# [조회] 버킷 메타데이터
+aws s3api head-bucket --bucket <bucket-name>
+# [조회] 버킷 정책 확인
+aws s3api get-bucket-policy --bucket <bucket-name>
 # [관리] 버킷 생성
 aws s3 mb s3://<new-bucket-name>
-# [관리] 파일 업로드/다운로드/동기화
+# [관리] 파일 업로드
 aws s3 cp <local-file> s3://<bucket-name>/
-
+# [관리] 파일 다운로드
 aws s3 cp s3://<bucket-name>/<file> <local-path>
-
+# [관리] 파일 동기화
 aws s3 sync <local-dir> s3://<bucket-name>/
 # [삭제] 객체 삭제 및 버킷 삭제
 aws s3 rm s3://<bucket-name>/<file-path>
-
+# [!주의! 강제 삭제] 파일이 있어도 버킷 통째로 삭제
 aws s3 rb s3://<bucket-name> --force

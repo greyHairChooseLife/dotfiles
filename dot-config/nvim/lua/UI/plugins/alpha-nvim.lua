@@ -62,9 +62,13 @@ return {
 
         -- Set menu
         dashboard.section.buttons.val = {
-            dashboard.button("F", "                           -  fetch   ", function()
-                vim.cmd("Git fetch")
-                alpha.redraw()
+            -- dashboard.button("F", "                           -  fetch   ", function()
+            --     vim.cmd("Git fetch")
+            --     alpha.redraw()
+            -- end),
+            dashboard.button("F", "                           -  dir   ", function()
+                vim.cmd("NvimTreeOpen")
+                vim.cmd("only")
             end),
             -- dashboard.button("n", "New", ":ene <BAR> startinsert <CR>"),
             dashboard.button("n", "New", ":ene<CR>"),
