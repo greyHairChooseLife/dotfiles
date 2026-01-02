@@ -12,7 +12,15 @@ alias tp='tmuxp'
 
 alias tpl='sel=$(tp ls | tac | fzf --header="Attach or Create the selected session" --preview "bat --color=always ${TMUXP_CONFIGDIR}/{}.yaml"); \
   [ -n "$sel" ] && tmuxp load -y "$sel"'
-alias tpl.='tmuxp load ./tmuxp.yaml'
+
+# alias tpl.='tmuxp load ./tmuxp.yaml'
+tpl.() {
+    if [ -z "$@" ]; then
+        tmuxp load ./tmuxp.yaml
+        return
+    fi
+    tmuxp load "$@"
+}
 
 alias tpe='sel=$(tp ls | tac | fzf --header="Edit the selected session spec" --preview "bat --color=always ${TMUXP_CONFIGDIR}/{}.yaml"); \
   [ -n "$sel" ] && tmuxp edit "$sel"'

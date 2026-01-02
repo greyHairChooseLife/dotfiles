@@ -100,3 +100,16 @@ a() {
         fi
     fi
 }
+
+ssh_from_ssh-config() {
+    # ~/.ssh/config에서 Host 항목 추출 (주석과 빈 줄 제외)
+    local hosts=$(grep '^Host ' ~/.ssh/config | awk '{print $2}' | grep -v '^\*$')
+
+    # fzf로 호스트 선택
+    local selected=$(echo "$hosts" | fzf --prompt="Select SSH host: ")
+
+    # 선택된 호스트가 있으면 ssh 실행
+    if [ -n "$selected" ]; then
+        ssh "$selected"
+    fi
+}

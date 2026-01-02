@@ -130,7 +130,9 @@ sudo pacman -S --needed \
     perf \
     bear \
     valgrind \
-    entr
+    entr \
+    sshfs \
+    mutagen.io-bin
 
 # Install AUR packages
 yay -S --needed \

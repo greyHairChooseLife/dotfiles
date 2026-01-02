@@ -1,0 +1,18 @@
+sync:
+    defaults:
+        mode: "two-way-safe" # 기본 동기화 모드
+        ignore:
+            vcs: true # .git, .svn 등 버전 관리 폴더 자동 무시
+            paths:
+                - ".DS_Store" # macOS 메타데이터 (혹시 모를 협업 대비)
+                - "target" # Rust 프로젝트 공통
+                - "dist"
+                - ".next"
+                - "build"
+                - "__pycache__" # Python 공통
+                - ".venv"
+
+                # 2. .gitignore에 있지만 동기화하고 싶은 파일 (앞에 ! 붙이기)
+                - "!.env"
+                - "!secret_key"
+                - "node_modules" # LSP 쓰려면 로컬에도 있어야할듯?

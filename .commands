@@ -28,16 +28,45 @@ git revert HEAD
 # 다운받기 전에 확인만
 git fetch --dry-run
 
+# PR 생성: 기본 브랜치 지정
 gh pr create --base <base-branch>
 
+# 특정 리포지토리에 PR 생성
 gh pr create --repo greyHairChooseLife/jg-websocket --base main
 
+# PR 병합
 gh pr merge <pr-number>
 
-# something with | delta
+# PR diff 확인 (delta와 함께 사용 가능)
 gh pr diff <pr-number>
 
+# PR 체크아웃
 gh pr checkout <pr-number>
+
+# Issue 생성
+gh issue create
+
+# Issue 목록 조회
+gh issue list
+
+# Issue 상세 보기
+gh issue view <issue-number>
+
+# Issue 편집
+gh issue edit <issue-number>
+
+# Issue 닫기
+gh issue close <issue-number>
+
+# Issue 다시 열기
+gh issue reopen <issue-number>
+
+# Issue에 댓글 추가
+gh issue comment <issue-number>
+
+# Issue에 담당자 할당
+gh issue assign <issue-number>
+
 
 ---------------------------------------------------------------------------------------------------- gh gist
 gh gist edit $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
@@ -84,6 +113,8 @@ ghostscript -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -o small.pdf large.pdf
 # Combine multiple PDF files into one
 pdfunite file1.pdf file2.pdf output.pdf
 
+# what is this?
+type <alias or function>
 ---------------------------------------------------------------------------------------------------- hardware
 # Save the current display layout to a profile with autorandr
 autorandr --save <profile-name>
@@ -137,10 +168,44 @@ docker run -d --name <container_name> -v </host/path>:</container/path> <img_nam
 docker exec -it <container_name> bash
 # List all containers (running and stopped)
 docker ps -a
-
+# 'config' 디렉토리의 Dockerfile에서 Docker 이미지를 빌드
+docker build -t <my-image-name> -f <path/to/Dockerfile>
+# 분리 모드로 볼륨 마운트와 함께 컨테이너 실행
+docker run -d --name <container_name> -v </host/path>:</container/path> <img_name>
+# 실행 중인 컨테이너 내부에서 셸 실행
+docker exec -it <container_name> bash
+# 모든 컨테이너 목록 보기 (실행 중 및 중지됨)
+docker ps -a
+# 실행 중인 컨테이너 중지
+docker stop <container_name>
+# 중지된 컨테이너 제거
+docker rm <container_name>
+# Docker 이미지 제거
+docker rmi <image_name>
+# 컨테이너의 로그 보기
+docker logs <container_name>
+# 모든 볼륨 목록 보기
+docker volume ls
+# 특정 볼륨 제거
+docker volume rm <volume_name>
+# 모든 사용하지 않는 컨테이너, 네트워크, 이미지 제거 (댕글링 이미지 포함)
+docker system prune -f
+# 모든 사용하지 않는 컨테이너, 네트워크, 이미지, 볼륨 제거
+docker system prune --all --volumes --force -f
+# 모든 중지된 컨테이너 제거
+docker container prune -f
+# 사용하지 않는 이미지 제거
+docker image prune -f
+# 사용하지 않는 볼륨 제거
+docker volume prune -f
 
 
 ---------------------------------------------------------------------------------------------------- Networking
+# ssh-config(~/.ssh/config) 읽어서 host 선택하고 접속
+ssh_from_ssh-config
+# 내꺼
+ssh -i ~/.ssh/dev-server.pem ubuntu@3.39.132.9
+
 # Connect to a Wi-Fi network, prompting for a password
 nmcli device wifi connect <SSID> --ask
 
@@ -149,6 +214,68 @@ nmcli -s -g 802-11-wireless-security.psk connection show $(nmcli connection show
 # Check network link status for a specific interface
 ip link show
 
+# 공인아이피 확인
+curl https://api.ipify.org
+
+# sshfs
+sshfs -o IdentityFile=~/.ssh/dev-server.pem,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 ubuntu@3.39.132.9:/home/ubuntu/sshfs ~/jg/05.NMM/sshfs
+# 일반적인 언마운트 시도
+fusermount3 -u ~/ec2_mount
+
+# SSH 키 생성 (기본 RSA 키)
+ssh-keygen -t rsa -b 4096 -C "<your_email@example.com>"
+
+# SSH 접속 (호스트 별칭 사용, ~/.ssh/config에 설정된 경우)
+ssh -i "<path/to/ssh-key.pem>" <username>@<host>
+
+# 파일 전송 (remote   local)
+scp <user>@<hostname>:/<remote/path>/<remotefile.txt> <local/path>/
+
+# 디렉토리 전송 (local   remote)
+scp -r <localdir> <user>@<hostname>:/<remote/path>/
+
+# rsync로 디렉토리를 동기화 (local   remote, 압축 및 아카이브 모드 및 진행률)
+rsync -avzP <localdir>/ <user>@<hostname>:/<remote/path>/
+
+# rsync로 디렉토리를 동기화 (remote   local)
+rsync -avzP <user>@<hostname>:/<remote/path>/ <localdir>/
+
+# 포트 포워딩 (로컬 포트 8080을 원격 서버의 80으로 노출)
+ssh -L 8080:localhost:80 <user>@<hostname>
+
+# SSH 터널을 통해 SOCKS 프록시 설정 (동적 프록시, remote를 프록시 서버로)
+ssh -D 1080 <user>@<hostname>
+
+# 원격 서버에서 명령 실행 (접속 없이)
+ssh <user>@<hostname> "<command>"
+
+
+
+---------------------------------------------------------------------------------------------------- remote dev
+
+# 동기화 세션 생성 (로컬   원격, 양방향 동기화 시작), --name: 별칭, --ignore-vcs: .gitignore 준수
+mutagen sync create --ignore-vcs <local/path> <ssh_alias>:<remote/path> --name=<session_name>
+
+# 동기화 일시 정지 (세션 설정은 유지하되, 파일 전송만 멈춤)
+mutagen sync pause <session_name>
+
+# 동기화 재개 (일시 정지된 세션을 다시 시작)
+mutagen sync resume <session_name>
+
+# 동기화 세션 영구 삭제 (더 이상 동기화하지 않을 때)
+mutagen sync terminate <session_name>
+
+# 현재 실행 중인 모든 동기화 세션 상태 확인 (상태, 충돌 여부 등)
+mutagen sync list
+
+# Mutagen 데몬(백그라운드 프로세스) 전체 종료 (다시 명령어를 입력하면 자동으로 재시작됨)
+mutagen daemon stop
+
+# 특정 세션의 동기화 과정을 실시간으로 모니터링 (종료하려면 Ctrl+C)
+mutagen sync monitor <session_name>
+
+# 동기화 강제 적용 (변경사항이 반영되지 않았을 때 즉시 동기화 시도)
+mutagen sync flush <session_name>
 
 
 
