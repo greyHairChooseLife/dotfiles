@@ -78,7 +78,7 @@ return {
             dashboard.button("O", "Old (global)", function() picker.recent_global() end),
             dashboard.button(".", "", ""),
             dashboard.button("sc", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
-            dashboard.button("c", "  Copilot", function()
+            dashboard.button("C", "  Copilot", function()
                 local cdc_func = require("AI.codecompanion.utils.general")
                 cdc_func.create_new()
                 vim.cmd("only")
@@ -100,6 +100,7 @@ return {
             dashboard.button("tm", " tmux", ":cd ~/.config/tmux | e tmux.conf<CR>"),
             dashboard.button("vi", " vi", ":cd ~/.config | e nvim<CR>"),
             dashboard.button("ba", " bash", ":cd ~/.config | e bash.sub/<CR>"),
+            dashboard.button("cl", " claude_code", ":cd ~/.claude | e settings.json<CR>"),
             dashboard.button(".", "", ""),
             dashboard.button("-", "                   ---------  sessions   ", ""),
             dashboard.button("sv", "Session View", function()

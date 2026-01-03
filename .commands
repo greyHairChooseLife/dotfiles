@@ -69,8 +69,13 @@ gh issue assign <issue-number>
 
 
 ---------------------------------------------------------------------------------------------------- gh gist
+# gist 보기
+gh gist view $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
+# gist 삭제
+gh gist delete $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
+# gist 수정
 gh gist edit $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
-
+# gist clone
 gh gist clone $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
 
 ---------------------------------------------------------------------------------------------------- appendix

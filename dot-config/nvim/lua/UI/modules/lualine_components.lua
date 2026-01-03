@@ -77,7 +77,21 @@ function M.get_git_branch()
     handle:close()
 
     -- 줄바꿈 제거하고 브랜치 이름 반환
-    return "branch: " .. branch:gsub("%s+", "")
+    return " " .. branch:gsub("%s+", "")
+end
+
+function M.get_cwd()
+    -- 현재 작업 디렉토리를 가져옴
+    local cwd = vim.fn.getcwd()
+    if not cwd or cwd == "" then return "no cwd" end
+
+    -- 홈 디렉토리를 가져옴
+    local home = vim.fn.expand("~")
+
+    -- cwd가 홈 디렉토리 내에 있으면 ~로 표시
+    if cwd:sub(1, #home) == home then cwd = "~" .. cwd:sub(#home + 1) end
+
+    return cwd
 end
 
 function M.harpoon_length()
@@ -179,7 +193,7 @@ M.my_nvimTree = {
                 padding = { left = 2, right = 2 },
             },
         },
-        lualine_b = M.fill_color2(M.colors.orange, M.colors.orange, M.get_git_branch, M.harpoon_length, 8),
+        lualine_b = M.fill_color2(M.colors.orange, M.colors.orange, M.get_git_branch, M.harpoon_length, 6),
         lualine_z = {
             {
                 M.harpoon_length,
@@ -198,7 +212,7 @@ M.my_nvimTree = {
                 separator = { right = "  " },
             },
         },
-        lualine_b = M.fill_color2(M.colors.grey, M.colors.grey, M.get_git_branch, M.harpoon_length, 8),
+        lualine_b = M.fill_color2(M.colors.grey, M.colors.grey, M.get_git_branch, M.harpoon_length, 6),
         lualine_x = {
             {
                 M.harpoon_length,
@@ -220,7 +234,7 @@ M.my_fugitive = {
                 separator = { right = "" },
             },
         },
-        lualine_b = M.fill_color2("#242024", "#242024", M.get_git_branch, function() return "- fugitive -" end, 13),
+        lualine_b = M.fill_color2("#242024", "#242024", M.get_git_branch, function() return "- fugitive -" end, 11),
         lualine_z = {
             {
                 function() return "- fugitive -" end,
@@ -335,24 +349,54 @@ M.my_sidekick = {
     sections = {
         lualine_a = {
             {
+                M.get_git_branch,
+                color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
+                padding = { left = 1, right = 1 },
+            },
+        },
+        lualine_b = {
+            {
+                M.get_cwd,
+                color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
+                padding = { left = 1, right = 1 },
+            },
+        },
+        lualine_c = M.fill_color2(M.colors.black, M.colors.black, M.get_git_branch, M.get_cwd, 19),
+        lualine_x = {
+            {
                 function()
                     local status = require("sidekick.status").cli()
-                    return " " .. (#status > 1 and #status or "")
+                    return "  ✖️  ✖️ " .. (#status > 1 and #status or "")
                 end,
                 cond = function() return #require("sidekick.status").cli() > 0 end,
-                color = function() return "Special" end,
+                color = function() return { fg = M.colors.orange, bg = M.colors.black } end,
             },
         },
     },
     inactive_sections = {
         lualine_a = {
             {
+                M.get_git_branch,
+                color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
+                padding = { left = 1, right = 1 },
+            },
+        },
+        lualine_b = {
+            {
+                M.get_cwd,
+                color = { bg = M.colors.orange, fg = M.colors.bblack, gui = "bold" },
+                padding = { left = 1, right = 1 },
+            },
+        },
+        lualine_c = M.fill_color2(M.colors.black, M.colors.black, M.get_git_branch, M.get_cwd, 35),
+        lualine_z = {
+            {
                 function()
                     local status = require("sidekick.status").cli()
-                    return " " .. (#status > 1 and #status or "")
+                    return " (claude code) ✖️  (neovim) ✖️ (tmux)" .. (#status > 1 and #status or "")
                 end,
                 cond = function() return #require("sidekick.status").cli() > 0 end,
-                color = function() return "Special" end,
+                color = function() return { fg = M.colors.wwhite, bg = M.colors.black } end,
             },
         },
     },

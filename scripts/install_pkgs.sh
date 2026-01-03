@@ -132,7 +132,10 @@ sudo pacman -S --needed \
     valgrind \
     entr \
     sshfs \
-    mutagen.io-bin
+    mutagen.io-bin \
+    claude-code \
+    zoxide \
+    lsof
 
 # Install AUR packages
 yay -S --needed \

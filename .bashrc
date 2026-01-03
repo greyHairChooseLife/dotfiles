@@ -137,6 +137,8 @@ for file in ~/.local/state/bash.sub/*.sh; do
     source $file
 done
 
+export PATH=$HOME/.local/bin:$PATH
+
 # 터미널 열 때 항상 영어(keyboard layout)로 시작
 # => 꼭 필요한가?
 # xdotool key Escape Escape

@@ -359,6 +359,7 @@ return {
                 lualine_components.my_oil,
                 lualine_components.my_copilot_chat,
                 lualine_components.my_codecompanion,
+                lualine_components.my_sidekick,
             },
         })
     end,
