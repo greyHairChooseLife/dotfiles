@@ -45,10 +45,10 @@ alias ssz='sysz' # forked for customizations, save it under HOME/.local/bin/sysz
 # <<<
 
 # >>> AI
-alias ai='aider --restore-chat-history --chat-mode architect --code-theme monokai --analytics-disable'
-alias ain='aider --chat-mode architect --code-theme monokai --analytics-disable'
-alias aiu='curl -LsSf https://aider.chat/install.sh | sh'
-alias air='aider --show-repo-map'
+# alias ai='aider --restore-chat-history --chat-mode architect --code-theme monokai --analytics-disable'
+# alias ain='aider --chat-mode architect --code-theme monokai --analytics-disable'
+# alias aiu='curl -LsSf https://aider.chat/install.sh | sh'
+# alias air='aider --show-repo-map'
 # <<<
 
 # >>> etc
