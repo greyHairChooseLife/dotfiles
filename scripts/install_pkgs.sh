@@ -135,7 +135,9 @@ sudo pacman -S --needed \
     mutagen.io-bin \
     claude-code \
     zoxide \
-    lsof
+    lsof \
+    serie \
+    sig
 
 # Install AUR packages
 yay -S --needed \
@@ -156,7 +158,15 @@ yay -S --needed \
     rustnet-bin \
     python-edge-tts \
     libtexprintf \
-    ytdl
+    ytdl \
+    eternalterminal \
+    sqlit \
+    wifitui \
+    stu \
+    portal-bin \
+    pvw-bin \
+    lazyssh-bin \
+    aws-session-manager-plugin
 
 # Enable important services
 sudo systemctl enable NetworkManager

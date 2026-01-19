@@ -6,6 +6,31 @@ return {
             mux = {
                 backend = "tmux",
                 enabled = true,
+                create = "terminal", ---@type "terminal"|"window"|"split"
+            },
+
+            watch = true, -- notify Neovim of file changes done by AI CLI tools
+            ---@class sidekick.win.Opts
+            win = {
+                --- This is run when a new terminal is created, before starting it.
+                --- Here you can change window options `terminal.opts`.
+                ---@param terminal sidekick.cli.Terminal
+                config = function(terminal) end,
+                wo = {}, ---@type vim.wo
+                bo = {}, ---@type vim.bo
+                layout = "right", ---@type "float"|"left"|"bottom"|"top"|"right"
+                --- Options used when layout is "float"
+                ---@type vim.api.keyset.win_config
+                float = {
+                    width = 0.9,
+                    height = 0.9,
+                },
+                -- Options used when layout is "left"|"bottom"|"top"|"right"
+                ---@type vim.api.keyset.win_config
+                split = {
+                    width = math.max(math.floor(vim.o.columns * 0.5), 80), -- set to 0 for default split width
+                    height = 20, -- set to 0 for default split height
+                },
             },
         },
     },
@@ -21,13 +46,13 @@ return {
             function() require("sidekick.cli").toggle({ name = "claude", focus = true }) end,
             desc = "Sidekick Toggle CLI",
         },
-        -- {
-        --     "<leader>as",
-        --     -- function() require("sidekick.cli").select() end,
-        --     -- Or to select only installed tools:
-        --     function() require("sidekick.cli").select({ filter = { installed = true } }) end,
-        --     desc = "Select CLI",
-        -- },
+        {
+            "<leader>as",
+            -- function() require("sidekick.cli").select() end,
+            -- Or to select only installed tools:
+            function() require("sidekick.cli").select({ filter = { installed = true } }) end,
+            desc = "Select CLI",
+        },
         {
             "<leader>ad",
             function() require("sidekick.cli").close() end,

@@ -1,0 +1,151 @@
+{
+  "id": "20260118-053539-934b226c",
+  "started_at": "2026-01-18T05:35:39.592060889+09:00",
+  "updated_at": "2026-01-18T05:41:16.488061361+09:00",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "text": "what kinda load balancer are there and explain the last one other than ALB, NLB. I know two of them already. answer in korean."
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "사용자가 AWS의 로드밸런서 종류에 대해 물어보고 있습니다. 사용자는 ALB와 NLB를 이미 알고 있다고 했으므로, 다른 로드밸런서 종류를 설명해달라고 하는 것 같습니다.\n\nAWS ELBv2(Elastic Load Balancing)에는 다음과 같은 로드밸런서 종류가 있습니다:\n1. Application Load Balancer (ALB) - 알려짐\n2. Network Load Balancer (NLB) - 알려짐\n3. Gateway Load Balancer (GWLB) - 이것이 세 번째 종류\n4. Classic Load Balancer (CLB) - 이건 ELB v1이고 구 버전\n\nELBv2에 속하는 주요 로드밸런서는:\n- ALB (Application Load Balancer)\n- NLB (Network Load Balancer)\n- GWLB (Gateway Load Balancer)\n\n그리고 구 버전:\n- Classic Load Balancer (ELBv1)\n\n사용자가 ALB, NLB 외에 \"마지막 것\" 즉 한 가지를 더 설명해달라고 했으므로, Gateway Load Balancer (GWLB)를 설명하면 될 것 같습니다.\n\n먼저 AWS 문서에서 로드밸런서 종류에 대해 검색해보겠습니다.",
+          "reasoningSignature": "EvcICkgICxABGAIqQJG48PzsE7FfpLJFVCVFwaY61y+XghacEehivZGXgNd8Fc0J4gy8/DU5JzrYTc25qw+b7CK0oPLbkAFUQ/JGrEYSDJ/40j7PClyCSVrwvRoMvMOghUbECb8Sx/NvIjAzRu6Xan8oD1y1e2CGQUdKLFVHwMm/rWSZmC1WjKVFcSdtVPQVYmO2dCnIK+6xjU8q3Ae8rHyBhPunGbBJzqWSb0G9Afw/0m5bCTi1kGEhuCdqA2vOf13bC+zfpXhySymaB800u4ao9+UwNaS4awrgCZYdk4IORUAki6amJWo7YrGrPt5zNC57YhQJqlCJlZhWuIzwnD/uXV6nvsEE7WeS0Tui07/tDYrKIADMVpGMZ12TYkWAc2MNFOj1oIATu9iVnmoWUTbCZSj+AB8SSHdoKbOGnbHTyM7Pe+jGqA7OSEJSrVgU4/TAdMKPzT9ZhyTKTno8Sl+V5ileWQ1HteGHflusQwYAXeQLwzr3m3AeNq+Q0Po9sPZ6zT46Kl/+OTf4BjXKOxzUmMXV46U/4IX9cfEmyBWRG+hgNEgQuTY6s2vC/sMUUSlfyy4Vj8rZtk8m4xTM0eFVkR/X3gj3wHRLf5iwNpPILHgMOGOy1oQDkuRKvsOUnXT9zLD+mLXHSfE8okmc7nCOgYUFBJHvL5RRHzN65/RB9fzI0aGeVLuHZsVd5IhgJ4DVLFbmEDGnwwHqRqMC92qzpgT3KizdPHNHuDcF1zECNo3x1IZbr0+Hf745VbXXvuobkHflGnKwzzzSE/vrlImurhhT9MdcPgXfdpv4v24GL7nVLkHIp+MfGqM+zJ7LJhcJ+I4OrVgJwcGsrC/UEJFBZdrQbMfXOyrKPVH/tLp06XY2YQaCGroR56BJFG+uwcJzufII99r5JCavXXhA2ZX9QI9sCA+G2lZQgyYnHdDdVjmLogZHewgbHE2kAwhBqFOeceyO7EAPPUALYU88RO93lW44fVpyVrs2zSVpcPd/RIWDQos7h4oAWVj5s/Kgwcbq7LhuP5Ss21uZkfk7/AMJjPubYEi5AgZPKKSzgXENwDFTEcxXYtCiQ0hz2bQNoBSHrp2mKjObgdVnAOyDvfXqKbvtoN5S2VwVqkI5Oo2wFnJGUhV0OCVjiULzuVqW4Aec83Z7YGPM+5NEh/qn9bJ4H5j6AxT+azGX+pCLf6LZIe8AnYJcNuHRBXyqAtz5OZSxRG0qk5w4v+cubf7Occ3cnc3VAr3Zk3KwsQnhQJ89yqUAzTE+3MOaZMTM41eflVK5uTX5zFz9togEJ2Iw2OVwTydlCIvotvN4bJCTYYUommBPPxkNBBDzKbxAhcFjz1x8SWu748g+N3X4zx6U46Ehk/40P1oa+kG2zmKJb/9Cf0byqIbFxI6Z32KTmvYe4/51f80KrrMkf2wdB1YRezyfOu7gYo5jgtsjayupxJ/wRmn8qOrLK+NS0V0LpVTqr0aJxlX+VsfCkM8BiwG///MNG6ZPUgp3twQeUY323SJ0djBHKXgMTCBnGAE="
+        },
+        {
+          "toolUse": {
+            "toolUseId": "tooluse_y4aWUHsXbXForFwBUvBkS1",
+            "name": "search_aws_docs",
+            "input": {
+              "query": "AWS load balancer types ALB NLB gateway"
+            }
+          }
+        },
+        {
+          "toolUse": {
+            "toolUseId": "tooluse_5oY1S5RUZOLLtjOMIVJaXe",
+            "name": "list_resources",
+            "input": {
+              "service": "elbv2"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "toolResult": {
+            "toolUseId": "tooluse_y4aWUHsXbXForFwBUvBkS1",
+            "content": "AWS Documentation results for 'AWS load balancer types ALB NLB gateway':\n\n1. What is an Application Load Balancer? - ELB\n   URL: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html\n   Automatically distribute incoming traffic across multiple targets using an Application Load Balancer.\n\n2. What is a Gateway Load Balancer? - ELB\n   URL: https://docs.aws.amazon.com/elasticloadbalancing/latest/gateway/introduction.html\n   Learn how to deploy, scale, and manage virtual appliances using Gateway Load Balancers.\n\n3. Target groups for your Application Load Balancers - ELB\n   URL: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html\n   Learn how to configure target groups for your Application Load Balancer.\n\n4. Migrate your Classic Load Balancer - Elastic Load Balancing\n   URL: https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/migrate-classic-load-balancer.html\n   Learn how to migrate from a Classic Load Balancer to an Application Load Balancer or a Network Load Balancer.\n\n5. Set up a Network Load Balancer for API Gateway private integrations (legacy) - Amazon API Gateway\n   URL: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-nlb-for-vpclink-using-console.html\n   Learn how to set up a Network Load Balancer for private integrations.\n\n"
+          }
+        },
+        {
+          "toolResult": {
+            "toolUseId": "tooluse_5oY1S5RUZOLLtjOMIVJaXe",
+            "content": "Resource types for Elastic Load Balancing (elbv2):\n- load-balancers\n- target-groups\n"
+          }
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "좋습니다. AWS 문서 검색 결과에서 Gateway Load Balancer에 대한 정보를 확인했습니다. AWS의 로드밸런서 종류를 정리하면:\n\n1. Application Load Balancer (ALB) - 사용자가 알고 있음\n2. Network Load Balancer (NLB) - 사용자가 알고 있음\n3. Gateway Load Balancer (GWLB) - 이것을 설명해야 함\n4. Classic Load Balancer (CLB) - 구 버전\n\n사용자가 ALB, NLB 외에 \"마지막 것\"을 설명해달라고 했으므로, Gateway Load Balancer를 설명하겠습니다. 한글로 답변해야 합니다.",
+          "reasoningSignature": "EskFCkgICxABGAIqQIYhM349/6IIDsmKSYsytvcMseTpC57yzWA5tDKnBFVCB8qZQKiT49S3yLnb65M6vN2Vc6CvAu8RLuB44C8vyGgSDDbyV9QEocAm8SJWhxoM6Kqfr7Nzw1wM6wWAIjBxHXrzHGI7A/ehB4X5sRKXB0KZF0guTgHSYIWGCMuq9fA7GgIo8H/k1yENX+/DeHAqrgQTY3zKjlSFgmbVaIOxAvkS+bL/gQSoxJW1x5e9YHkVx1VXDeq9hpp6x9LyGcfmI35IlUO1WPq0aQx8wWPOMwPpatEwja67SU71tYfE9oKr5KMgZy+ABpXgvuyGV9s2uj8esyFcSFN3aYRzuvJXr8ROIx4fXfZMijbnd8vHWQA5/XlVlZx6VlprX3PVs+0nbGzR7nj6gwGwJhmu8jFezggLW96t69NODEMCQ1RvuBG6SGWBfCUgviJv7NQI7LDFypBz35EbAK6+DsccWKmGK9lG90tEknWlSHmMaYIpAz0lQRPaAcHSdqewly8ecsd+iSTVtTsZ9wN4F52DuQTqJY6ITlzBbfJmO5iQH1g18Jk2Thf2RGkGjvAsT4Zst2SX/Uct7CY6WSruTp08nRKUhY0j1BrQXsM3rmvKxQbOVL1aRgG3aVs8+LogZ0m0yUUXro3JmPmPbAtw069oxeT35C5GD9yPIORFdg7uSSZ5r9sJNa37IldfhjNQWiZBjO7ni8Ut0jNizUdJm4qtHGN+INcmeagngfLZDy6F0/plKMi8d9Oq9baKjpFBce9Glo0F9cENNZuX0zfYQG2UMa8W/TEO/7ADvi0hE9JgizJIgCKgea8e/ttkwy1nDdtp819X4dp/uYqlq04joXzMohCBLGR1poFRig22JYQkQLDm4KucuyzolJ3nOtdM2z1PmCDA6+BpzGKFe4GpqmU7uRmFISyotwg10Bv2Jpg9HZPUys4YAQ=="
+        },
+        {
+          "text": "AWS 로드밸런서 종류는 다음과 같습니다:\n\n## AWS 로드밸런서 종류\n\n1. **ALB** (Application Load Balancer) - 알고 계심 ✓\n2. **NLB** (Network Load Balancer) - 알고 계심 ✓\n3. **GWLB** (Gateway Load Balancer) - 설명 아래\n4. **CLB** (Classic Load Balancer) - 구버전\n\n---\n\n## Gateway Load Balancer (GWLB) 상세 설명\n\n**GWLB란?**\n- 3계층(Network 계층)에서 작동하는 로드밸런서\n- 가상 어플라이언스(virtual appliances)를 배포, 확장, 관리하기 위해 설계됨\n\n**주요 특징:**\n- **방화벽, 침입 탐지(IDS)/방지(IPS) 등의 보안 어플라이언스 배포에 특화**\n- 매우 높은 성능 (초당 수백만 요청 처리 가능)\n- 저 지연 시간 (극도로 낮은 레이턴시)\n- 트래픽을 여러 가상 어플라이언스 인스턴스로 분산\n\n**사용 사례:**\n- 보안 어플라이언스를 통한 트래픽 검사 및 필터링\n- 침입 탐지/방지 시스템 (IDS/IPS)\n- 방화벽 및 DPI (Deep Packet Inspection)\n- 로드 밸런싱된 방식으로 보안 어플라이언스 배포\n\n**ALB/NLB와의 차이:**\n- ALB: Layer 7 (애플리케이션) - HTTP/HTTPS\n- NLB: Layer 4 (전송계층) - TCP/UDP, 극고성능\n- **GWLB: Layer 3 (네트워크계층) - 보안 어플라이언스 중심**"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "text": "can they be placed inside the boundary of a VPC? so they are only viable inside of it?  I am talking about alb/nlb. answer in korean."
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "사용자가 ALB/NLB가 VPC 경계 내에 배치될 수 있는지, 그리고 VPC 내에서만 사용 가능한지 물어보고 있습니다. 한국어로 답변해야 합니다.\n\nAWS의 로드밸런서들이 VPC와 어떤 관계가 있는지 설명해야 합니다:\n- ALB와 NLB는 서브넷(subnet)에 배치됩니다\n- 서브넷은 VPC 내의 리소스입니다\n- 따라서 ALB/NLB는 VPC 내에만 존재합니다\n\n이것은 일반적인 AWS 지식이므로 documentation을 검색할 필요가 있을 수 있지만, 기본적인 내용입니다.",
+          "reasoningSignature": "EtAFCkgICxABGAIqQM3Z07LjKWrHelR5E81w0h3/V+jRCpsr1uGV2FP+CY/5ly6TN1OHyc6piPFB3ts0x9VpZySbOVZ9VCCitiDlUYkSDNOII/v10DD3JUp7ahoMYIGEXiRidvZLNBgpIjCgMn3sGk3RbZREMCGFjqnCnsF3AnJdMjKlmV1e35eLA2PlSkdnJejuRo2BCEXDUaEqtQRYCoyxKzjbJ0li+NwpGHsTqR/IvuKNV2a6DRhNuKH+xRDbCY3NuxyN1yAET9R4qr3rdJiaEw9+hiNorPqo2z7Tiz4XvoD41g177GkXdq5fdpvLGLCSCCTWHLm1qNzTmBGegTeTQAwXtirQ924d+hD8gShtpIclCgY8uAteBR5BgcNpVOCAHQ4sLZ2IcdIGhvOiuBb9sn7FA+9GISP2GSY3Xo1e5Pq7vCKLHfPySRimZqxVP5hijFyEeiavOkX/dea+nQHILwNg+tmHDf5D2zjMppAXHNYIWh2/nXP9nLVBKpixRPJP3BKkNN4g7J7xcf0NtKyLoA3SsMaRklafkJkadct+uRjdZg41qNQ+YXCIHGD1ewDF9Pz8WOtd8y019vTYlZiyKni55kgO2fLPYGKah3znJ9IRrCJ7jKliPkpdqdYa4BE2HAAiN8cfJJqNnbGVJqy9b9yzvHMrlS8C1mH7HuuGPZcN3o1yxualPk1DAxr49s7+b02H/tUW+vcbtwXnhUPWl+5aIAVCfjjcs2Id60dJPxWYJjT0UtopMoZzoXtzZ8FR++iyMx3maCHUjoQ86A9bE4pD+cnVRBVWoWjSi8aisONRkKRjcfxDb411Snz97u6bIxu3NcsPxHTxWPRaJkAHwNTok1sJDNFNGlEJuN9E5ISK7kRicTwWgADEToD5X3RptXa+cIBsiDaFqv5WtkHsbcVq4EVgWtaQmnBZ/DjXCyHrqpZQDlryoSQ5XX71Jq8PGAE="
+        },
+        {
+          "toolUse": {
+            "toolUseId": "tooluse_Vlh7UHJ14g8Hdyys6bEdPp",
+            "name": "search_aws_docs",
+            "input": {
+              "query": "ALB NLB VPC subnet placement network architecture"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "toolResult": {
+            "toolUseId": "tooluse_Vlh7UHJ14g8Hdyys6bEdPp",
+            "content": "AWS Documentation results for 'ALB NLB VPC subnet placement network architecture':\n\n1. Route TCP and UDP traffic with Network Load Balancers - Amazon EKS\n   URL: https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html\n   Use the AWS Load Balancer Controller to create network load balancers for Amazon EKS workloads, supporting IP and instance targets with AWS Network Load Balancers.\n\n2. Generate a static outbound IP address using a Lambda function, Amazon VPC, and a serverless architecture - AWS Prescriptive Guidance\n   URL: https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/generate-a-static-outbound-ip-address-using-a-lambda-function-amazon-vpc-and-a-serverless-architecture.html\n   Use a serverless architecture with a Lambda function to obtain a static outbound IP address.\n\n3. Provide network connectivity for your Auto Scaling instances using Amazon VPC - Amazon EC2 Auto Scaling\n   URL: https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-in-vpc.html\n   Learn about using Amazon VPC to provide network connectivity for your Auto Scaling instances.\n\n4. Network Load Balancers - Elastic Load Balancing\n   URL: https://docs.aws.amazon.com/elasticloadbalancing/latest/network/network-load-balancers.html\n   Learn how to create and configure your Network Load Balancer.\n\n5. Application Load Balancers as targets in VPC Lattice - Amazon VPC Lattice\n   URL: https://docs.aws.amazon.com/vpc-lattice/latest/ug/alb-target.html\n   Register an Application Load Balancer as the target of a VPC Lattice service.\n\n"
+          }
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "검색 결과가 구체적으로 설명하지 않았지만, AWS의 기본 구조는 알려진 바입니다. ALB와 NLB에 대해 정확히 설명하겠습니다.",
+          "reasoningSignature": "EswCCkgICxABGAIqQIcWSfcbqg2t5qktitqA1ij+0V9qL7w8Riy16srGbEl15dORznU6Puizy4M5QUUsAVoMhlkJPq6nVaMNVzWV1E0SDJgU0oLlusTqPRHGSxoMRorAMrifdlVyEmi1IjDfh05HsiJv5//4OjYhZwGTzg66MQ8COaOhP4qOv2qFZvatCl9J6zBiJ7HYSHfijx4qsQGbFX/0uPRBC2uS1sL2Y+IuPphhSOnAZMfh+f1RwnCcVzAQpadaFLyznEz9N2e0K8X/Hhy9okQJrlxkwCWcbBcEayGiwP6nAW5gcf9bY89h16Y3WjaZq/cdIHfWNKe7vpeXemPRGU9Qs7CCmX1imDL10BYfqMXdLRtcZ7V9s4u7ydJcu3MgxbiYe6Bva0tVYuNwKIdPr+tTunjfXmCbdEXVGtz2RtlJismFWklHdn/rbqMYAQ=="
+        },
+        {
+          "text": "좋은 질문입니다! 답변은 **맞습니다. ALB/NLB는 VPC 내에만 배치되며, VPC 외부에는 존재할 수 없습니다.**\n\n## ALB/NLB의 VPC 배치\n\n**배치 구조:**\n```\nAWS 계정\n └─ VPC\n     ├─ 서브넷 1 (Public)\n     │   └─ ALB/NLB ENI (Elastic Network Interface)\n     ├─ 서브넷 2 (Public)\n     │   └─ ALB/NLB ENI (Elastic Network Interface)\n     └─ 서브넷 3 (Private)\n         └─ 대상 인스턴스 (Target)\n```\n\n**핵심 포인트:**\n\n1. **VPC 내에만 배치 가능**\n   - ALB/NLB는 반드시 **2개 이상의 서브넷**에 배치됨\n   - VPC 외부에는 존재할 수 없음\n   - 서브넷이 없으면 생성 불가능\n\n2. **외부 접근은 가능**\n   - 인터넷 게이트웨이를 통해 외부 사용자가 접근 가능\n   - 로드밸런서 자체는 VPC 내에 있지만, 공개 IP 할당 가능\n   - VPC 내 트래픽만 처리하는 것은 아님\n\n3. **Classic Load Balancer (CLB)와의 차이점**\n   - 구 CLB: VPC/EC2-Classic 모두 지원 (이제 구식)\n   - ALB/NLB: **VPC only** (필수)\n\n**결론:** ALB/NLB는 VPC 인프라의 **필수적인 일부**이며, VPC 내에서만 작동합니다."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "text": "why does it need 2 or more of subnets?"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "사용자가 ALB/NLB가 왜 2개 이상의 서브넷이 필요한지 묻고 있습니다. 이것은 좋은 질문입니다. 이유를 설명해보겠습니다:\n\n1. **고가용성 (High Availability)**: AWS의 설계 원칙상, ALB/NLB는 여러 가용 영역(AZ)에 걸쳐 배치되어야 합니다. 한 개 AZ가 장애가 나도 서비스가 계속되도록.\n\n2. **가용 영역 (Availability Zone)**: 각 서브넷은 특정 AZ에만 속합니다. 따라서 여러 AZ를 사용하려면 각 AZ마다 서브넷이 필요합니다.\n\n3. **로드 분산**: 여러 서브넷 (여러 AZ)에 걸쳐 로드밸런서 자체도 분산되어 단일 장애점(single point of failure)을 제거합니다.\n\n한국어로 설명하면 됩니다.",
+          "reasoningSignature": "EoQHCkgICxABGAIqQHFSanlrBXSlr7cFO7HajP2WqoK1LkMXZ7DL1+QMpB/bqXaaWawGNpoNV7b9jQCTrgu6J6mQVfk0Yz3Qmoq8zDgSDAud/STdXKkGZYOwYBoMRE20YO5aEYLjtD+aIjD+Q8TcN0IrbpDJyDu//hDew4DCtMJhMMhh0/3nPb5qeCYe2nftaSo+TRjm7BYnhKcq6QUsbpaZbNQnNZtMEioR4VKSstCmG8MoQinug802BSGWOR56WtOGDjd9jdkvKMNRedr3ZE6uV3QtVUxe+viAuvhBT9lbXsc3GTPu0rJf8xr2MAhX1LQsSNYKoqP5Ue9d+230vZO4dcDsKCD7gk7JMyD8WkRV57Ew6zxlK8wAii4QGmeop7pXS1dYp6iSnNK+tQan/My81x6Um25P3HZVBuLPMyLAePDx/S4tQToEA4/oQ6TmqBLpxbANZrHbhj5UcJqVITQ93VuldASxvkJhecOSCJ93rb/1uBw/o/wgYVcqXltIw/j4vop7CvUImcFWeWqrGID+f0AxiA6oakQ8cCm8z2M1VWwXTtayt4jyajjmzCxibg8I7XZAh2M0LJnnYexcopMizwG+LFLPYzaqGz+HSAdUa/ZcF5oe8wca+9HnZKG00XpQ7aBvdzXjq13DMT8s+kPLBot30HEGnSIhSjcFvhOvH6D9M5XIwxLKXJfMsiyKQPVId8ZaBMwZeBTaYrqxN5mofwVHsDTpOt0LpC667N+3mC0TlJtdGZLiLq+NhUeAfaR/Y2ug5H02Q7U/soKsF9wYMq5fVSI2Ql0MnizPfFlFhx6SOuWu86rIIHBIjy071dksVvsaXmNVeWgElNIJz3pChj78EDIVkKB/PVEZnkGTBXg1PjcPPt3WfsArNkdtW1960TUN5hlUiPwJKCFj9inXwYGn9MvUF0MedvF5DvhKDPyHcIoC68MiUce2x9xkC/RECoRUlnyB8pbtXGnldGA6IxVNukw/bI/tJdIChfTMsSSddORGJ+3jTUe13b+XN7ZAj8Vv1jtRbnXqjwP2FqtRhwXvXRfEi8XAU8FeMFVZDmEY9FAK/DN5jeG2vs2s7rsrOqG+uVNhUMtkRKw2i5KZjr9Ij8P0LQhcyCSYGguufogYFvv/pB7fOZmxqD95m6nsh2YVr/+nO9FQQ8gJXThdgIf8s7C4HWxYQjtNRP5S2wJybIXzGAE="
+        },
+        {
+          "text": "좋은 질문입니다! 이유를 설명하겠습니다.\n\n## ALB/NLB가 2개 이상의 서브넷이 필요한 이유\n\n### 1. **가용 영역 (Availability Zone) 분산**\n```\n가용 영역 A          가용 영역 B          가용 영역 C\n   ├─ 서브넷 A       ├─ 서브넷 B       ├─ 서브넷 C\n   │  └─ ALB         │  └─ ALB         │  └─ ALB\n   │   (활성)        │   (활성)         │   (백업)\n   │                 │\n   인스턴스들 분산 배치\n```\n\n- **각 서브넷은 특정 가용 영역(AZ)에만 속함**\n- ALB/NLB는 **여러 AZ에 걸쳐 배치**되어야 고가용성 보장\n- 한 개 AZ가 장애나도 다른 AZ의 로드밸런서가 계속 작동\n\n### 2. **자동 장애 조치 (Auto Failover)**\n```\nAZ1 (서브넷1) ← 장애 발생\n  ↓ (자동으로)\nAZ2 (서브넷2) ← 트래픽 자동 이동\n```\n\n### 3. **단일 장애점(SPOF) 제거**\n- 1개 서브넷만 사용 = 그 AZ가 장애나면 전체 서비스 중단\n- 2개 이상 서브넷 = 분산되어 서비스 지속 가능\n\n### 4. **AWS 권장 사항**\n- ALB/NLB 생성 시 **최소 2개 AZ** 선택 강제\n- 실제로 2개 미만으로 설정하면 **AWS가 거부함**\n\n**결론:** 고가용성과 장애 대응을 위해 **여러 가용 영역에 분산**되어야 하므로, 최소 2개 서브넷이 필수입니다!"
+        }
+      ]
+    }
+  ],
+  "context": {
+    "service": "elbv2",
+    "resource_type": "load-balancers",
+    "user_regions": [
+      "ap-northeast-2"
+    ],
+    "user_profiles": [
+      "__sdk_default__"
+    ],
+    "mode": "list"
+  }
+}

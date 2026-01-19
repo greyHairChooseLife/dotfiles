@@ -4,11 +4,14 @@ __git_complete ga _git_add
 __git_complete gco _git_commit
 __git_complete gch _git_checkout
 __git_complete gp _git_push
+__git_complete gme _git_merge
+__git_complete gre _git_reset
 __git_complete gt _git_tag
 __git_complete gfd _git_fetch
 __git_complete gb _git_branch
 __git_complete gba _git_branch
 __git_complete gs _git_status
+__git_complete gss _git_status
 __git_complete gst _git_stash
 __git_complete gf _git_fetch
 __git_complete gd _git_diff
@@ -30,7 +33,7 @@ alias gco='git commit'
 alias gch='git checkout'
 alias gch!='git checkout $(git branch | fzf)'
 alias gp='git push'
-alias gm='git merge'
+alias gme='git merge'
 alias gre='git reset'
 alias gt='git tag'
 alias gcl='git clean -i .'

@@ -7,11 +7,17 @@ gh org list
 
 org=$(gh org list | fzf) && repo=$(gh repo list "$org" | fzf | awk '{print $1}') && gh repo clone "$repo"
 
+# Clone repository using a specific branch
+gh repo clone <owner>/<repo> -- -b <branch-name>
+
 # Create branch from git rev
 git checkout -b <new-branch-name> [<start-point>]
 
 # branch 관리: 로컬에서 필요없는 remote upstream 지우기
 git branch -d -r <remote-name>/<bracnh-name>
+
+# remote: origin 브랜치 싹 정리
+git branch -r | grep 'origin/' | grep -v 'HEAD' | xargs git branch -rd
 
 git push origin --delete <branch-name>
 
@@ -67,6 +73,8 @@ gh issue comment <issue-number>
 # Issue에 담당자 할당
 gh issue assign <issue-number>
 
+# commit author 변경
+git commit --amend --author="팀원 이름 <팀원 이메일>" --no-edit
 
 ---------------------------------------------------------------------------------------------------- gh gist
 # gist 보기
@@ -120,6 +128,24 @@ pdfunite file1.pdf file2.pdf output.pdf
 
 # what is this?
 type <alias or function>
+
+# regex maker
+regex <path/to/file>
+
+# 1초마다 ps aux를 실행하고 그 결과를 sig로 실시간 스트리밍
+while true; do <ps aux>; sleep 1; done | sig
+
+# port 모두보기
+pvw -A
+# port <특정> 보기
+pvw -A --ports <port>
+
+# 파일 찾아서 출력해서 interactive grep
+fd 'tmuxp.' -x cat | sig -a
+
+# how to see inspect --help properly
+curl --help all | fzf --preview "curl --help all | grep -A 15 {}"
+
 ---------------------------------------------------------------------------------------------------- hardware
 # Save the current display layout to a profile with autorandr
 autorandr --save <profile-name>
@@ -187,6 +213,8 @@ docker stop <container_name>
 docker rm <container_name>
 # Docker 이미지 제거
 docker rmi <image_name>
+# dangling 이미지 모두 제거
+docker rmi $(docker images -f "dangling=true" -q)
 # 컨테이너의 로그 보기
 docker logs <container_name>
 # 모든 볼륨 목록 보기
@@ -204,16 +232,44 @@ docker image prune -f
 # 사용하지 않는 볼륨 제거
 docker volume prune -f
 
+# List docker context
+docker context list
+# Use docker context
+docker context use <name-of-context>
+
+# TODO:: MAYBE LATER: docker context list | fzf | awk '{print $1}' | <name-of-context>
+#
+# Remove the context
+docker context rm <name-of-context>
+# Create docker context, need to configure ssh-key through ssh config
+docker context create <name-of-context> --description <description> --docker "host=ssh://43.202.251.227"
+
+# Change docker context
+dctx
+# Add docker context
+dctx-add
+# Remove docker context
+dctx-rm
+
+# inspect why healthcheck failed
+docker inspect --format='{{json .State.Health}}' <container-name> | jq
 
 ---------------------------------------------------------------------------------------------------- Networking
-# ssh-config(~/.ssh/config) 읽어서 host 선택하고 접속
-ssh_from_ssh-config
+
 # 내꺼
-ssh -i ~/.ssh/dev-server.pem ubuntu@3.39.132.9
+ssh -i ~/.ssh/dev-server.pem ubuntu@52.79.120.81
+# 내꺼
+ssh -i ~/.ssh/dev-server.pem ubuntu@ec2-52-79-120-81.ap-northeast-2.compute.amazonaws.com
+
+# ssh 접속; ssh-config(~/.ssh/config) 읽어서 host 선택하고 접속
+s
+# ssh config 수정(~/.ssh/config)
+se
 
 # Connect to a Wi-Fi network, prompting for a password
 nmcli device wifi connect <SSID> --ask
 
+# 비번 보여주기
 nmcli -s -g 802-11-wireless-security.psk connection show $(nmcli connection show | grep -i wifi |awk '{print $1 "\t" $3 "\t"  $4}'| column -t -s $'\t' | fzf | awk '{print $1}')
 
 # Check network link status for a specific interface
@@ -240,10 +296,10 @@ scp <user>@<hostname>:/<remote/path>/<remotefile.txt> <local/path>/
 scp -r <localdir> <user>@<hostname>:/<remote/path>/
 
 # rsync로 디렉토리를 동기화 (local   remote, 압축 및 아카이브 모드 및 진행률)
-rsync -avzP <localdir>/ <user>@<hostname>:/<remote/path>/
+rsync -e "ssh -i <path/to/key>" -avzP <localdir>/ <user>@<hostname>:/<remote/path>/
 
 # rsync로 디렉토리를 동기화 (remote   local)
-rsync -avzP <user>@<hostname>:/<remote/path>/ <localdir>/
+rsync -e "ssh -i <path/to/key>" -avzP <user>@<hostname>:/<remote/path>/ <localdir>/
 
 # 포트 포워딩 (로컬 포트 8080을 원격 서버의 80으로 노출)
 ssh -L 8080:localhost:80 <user>@<hostname>
@@ -333,6 +389,9 @@ aws configure set region ap-northeast-2
 aws configure list
 # 현재 IAM 자격 증명 확인
 aws sts get-caller-identity
+
+# aws tui (powered by claws)
+aws-tui
 
 ---------------------------------------------------------------------------------------------------- aws ec2 (Read -> Manage)
 # [조회] 실행 중인 인스턴스 목록 (ID, 이름, 상태, IP, 타입)
@@ -432,7 +491,7 @@ aws lambda delete-function --function-name <function-name>
 # [조회] 버킷 목록
 aws s3 ls
 # [조회] 버킷 내용 확인
-aws s3 ls s3://<bucket-name>
+aws s3 ls s3://<bucket-name> --recursive
 # [조회] 버킷 메타데이터
 aws s3api head-bucket --bucket <bucket-name>
 # [조회] 버킷 정책 확인
@@ -449,3 +508,19 @@ aws s3 sync <local-dir> s3://<bucket-name>/
 aws s3 rm s3://<bucket-name>/<file-path>
 # [!주의! 강제 삭제] 파일이 있어도 버킷 통째로 삭제
 aws s3 rb s3://<bucket-name> --force
+
+---------------------------------------------------------------------------------------------------- [SSM/Connectivity] 세션 및 관리자 작업
+# [접속] 로컬에서 특정 EC2로 SSM 세션 시작
+aws ssm start-session --target <instance-id>
+# [관리] SSM 세션 강제 종료
+aws ssm terminate-session --session-id <session-id>
+# [조회] 현재 활성화된 모든 SSM 세션 목록 확인 (누가 붙어있나?)
+aws ssm describe-sessions --state Active
+# [관리] 특정 세션 ID를 지정하여 강제 종료
+aws ssm terminate-session --session-id <session-id>
+
+---------------------------------------------------------------------------------------------------- [CloudWatch] 로그 확인
+# [조회] 특정 로그 그룹 목록 확인
+aws logs describe-log-groups
+# [조회] 실시간 로그 스트림 덤프
+aws logs tail /aws/rds/instance/<instance-name>/postgresql --follow

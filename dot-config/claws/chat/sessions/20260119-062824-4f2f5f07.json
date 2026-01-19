@@ -1,0 +1,27 @@
+{
+  "id": "20260119-062824-4f2f5f07",
+  "started_at": "2026-01-19T06:28:24.880305961+09:00",
+  "updated_at": "2026-01-19T06:29:06.327148694+09:00",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "text": "hi?"
+        }
+      ]
+    }
+  ],
+  "context": {
+    "service": "rds",
+    "resource_type": "instances",
+    "user_regions": [
+      "ap-northeast-2"
+    ],
+    "user_profiles": [
+      "__sdk_default__"
+    ],
+    "mode": "list",
+    "resource_count": 1
+  }
+}

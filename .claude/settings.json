@@ -6,15 +6,23 @@
       "Read(~/.aws/**)",
       "Read(~/.ssh/**)",
       "Read(~/.local/state/bash.sub/**)"
-    ]
+    ],
+    "defaultMode": "default"
   },
+  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "npx -y @owloops/claude-powerline@latest"
   },
   "enabledPlugins": {
-    "lua-lsp@claude-plugins-official": true
+    "lua-lsp@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true
   },
-  "outputStyle": "Explanatory",
-  "model": "haiku"
+  "outputStyle": "Default",
+  "alwaysThinkingEnabled": false,
+  "promptSuggestionEnabled": false
 }

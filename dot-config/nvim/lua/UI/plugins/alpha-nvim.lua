@@ -62,11 +62,7 @@ return {
 
         -- Set menu
         dashboard.section.buttons.val = {
-            -- dashboard.button("F", "                           -  fetch   ", function()
-            --     vim.cmd("Git fetch")
-            --     alpha.redraw()
-            -- end),
-            dashboard.button("F", "                           -  dir   ", function()
+            dashboard.button(".", "                             ________   dir ____", function()
                 vim.cmd("NvimTreeOpen")
                 vim.cmd("only")
             end),
@@ -76,33 +72,29 @@ return {
             dashboard.button("w", "Word grep", function() picker.grep() end),
             dashboard.button("o", "old", function() picker.recent() end),
             dashboard.button("O", "Old (global)", function() picker.recent_global() end),
-            dashboard.button(".", "", ""),
-            dashboard.button("sc", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
-            dashboard.button("C", "  Copilot", function()
+            dashboard.button("_", "                             ________   AI _____", ""),
+            dashboard.button("cc", "Copilot", function()
                 local cdc_func = require("AI.codecompanion.utils.general")
                 cdc_func.create_new()
                 vim.cmd("only")
             end),
-            dashboard.button(".", "", ""),
-            dashboard.button("D", "                   ---------  doc   ", ":cd ~/Documents | vi .<CR>"),
-            -- dashboard.button(
-            --   "dpu",
-            --   "                           -  pull    ",
-            --   ":cd ~/Documents/dev-wiki | :Git pull --ff-only | :cd ~/Documents/job-wiki | :Git pull --ff-only<CR>"
-            -- ),
+            dashboard.button("cp", "c.c: Prompts", ":cd ~/.claude | e CLAUDE.md<CR>"),
+            dashboard.button("ce", "c.c: Commands", ":cd ~/.claude | e commands<CR>"),
+
+            dashboard.button("_", "                              _______   doc _____", ""),
             dashboard.button("1", "dev", ":cd ~/Documents/dev-wiki | :VimwikiIndex<CR>"),
             dashboard.button("2", "job", ":cd ~/Documents/job-wiki | :2VimwikiIndex<CR>"),
-            dashboard.button(".", "", ""),
-            dashboard.button("q", "                   ---------  configs   ", ":q<CR>"),
-            dashboard.button("lz", "󰂖 lazy plugins", ":Lazy<CR>"),
-            dashboard.button("i3", " i3", ":cd ~/.config/i3 | e config<CR>"),
-            dashboard.button("te", " term", ":cd ~/.config/alacritty | e alacritty.toml<CR>"),
-            dashboard.button("tm", " tmux", ":cd ~/.config/tmux | e tmux.conf<CR>"),
-            dashboard.button("vi", " vi", ":cd ~/.config | e nvim<CR>"),
-            dashboard.button("ba", " bash", ":cd ~/.config | e bash.sub/<CR>"),
-            dashboard.button("cl", " claude_code", ":cd ~/.claude | e settings.json<CR>"),
-            dashboard.button(".", "", ""),
-            dashboard.button("-", "                   ---------  sessions   ", ""),
+            dashboard.button("d", "all", ":cd ~/Documents | vi .<CR>"),
+
+            dashboard.button("_", "                              ______  configs ___", ""),
+            dashboard.button("lz", "lazy plugins", ":Lazy<CR>"),
+            dashboard.button("i3", "i3", ":cd ~/.config/i3 | e config<CR>"),
+            dashboard.button("te", "term", ":cd ~/.config/alacritty | e alacritty.toml<CR>"),
+            dashboard.button("tm", "tmux", ":cd ~/.config/tmux | e tmux.conf<CR>"),
+            dashboard.button("vi", "vi", ":cd ~/.config | e nvim<CR>"),
+            dashboard.button("ba", "bash", ":cd ~/.config | e bash.sub/<CR>"),
+            dashboard.button("sc", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
+            dashboard.button("_", "                              ______  sessions __", ""),
             dashboard.button("sv", "Session View", function()
                 vim.cmd("AutoSession search")
                 vim.fn.feedkeys("!json ", "m") -- json 파일에 탭 이름 정보 저장해둠

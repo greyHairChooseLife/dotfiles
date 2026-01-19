@@ -1,0 +1,197 @@
+{
+  "id": "20260119-121432-dccae505",
+  "started_at": "2026-01-19T12:14:32.843389019+09:00",
+  "updated_at": "2026-01-19T12:51:48.648825472+09:00",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "text": "There is no record for main domain. I wonder why. Because I automatically set up things with Terraform to use main domain."
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "The user is asking about Route53 record sets and mentions they don't have a record for their main domain, even though they set it up with Terraform. They want to understand why.\n\nI should query the Route53 record-sets to see what records actually exist. The current context shows we're looking at route53/record-sets with a count of 9. Let me fetch those records to see what's there.\n\nThe user is in ap-northeast-2 region and using __sdk_default__ profile. I need to query Route53 record-sets in that region.",
+          "reasoningSignature": "EqMFCkgICxABGAIqQH+Fs2PqdR9swW2Q/71iV8hN8EWMi1vcHiSsSegU8If2RBXjhTQs7nqyfHDRzxQLZ/mBHnkRIGGxFMvAOe/i9pQSDG6fMa+6kcL0bseo+xoM5/THpMXVOifcRACmIjD88mlSOaqcbK11ngqj/mWUYtul5ct2cc6fGFaS68UaDUOGkO+zy3ITZVfTgbuQ0iUqiATXhBAS9ZtLiC9BDFNBHOnt9oUQyaU3TpEICaej/KCkiqosJ7LOpVWjfdoq8hWsgR/4o8DtCiXZTJy/wtPPH2qssVqQ70kvqqTayAu4CVQP6Ns4BUDb5Q30EILJ8grbmWPblSkHBOcmgVCK9tqHN89B3jxt/3J+tRxm1Yk8hjiLhVl91lnKBfm+dFLsxsi1lOWcjFFOtgIw7KLDVAoMFtacBibVTYH+lsVfsk2d1HOJEYan4migjgZ3dz3vKQqUN9rnLG1ZzHW9d2H8zhAOSFS2b4BsobsfgdXrxh/N5J7WnC2R3zaV95fanjvSXKEFHW4PlGXU6Egq+NqkYEJdfxnykE4+Dmg040au304VVJRByhhR21V4d59KLRVQ3CqMDtcOseo8hb2tEsWIzvJWHvpQkiZeI5+3RXY4V2ykk3hdFkPPqXlSzhEd1b+x6pAHamkdIPtIGNeb40gpKHGc0AomHDiBMKVM9fNgcQfBkcho0GijgZFkcJWKYPQon+3ImzE+XLfldAA+oy6kpBMejGl7q34N1KiUOybanzZ3RE5wQCrYrsPVyT50iG0m05mranx+e2JquUbdJb06ZfmKWV9kvTEbtThNf9GSrKOrDcy7duqr85DQB8xzsNB7yuL2oRKDNThBxYZJ+Ztw3a8OrvJ/k/w+k9U8B/R7+70gSUT6whZ6rwEWrfXAGAE="
+        },
+        {
+          "text": "I'll help you investigate. Let me check what Route53 record-sets currently exist in your setup."
+        },
+        {
+          "toolUse": {
+            "toolUseId": "tooluse_urSDwBsoo0G05Do3UJvg88",
+            "name": "query_resources",
+            "input": {
+              "limit": 100,
+              "region": "ap-northeast-2",
+              "resource_type": "record-sets",
+              "service": "route53"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "toolResult": {
+            "toolUseId": "tooluse_urSDwBsoo0G05Do3UJvg88",
+            "content": "Error listing route53/record-sets: HostedZoneId filter required - navigate from a hosted zone",
+            "isError": true
+          }
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "Ah, I see. To query record-sets in Route53, I need to first get the hosted zones, and then I can look at records within a specific zone. Let me query hosted zones first.",
+          "reasoningSignature": "EtQCCkgICxABGAIqQIbgUre4OmjXmcGBlTGa0H62TyprxMcm54cjVfryoSHdfqv2cwDhPWl6RC5x6L5o0S1kFa0brUzSXcD4SpIhOMwSDOhidR5vvgHc/EFWxRoMkICGyTDr+FOzRh+tIjB3O572OzAjt9GGAboRa/JlUx44+zW/zvd7CVsklJG+VCK2gRsXn2/9sQKJcBU9GaAquQFR4NjMzSbsFmCOl+FFba5xxn7MIn/T7INJlwpppGqj3iQNy0xLB7hCQc0jl6SsBBN1QVoOsI7PjVWpVIXIlkESiGSqg7qETFOE4TzFpys4kKbVpSI3Sl42rJoDA2uCklTdRGrdofqb0rPX4Bov4JeYG5wOF3zsZhSOiFKJQkZYw64fMASQHHhA/ykxW85lBxI/4WunrWVa9LpCnJ4SBNtPICUbwXJMdxeAFJEmQyJO7AEJx+Cf7eQDSRgB"
+        },
+        {
+          "text": "I need to first check your hosted zones. Let me do that:"
+        },
+        {
+          "toolUse": {
+            "toolUseId": "tooluse_7sBZCv5sBam8UbWYiCbP1k",
+            "name": "query_resources",
+            "input": {
+              "limit": 100,
+              "region": "ap-northeast-2",
+              "resource_type": "hosted-zones",
+              "service": "route53"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "toolResult": {
+            "toolUseId": "tooluse_7sBZCv5sBam8UbWYiCbP1k",
+            "content": "Found 1 route53/hosted-zones resources in ap-northeast-2 (showing 1-1):\n\n- ID: ap-northeast-2:Z01878331W9LZTLPGHQL9, Name: sodam.store\n"
+          }
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "Good! So we have one hosted zone: sodam.store. Now let me get the record-sets for this hosted zone. The issue is that I need to use get_resource_detail to see the records within this zone.",
+          "reasoningSignature": "EucCCkgICxABGAIqQDRIHZ23Lh5UDnJkl1Ykyz3fwZ36xFdHJawOfAhggFW3x9A/vJ8qCGwiMSb1wjujUNO+VFmyrgRMhebPLVc77iQSDAkMIEs9NYox0OJ2bhoMsNPjksvr2Fk6s3PGIjC8pqA5pYMlgh+/wn7r/ui0It4tN0/fJLFQpl+o3JFqo1bKU75joLJKzN+340qfDhIqzAGBwA2Sw9FHvM1gGeKr82ay5U0gRhCPeDW6eoW4/bExsJEIQQ+J154CZbyockK8veyY0RP4aOJCD6+UEpP45RCDkROozkZlURJ+s98YLxl/J79P5Edl1p/HvzlUMQNmpy/TzRgW7dk78Ec6I4zAFFBapzbaiOkXvr60vMM+PkYPX6T6GFInPBUNhfM2TPLCyqwY+VaPYG0YAQh1YtskObopGUe7nPs5IzHGm6hykAFbzGmL9CxWjUehiROx/Ga7lwz+kzLNTjN9ED6okT8YAQ=="
+        },
+        {
+          "text": "Now let me check the records in your hosted zone:"
+        },
+        {
+          "toolUse": {
+            "toolUseId": "tooluse_7EhYCez7WiIu0zYCSVRDD6",
+            "name": "get_resource_detail",
+            "input": {
+              "id": "Z01878331W9LZTLPGHQL9",
+              "region": "ap-northeast-2",
+              "resource_type": "hosted-zones",
+              "service": "route53"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "toolResult": {
+            "toolUseId": "tooluse_7EhYCez7WiIu0zYCSVRDD6",
+            "content": "ID: ap-northeast-2:Z01878331W9LZTLPGHQL9\nName: sodam.store\n\nRaw Data:\n{\n  \"CallerReference\": \"c00f6d47-04db-46bf-b1d0-95f91f956f95\",\n  \"Id\": \"/hostedzone/Z01878331W9LZTLPGHQL9\",\n  \"Name\": \"sodam.store.\",\n  \"Config\": {\n    \"Comment\": \"\",\n    \"PrivateZone\": false\n  },\n  \"Features\": null,\n  \"LinkedService\": null,\n  \"ResourceRecordSetCount\": 9\n}\n"
+          }
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "Good! The hosted zone shows 9 record-sets. Now I need to find a way to list all record-sets in this zone. Let me try querying record-sets with the hosted zone ID. I'll need to use the full zone ID from the Name field or try the ID parameter differently.\n\nActually, looking back at the error, it seems record-sets might need the zone ID. Let me try getting the records by using a different approach - maybe I can query record-sets and somehow filter by zone. Or I need to understand the proper format for the zone ID when querying record-sets.",
+          "reasoningSignature": "EscFCkgICxABGAIqQLeMtogvtSj64l6A2523pEc9qTH3w5PxaGALxvRDwZftasHk12DHm/lYleXeaWgcWa6MdbiA8Um1EvrIBKf7mJcSDH+r68j2gaay5qOpshoMrrJXpCFquw2p7AJBIjCnxrwuxt45eQoTSR9lvRDANyz89aEpwiQ/KbW32MQKa6WQ3vD+2MUTFD/al9J+X+QqrAS/ErSfORSAX6t3dKfS23nFCQRdDGs4o6hGCxGagADQqpsh8rrvqawXpmxGh9fTuaPhPdn1IhZzucpnrMf1jOBv6KV6hIO4uaxTicbZqFlpiesqUXZv/vj5fdi69nUdGKeWFi8inR7ATuo8SBG+AL3xAmU4iS7TiHxuXOopE2Kb8CshCcNDCiX5mWzNN7PEhGyEJBY36n7KI3RABkM2oIo/qqUa61CvEyYlvc63g3TRCOkLt+mq6sJofqnTfxj9AMeSMr0FX+J54SicZiVK9AiizK0/iyCOfsuZUePWo5dWSvOJbGCy3fzGvGBRy92zDVbUohvEisYmW1+tyOYfMjCKjhPt6Y1TrLmB+ymnFNrGplP/y2uDySF70NHm/BGQOF9c1USazMjhosIzrxqfot2/7bh5NVSLKLRWULkCLtvu1PvhLSywF2mXpXrgzQzevF6gV8NLqfyQGtgbZIdu6P+eSqPNUacP+bzYu66Hb5Kenu/Phg9UOReTtwBvSloL+GNBw23stTbMu2qFOz/dkOfUozYkDV8XQl5YwSnt703MMw1dBBz5oAKeCIsmckDExpWswNN3Efq7HDtpXqv93NhWTNsQhWrmJTvfPknZTV72lRNyJMaoaKTSXOylqM2MW1v4VSqOmGXaE3FBIiqPDN9qzESnBKzbopxMhKAhY9X+qDvD9T7fLHh2k5VYcjmL7Av6E/s/iUpLsDKObvJ+OMQmdETLq2R+2nw4h3P3GAE="
+        },
+        {
+          "text": "The hosted zone has 9 record-sets. Let me check the search AWS docs to understand what records you might be missing:"
+        },
+        {
+          "toolUse": {
+            "toolUseId": "tooluse_vmnGJjObXMgzyJOnwusrWE",
+            "name": "search_aws_docs",
+            "input": {
+              "query": "Route53 apex record main domain A record"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "toolResult": {
+            "toolUseId": "tooluse_vmnGJjObXMgzyJOnwusrWE",
+            "content": "AWS Documentation results for 'Route53 apex record main domain A record':\n\n1. Supported DNS record types - Amazon Route 53\n   URL: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html\n   Describes the DNS record types that are supported by Route 53.\n\n2. Choosing between alias and non-alias records - Amazon Route 53\n   URL: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html\n   Choose whether you want to create alias records in Amazon Route 53.\n\n3. Setting Up Amazon Route 53 Zone Apex Support with an AWS GovCloud (US)Elastic Load Balancing Load Balancer - AWS GovCloud (US)\n   URL: https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/setting-up-route53-zoneapex-elb.html\n   Set up Amazon Route 53 zone apex to work with your AWS GovCloud (US) Elastic Load Balancing load balancer.\n\n4. Working with records - Amazon Route 53\n   URL: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/rrsets-working-with.html\n   Create, change, delete, and list records using the Route 53 with the console.\n\n5. Values specific for simple records - Amazon Route 53\n   URL: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-values-basic.html\n   When you create simple records, you specify the following values.\n\n"
+          }
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "I can see the documentation references, but I still need to see the actual records. Let me try a different approach - maybe I can use get_resource_detail with record-sets to see if it shows all the records within the zone. Or perhaps I need to check Terraform state to see what was created.\n\nActually, the error message said \"HostedZoneId filter required - navigate from a hosted zone\". This suggests I might need to use a different ID format or that the tool requires traversing through the zone. Let me try using the zone ID in a different way or look at the Terraform configuration to understand what should be there.\n\nWithout being able to directly list all the records, I should ask the user about their Terraform configuration or help them investigate what might be missing. The main domain \"sodam.store\" should have at least an A record (apex record) pointing to their infrastructure.",
+          "reasoningSignature": "EqYICkgICxABGAIqQPX62bDMADvw0Kk5YKBK8AXRhE4jIO2BljlfoG8iWP6QAqauHqKWWM3wcMdSz478QL6r5JqwLEMk8QGGmVUbDiQSDE/qtcqFOCEuUwEwghoM5LURNe13rEs91mifIjBmQnR1hZo0uI9Bq+I/Id0KIXyB0Psf+vFVZ1erUGFCWWdlJN75YhSfs/bHH7M4GDsqiwdNpnXn1CGfOlb7+HCPA8D2rC/JKaB2+s4W7Q2pcTM4BfMZWk/8IkFpgHvuSKsmCJp6Pe95QSoXkUFdRfs9BLVUHzOSovJiVxzxHzqfEXIMig+0yGSgHb0yJWwWUGY4NSBmGfGRfVkrFvxoiaBDK7RpidDLWgo244XJE9X06CkN5CR5QsVaDEH57TCag4XKVo3ofAfZ2nVKbqGPUf1e77CNybWdA2d8orqPhr7kKHdXDwSzjm+i7N04xt1gkU+naohzLQhrAHVB4ZrCpOvtv7kULowhrzVC/owmpoqo+X2P7K6/RroxVCypArCNeA/5xBTQPn1uFh0IKF3m2QvsVYwPO1xp0/x13cZnPwrFazl+Xggw+D9MCy7sI53eg0kVqfSE98SR3PuoVpdeBjy7fAWc4N4CYJsvfO77s+Y5PeCJOZUV/mo1cl+MIm1TnKooBYEqPcL2HWO9ARP+k5i381RO5qTnlf7DvFSdzQ48ZBOwp3vUdwDgE4A+q3BKZZ8F0zQqGlEdNLQ1L9kknB6Un1NttxSW0fhA2RqRKCofaK9cizMxpTQiyzsChaJ3uzp6GUKyJREPNVbu/VOeh/Cc8D3zc1/u701Vu4eZP9pcyiP4qO9tqSWa2nFb/Qwk4AW/Kms6d/R4lg04RcWk1hjOipMnyBV9+GvX5biy56iwp2X4hSJGeurrk13lpns7ndlv+9wTWGuXBlAl/QCm4cpz7Js0/x7AYBxKyBOiMd77JBQxIYf2OsbfCUbCdpS+IAFalns3THWElKQDTVYdxhRxZUhm0V3NpfDM4sW+b9twg8kmIL4lLUhXOopIXAnEjKBje9V7W4ANshBCxS3HMagi65oxDvqO5eed5au6SonHDPfQ+hFta33THVD6zbTWLej0ibMTFzpHEbTMTl7VoT8nyYgdB2O9TDzH5oFny79n6w1VgeXRcdcXKtmLk0ZJxfyvIVhN+GXhFxqNP+fUdrvaxmpI1u5h66HA/XKov7c4teLRDC6XfbZ9xRjP5hg9+mXfCrc6RXGhue5IOK/q+5LhJT6DFBPM11rFKJmM6mPMg77FwOD7ZF9iFPZzcxWIFO0pLjT6amrj6XZTzrWqodbuE3jj8ROsNg0kQqTSV4hHnHkoLPINQtnoqT8iFSXk2ivanHbqv/VcMCNc3Aac4ft1O8LNALT/h6W5rVF8Yi7XXoAz0tk0J9V9j9KXOgIBGAE="
+        },
+        {
+          "text": "Based on what I found:\n- **Hosted Zone**: `sodam.store` exists with 9 record-sets total\n- **Main Domain Issue**: For the apex domain (sodam.store without subdomain), you typically need:\n  - An **A record** (or AAAA for IPv6) pointing to your infrastructure\n  - Or an **ALIAS record** if pointing to AWS resources (CloudFront, ALB, etc.)\n\n**Why this might be missing:**\n\n1. **Terraform didn't create it** - Check your Terraform code to ensure the root domain record is defined (e.g., `aws_route53_record` with name = \"sodam.store\" or empty name \"\")\n\n2. **Only subdomains exist** - You might have records for `www.sodam.store` or other subdomains, but not the bare domain\n\n3. **Terraform plan wasn't applied** - The record might be in your `.tf` files but not actually created in AWS yet\n\n**To investigate:**\n- Can you check your Terraform configuration? Look for `aws_route53_record` resources without a subdomain prefix\n- The root domain record should typically look like:\n  ```hcl\n  resource \"aws_route53_record\" \"main\" {\n    zone_id = aws_route53_zone.main.zone_id\n    name    = \"sodam.store\"\n    type    = \"A\"  # or ALIAS\n    alias {\n      name                   = aws_cloudfront_distribution.main.domain_name\n      zone_id                = aws_cloudfront_distribution.main.hosted_zone_id\n      evaluate_target_health = false\n    }\n  }\n  ```\n\nWhat infrastructure are you pointing `sodam.store` to (CloudFront, ALB, etc.)?"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "text": "when I dig it, it shows like below:~$ dig sodam.store  ; \u003c\u003c\u003e\u003e DiG 9.20.17 \u003c\u003c\u003e\u003e sodam.store ;; global options: +cmd ;; Got answer: ;; -\u003e\u003eHEADER\u003c\u003c- opcode: QUERY, status: NOERROR, id: 14516 ;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1  ;; OPT PSEUDOSECTION: ; EDNS: version: 0, flags:; udp: 4096 ;; QUESTION SECTION: ;sodam.store.   IN A  ;; AUTHORITY SECTION: sodam.store.  900 IN SOA ns-348.awsdns-43.com. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400  ;; Query time:"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "reasoning": "Looking at the dig output, the user is getting an SOA record but NO A record for the apex domain (sodam.store). This is the problem.\n\nThe dig shows:\n- ANSWER: 0 (no answer/A record found)\n- AUTHORITY SECTION shows the SOA record from the Route53 hosted zone\n\nThis confirms that:\n1. The hosted zone exists and is properly configured\n2. But there's NO A record (or any alias record) pointing to anything for the bare domain\n\nSo the issue is that their Terraform setup didn't create the apex A record. The hosted zone is there (9 records exist), but apparently none of them is an apex A record.\n\nThis could mean:\n1. Their Terraform code doesn't have the resource defined for the apex domain\n2. Or the resource was defined but somehow wasn't applied\n3. Or they're pointing to a subdomain only (www.sodam.store) but not the bare domain\n\nI should explain this clearly and suggest they check their Terraform code for the missing apex record resource.",
+          "reasoningSignature": "EtQICkgICxABGAIqQF6rAyuU1mZUSLP2d2fb22B57rPvEym+VLLrcMblQO1GvTfDarjsEEYBbK+GRCk57TXs7UgTGU5jNWhpV8STKaISDOJJFVVjff0M6mARshoMcLwn1yy+LSUlzF7dIjCuLIhkTLXgZdPqFWiZjft2qtX6GkBlxzxuu4RGtxRue6aJa4glmmh9DQowU6Rg9OUquQcTO72HNQOYcFGWq7Dcih4RkwB61vjUo//oAL0ZC/t4BwxrMzOUE9R6rCo1XvF8qDdEoNQ5sBPvtPukt47Epx+TdrMz0b3rpiDXg6Lj36TLtVl1i98axY/frzRzbM8gth0oFHcHQQzu4ipqEhig/d5KfgMFpRwcNrJgpDBPDQXh9DQiOKZtnPpKY5APu4YheoL/7ndaR3tqCnyMphdkNo52KH/0loL9+QbyGGHlbfM/z1IyjAFYailpaJ/ElJOO4StfnUzj2Z2hTNrxtDIGIs6Azxi0wXVUYcjPeipzG28ZGptryUYmbH/Y6s7bNLbQwv5Oijm736QEn/rihfdEtSomLH1sZEciu9yxSiqZ1cF+Rl5f+XJbQw9HDJptGz4sNre0OQlanT7+Q8xz4UCinQ7z73JI3a+G0xwvFI/i/H2VSzDjtmO7KixNHehka/tPM2CwIcWMIvKfx7DfyTeAsi7R7X6ebTbVgk3iLPdm4J84RC6XTGJpqz8K76ps5UQPbtslNq2KEFqXkNFU1GTDv/gp7YHSNh++ErCthNcjzfA1C2JxPwOWxryltpWdIiOGzXYzoPmL3BmKulE2bmOTXzhcXPhl7QhOliksb7LL9c9YR9EbWZTYN7yYpSeCoAhr27Ck96YeC+I7ovvEb7/7BKcEVmQ6mIQoMqTOzRceX0Anz/cu+vG63MEL5NG9E6UXO0+OgrOYKL3zaWzWGj8hO3d7Z/YCLabU0NHj+2O1FpFHvfeVL8M1bj90URYY/OJMXJsKPjoDkR+cFvQBtj6BbyUNTGTxMHi9fu7f5EDn58SD8bSvxR/0OQTJDdDB97aH/TK7fGpbgeWOz5nCIh6/JIeL+LJQjKdYGFGdIVbjdZmFEDzE6zYuONnutOu7t73Qd1COLwg1B1z7xHvVYMS8MMytueNsTUiR0LXGnEbLOI9VYDMPeOhwxZ2IsrsmImT3fLwW0rneboSeKG2BfstzjecNfrwBa1+fhKSD5x2d6BMpYVoppD3EwmgrEQ5yWMtP7b7vrFmgL03Ow2kVqSHBDBEjE1FoG8ksrmZcHqlPquzcMIaxOJjqZGNzZdLp8qCO3TbKN/uPw761JvfbDAVcEmRWtEM5cCkf297pfeA5gttZy0x/6NSAKzBr6ZESIW/7ee5Pq93A2FOPCifB2qWCdEKIBVRtw47FRRrfn6a4cmya/3XSrpQ+W8s3a/dEZauPHbFl8Xu4z6rXo7ksHuVBnrUL8v14Wqq42532kuAbi3tVd7/ExvkYsmGsgxgB"
+        },
+        {
+          "text": "Ah, that's the issue! The `dig` output shows:\n\n- **ANSWER: 0** - No A record exists for the apex domain\n- **AUTHORITY SECTION** shows only the SOA record from Route53\n\nThis confirms: **Your main domain `sodam.store` has no A record (or ALIAS record) configured.**\n\n**Why this happened with Terraform:**\n\nYour Terraform code likely:\n1. **Didn't include an apex domain record** - Only created subdomains like `www.sodam.store`\n2. **Or the resource wasn't applied** - The `.tf` file has it, but `terraform apply` wasn't run\n3. **Or it was deleted accidentally** - Someone removed it manually from Route53\n\n**To fix it:**\n\nAdd this to your Terraform configuration:\n\n```hcl\n# If pointing to CloudFront\nresource \"aws_route53_record\" \"main_apex\" {\n  zone_id = aws_route53_zone.main.zone_id\n  name    = \"sodam.store\"\n  type    = \"A\"\n  alias {\n    name                   = aws_cloudfront_distribution.main.domain_name\n    zone_id                = aws_cloudfront_distribution.main.hosted_zone_id\n    evaluate_target_health = false\n  }\n}\n\n# Or if pointing to ALB\nresource \"aws_route53_record\" \"main_apex\" {\n  zone_id = aws_route53_zone.main.zone_id\n  name    = \"sodam.store\"\n  type    = \"A\"\n  alias {\n    name                   = aws_lb.main.dns_name\n    zone_id                = aws_lb.main.zone_id\n    evaluate_target_health = false\n  }\n}\n```\n\nThen run:\n```bash\nterraform plan\nterraform apply\n```\n\n**Quick check:** What are the 9 existing records? Do you have `www.sodam.store` working but not the bare domain?"
+        }
+      ]
+    }
+  ],
+  "context": {
+    "service": "route53",
+    "resource_type": "record-sets",
+    "user_regions": [
+      "ap-northeast-2"
+    ],
+    "user_profiles": [
+      "__sdk_default__"
+    ],
+    "mode": "list",
+    "resource_count": 9
+  }
+}

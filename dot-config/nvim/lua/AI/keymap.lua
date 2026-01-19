@@ -131,3 +131,18 @@ wk_map({
         ["I"] = { gen_command("chat", chat.cra), desc = "improve readability: prompt from avante", mode = { "v" } },
     },
 })
+
+-- MEMO:: sidekick.nvim
+local cld = require("sidekick.cli")
+wk_map({
+    ["<leader>a"] = {
+        group = "  Claude Code",
+        order = { "a", "d", "t", "v", "f", "<Space>" },
+        ["a"] = { function() cld.toggle({ name = "claude", focus = true }) end, desc = "attach", mode = { "n", "v" } },
+        ["d"] = { function() cld.close() end, desc = "detach" },
+        ["t"] = { function() cld.send({ msg = "{this}" }) end, desc = "Send This", mode = { "n", "x" } },
+        ["v"] = { function() cld.send({ msg = "{selection}" }) end, desc = "Send Visual Selection", mode = { "x" } },
+        ["f"] = { function() cld.send({ msg = "{file}" }) end, desc = "Send File" },
+        ["<Space>"] = { function() cld.prompt() end, desc = "Select Prompt", mode = { "n", "x" } },
+    },
+})

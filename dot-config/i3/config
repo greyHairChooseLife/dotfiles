@@ -73,18 +73,19 @@ bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
 # Start Applications
 bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
 ##bindsym $mod+F2 exec palemoon google-chrome-stable
-bindsym $mod+Mod1+1 exec --no-startup-id "brave --app=$(xclip -o -selection clipboard)"
 bindsym $mod+F2 exec brave
-bindsym $mod+Mod1+2 exec brave
 bindsym $mod+F3 exec pcmanfm
 # bindsym $mod+Mod1+3 exec pcmanfm
+bindsym $mod+Mod1+1 exec --no-startup-id "brave --app=$(xclip -o -selection clipboard)"
+bindsym $mod+Mod1+2 exec brave
 # bindsym $mod+Mod1+3 exec --no-startup-id "brave --app=https://www.figma.com/files/recents"
-bindsym $mod+Mod1+3 exec --no-startup-id "brave --app=https://www.figma.com/design/pOEeRKwSk30FQEsKEuO4MW/%EC%97%B0%EC%8A%B5%EC%9E%A5?node-id=24-2"
+bindsym $mod+Mod1+3 exec --no-startup-id "brave --app=https://gemini.google.com/app"
+bindsym $mod+Mod1+4 exec --no-startup-id "brave --app=https://www.figma.com/design/pOEeRKwSk30FQEsKEuO4MW/%EC%97%B0%EC%8A%B5%EC%9E%A5?node-id=24-2"
+bindsym $mod+Mod1+5 exec --no-startup-id "brave --app=https://notebooklm.google.com"
 
 
 # bindsym $mod+F3 exec ranger
 bindsym $mod+Shift+F3 exec pcmanfm_pkexec
-bindsym $mod+Mod1+4 exec --no-startup-id "brave --app=https://notebooklm.google.com"
 bindsym $mod+F5 exec terminal -e 'mocp'
 bindsym $mod+i exec --no-startup-id bash ~/dotfiles/dot-config/bash.sub/vocal/vocal.sh
 bindsym $mod+Shift+i exec --no-startup-id bash ~/dotfiles/dot-config/bash.sub/vocal/vocal.sh cancel

@@ -1,0 +1,62 @@
+# Frontmatter 옵션
+
+- **allowed-tools**
+  - 목적: list of tools the command can use
+  - 기본값: inherits from the conversation
+
+- **argument-hint**
+  - 목적: the arguments expected for the slash command. example: argument-hint: add [tagid] | remove [tagid] | list. this hint is shown to the user when auto-completing the slash command.
+  - 기본값: none
+
+- **context**
+  - 목적: set to fork to run the command in a forked sub-agent context with its own conversation history.
+  - 기본값: inline (no fork)
+
+- **agent**
+  - 목적: specify which agent type to use when context: fork is set. only applicable when combined with context: fork.
+  - 기본값: general-purpose
+
+- **description**
+  - 목적: brief description of the command
+  - 기본값: uses the first line from the prompt
+
+- **model**
+  - 목적: specific model string (see models overview)
+  - 기본값: inherits from the conversation
+
+- **disable-model-invocation**
+  - 목적: whether to prevent the skill tool from calling this command
+  - 기본값: false
+
+- **hooks**
+  - 목적: define hooks scoped to this command's execution. see define hooks for commands.
+  - 기본값: none
+
+
+# examples
+
+
+For example:
+
+```md
+---
+allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
+argument-hint: [message]
+description: Create a git commit
+model: claude-3-5-haiku-20241022
+---
+
+Create a git commit with message: $ARGUMENTS
+```
+
+Example using positional arguments:
+
+```md
+---
+argument-hint: [pr-number] [priority] [assignee]
+description: Review pull request
+---
+
+Review PR #$1 with priority $2 and assign to $3.
+Focus on security, performance, and code style.
+```

@@ -14,7 +14,7 @@ alias tpl='sel=$(tp ls | tac | fzf --header="Attach or Create the selected sessi
   [ -n "$sel" ] && tmuxp load -y "$sel"'
 
 # alias tpl.='tmuxp load ./tmuxp.yaml'
-tpl.() {
+tp.() {
     if [ -z "$@" ]; then
         tmuxp load ./tmuxp.yaml
         return
