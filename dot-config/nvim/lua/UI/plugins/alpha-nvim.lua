@@ -92,7 +92,7 @@ return {
             dashboard.button("te", "term", ":cd ~/.config/alacritty | e alacritty.toml<CR>"),
             dashboard.button("tm", "tmux", ":cd ~/.config/tmux | e tmux.conf<CR>"),
             dashboard.button("vi", "vi", ":cd ~/.config | e nvim<CR>"),
-            dashboard.button("ba", "bash", ":cd ~/.config | e bash.sub/<CR>"),
+            dashboard.button("ba", "bash", ":cd ~/.config | e zsh.sub/<CR>"),
             dashboard.button("sc", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
             dashboard.button("_", "                              ______  sessions __", ""),
             dashboard.button("sv", "Session View", function()

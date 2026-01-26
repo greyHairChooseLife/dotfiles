@@ -3,7 +3,7 @@ vi ~/.commands
 # List repositories for a specific user or organization
 gh repo list <username/org>
 # Clone a repository from one of your organizations
-gh org list
+gh org list | fzf-tmux
 
 org=$(gh org list | fzf) && repo=$(gh repo list "$org" | fzf | awk '{print $1}') && gh repo clone "$repo"
 
