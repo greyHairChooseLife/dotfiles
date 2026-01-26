@@ -1,8 +1,0 @@
-- name: openrouter/deepseek/deepseek-chat
-  extra_params:
-    extra_body:
-      provider:
-        # Only use these providers, in this order
-        order: ["DeepInfra"]
-        # Don't fall back to other providers
-        allow_fallbacks: false
