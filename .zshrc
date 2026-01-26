@@ -39,13 +39,8 @@ if type dircolors > /dev/null 2>&1; then
     fi
 fi
 
-# Aliases
+# Basic aliases (detailed aliases in ~/.config/zsh.sub/alias.sh)
 alias ls='ls --color=auto'
-alias ll='ls -la'
-alias c='clear'
-alias grep='grep --colour=auto'
-alias egrep='egrep --colour=auto'
-alias fgrep='fgrep --colour=auto'
 
 xhost +local:root > /dev/null 2>&1
 
@@ -68,13 +63,13 @@ export SYSTEMD_EDITOR=/usr/bin/nvim
 
 # Source additional config files
 if [[ -d ~/.config/zsh.sub ]]; then
-    for file in ~/.config/zsh.sub/*.sh; do
+    for file in ~/.config/zsh.sub/*.sh(N); do
         [[ -r "$file" ]] && source "$file"
     done
 fi
 
 if [[ -d ~/.local/state/zsh.sub ]]; then
-    for file in ~/.local/state/zsh.sub/*.sh; do
+    for file in ~/.local/state/zsh.sub/*.sh(N); do
         [[ -r "$file" ]] && source "$file"
     done
 fi

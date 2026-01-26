@@ -276,7 +276,7 @@ nmcli -s -g 802-11-wireless-security.psk connection show $(nmcli connection show
 ip link show
 
 # 공인아이피 확인
-curl https://api.ipify.org
+curl https://api.ipify.org; echo
 
 # sshfs
 sshfs -o IdentityFile=~/.ssh/dev-server.pem,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 ubuntu@3.39.132.9:/home/ubuntu/sshfs ~/jg/05.NMM/sshfs
