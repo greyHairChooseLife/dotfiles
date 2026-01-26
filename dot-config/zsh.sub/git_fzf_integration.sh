@@ -83,6 +83,9 @@ _async_fetch_all() {
                   && gg
 }
 
+# Unalias if exists (oh-my-zsh conflict)
+unalias gg 2>/dev/null
+
 gg() {
     local command_list=$(
         cat << EOF

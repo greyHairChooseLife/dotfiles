@@ -14,6 +14,11 @@ export ZSH="$HOME/.oh-my-zsh"
 # Set name of the theme to load
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
+# fzf-tab configuration (must be before plugins load)
+# Use Tab to accept selection
+zstyle ':fzf-tab:*' fzf-flags '--bind=tab:accept'
+zstyle ':fzf-tab:*' continuous-trigger '/'
+
 # Plugins
 plugins=(
   git

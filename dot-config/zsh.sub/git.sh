@@ -71,6 +71,9 @@ gf_origin() {
     eval "$cmd"
 }
 
+# Unalias if exists (oh-my-zsh conflict)
+unalias gf 2>/dev/null
+
 gf() {
     # fzf -m 옵션 추가
     targets=$(
