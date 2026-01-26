@@ -25,7 +25,7 @@ openSetOfChatGPT() {
 
 chatGPT_services() {
   local services choices browser_cmd
-  declare -A services=(
+  typeset -A services=(
     ["tmp_(4o)"]="https://chatgpt.com/?temporary-chat=true&model=gpt-4o"
     ["1.Basic(o1-mini)"]="https://chatgpt.com/?model=o1-mini"
     ["2.Code"]="https://chatgpt.com/g/g-2DQzU5UZl-code-copilot"

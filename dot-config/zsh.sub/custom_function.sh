@@ -1,18 +1,23 @@
 fman() {
-    # 모든 실행 가능한 명령어, 함수, alias 목록 가져오기 및 중복 제거
-    local commands=$(compgen -c | sort | uniq)
+    # 모든 실행 가능한 명령어 목록 가져오기
+    local all_commands=(${(k)commands})
 
     # 사용자 정의 함수 목록 가져오기
-    local functions=$(declare -F | cut -d' ' -f3)
+    local user_functions=(${(k)functions})
 
     # Alias 목록 가져오기
-    local aliases=$(alias | cut -d'=' -f1 | sed "s/alias //g")
+    local user_aliases=(${(k)aliases})
 
-    # 함수와 alias 제거
-    commands=$(echo "$commands" | grep -vxF -f <(echo "$functions") | grep -vxF -f <(echo "$aliases"))
+    # 함수와 alias 제거 (commands만 남김)
+    local commands_only=()
+    for cmd in $all_commands; do
+        if [[ ! " ${user_functions[@]} " =~ " ${cmd} " ]] && [[ ! " ${user_aliases[@]} " =~ " ${cmd} " ]]; then
+            commands_only+=($cmd)
+        fi
+    done
 
     # fzf를 사용하여 명령어 선택 및 tldr, man 페이지 미리보기 및 열기
-    local cmd=$(echo "$commands" | fzf -q "$1" -m --preview "tldr {}")
+    local cmd=$(printf "%s\n" "${commands_only[@]}" | sort | fzf -q "$1" -m --preview "tldr {}")
     if [ -z "$cmd" ]; then
         echo "No command selected."
         return

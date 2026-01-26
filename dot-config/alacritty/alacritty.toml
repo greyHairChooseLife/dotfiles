@@ -21,7 +21,7 @@ dynamic_title = true
 [font]
 # normal.family = "D2Coding"
 normal.family = "D2CodingLigature Nerd Font Propo"
-size = 11.0  # current
+size = 11.0                                        # current
 # size = 11.0  # cbpm labtop
 # size = 9.0 # x390
 # size = 15.0 # portable monitor
@@ -55,7 +55,7 @@ search.focused_match = { background = "#0000FF" }
 cursor = { text = "#000000", cursor = "#ffffff" }
 
 [terminal.shell]
-program = "/bin/bash"
+program = "/bin/zsh"
 
 [hints]
 alphabet = "jfkdls;ahgurieowpq"

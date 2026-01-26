@@ -1,25 +1,22 @@
 # Create history directory if it doesn't exist
-mkdir -p ~/.bash_history_dir
+mkdir -p ~/.zsh_history_dir
 
 # PID-based history file
-export HISTFILE=~/.bash_history_dir/pid_$$
+export HISTFILE=~/.zsh_history_dir/pid_$$
 export HISTSIZE=500
-export HISTFILESIZE=200000
-export HISTCONTROL=ignoreboth
-export HISTIGNORE="ls:cd:exit:pwd"
-# shopt -s histappend
+export SAVEHIST=200000
 
 edit_and_return_command() {
     # 현재 줄을 임시 파일에 저장
     local tmpfile=$(mktemp)
-    READLINE_LINE="${READLINE_LINE:-}"
-    echo "$READLINE_LINE" > "$tmpfile"
+    echo "$BUFFER" > "$tmpfile"
     # 에디터로 편집
-    ${EDITOR:-vi} "$tmpfile"
+    ${EDITOR:-vi} "$tmpfile" < /dev/tty > /dev/tty
     # 편집 결과를 다시 커맨드라인에 복원
-    READLINE_LINE="$(cat "$tmpfile")"
-    READLINE_POINT=${#READLINE_LINE}
+    BUFFER="$(cat "$tmpfile")"
+    CURSOR=${#BUFFER}
     rm "$tmpfile"
+    zle reset-prompt
 }
 
 # Function to save only successful commands
@@ -27,13 +24,12 @@ save_successful_history() {
     local exit_code=$?
     if [[ $exit_code -eq 127 ]]; then
         # Remove the last command from history if that is typo command
-        history -d $(history 1 | awk '{print $1}') 2> /dev/null || true
+        fc -R
     else
-        # history -a
         local last_cmd=$(fc -ln -1 | sed 's/^[[:space:]]*//')
         if [[ -n "$last_cmd" ]]; then
             local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-            echo "$timestamp $(pwd) $last_cmd" >> ~/.bash_history_dir/pid_$$
+            echo "$timestamp $(pwd) $last_cmd" >> ~/.zsh_history_dir/pid_$$
         fi
     fi
     return $exit_code
@@ -42,14 +38,14 @@ save_successful_history() {
 delete_history_entry() {
     local pid="$1"
     local entry="$2"
-    local histfile="$HOME/.bash_history_dir/pid_$pid"
+    local histfile="$HOME/.zsh_history_dir/pid_$pid"
     local tmpfile
     tmpfile=$(mktemp)
     grep -F -v -- "$entry" "$histfile" > "$tmpfile" && mv "$tmpfile" "$histfile"
 }
 delete_history_entry_global() {
     local entry="$1"
-    local histdir="$HOME/.bash_history_dir"
+    local histdir="$HOME/.zsh_history_dir"
     local tmpfile
     for file in "$histdir"/pid_*; do
         [ -e "$file" ] || continue
@@ -63,11 +59,12 @@ delete_history_entry_global() {
     return 1
 }
 
-export PROMPT_COMMAND="save_successful_history"
+# Use precmd hook for zsh
+precmd_functions+=(save_successful_history)
 
 get_full_field_list_per_process() {
     local pid="${1:-$$}"
-    cat ~/.bash_history_dir/pid_"$pid" 2> /dev/null \
+    cat ~/.zsh_history_dir/pid_"$pid" 2> /dev/null \
         | awk '{ key=""; for (i=3; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
         | sort -n -k1,2
 }
@@ -100,7 +97,7 @@ per_process_history() {
 # Global history function (using rg)
 # datetime으로 시작하는것만 추려
 get_full_field_list_global() {
-    cat ~/.bash_history_dir/pid_* 2> /dev/null \
+    cat ~/.zsh_history_dir/pid_* 2> /dev/null \
         | awk '{ key=""; for (i=4; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
         | rg -- '^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}' \
         | sort -n -k1,2
@@ -131,15 +128,8 @@ global_history() {
 
 # Optional: Cleanup old PID files
 cleanup_old_history() {
-    find ~/.bash_history_dir -name "pid_*" -mtime +7 -delete
+    find ~/.zsh_history_dir -name "pid_*" -mtime +7 -delete
 }
-
-export -f delete_history_entry
-export -f delete_history_entry_global
-export -f get_full_field_list_per_process
-export -f get_full_field_list_per_process_no_path
-export -f get_full_field_list_global
-export -f get_full_field_list_global_no_path
 
 # Command aliases
 alias hip='per_process_history'      # Current process history

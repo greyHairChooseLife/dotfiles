@@ -49,7 +49,7 @@ fzf_find_image_file() {
 
     fd --type file -e jpg -e jpeg -e png -e svg | sort \
         | FZF_PREVIEW_IMAGE_WIDTH=40 \
-          fzf --prompt "Images: " \
+            fzf --prompt "Images: " \
             --header '<Enter>: open in nvim (vertical split)' \
             --layout=default \
             --preview-window=up:70%:wrap \
@@ -218,8 +218,3 @@ alias j='fzf_find_dir'
 alias j.='fzf_find_dir_hidden'
 alias ffg='smart_grep'
 alias ffg.='smart_grep_hidden'
-
-export -f fzf_find_image_file
-export -f fzf_find_file_unified
-export -f fzf_find_dir
-export -f fzf_find_dir_hidden

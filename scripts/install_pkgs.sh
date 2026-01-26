@@ -139,7 +139,8 @@ sudo pacman -S --needed \
     serie \
     sig \
     tailscale \
-    pass
+    pass \
+    zsh
 
 # Install AUR packages
 yay -S --needed \

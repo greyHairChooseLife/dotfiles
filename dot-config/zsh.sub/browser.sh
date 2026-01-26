@@ -65,7 +65,7 @@ google_notebooklm() {
 alias G='G_services'
 G_services() {
     local services choices browser_cmd
-    declare -A services=(
+    typeset -A services=(
            ["1.Mail"]="https://www.gmail.com"
            ["2.Calendar"]="https://calendar.google.com/calendar/u/0/r/month"
            ["3.Tasks"]="https://tasks.google.com/embed/?origin=https://calendar.google.com"

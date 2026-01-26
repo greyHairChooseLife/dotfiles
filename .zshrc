@@ -1,8 +1,9 @@
 #
-# ~/.bashrc
+# ~/.zshrc
 #
 
-[[ $- != *i* ]] && return
+# Return if not interactive
+[[ -o interactive ]] || return
 
 colors() {
     local fgc bgc vals seq0
@@ -32,37 +33,39 @@ colors() {
     done
 }
 
-[ -r /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion
+# Zsh completion system
+autoload -Uz compinit
+compinit
 
 # Change the window title of X terminals
 case ${TERM} in
-    xterm* | rxvt* | Eterm* | aterm | kterm | gnome* | interix | konsole*)
-        PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
+    xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|interix|konsole*)
+        precmd() {
+            print -Pn "\e]0;%n@%m:%~\a"
+        }
         ;;
     screen*)
-        PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+        precmd() {
+            print -Pn "\e_%n@%m:%~\e\\"
+        }
         ;;
 esac
 
 use_color=true
 
 # Set colorful PS1 only on colorful terminals.
-# dircolors --print-database uses its own built-in database
-# instead of using /etc/DIR_COLORS.  Try to use the external file
-# first to take advantage of user additions.  Use internal bash
-# globbing instead of external grep binary.
 safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
 match_lhs=""
-[[ -f ~/.dir_colors   ]] && match_lhs="${match_lhs}$(< ~/.dir_colors)"
-[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(< /etc/DIR_COLORS)"
+[[ -f ~/.dir_colors   ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
+[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(<>/etc/DIR_COLORS)"
 [[ -z ${match_lhs}    ]] \
-    && type -P dircolors > /dev/null \
+    && type dircolors > /dev/null 2>&1 \
     && match_lhs=$(dircolors --print-database)
 [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
 
 if ${use_color}; then
-    # Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
-    if type -P dircolors > /dev/null; then
+    # Enable colors for ls, etc.
+    if type dircolors > /dev/null 2>&1; then
         if [[ -f ~/.dir_colors ]]; then
             eval $(dircolors -b ~/.dir_colors)
         elif [[ -f /etc/DIR_COLORS ]]; then
@@ -71,11 +74,9 @@ if ${use_color}; then
     fi
 
     if [[ ${EUID} == 0 ]]; then
-        #PS1='\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] '
-        PS1='\W\$ '
+        PS1='%1~%# '
     else
-        #PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] '
-        PS1='\W\$ '
+        PS1='%1~%# '
     fi
 
     alias ls='ls --color=auto'
@@ -86,16 +87,13 @@ if ${use_color}; then
     alias fgrep='fgrep --colour=auto'
 else
     if [[ ${EUID} == 0 ]]; then
-        # show root@ when we don't have colors
-        #PS1='\u@\h \W \$ '
-        PS1='\W\$ '
+        PS1='%1~%# '
     else
-        #PS1='\u@\h \w \$ '
-        PS1='\w\$ '
+        PS1='%~%# '
     fi
 fi
 
-unset use_color safe_term match_lhs sh
+unset use_color safe_term match_lhs
 
 # export PATH="/opt/flutter/bin:$PATH"
 # export JAVA_HOME='/usr/lib/jvm/java-8-openjdk/jre'
@@ -108,35 +106,36 @@ unset use_color safe_term match_lhs sh
 
 xhost +local:root > /dev/null 2>&1
 
-# Bash won't get SIGWINCH if another process is in the foreground.
-# Enable checkwinsize so that bash will check the terminal size when
-# it regains control.  #65623
-# http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
-shopt -s checkwinsize
+# Zsh options
+setopt INTERACTIVE_COMMENTS
+setopt HIST_IGNORE_DUPS
+setopt APPEND_HISTORY
+setopt SHARE_HISTORY
 
-shopt -s expand_aliases
-
-# export QT_SELECT=4
-
-# Enable history appending instead of overwriting.  #139609
-shopt -s histappend
-# show history datetime
-HISTTIMEFORMAT='%F %T '
-HISTCONTROL=ignoredups
+# History settings
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
 
 export EDITOR=/usr/bin/nvim
 export editor=/usr/bin/nvim
 export SUDO_EDITOR=/usr/bin/nvim
 export SYSTEMD_EDITOR=/usr/bin/nvim
 
-for file in ~/.config/bash.sub/*.sh; do
-    source $file
-done
+# Source additional config files
+if [[ -d ~/.config/zsh.sub ]]; then
+    for file in ~/.config/zsh.sub/*.sh; do
+        [[ -r "$file" ]] && source "$file"
+    done
+fi
 
-for file in ~/.local/state/bash.sub/*.sh; do
-    source $file
-done
+if [[ -d ~/.local/state/zsh.sub ]]; then
+    for file in ~/.local/state/zsh.sub/*.sh; do
+        [[ -r "$file" ]] && source "$file"
+    done
+fi
 
 export PATH=$HOME/.local/bin:$PATH
 
-eval "$(fzf --bash)"
+# fzf integration
+eval "$(fzf --zsh)"
