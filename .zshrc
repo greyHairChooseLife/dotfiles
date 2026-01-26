@@ -1,10 +1,31 @@
-#
-# ~/.zshrc
-#
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 # Return if not interactive
 [[ -o interactive ]] || return
 
+# Path to your oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set name of the theme to load
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Plugins
+plugins=(
+  git
+  fzf-tab
+  zsh-syntax-highlighting
+)
+
+source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# Colors function
 colors() {
     local fgc bgc vals seq0
 
@@ -33,67 +54,22 @@ colors() {
     done
 }
 
-# Zsh completion system
-autoload -Uz compinit
-compinit
-
-# Change the window title of X terminals
-case ${TERM} in
-    xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|interix|konsole*)
-        precmd() {
-            print -Pn "\e]0;%n@%m:%~\a"
-        }
-        ;;
-    screen*)
-        precmd() {
-            print -Pn "\e_%n@%m:%~\e\\"
-        }
-        ;;
-esac
-
-use_color=true
-
-# Set colorful PS1 only on colorful terminals.
-safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
-match_lhs=""
-[[ -f ~/.dir_colors   ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
-[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(<>/etc/DIR_COLORS)"
-[[ -z ${match_lhs}    ]] \
-    && type dircolors > /dev/null 2>&1 \
-    && match_lhs=$(dircolors --print-database)
-[[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
-
-if ${use_color}; then
-    # Enable colors for ls, etc.
-    if type dircolors > /dev/null 2>&1; then
-        if [[ -f ~/.dir_colors ]]; then
-            eval $(dircolors -b ~/.dir_colors)
-        elif [[ -f /etc/DIR_COLORS ]]; then
-            eval $(dircolors -b /etc/DIR_COLORS)
-        fi
-    fi
-
-    if [[ ${EUID} == 0 ]]; then
-        PS1='%1~%# '
-    else
-        PS1='%1~%# '
-    fi
-
-    alias ls='ls --color=auto'
-    alias ll='ls -la'
-    alias c='clear'
-    alias grep='grep --colour=auto'
-    alias egrep='egrep --colour=auto'
-    alias fgrep='fgrep --colour=auto'
-else
-    if [[ ${EUID} == 0 ]]; then
-        PS1='%1~%# '
-    else
-        PS1='%~%# '
+# dircolors
+if type dircolors > /dev/null 2>&1; then
+    if [[ -f ~/.dir_colors ]]; then
+        eval $(dircolors -b ~/.dir_colors)
+    elif [[ -f /etc/DIR_COLORS ]]; then
+        eval $(dircolors -b /etc/DIR_COLORS)
     fi
 fi
 
-unset use_color safe_term match_lhs
+# Aliases
+alias ls='ls --color=auto'
+alias ll='ls -la'
+alias c='clear'
+alias grep='grep --colour=auto'
+alias egrep='egrep --colour=auto'
+alias fgrep='fgrep --colour=auto'
 
 # export PATH="/opt/flutter/bin:$PATH"
 # export JAVA_HOME='/usr/lib/jvm/java-8-openjdk/jre'
@@ -117,6 +93,7 @@ HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 
+# Editor
 export EDITOR=/usr/bin/nvim
 export editor=/usr/bin/nvim
 export SUDO_EDITOR=/usr/bin/nvim
@@ -139,3 +116,6 @@ export PATH=$HOME/.local/bin:$PATH
 
 # fzf integration
 eval "$(fzf --zsh)"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

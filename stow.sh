@@ -40,6 +40,26 @@ if [ "$install_answer" == 'y' ]; then
     fi
 fi
 
+# Install oh-my-zsh and plugins if not exists
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    read -p "oh-my-zsh not found. Install oh-my-zsh and plugins? (y/n): " install_omz
+    if [ "$install_omz" == 'y' ]; then
+        echo "Installing oh-my-zsh..."
+        git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh
+
+        echo "Installing powerlevel10k theme..."
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+
+        echo "Installing fzf-tab plugin..."
+        git clone https://github.com/Aloxaf/fzf-tab ~/.oh-my-zsh/custom/plugins/fzf-tab
+
+        echo "Installing zsh-syntax-highlighting plugin..."
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+
+        echo "oh-my-zsh installation completed."
+    fi
+fi
+
 read -p "
 Config symlink (u)pdate, (d)elete, (c)ancel: " answer
 
