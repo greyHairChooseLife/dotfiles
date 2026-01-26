@@ -22,6 +22,7 @@ RUN pacman -Syu --noconfirm && \
   jq \
   yq \
   lsd \
+  xclip \
   && pacman -Scc --noconfirm
 
 # Create user (same UID as host for volume permissions)
@@ -48,7 +49,8 @@ RUN git clone --depth=1 https://github.com/Aloxaf/fzf-tab \
   ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 # Create config directories
-RUN mkdir -p ~/.config ~/.config/tmux ~/.local/bin ~/.local/state/zsh.sub
+RUN mkdir -p ~/.config ~/.config/tmux ~/.local/bin ~/.local/state/zsh.sub \
+    ~/.local/bin/tmux/plugins ~/.local/share/tmux/resurrect
 
 # Install Portal (file transfer tool)
 RUN curl -sL https://github.com/SpatiumPortae/portal/releases/download/v1.2.3/portal_1.2.3_Linux_x86_64.tar.gz | tar xz -C ~/.local/bin portal

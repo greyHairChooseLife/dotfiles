@@ -47,12 +47,15 @@ echo "Starting $CONTAINER_NAME..."
 docker run -it \
     --name $CONTAINER_NAME \
     --hostname devbox \
+    -e TMUX_CONFIG_DIR="/home/devuser/.config/tmux" \
+    -e TMUX_PLUGIN_DIR="/home/devuser/.local/bin/tmux/plugins" \
+    -e TMUX_RESURRECT_DIR="/home/devuser/.local/share/tmux/resurrect" \
     -v "$DOTFILES_DIR/.zshrc:/home/devuser/.zshrc:ro" \
     -v "$DOTFILES_DIR/.p10k.zsh:/home/devuser/.p10k.zsh:ro" \
     -v "$DOTFILES_DIR/.dir_colors:/home/devuser/.dir_colors:ro" \
     -v "$DOTFILES_DIR/dot-config/zsh.sub:/home/devuser/.config/zsh.sub:ro" \
     -v "$DOTFILES_DIR/dot-config/nvim:/home/devuser/.config/nvim:ro" \
-    -v "$DOTFILES_DIR/dot-config/tmux/tmux.conf:/home/devuser/.config/tmux/tmux.conf:ro" \
+    -v "$DOTFILES_DIR/dot-config/tmux:/home/devuser/.config/tmux:ro" \
     -v "$HOME/workspace:/home/devuser/workspace" \
     -w /home/devuser \
     $IMAGE_NAME \
