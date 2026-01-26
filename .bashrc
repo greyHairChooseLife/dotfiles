@@ -143,3 +143,4 @@ export PATH=$HOME/.local/bin:$PATH
 # => 꼭 필요한가?
 # xdotool key Escape Escape
 # clear
+eval "$(fzf --bash)"

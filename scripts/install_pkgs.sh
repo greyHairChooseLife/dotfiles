@@ -137,7 +137,9 @@ sudo pacman -S --needed \
     zoxide \
     lsof \
     serie \
-    sig
+    sig \
+    tailscale \
+    pass
 
 # Install AUR packages
 yay -S --needed \

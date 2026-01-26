@@ -9,7 +9,6 @@
     ],
     "defaultMode": "default"
   },
-  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "npx -y @owloops/claude-powerline@latest"
@@ -24,5 +23,6 @@
   },
   "outputStyle": "Default",
   "alwaysThinkingEnabled": false,
-  "promptSuggestionEnabled": false
+  "promptSuggestionEnabled": false,
+  "model": "sonnet"
 }
