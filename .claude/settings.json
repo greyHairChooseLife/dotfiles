@@ -23,5 +23,6 @@
   },
   "outputStyle": "Default",
   "alwaysThinkingEnabled": false,
-  "promptSuggestionEnabled": false
+  "promptSuggestionEnabled": false,
+  "model": "sonnet"
 }

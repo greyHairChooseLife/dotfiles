@@ -35,18 +35,10 @@ RUN groupadd -g $GID devuser && \
 USER devuser
 WORKDIR /home/devuser
 
-# Install oh-my-zsh
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-
-# Install powerlevel10k
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
-  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-
 # Install zsh plugins
-RUN git clone --depth=1 https://github.com/Aloxaf/fzf-tab \
-  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab && \
-  git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git \
-  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+RUN mkdir -p ~/.zsh && \
+  git clone --depth=1 https://github.com/sindresorhus/pure.git ~/.zsh/pure && \
+  git clone --depth=1 https://github.com/Aloxaf/fzf-tab ~/.zsh/fzf-tab
 
 # Create config directories
 RUN mkdir -p ~/.config ~/.config/tmux ~/.local/bin ~/.local/state/zsh.sub \

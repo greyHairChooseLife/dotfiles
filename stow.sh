@@ -40,23 +40,19 @@ if [ "$install_answer" == 'y' ]; then
     fi
 fi
 
-# Install oh-my-zsh and plugins if not exists
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    read -p "oh-my-zsh not found. Install oh-my-zsh and plugins? (y/n): " install_omz
-    if [ "$install_omz" == 'y' ]; then
-        echo "Installing oh-my-zsh..."
-        git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh
+# Install zsh plugins if not exists
+if [ ! -d "$HOME/.zsh/pure" ]; then
+    read -p "zsh plugins not found. Install pure prompt and fzf-tab? (y/n): " install_zsh
+    if [ "$install_zsh" == 'y' ]; then
+        mkdir -p ~/.zsh
 
-        echo "Installing powerlevel10k theme..."
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+        echo "Installing pure prompt..."
+        git clone https://github.com/sindresorhus/pure.git ~/.zsh/pure
 
         echo "Installing fzf-tab plugin..."
-        git clone https://github.com/Aloxaf/fzf-tab ~/.oh-my-zsh/custom/plugins/fzf-tab
+        git clone https://github.com/Aloxaf/fzf-tab ~/.zsh/fzf-tab
 
-        echo "Installing zsh-syntax-highlighting plugin..."
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-
-        echo "oh-my-zsh installation completed."
+        echo "zsh plugins installation completed."
     fi
 fi
 

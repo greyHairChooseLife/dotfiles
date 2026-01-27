@@ -1,41 +1,39 @@
-# 1. Powerlevel10k Instant Prompt (최상단 필수)
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# 1. Pure prompt 설정
+fpath+=($HOME/.zsh/pure)
+autoload -Uz promptinit
+promptinit
+prompt pure
+# Git 업데이트 체크 방지 (속도 향상)
+export PURE_GIT_PULL=1
+# PURE_PROMPT_SYMBOL="★"
+PURE_SUSPENDED_JOBS_SYMBOL="󱅂 "
+PURE_GIT_STASH_SYMBOL=" "
+PURE_GIT_DOWN_ARROW="󰧩"
+PURE_GIT_UP_ARROW="󰠽"
+PURE_PROMPT_SYMBOL=""
+PURE_PROMPT_VICMD_SYMBOL=" >"
 
-# 2. 기본 설정
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="powerlevel10k/powerlevel10k"
-
-# 3. OMZ 최적화 플래그
-DISABLE_AUTO_UPDATE="true"
-DISABLE_MAGIC_FUNCTIONS="true"
-DISABLE_COMPFIX="true"
-ZSH_DISABLE_COMPFIX="true"
-COMPLETION_WAITING_DOTS="false"
-zstyle ':omz:lib:misc' aliases no
-zstyle ':omz:alpha:lib:completion' autoreload no
-zstyle ':omz:alpha:lib:terminfo' bracketed-paste-magic no
-
-# 4. 플러그인 (최소화)
-plugins=(git fzf-tab)
-
-# 5. compinit 최적화 (하루 1회만 재생성)
+# 2. Completion 시스템
 autoload -Uz compinit
-if [[ -n ${ZSH_COMPDUMP}(#qN.mh+24) ]]; then
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
   compinit
 else
   compinit -C
 fi
 
-# 6. Oh My Zsh 실행
-source $ZSH/oh-my-zsh.sh
+# 3. Completion 스타일
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
-# 7. 외부 플러그인 (lazy load 방식으로 변경 가능)
+# 4. fzf-tab (completion 강화)
+[[ -d ~/.zsh/fzf-tab ]] && source ~/.zsh/fzf-tab/fzf-tab.plugin.zsh
+
+# 5. Syntax highlighting
 [[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
   source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# 8. 서브 설정 파일 (캐시된 경로 사용)
+# 6. 서브 설정 파일
 () {
   local sub_dirs=("$HOME/.config/zsh.sub" "$HOME/.local/state/zsh.sub")
   local dir file
@@ -47,19 +45,18 @@ source $ZSH/oh-my-zsh.sh
   done
 }
 
-# 9. fzf 초기화 (캐시 사용)
+# 7. fzf
 if [[ ! -f ~/.fzf.zsh ]] || [[ $(command -v fzf) -nt ~/.fzf.zsh ]]; then
   fzf --zsh > ~/.fzf.zsh 2>/dev/null
 fi
 [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 
-# 10. p10k 설정
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
-
-# 11. fzf-tab 설정
+# 8. fzf-tab 설정
 zstyle ':fzf-tab:*' fzf-flags '--bind=tab:accept'
 zstyle ':fzf-tab:*' accept-line enter
 zstyle ':fzf-tab:*' continuous-trigger '/'
 
-# 12. 옵션
+# 9. 옵션
 unsetopt nomatch
+setopt auto_cd
+setopt hist_ignore_dups
