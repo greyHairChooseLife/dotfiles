@@ -115,7 +115,8 @@ function M.tab_only_close_hidden()
 end
 
 local function close_if_last_with_nvimtree()
-    local all_windows = vim.api.nvim_list_wins()
+    local all_windows = vim.fn.getbufinfo({ buflisted = 1 })
+    -- local all_windows = vim.api.nvim_list_wins()
 
     if #all_windows == 2 then
         local current_win = vim.api.nvim_get_current_win()
@@ -129,8 +130,9 @@ local function close_if_last_with_nvimtree()
         end
 
         if other_win then
-            local buf = vim.api.nvim_win_get_buf(other_win)
-            if vim.bo[buf].filetype == "NvimTree" then vim.cmd("q") end
+            -- local buf = vim.api.nvim_win_get_buf(other_win.bufnr)
+            local buf = other_win.bufnr
+            if vim.bo[buf].filetype == "NvimTree" then M.gQ() end
         end
     end
 end
@@ -152,16 +154,24 @@ function M.gq(bufnr, winid)
     local excluded_buftype = vim.tbl_contains(excluded_buftypes, vim.bo[bufnr].buftype)
 
     if is_buflisted and not bufname_empty and not buffer_active_in_other_window and not excluded_filetype and not excluded_buftype then
-        if #vim.fn.getbufinfo({ buflisted = 1 }) == 1 then return vim.cmd("q") end
-        close_if_last_with_nvimtree()
-        vim.cmd.bdelete(bufnr)
-    else
-        if utils.is_last_window() then
-            vim.cmd("q")
-        else
-            vim.api.nvim_win_close(winid or 0, false)
+        if #vim.fn.getbufinfo({ buflisted = 1 }) == 1 then
+            if utils.tree:is_visible() then
+                M.gQ()
+            else
+                vim.cmd("q")
+            end
+            return
         end
+        -- close_if_last_with_nvimtree()
+        vim.cmd.bdelete(bufnr)
+        return
     end
+
+    if utils.is_last_window() then return vim.cmd("q!") end
+
+    if vim.bo[bufnr].filetype == "NvimTree" then return vim.cmd("q!") end
+
+    vim.api.nvim_win_close(winid or 0, false)
 end
 
 function M.ge()
