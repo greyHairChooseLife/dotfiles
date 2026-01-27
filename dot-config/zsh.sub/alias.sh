@@ -1,4 +1,5 @@
 # File operations
+alias ls='ls --color=auto'
 alias lsd='lsd --group-directories-first'
 alias ll='lsd -lXFt'
 alias lla='lsd -lAXtF'
@@ -15,9 +16,9 @@ alias rg='rg --ignore-case'
 alias gr='rg --ignore-case'
 
 # Navigation
+alias .='cd $HOME/dotfiles'
 alias ..='cd ..'
 alias ...='cd ../..'
-alias dot='cd $HOME/dotfiles'
 
 # Clipboard
 alias m='pwd | xclip -selection clipboard'

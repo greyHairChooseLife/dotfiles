@@ -19,7 +19,7 @@ fzf_find_image_file2() {
 
     # Only find image files
     fd --type file -e jpg -e jpeg -e png -e svg | sort \
-        | fzf --prompt "Images: " \
+        | fzf-tmux --prompt "Images: " \
             --header '<Enter>: open in nvim (vertical split)' \
             --preview-window=up:70%:wrap \
             --bind "enter:become(nvim -o {+})" \
@@ -49,7 +49,7 @@ fzf_find_image_file() {
 
     fd --type file -e jpg -e jpeg -e png -e svg | sort \
         | FZF_PREVIEW_IMAGE_WIDTH=40 \
-            fzf --prompt "Images: " \
+            fzf-tmux --prompt "Images: " \
             --header '<Enter>: open in nvim (vertical split)' \
             --layout=default \
             --preview-window=up:70%:wrap \
@@ -129,7 +129,7 @@ fzf_find_dir() {
     dir=$(fd --type d --max-depth 1 \
         | awk 'BEGIN{print ".."} {print}' \
         | sort -r \
-        | fzf \
+        | fzf-tmux \
             --prompt="$prompt" \
             --header="$header" \
             --bind "alt-h:become(fzf_find_dir_hidden)" \
@@ -154,7 +154,7 @@ fzf_find_dir_hidden() {
     dir=$(fd --type d --hidden -I --max-depth 1 \
         | awk 'BEGIN{print ".."} {print}' \
         | sort -r \
-        | fzf \
+        | fzf-tmux \
             --prompt="$prompt" \
             --header="$header" \
             --bind "alt-h:become(fzf_find_dir)" \
@@ -177,7 +177,7 @@ smart_grep() {
     rm -f /tmp/rg-fzf-{r,f}
     local RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
     local INITIAL_QUERY="${*:-}"
-    : | fzf --ansi --disabled --query "$INITIAL_QUERY" \
+    : | fzf-tmux --ansi --disabled --query "$INITIAL_QUERY" \
         --prompt "ripgrep & ${curr_dir}/" \
         --header "<CTRL-T>: Toggle ripgrep / FZF" \
         --bind "start:reload:$RG_PREFIX {q}" \
@@ -195,7 +195,7 @@ smart_grep_hidden() {
     rm -f /tmp/rg-fzf-{r,f}
     local RG_PREFIX="rg --hidden --column --line-number --no-heading --color=always --smart-case "
     local INITIAL_QUERY="${*:-}"
-    : | fzf --ansi --disabled --query "$INITIAL_QUERY" \
+    : | fzf-tmux --ansi --disabled --query "$INITIAL_QUERY" \
         --prompt "ripgrep & ${curr_dir}/" \
         --header "<CTRL-T>: Toggle ripgrep / FZF" \
         --bind "start:reload:$RG_PREFIX {q}" \

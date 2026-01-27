@@ -4,7 +4,7 @@ return {
     -- [WARN] CodeCompanion.nvim will experience breaking changes soon. Pin to version v17.33.0 or earlier to avoid this.
     -- See: https://github.com/olimorris/codecompanion.nvim/pull/2439
     -- commit = "8ad65ee",
-    version = "17.33.0", -- Pin to this version
+    -- version = "17.33.0", -- Pin to this version
     dependencies = {
         "nvim-lua/plenary.nvim",
         "nvim-treesitter/nvim-treesitter",

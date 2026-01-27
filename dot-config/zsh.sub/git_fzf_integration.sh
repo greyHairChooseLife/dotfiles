@@ -84,15 +84,15 @@ _async_fetch_all() {
 }
 
 # Unalias if exists (oh-my-zsh conflict)
-unalias gg 2>/dev/null
+unalias gg 2> /dev/null
 
 gg() {
     local command_list=$(
         cat << EOF
-_async_fetch_all
 look_graph_log
 look_commit
 look_branch_or_tag
+_async_fetch_all
 EOF
     )
 

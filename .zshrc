@@ -1,83 +1,65 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+# 1. Powerlevel10k Instant Prompt (최상단 필수)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Return if not interactive
-[[ -o interactive ]] || return
-
-# Path to your oh-my-zsh installation.
+# 2. 기본 설정
 export ZSH="$HOME/.oh-my-zsh"
-
-# Set name of the theme to load
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-# fzf-tab configuration (must be before plugins load)
-# Use Tab to accept selection
-zstyle ':fzf-tab:*' fzf-flags '--bind=tab:accept'
-zstyle ':fzf-tab:*' continuous-trigger '/'
+# 3. OMZ 최적화 플래그
+DISABLE_AUTO_UPDATE="true"
+DISABLE_MAGIC_FUNCTIONS="true"
+DISABLE_COMPFIX="true"
+ZSH_DISABLE_COMPFIX="true"
+COMPLETION_WAITING_DOTS="false"
+zstyle ':omz:lib:misc' aliases no
+zstyle ':omz:alpha:lib:completion' autoreload no
+zstyle ':omz:alpha:lib:terminfo' bracketed-paste-magic no
 
-# Plugins
-plugins=(
-  git
-  fzf-tab
-  zsh-syntax-highlighting
-)
+# 4. 플러그인 (최소화)
+plugins=(git fzf-tab)
 
+# 5. compinit 최적화 (하루 1회만 재생성)
+autoload -Uz compinit
+if [[ -n ${ZSH_COMPDUMP}(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+
+# 6. Oh My Zsh 실행
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
+# 7. 외부 플러그인 (lazy load 방식으로 변경 가능)
+[[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
+  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# dircolors
-if type dircolors > /dev/null 2>&1; then
-    if [[ -f ~/.dir_colors ]]; then
-        eval $(dircolors -b ~/.dir_colors)
-    elif [[ -f /etc/DIR_COLORS ]]; then
-        eval $(dircolors -b /etc/DIR_COLORS)
-    fi
-fi
-
-# Basic aliases (detailed aliases in ~/.config/zsh.sub/alias.sh)
-alias ls='ls --color=auto'
-
-xhost +local:root > /dev/null 2>&1
-
-# Zsh options
-setopt INTERACTIVE_COMMENTS
-setopt HIST_IGNORE_DUPS
-setopt APPEND_HISTORY
-setopt SHARE_HISTORY
-
-# History settings
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-
-# Editor
-export EDITOR=/usr/bin/nvim
-export editor=/usr/bin/nvim
-export SUDO_EDITOR=/usr/bin/nvim
-export SYSTEMD_EDITOR=/usr/bin/nvim
-
-# Source additional config files
-if [[ -d ~/.config/zsh.sub ]]; then
-    for file in ~/.config/zsh.sub/*.sh(N); do
-        [[ -r "$file" ]] && source "$file"
+# 8. 서브 설정 파일 (캐시된 경로 사용)
+() {
+  local sub_dirs=("$HOME/.config/zsh.sub" "$HOME/.local/state/zsh.sub")
+  local dir file
+  for dir in $sub_dirs; do
+    [[ -d $dir ]] || continue
+    for file in $dir/*.sh(N); do
+      source $file
     done
+  done
+}
+
+# 9. fzf 초기화 (캐시 사용)
+if [[ ! -f ~/.fzf.zsh ]] || [[ $(command -v fzf) -nt ~/.fzf.zsh ]]; then
+  fzf --zsh > ~/.fzf.zsh 2>/dev/null
 fi
+[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 
-if [[ -d ~/.local/state/zsh.sub ]]; then
-    for file in ~/.local/state/zsh.sub/*.sh(N); do
-        [[ -r "$file" ]] && source "$file"
-    done
-fi
+# 10. p10k 설정
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-export PATH=$HOME/.local/bin:$PATH
+# 11. fzf-tab 설정
+zstyle ':fzf-tab:*' fzf-flags '--bind=tab:accept'
+zstyle ':fzf-tab:*' accept-line enter
+zstyle ':fzf-tab:*' continuous-trigger '/'
 
-# fzf integration
-eval "$(fzf --zsh)"
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# 12. 옵션
+unsetopt nomatch
