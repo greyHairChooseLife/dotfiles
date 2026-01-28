@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/zsh
 
 # 1. 절대 경로 설정 (스크립트 위치 기준)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="${0:A:h}" # bash to zsh: SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PYTHON_DIR="$SCRIPT_DIR/python"
 AUDIO_FILE="/tmp/vocal_recording.wav"
 NOTIFY_ID_FILE="/tmp/vocal_notify_id"

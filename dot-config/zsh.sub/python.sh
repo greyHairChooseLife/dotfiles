@@ -1,4 +1,4 @@
-SCRIPT_PATH=${HOME}/dotfiles/dot-config/bash.sub/scripts/python
+SCRIPT_PATH=${HOME}/dotfiles/dot-config/zsh.sub/scripts/python
 
 alias py='python'
 # alias src='source .venv/bin/activate'

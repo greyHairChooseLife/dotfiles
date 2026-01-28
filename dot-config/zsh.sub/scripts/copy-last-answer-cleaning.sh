@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # 1. Find the most recently modified project file
 # We look in ~/.claude/projects, go 2 levels deep, and sort by modification time

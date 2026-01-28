@@ -70,7 +70,7 @@ EOF
     local myPretty="'%C(blue)%h%Creset -%C(brightred)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
     local cmd=$(echo "$command_list" | fzf \
         --header="$header" \
-        --preview="echo {} | sed 's/.*:  //' | sed 's/git log/git log --oneline --graph --color=always/' | sed \"s/MY/$myPretty/\" | bash")
+        --preview="echo {} | sed 's/.*:  //' | sed 's/git log/git log --oneline --graph --color=always/' | sed \"s/MY/$myPretty/\" | zsh")
 
     eval $(echo "$cmd" | sed "s/.*:  //" | sed "s/git log/git log --oneline --graph --color=always/" | sed "s/MY/$myPretty/")
 }

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Set up the virtual environment home directory
 export VENV_HOME="$HOME/.local/state/python_venv"
@@ -93,9 +93,9 @@ venv_manager() {
 
         read -p "Will you activate? (y/n) " will_activate
         if [ "$will_activate" = "y" ] || [ "$will_activate" = " " ]; then
-          activate_conda_env "$name"
+            activate_conda_env "$name"
         else
-          venv_manager
+            venv_manager
         fi
     }
 
@@ -145,14 +145,25 @@ rm_conda_env"
     $selected_command
 }
 
-# If script is sourced, just define the function
-# If script is executed directly, run the function
-if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
-    # Script is being sourced
-    # Just export the function
-    export -f venv_manager
-else
-    # Script is being executed directly
-    # Run the function
+# DEPRECATED:: 2026-01-28
+# This is for Bash
+# # If script is sourced, just define the function
+# # If script is executed directly, run the function
+# if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+#     # Script is being sourced
+#     # Just export the function
+#     export -f venv_manager
+# else
+#     # Script is being executed directly
+#     # Run the function
+#     venv_manager
+# fi
+
+# Zsh 전용 실행/Source 감지 로직
+# ZSH_EVAL_CONTEXT가 'toplevel'이면 스크립트가 직접 실행된 것
+if [[ $ZSH_EVAL_CONTEXT == 'toplevel' ]]; then
+    # 직접 실행된 경우 함수 실행
+    # (주의: 직접 실행 시 activate는 하위 셸에서만 적용되고 종료됩니다. 현재 셸 적용은 source 필요)
     venv_manager
 fi
+# Source된 경우: 함수(venv_manager)가 현재 셸에 자동으로 정의되므로 별도 export 불필요

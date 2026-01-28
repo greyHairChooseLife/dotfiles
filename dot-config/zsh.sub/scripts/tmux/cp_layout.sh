@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 tmux list-w \
           | grep \* \
           | sed 's/.*\[layout //' \

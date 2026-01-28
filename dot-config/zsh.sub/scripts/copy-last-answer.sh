@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Directory where Claude stores project logs
 CLAUDE_DIR="$HOME/.claude/projects"

@@ -61,3 +61,8 @@ bindkey '^[^K' _smart_grep_widget
 # History navigation
 bindkey '^P' up-history
 bindkey '^N' down-history
+
+# unmap
+bindkey -e
+bindkey -r "^[h"
+bindkey -r "^[H"

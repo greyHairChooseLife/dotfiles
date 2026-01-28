@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 set -euo pipefail
 
-# source "/home/sy/dotfiles/dot-config/bash.sub/scripts/core/main.sh"
+# source "/home/sy/dotfiles/dot-config/zsh.sub/scripts/core/main.sh"
 
 ##? JSON navigator
 ##?

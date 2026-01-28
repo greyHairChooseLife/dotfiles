@@ -73,22 +73,3 @@ alias aws-tui='claws'     # github.com/clawscli/claws
 alias regex='trex'        # github.com/samyakbardiya/trex
 alias db='sqlit'
 alias nnd='~/.local/bin/nnd'
-
-# AWS SSM sessions (project-specific)
-nmm1() {
-    aws ssm start-session --target i-0a6da861072635265 \
-        --document-name AWS-StartInteractiveCommand \
-        --parameters 'command=["sudo -u ubuntu -i bash -c \"tmux new-session -A -s main\""]'
-}
-
-nmm2() {
-    aws ssm start-session --target i-0c52d4471571c7e76 \
-        --document-name AWS-StartInteractiveCommand \
-        --parameters 'command=["sudo -u ubuntu -i bash -c \"tmux new-session -A -s main\""]'
-}
-
-nmm3() {
-    aws ssm start-session --target i-04e337c7eeb34fb60 \
-        --document-name AWS-StartInteractiveCommand \
-        --parameters 'command=["sudo -u ubuntu -i bash -c \"tmux new-session -A -s main\""]'
-}
