@@ -1,5 +1,5 @@
 -- Global variables
-vim.g.mapleader = "\\" -- Set leader key
+vim.g.mapleader = "\\" -- 리더 키 설정
 
 -- specs table
 local workflows = {
@@ -25,13 +25,13 @@ for _, workflow in ipairs(workflows) do
 end
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
     vim.fn.system({
         "git",
         "clone",
         "--filter=blob:none",
         "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
+        "--branch=stable", -- 최신 안정 버전
         lazypath,
     })
 end
@@ -43,7 +43,7 @@ require("lazy").setup({
     git = { log = { "-50" } }, -- (L)og에서 몇개나 보여줄지
 
     diff = { cmd = "diffview.nvim" },
-    change_detection = { enabled = false }, -- automatically check for config file changes and reload the ui
+    change_detection = { enabled = false }, -- 구성 파일 변경을 자동으로 확인하고 UI를 다시 로드
     performance = {
         rtp = {
             disabled_plugins = { -- 기본 플러그인
@@ -66,7 +66,7 @@ require("lazy").setup({
                         size = { width = 0.95, height = 0.95 },
                     })
                 end,
-                desc = "Open terminal in plugin dir",
+                desc = "플러그인 디렉토리에서 터미널 열기",
             },
             ["Z"] = {
                 function(plugin)
@@ -83,7 +83,7 @@ require("lazy").setup({
                         vim.cmd("DiffviewFileHistory --reverse --range=HEAD..origin/HEAD")
                     end
                 end,
-                desc = "DiffviewOpen with current commit hash & CD into plugin dir",
+                desc = "현재 커밋 해시로 DiffviewOpen 및 플러그인 디렉토리로 CD",
             },
         },
     },

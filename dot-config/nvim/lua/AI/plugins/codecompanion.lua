@@ -71,11 +71,8 @@ return {
                     show_tools_processing = true, -- Show the loading message when tools are being executed?
 
                     icons = {
-                        -- pinned_buffer = " ",
-                        -- watched_buffer = "󰴅 ",
-                        buffer_pin = " ",
-                        buffer_watch = "󰴅 ", -- 󰂥
-                        --chat_context = " ",
+                        buffer_sync_all = " ", -- was: buffer_pin
+                        buffer_sync_diff = "󰴅 ", -- was: buffer_watch
                         chat_fold = " ",
                         tool_success = " ",
                         tool_failure = " ",
@@ -106,8 +103,35 @@ return {
                 },
             },
             adapters = {
+                -- WARN:: not working
+                acp = {
+                    opts = {
+                        show_presets = false,
+                    },
+
+                    claude_code = function()
+                        return require("codecompanion.adapters").extend("claude_code", {
+                            env = {
+                                CLAUDE_CODE_OAUTH_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN",
+                            },
+                        })
+                    end,
+
+                    gemini_cli = function()
+                        return require("codecompanion.adapters").extend("gemini_cli", {
+                            defaults = {
+                                auth_method = "gemini-api-key", -- "oauth-personal"|"gemini-api-key"|"vertex-ai"
+                            },
+                            env = {
+                                api_key = "GEMINI_API_KEY",
+                            },
+                        })
+                    end,
+                },
+
                 http = {
                     opts = {
+                        show_presets = false,
                         show_defaults = false,
                         show_model_choices = true,
                     },
@@ -146,15 +170,15 @@ return {
                         close = { modes = { n = "<C-c>", i = "<C-c>" } },
                         send = { modes = { i = { "<C-s>", "<A-Enter>" } } },
                         stop = { modes = { n = "<Esc><Esc><Esc>" } },
-                        pin = { modes = { n = "grp" } },
-                        watch = { modes = { n = "grw" } },
+                        buffer_sync_all = { modes = { n = "grp" } }, -- was: pin
+                        buffer_sync_diff = { modes = { n = "grw" } }, -- was: watch
                         goto_file_under_cursor = { modes = { n = "gO" } },
                         clear = { modes = { n = "gX" } },
                         previous_header = { modes = { n = "<C-p>" } },
                         next_header = { modes = { n = "<C-n>" } },
                         previous_chat = { modes = { n = "]]" } },
                         next_chat = { modes = { n = "[[" } },
-                        system_prompt = { modes = { n = "gts" } }, -- toggle system prompts
+                        system_prompt = { modes = { n = "gts" } }, -- toggle system prompt
                         yolo_mode = { modes = { n = "gta" } }, -- toggle auto tool mode
                         regenerate = { modes = { n = "gR" } },
                         copilot_stats = { modes = { n = "gs" } },
@@ -163,6 +187,13 @@ return {
                         name = "copilot",
                         -- model = "gpt-4.1",
                         model = "grok-code-fast-1",
+                    },
+                    slash_commands = {
+                        ["buffer"] = { opts = { provider = "snacks" }, keymaps = { modes = { n = { "<C-b>" } } } },
+                        ["file"] = { opts = { provider = "snacks" }, keymaps = { modes = { n = { "<C-f>" } } } },
+                        ["fetch"] = { opts = { provider = "snacks" }, keymaps = { modes = { n = { "<C-w>" } } } },
+                        ["help"] = { opts = { provider = "snacks" } },
+                        ["symbols"] = { opts = { provider = "snacks" } },
                     },
                     -- variables = {},
                 },

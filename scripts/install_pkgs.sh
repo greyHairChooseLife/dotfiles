@@ -169,7 +169,8 @@ yay -S --needed \
     portal-bin \
     pvw-bin \
     lazyssh-bin \
-    aws-session-manager-plugin
+    aws-session-manager-plugin \
+    claude-code-acp
 
 # Enable important services
 sudo systemctl enable NetworkManager

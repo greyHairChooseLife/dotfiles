@@ -165,7 +165,7 @@ M.add_buffer_reference = function()
 
     local add_buf_to_last_chat = function()
         local bufnr = vim.api.nvim_get_current_buf()
-        local chat_helpers = require("codecompanion.strategies.chat.helpers.init")
+        local chat_helpers = require("codecompanion.interactions.chat.helpers.init")
         local buf_utils = require("codecompanion.utils.buffers")
 
         local content = chat_helpers.format_buffer_for_llm(bufnr, buf_utils.get_info(bufnr).path)
@@ -188,7 +188,7 @@ M.add_buffer_reference = function()
         -- Check for duplicate before adding
         local chat = cdc.last_chat()
         if chat then
-            for _, ctx in ipairs(chat.context.Chat.context_items) do
+            for _, ctx in ipairs(chat.context_items) do
                 if ctx.id == id then
                     vim.notify("Already in context!", 2, { render = "minimal" })
                     return false
@@ -206,7 +206,7 @@ M.add_buffer_reference = function()
             bufnr = bufnr,
             id = id,
             path = path,
-            source = "codecompanion.strategies.chat.slash_commands.buffer",
+            source = "codecompanion.interactions.chat.slash_commands.buffer",
             opts = { watched = true },
         })
 
@@ -254,7 +254,7 @@ M.add_tab_buffers_reference = function()
     for _, win in ipairs(buffers) do
         local bufnr = vim.api.nvim_win_get_buf(win)
         local buf_utils = require("codecompanion.utils.buffers")
-        local chat_helpers = require("codecompanion.strategies.chat.helpers.init")
+        local chat_helpers = require("codecompanion.interactions.chat.helpers.init")
         -- local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
         local buftype = vim.bo[bufnr].buftype
         local path = vim.api.nvim_buf_get_name(bufnr)
@@ -279,7 +279,7 @@ M.add_tab_buffers_reference = function()
 
             -- 중복 체크
             local is_duplicate = false
-            for _, ctx in ipairs(chat.context.Chat.context_items) do
+            for _, ctx in ipairs(chat.context_items) do
                 if ctx.id == id then
                     is_duplicate = true
                     table.insert(skipped_buffers, vim.fn.fnamemodify(path, ":t"))
@@ -298,7 +298,7 @@ M.add_tab_buffers_reference = function()
                     bufnr = bufnr,
                     id = id,
                     path = path,
-                    source = "codecompanion.strategies.chat.slash_commands.buffer",
+                    source = "codecompanion.interactions.chat.slash_commands.buffer",
                     opts = { watched = true },
                 })
 
