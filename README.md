@@ -236,3 +236,4 @@ set -g @current_mode_indicator '#(bash $TMUX_CONFIG_DIR/utils/generate_mode_sign
   - https://github.com/claydugo/browsher.nvim
 
 
+
