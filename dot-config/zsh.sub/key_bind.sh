@@ -48,6 +48,11 @@ zle -N _smart_grep_widget
 # zle -N _fzf_find_dir_widget
 
 # Key bindings
+# unmap
+bindkey -e
+bindkey -r "^[h"
+bindkey -r "^[H"
+
 bindkey '^L' _clear_only_screen_widget
 bindkey '^[^L' _clear_screen_and_scrollback_widget  # Alt+Ctrl+L
 
@@ -61,8 +66,3 @@ bindkey '^[^K' _smart_grep_widget
 # History navigation
 bindkey '^P' up-history
 bindkey '^N' down-history
-
-# unmap
-bindkey -e
-bindkey -r "^[h"
-bindkey -r "^[H"

@@ -170,7 +170,9 @@ yay -S --needed \
     pvw-bin \
     lazyssh-bin \
     aws-session-manager-plugin \
-    claude-code-acp
+    claude-code-acp \
+    lazyactions-bin \
+    oxicord-bin
 
 # Enable important services
 sudo systemctl enable NetworkManager

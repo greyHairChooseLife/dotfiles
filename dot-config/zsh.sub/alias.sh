@@ -1,6 +1,6 @@
 # File operations
 alias ls='ls --color=auto'
-alias lsd='lsd --group-directories-first'
+alias lsd='lsd --group-directories-first --date "+%Y-%m-%d %H:%M"'
 alias ll='lsd -lXFt'
 alias lla='lsd -lAXtF'
 alias cp='cp -i'
@@ -47,6 +47,7 @@ alias d='docker'
 alias di='docker images'
 alias dc='docker-compose'
 alias lzd='lazydocker'
+alias lza='lazyactions'
 
 # Kubernetes
 alias k='kubectl'

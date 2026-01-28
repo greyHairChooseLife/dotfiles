@@ -1,3 +1,4 @@
+export EDITOR='nvim' # 충북프로메이커센터, 미래창업연구소
 # WARN:
 # ..
 # 1. 비밀번호 등 중요한 정보는 사용하지 않기(remote repository에 업로드 가능)

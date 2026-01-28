@@ -17,11 +17,12 @@ alias gs='git status'
 alias gss='git status --short'
 alias gl='git log'
 # alias gd='git --no-pager diff | delta --diff-so-fancy'
-function gd() {
-    git --no-pager diff "$@" | delta --diff-so-fancy
-}
-alias gst='git stash'
+function gd() { git --no-pager diff "$@" | delta --diff-so-fancy }
 
+alias vd="git-root > /dev/null && nvim -c 'DiffviewOpen --imply-local'"
+alias vh="git-root > /dev/null && nvim -c 'DiffviewFileHistory'"
+
+alias gst='git stash'
 alias gls='git log --oneline --simplify-by-decoration --all'
 alias glo='git log --oneline'
 alias gloa='git log --oneline --all'
@@ -72,7 +73,7 @@ gf_origin() {
 }
 
 # Unalias if exists (oh-my-zsh conflict)
-unalias gf 2>/dev/null
+unalias gf 2> /dev/null
 
 gf() {
     # fzf -m 옵션 추가

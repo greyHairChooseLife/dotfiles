@@ -4,7 +4,7 @@ if [[ -n "$TMUX" ]]; then
     _fzf_copy_cmd="tmux load-buffer -w -"
 fi
 
-alias fzf='fzf-tmux'
+# alias fzf='fzf-tmux'
 
 export FZF_DEFAULT_OPTS="
   --multi

@@ -10,8 +10,8 @@ alias tt='tmux attach \
 
 alias tp='tmuxp'
 
-alias tpl='sel=$(tp ls | tac | fzf --header="Attach or Create the selected session" --preview "bat --color=always ${TMUXP_CONFIGDIR}/{}.yaml"); \
-  [ -n "$sel" ] && tmuxp load -y "$sel"'
+alias tpl='sel=$(fd . $TMUXP_CONFIGDIR | tac | sed "s/.*tmuxp\///" | fzf --header="Attach or Create the selected session" --preview "bat --color=always ${TMUXP_CONFIGDIR}/{}"); \
+  [ -n "$sel" ] && tmuxp load -y "$TMUXP_CONFIGDIR/$sel"'
 
 # alias tpl.='tmuxp load ./tmuxp.yaml'
 tp.() {
@@ -49,4 +49,4 @@ tm.2_toggle_border() {
 alias 1='tm.1_title'
 alias 2='tm.2_toggle_border'
 # select tmux window and copy its layout
-alias tlayout='zsh /home/sy/dotfiles/dot-config/zsh.sub/scripts/tmux/cp_layout_fzf.sh'
+alias tlayout='zsh ${HOME}/dotfiles/dot-config/zsh.sub/scripts/tmux/cp_layout_fzf.sh'
