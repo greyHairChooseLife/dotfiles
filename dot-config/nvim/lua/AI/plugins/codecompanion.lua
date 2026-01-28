@@ -164,8 +164,6 @@ return {
                         -- model = "gpt-4.1",
                         model = "grok-code-fast-1",
                     },
-                    slash_commands = require("AI.codecompanion.slash_commands"),
-                    tools = require("AI.codecompanion.tools"),
                     -- variables = {},
                 },
                 inline = {
@@ -181,9 +179,8 @@ return {
                 },
             },
             prompt_library = require("AI.codecompanion.prompt_library"),
-            -- opts = { system_prompt = require("AI.codecompanion.system_prompts.v3") }, -- 기본 제공 시스템 프롬프트로 돌아가자. 2025-08-31
             extensions = require("AI.codecompanion.extensions"),
-            ignore_warnings = true,
+            ignore_warnings = false,
         })
 
         -- MEMO:: setup custom utils

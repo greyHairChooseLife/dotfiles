@@ -27,30 +27,10 @@ local predefined = {
     review_commit = "/review_commit",
     generate_commit_msg = "/generate_commit_msg",
     simplify_paragraph = "/simplify_paragraph",
-    -- DEPRECATED:: 2025-05-09
-    -- agsfc = "/analyze_git_status_for_commits",
 }
 local chat = {
     -- improve_readability
     ir = "Review the following code with a strong focus on readability. Suggest improvements to naming, structure, and clarity. If anything is hard to follow, ambiguous, or could be simplified, highlight it and propose cleaner alternatives. Prioritize clean, intuitive, and self-explanatory code.",
-    -- code_readability_analysis prompt from avante
-    cra = [[
-  You must identify any readability issues in the code snippet.
-  Some readability issues to consider:
-  - Unclear naming
-  - Unclear purpose
-  - Redundant or obvious comments
-  - Lack of comments
-  - Long or complex one liners
-  - Too much nesting
-  - Long variable names
-  - Inconsistent naming and code style.
-  - Code repetition
-  You may identify additional problems. The user submits a small section of code from a larger file.
-  Only list lines with readability issues, in the format <line_num>|<issue and proposed solution>
-  If there's no issues with code respond with only: <OK>
-  Answer in Korean.
-]],
 }
 local inline = {
     better_naming = "Improve this codeblocks by renaming unclear variables and parameters to something more descriptive, based on what they represent or do.",
@@ -101,18 +81,11 @@ wk_map({
 wk_map({
     ["<leader>ce"] = {
         group = "Prefill",
-        order = { "d", "e", "l", "f", "g", "n", "i", "I", "s", "R" },
+        order = { "d", "e", "l", "f", "g", "n", "r", "s", "R" },
         ["e"] = { gen_command("pre", predefined.explain), desc = "explain", mode = { "v" } },
         ["l"] = { gen_command("pre", predefined.lsp), desc = "lsp", mode = { "v" } },
         ["f"] = { gen_command("pre", predefined.fix), desc = "fix", mode = { "v" } },
         ["g"] = { gen_command("pre", predefined.code_workflow), desc = "  generate code", mode = { "n" } },
-        -- DEPRECATED:: 2025-05-08
-        -- to action palette only
-        -- ["c"] = {
-        -- 	gen_command("pre", predefined.agsfc),
-        -- 	desc = "analyze: staged & unstaged & untracked",
-        -- 	mode = { "n" },
-        -- },
         ["R"] = {
             gen_command("pre", predefined.review_commit),
             desc = "Review commit: HEAD or CommitHash",
@@ -126,9 +99,7 @@ wk_map({
 
         ["n"] = { gen_command("inline", inline.better_naming), desc = "󰊈 better naming", mode = { "v" } },
         ["d"] = { gen_command("inline", inline.docstring), desc = "󰊈 docstring", mode = { "v" } },
-
-        ["i"] = { gen_command("chat", chat.improve_readability), desc = "improve readability", mode = { "v" } },
-        ["I"] = { gen_command("chat", chat.cra), desc = "improve readability: prompt from avante", mode = { "v" } },
+        ["r"] = { gen_command("chat", chat.ir), desc = "improve readability", mode = { "v" } },
     },
 })
 
