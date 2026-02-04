@@ -411,7 +411,7 @@ return {
             example = { raw = "[!EXAMPLE]", rendered = "󰉹 Example", highlight = "RenderMarkdownHint" },
             quote = { raw = "[!QUOTE]", rendered = "󱆨 Quote", highlight = "RenderMarkdownQuote" },
             error = { raw = "[!ERROR]", rendered = " Error", highlight = "RenderMarkdownRed" },
-            note2 = { raw = "[!NOTE]", rendered = "󰋽 Note", highlight = "RenderMarkdownInfo", category = "github" },
+            note = { raw = "[!NOTE]", rendered = "󰌶 Note", highlight = "RenderMarkdownMyNote", category = "github" },
             -- My own
             test = { raw = "[!ts]", rendered = "󰨸 TEST ", highlight = "RenderMarkdownMyTest" },
             todo = { raw = "[!td]", rendered = " 󰥔 TODO ", highlight = "RenderMarkdownMySimpleTodo" },
@@ -421,7 +421,6 @@ return {
             reference = { raw = "[!rf]", rendered = "󰉢 REFERENCE ", highlight = "RenderMarkdownMyReference" },
             log = { raw = "[!lg]", rendered = "󰨸 Log ", highlight = "RenderMarkdownMyTest" },
             concept = { raw = "[!cn]", rendered = "󰃁 개념정리 ", highlight = "RenderMarkdownBlue" },
-            note = { raw = "[!nt]", rendered = "󰌶 Note", highlight = "RenderMarkdownMyNote" },
 
             my_red = { raw = "[!re]", rendered = "⚡ ", highlight = "RenderMarkdownRed" }, -- 
             my_blue = { raw = "[!bl]", rendered = "⚡ ", highlight = "RenderMarkdownBlue" },
