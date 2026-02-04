@@ -74,6 +74,11 @@ return {
                         text = true,
                     }):wait()
 
+                    if git_root.code ~= 0 then
+                        vim.notify(err or "No git managed.\r\n\r\npath: " .. vim.uv.cwd(), vim.log.levels.WARN)
+                        return nil
+                    end
+
                     if git_root.code == 0 then
                         -- Remove trailing newline and return the git root
                         return git_root.stdout:gsub("\n", "") .. "/"
@@ -100,7 +105,7 @@ return {
             },
             project_local_todo = {
                 command_name = "LocalTodo",
-                title = "      TODO      ",
+                title = "      Local TODO      ",
                 directory = function()
                     -- Try to get git root directory first
                     local git_root = vim.system({
@@ -110,6 +115,11 @@ return {
                     }, {
                         text = true,
                     }):wait()
+
+                    if git_root.code ~= 0 then
+                        vim.notify(err or "No git managed.\r\n\r\npath: " .. vim.uv.cwd(), vim.log.levels.WARN)
+                        return nil
+                    end
 
                     if git_root.code == 0 then
                         -- Remove trailing newline and return the git root
@@ -124,6 +134,21 @@ return {
                         return cwd .. "/"
                     end
                 end,
+                filename = function() return "TODO.md" end,
+
+                post_open = function(_, _)
+                    vim.wo.winhl = "Normal:NoteBackground,FloatBorder:LocalTodoBorder,FloatTitle:LocalTodoTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
+                    vim.wo.number = false
+                    vim.wo.foldcolumn = "2"
+                    vim.wo.relativenumber = false
+                    vim.wo.cursorline = false
+                    vim.wo.signcolumn = "no"
+                end,
+            },
+            global_todo = {
+                command_name = "GlobalTodo",
+                title = "      Global TODO      ",
+                directory = function() return "~/Documents/" end,
                 filename = function() return "TODO.md" end,
 
                 post_open = function(_, _)
