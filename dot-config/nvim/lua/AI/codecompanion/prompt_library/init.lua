@@ -17,6 +17,7 @@ return {
     ["os1"] = require(on_slash_commands .. "get_full_git_status_reference"),
     ["os2"] = require(on_slash_commands .. "spec_maker"),
     ["os3"] = require(on_slash_commands .. "todolist_maker"),
+    ["draw"] = require(on_slash_commands .. "excalidraw"),
 
     -- off action palette & keymap only
     ["ok1"] = require(on_keymaps .. "review_commit"),
