@@ -76,6 +76,12 @@ gf_origin() {
 unalias gf 2> /dev/null
 
 gf() {
+    # git 저장소인지 확인
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Error: Not a git repository."
+        return 1
+    fi
+
     # fzf -m 옵션 추가
     targets=$(
         for remote in $(git remote); do
