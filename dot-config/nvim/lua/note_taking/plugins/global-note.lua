@@ -75,7 +75,7 @@ return {
                     }):wait()
 
                     if git_root.code ~= 0 then
-                        vim.notify(err or "No git managed.\r\n\r\npath: " .. vim.uv.cwd(), vim.log.levels.WARN)
+                        vim.notify(err or "Not a git repository.\r\n\r\npath: " .. vim.uv.cwd(), vim.log.levels.WARN)
                         return nil
                     end
 
