@@ -78,14 +78,13 @@ You are a conversion assistant expertised in computer science and teaching. Conv
 ]]
 
 return {
-    -- strategy = "inline",
-    strategy = "chat",
+    interaction = "inline",
     description = "",
     opts = {
+        alias = "simplify_paragraph",
+        placement = "replace", -- For inline interaction: new, replace, add, before, chat
         modes = { "v" },
-        is_default = true, -- don't show on action palette
         is_slash_cmd = false,
-        short_name = "simplify_paragraph",
         auto_submit = true,
         user_prompt = false,
         ignore_system_prompt = true,

@@ -33,13 +33,12 @@ Notice: Before you answer, if full of related files contents might be needed for
 ]]
 
 return {
-    strategy = "chat",
+    interaction = "chat",
     description = "",
     opts = {
+        alias = "review_commit",
         modes = { "n", "v" },
-        is_default = true, -- don't show on action palette
         is_slash_cmd = false,
-        short_name = "review_commit",
         auto_submit = true,
         user_prompt = false,
         ignore_system_prompt = true,

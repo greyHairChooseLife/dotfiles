@@ -43,13 +43,12 @@ You are a commit assistant.
 ]]
 
 return {
-    strategy = "chat",
-    description = "",
+    interaction = "chat", -- chat, inline, workflow
+    description = "", -- shown in the Action Pallete
     opts = {
-        is_default = true, -- don't show on action palette
+        alias = "generate_commit_msg", -- Allows the prompt to be triggered via :CodeCompanion /{alias}
         is_slash_cmd = false,
         -- modes = { "v" },
-        short_name = "generate_commit_msg",
         auto_submit = true,
         user_prompt = false,
         ignore_system_prompt = true,
