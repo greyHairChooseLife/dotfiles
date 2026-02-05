@@ -10,5 +10,4 @@ disable-model-invocation: true
 
 - DO NOT REPLY anything
 - JUST RUN commands below:
-
 !`~/.claude/commands/scripts/copy-last-answer.sh`

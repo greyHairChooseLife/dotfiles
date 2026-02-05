@@ -23,6 +23,10 @@ figma() {
     browser --app="https://www.figma.com/files/recents"
     exit
 }
+excalidraw() {
+    browser --app="https://excalidraw.com/"
+    exit
+}
 discord() {
     browser --app="https://discord.com/channels/1071395189219938354/1071395190016843912"
     exit
@@ -66,16 +70,16 @@ alias G='G_services'
 G_services() {
     local services choices browser_cmd
     typeset -A services=(
-           ["1.Mail"]="https://www.gmail.com"
-           ["2.Calendar"]="https://calendar.google.com/calendar/u/0/r/month"
-           ["3.Tasks"]="https://tasks.google.com/embed/?origin=https://calendar.google.com"
-           ["4.Keep"]="https://keep.google.com"
-           ["5.Drive"]="https://drive.google.com/drive/my-drive"
-           ["-.Docs"]="https://docs.new"
-           ["-.Sheet"]="https://docs.google.com/spreadsheets/u/0/"
-           ["-.Hwp"]="https://hwp.polarisoffice.com"
-           ["-.notebookLM"]="https://notebooklm.google.com/"
-           ["-.All"]="all"
+                  ["1.Mail"]="https://www.gmail.com"
+                  ["2.Calendar"]="https://calendar.google.com/calendar/u/0/r/month"
+                  ["3.Tasks"]="https://tasks.google.com/embed/?origin=https://calendar.google.com"
+                  ["4.Keep"]="https://keep.google.com"
+                  ["5.Drive"]="https://drive.google.com/drive/my-drive"
+                  ["-.Docs"]="https://docs.new"
+                  ["-.Sheet"]="https://docs.google.com/spreadsheets/u/0/"
+                  ["-.Hwp"]="https://hwp.polarisoffice.com"
+                  ["-.notebookLM"]="https://notebooklm.google.com/"
+                  ["-.All"]="all"
     )
 
     # 순서를 정의하는 인덱스 배열

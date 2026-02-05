@@ -146,6 +146,11 @@ fd 'tmuxp.' -x cat | sig -a
 # how to see inspect --help properly
 curl --help all | fzf --preview "curl --help all | grep -A 15 {}"
 
+# create zip of everyting (- hidden)
+zip -r myfiles.zip .
+
+# create zip of everyting (+ hidden)
+zip -r archive.zip .* *
 ---------------------------------------------------------------------------------------------------- hardware
 # Save the current display layout to a profile with autorandr
 autorandr --save <profile-name>

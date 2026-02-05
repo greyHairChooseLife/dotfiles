@@ -60,3 +60,5 @@ zstyle ':fzf-tab:*' continuous-trigger '/'
 unsetopt nomatch
 setopt auto_cd
 setopt hist_ignore_dups
+
+export PATH="$HOME/.local/bin:$PATH"
