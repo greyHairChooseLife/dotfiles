@@ -27,6 +27,8 @@ local predefined = {
     review_commit = "/review_commit",
     generate_commit_msg = "/generate_commit_msg",
     simplify_paragraph = "/simplify_paragraph",
+    translate = "/translate",
+    polish = "/polish_english",
 }
 local chat = {
     -- improve_readability
@@ -96,10 +98,18 @@ wk_map({
             desc = "simplify paragraph",
             mode = { "v" },
         },
-
         ["n"] = { gen_command("inline", inline.better_naming), desc = "󰊈 better naming", mode = { "v" } },
         ["d"] = { gen_command("inline", inline.docstring), desc = "󰊈 docstring", mode = { "v" } },
         ["r"] = { gen_command("chat", chat.ir), desc = "improve readability", mode = { "v" } },
+    },
+})
+
+wk_map({
+    ["<leader>cl"] = {
+        group = "Language",
+        order = { "t", "r" },
+        ["t"] = { gen_command("pre", predefined.translate), desc = "translate 󰗊 ", mode = { "v" } },
+        ["p"] = { gen_command("pre", predefined.polish), desc = "polish English", mode = { "v" } },
     },
 })
 
