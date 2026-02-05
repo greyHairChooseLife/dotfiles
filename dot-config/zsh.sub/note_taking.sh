@@ -1,14 +1,13 @@
 export DEV_WIKI="/home/sy/Documents/dev-wiki"
 export JOB_WIKI="/home/sy/Documents/job-wiki"
 
-alias doc='cd ~/Documents/'
 
 docup() {
     current_path=$(pwd)
 
     read -p "Will you update english study note? (y/n)" answer
     if [ "$answer" = "y" ]; then
-        _update_readme_with_english_study_note
+      _update_readme_with_english_study_note
     fi
 
     for wiki in "$DEV_WIKI" "$JOB_WIKI"; do
@@ -17,17 +16,17 @@ docup() {
 
         # MEMO:: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 크래프톤 정글 진행중 특수
         if [ "$wiki" = "$DEV_WIKI" ]; then
-            gitpages_deploy="$DEV_WIKI/docs"
-            source_to_deploy="$DEV_WIKI/notes/Project/크래프톤_정글"
-            rm -rf "$gitpages_deploy"/*
-            cp -rf "$source_to_deploy"/* "$gitpages_deploy"
-            rm -f "$gitpages_deploy/외부비공개"
+          gitpages_deploy="$DEV_WIKI/docs"
+          source_to_deploy="$DEV_WIKI/notes/Project/크래프톤_정글"
+          rm -rf "$gitpages_deploy"/*
+          cp -rf "$source_to_deploy"/* "$gitpages_deploy"
+          rm -f "$gitpages_deploy/외부비공개"
 
-            index_md="$gitpages_deploy/index.md"
-            if grep -q '^## 비공개' "$index_md"; then
-                # "## 비공개"가 등장하는 줄부터 끝까지 삭제
-                sed -i '/^## 비공개/,$d' "$index_md"
-            fi
+        index_md="$gitpages_deploy/index.md"
+        if grep -q '^## 비공개' "$index_md"; then
+          # "## 비공개"가 등장하는 줄부터 끝까지 삭제
+          sed -i '/^## 비공개/,$d' "$index_md"
+        fi
         fi
         # MEMO:: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
