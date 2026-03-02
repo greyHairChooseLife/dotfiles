@@ -59,7 +59,7 @@ return {
         },
         indent = {
             -- 왠진 몰라도 켜면 들여쓰기 되지도 않으면서 테이블 UI 깨지는 버그만 있음
-            enabled = true,
+            enabled = false,
             -- Amount of additional padding added for each heading level
             per_level = 3,
             skip_level = 1,
@@ -115,7 +115,8 @@ return {
             -- icons = function(sections)
             -- 	return table.concat(sections, ".") .. ". "
             -- end,
-            icons = function(ctx)
+            icons = { "󰼏  ", "󰼐  ", "󰼑  ", "󰼒  ", "󰼓  ", "󰼔  " },
+            _icons = function(ctx)
                 local sections = ctx.sections
                 -- table.remove(sections, 1)
                 -- if #sections > 0 then

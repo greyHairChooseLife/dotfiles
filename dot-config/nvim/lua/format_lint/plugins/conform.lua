@@ -21,7 +21,7 @@ return {
                 bash = { "shfmt", stop_after_first = true },
                 sh = { "shfmt", stop_after_first = true },
                 yaml = { "prettierd", "prettier" },
-                -- yaml = { "yamlfmt" },
+                yaml = { "yamlfmt" },
                 toml = { "taplo" },
                 c = { "clang-format" },
                 terraform = { "terraform" },

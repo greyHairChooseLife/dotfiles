@@ -19,14 +19,21 @@ MODEL_PATH="$HOME/whisper"
 
 # --- 취소 ---
 if [ "$1" = "cancel" ]; then
-    if pgrep -x "rec" > /dev/null; then
-        pkill -x "rec"
-        if [ -f "$NOTIFY_ID_FILE" ]; then
-            LAST_ID=$(cat "$NOTIFY_ID_FILE")
-            notify-send -r "$LAST_ID" -h string:bgcolor:#f1502f -h string:fgcolor:#333342 -t 1500 "Vocal" "Recording cancelled"
-        fi
-        rm -f "$AUDIO_FILE" "$NOTIFY_ID_FILE"
+    pkill -x "rec" 2>/dev/null
+    pkill -f "openai_uploader.py" 2>/dev/null
+    pkill -f "transcribe.py" 2>/dev/null
+
+    # 프로세스 종료 대기
+    sleep 0.2
+
+    if [ -f "$NOTIFY_ID_FILE" ]; then
+        LAST_ID=$(cat "$NOTIFY_ID_FILE")
+        notify-send -r "$LAST_ID" -h string:bgcolor:#f1502f -h string:fgcolor:#333342 -t 1500 "Vocal" "Recording cancelled"
+      else
+        # ID 없어도 강제로 닫기
+        dunstctl close-all
     fi
+    rm -f "$AUDIO_FILE" "$NOTIFY_ID_FILE"
     exit 0
 fi
 

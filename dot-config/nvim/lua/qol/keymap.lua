@@ -68,6 +68,7 @@ map("i", "zz", function() vim.api.nvim_input("<Esc>zzA") end)
 
 map("i", "<M-b>", "<C-Left>")
 map("i", "<M-f>", "<C-Right>")
+map("i", "<M-d>", "<C-o>de")
 map("i", "<C-b>", "<Left>")
 map("i", "<C-f>", "<Right>")
 map("i", "<C-a>", "<Home>")
@@ -75,6 +76,7 @@ map("i", "<C-e>", "<End>")
 map("i", "<C-d>", "<Del>")
 map("c", "<M-b>", "<C-Left>")
 map("c", "<M-f>", "<C-Right>")
+map("c", "<M-d>", "<C-o>de")
 map("c", "<C-a>", "<Home>")
 map("c", "<C-e>", "<End>")
 map("c", "<C-d>", "<Del>")
@@ -135,8 +137,8 @@ map("v", "<A-h>", "<gv")
 map("v", "<A-l>", ">gv")
 
 -- insert mode 편집 쉽게
-map("i", "<C-,>", "<C-Left>")
-map("i", "<C-.>", "<C-Right>")
+-- map("i", "<C-,>", "<C-Left>")
+-- map("i", "<C-.>", "<C-Right>")
 
 -- snippet
 map("i", "cl<cr>", Insert_console_log, opt)

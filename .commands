@@ -151,6 +151,14 @@ zip -r myfiles.zip .
 
 # create zip of everyting (+ hidden)
 zip -r archive.zip .* *
+
+# 터치패드 장치 ID 확인 (터치패드 이름과 ID 찾기)
+xinput list
+# 터치패드 임시 비활성화 (ID는 xinput list로 확인)
+xinput disable <ID>
+# 터치패드 재활성화
+xinput enable <ID>
+
 ---------------------------------------------------------------------------------------------------- hardware
 # Save the current display layout to a profile with autorandr
 autorandr --save <profile-name>

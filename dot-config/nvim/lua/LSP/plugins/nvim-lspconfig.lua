@@ -78,6 +78,8 @@ return {
             bashls = {},
             clangd = {},
             terraformls = {},
+            -- markdown_oxide = {},
+            -- marksman = {},
         }
         local disabled_server = {
             "pylsp",
