@@ -34,6 +34,35 @@ local layouts = {
             },
         },
     },
+    full = {
+        layout = {
+            box = "horizontal",
+            row = 0.5,
+            width = 1000,
+            min_width = 80,
+            height = 100,
+            border = "none",
+            {
+                box = "vertical",
+                border = "rounded",
+                title = "{title} {live} {flags}",
+                { win = "input", height = 1, border = "bottom" },
+                { win = "list", border = "none" },
+            },
+            {
+                win = "preview",
+                title = "{preview}",
+                border = "bold",
+                width = 0.7,
+                wo = {
+                    winhighlight = {
+                        NormalFloat = "SnacksPickerPreview",
+                        FloatBorder = "SnacksPickerPreviewBorder",
+                    },
+                },
+            },
+        },
+    },
     dropdown = {
         layout = {
             backdrop = false,
