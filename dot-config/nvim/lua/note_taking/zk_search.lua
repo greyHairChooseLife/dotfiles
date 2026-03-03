@@ -13,62 +13,32 @@ local function read_metadata()
     return ok and data or { tags = {}, areas = {}, types = {}, paths = {} }
 end
 
--- 디렉토리 트리를 계층적으로 스캔 (숨김 제외, docs/ 제외)
-local function scan_dirs(base, prefix, result)
-    prefix = prefix or ""
-    result = result or {}
-    local handle = vim.uv.fs_scandir(base)
-    if not handle then return result end
-    local entries = {}
-    while true do
-        local name, ftype = vim.uv.fs_scandir_next(handle)
-        if not name then break end
-        if ftype == "directory" and not name:match("^%.") and name ~= "docs" then
-            entries[#entries + 1] = name
-        end
-    end
-    table.sort(entries)
-    for _, name in ipairs(entries) do
-        local rel = prefix == "" and name or (prefix .. "/" .. name)
-        result[#result + 1] = rel
-        scan_dirs(base .. "/" .. name, rel, result)
-    end
-    return result
-end
-
 -- active_filters → zk list 인수 변환
--- type/area 필터는 zk CLI 미지원 → post-filter로 처리
+-- tag/type/area 필터는 zk CLI 미지원(OR) 또는 미지원(type/area) → 모두 post-filter
 local function build_zk_args(filters)
     local args = { "list", "--quiet", "--exclude", "docs", "--format", "{{abs-path}}\t{{title}}\t{{filename-stem}}" }
 
-    -- tags OR (zk 네이티브 지원)
-    if #filters.tags_or > 0 then
+    -- tags AND만 zk 네이티브: --tag A --tag B (교집합)
+    for _, t in ipairs(filters.tags_and) do
         args[#args + 1] = "--tag"
-        args[#args + 1] = table.concat(filters.tags_or, ",")
-    end
-
-    -- path AND
-    for _, p in ipairs(filters.paths) do
-        args[#args + 1] = "--path"
-        args[#args + 1] = p
+        args[#args + 1] = t
     end
 
     -- date filters
-    if filters.created_after then
-        args[#args + 1] = "--created-after"
-        args[#args + 1] = filters.created_after
+    if filters.created_after  then args[#args + 1] = "--created-after";  args[#args + 1] = filters.created_after  end
+    if filters.created_before then args[#args + 1] = "--created-before"; args[#args + 1] = filters.created_before end
+    if filters.modified_after  then args[#args + 1] = "--modified-after";  args[#args + 1] = filters.modified_after  end
+    if filters.modified_before then args[#args + 1] = "--modified-before"; args[#args + 1] = filters.modified_before end
+
+    -- path OR: positional args (zk list <path>... → OR 동작)
+    for _, p in ipairs(filters.paths) do
+        args[#args + 1] = p
     end
-    if filters.created_before then
-        args[#args + 1] = "--created-before"
-        args[#args + 1] = filters.created_before
-    end
-    if filters.modified_after then
-        args[#args + 1] = "--modified-after"
-        args[#args + 1] = filters.modified_after
-    end
-    if filters.modified_before then
-        args[#args + 1] = "--modified-before"
-        args[#args + 1] = filters.modified_before
+
+    -- path NOT: --exclude
+    for _, p in ipairs(filters.paths_not or {}) do
+        args[#args + 1] = "--exclude"
+        args[#args + 1] = p
     end
 
     return args
@@ -90,58 +60,74 @@ local function read_frontmatter(path)
             local key, val = line:match("^(%w+):%s*(.+)$")
             if key then result[key] = val:match('^"(.*)"$') or val end
         end
-        if line_count > 20 then break end -- frontmatter는 앞부분에만 있음
+        if line_count > 20 then break end
     end
     f:close()
     return result
 end
 
--- post-filter: type/area/tags_not 적용
-local function post_filter(items, filters)
-    if #filters.types_or == 0 and #filters.types_not == 0
-        and #filters.areas_or == 0 and #filters.areas_not == 0
-        and #filters.tags_not == 0 then
-        return items
+-- 리스트에 값이 있는지 확인
+local function list_has(list, value)
+    for _, v in ipairs(list) do
+        if v == value then return true end
     end
+    return false
+end
+
+-- 리스트에서 값 제거
+local function list_remove(list, value)
+    for i, v in ipairs(list) do
+        if v == value then table.remove(list, i); return end
+    end
+end
+
+-- tags 문자열에서 개별 태그 파싱 (frontmatter tags: [a, b, c] 형태)
+local function parse_tags(tags_str)
+    local tags = {}
+    -- "tag1tag2tag3" 형태 (zk가 붙여서 반환) 또는 "[tag1, tag2]" 형태 모두 처리
+    local cleaned = tags_str:gsub("^%[", ""):gsub("%]$", "")
+    for t in cleaned:gmatch("[^,]+") do
+        local trimmed = t:match("^%s*(.-)%s*$")
+        if trimmed ~= "" then tags[#tags + 1] = trimmed end
+    end
+    return tags
+end
+
+-- post-filter: tag OR/AND/NOT, type OR/AND/NOT, area OR/AND/NOT 적용
+local function post_filter(items, filters)
+    local need = #filters.tags_or > 0 or #filters.tags_not > 0
+             or #filters.types_or > 0 or #filters.types_not > 0
+             or #filters.areas_or > 0 or #filters.areas_not > 0
+    if not need then return items end
+
     local result = {}
     for _, item in ipairs(items) do
         local fm = read_frontmatter(item.file)
         local item_type = fm.type or ""
         local item_area = fm.area or ""
-        local item_tags = fm.tags or ""
+        local item_tag_list = parse_tags(fm.tags or "")
 
-        -- type OR filter
-        if #filters.types_or > 0 then
+        -- tags OR: item이 OR 목록 중 하나라도 가지면 통과
+        if #filters.tags_or > 0 then
             local match = false
-            for _, t in ipairs(filters.types_or) do
-                if item_type == t then match = true; break end
+            for _, t in ipairs(filters.tags_or) do
+                if list_has(item_tag_list, t) then match = true; break end
             end
             if not match then goto continue end
         end
 
-        -- type NOT filter
-        for _, t in ipairs(filters.types_not) do
-            if item_type == t then goto continue end
-        end
-
-        -- area OR filter
-        if #filters.areas_or > 0 then
-            local match = false
-            for _, a in ipairs(filters.areas_or) do
-                if item_area == a then match = true; break end
-            end
-            if not match then goto continue end
-        end
-
-        -- area NOT filter
-        for _, a in ipairs(filters.areas_not) do
-            if item_area == a then goto continue end
-        end
-
-        -- tags NOT filter
+        -- tags NOT: item이 NOT 목록 중 하나라도 가지면 제외
         for _, t in ipairs(filters.tags_not) do
-            if item_tags:find(t, 1, true) then goto continue end
+            if list_has(item_tag_list, t) then goto continue end
         end
+
+        -- type OR / NOT
+        if #filters.types_or > 0 and not list_has(filters.types_or, item_type) then goto continue end
+        if list_has(filters.types_not, item_type) then goto continue end
+
+        -- area OR / NOT
+        if #filters.areas_or > 0 and not list_has(filters.areas_or, item_area) then goto continue end
+        if list_has(filters.areas_not, item_area) then goto continue end
 
         result[#result + 1] = item
         ::continue::
@@ -152,45 +138,22 @@ end
 -- active_filters → 타이틀 문자열
 local function build_title(filters)
     local parts = {}
-    if #filters.tags_or > 0 then
-        parts[#parts + 1] = "tag:" .. table.concat(filters.tags_or, "|")
-    end
-    if #filters.tags_not > 0 then
-        parts[#parts + 1] = "tag!:" .. table.concat(filters.tags_not, "|")
-    end
-    if #filters.types_or > 0 then
-        parts[#parts + 1] = "type:" .. table.concat(filters.types_or, "|")
-    end
-    if #filters.types_not > 0 then
-        parts[#parts + 1] = "type!:" .. table.concat(filters.types_not, "|")
-    end
-    if #filters.areas_or > 0 then
-        parts[#parts + 1] = "area:" .. table.concat(filters.areas_or, "|")
-    end
-    if #filters.areas_not > 0 then
-        parts[#parts + 1] = "area!:" .. table.concat(filters.areas_not, "|")
-    end
-    if #filters.paths > 0 then
-        parts[#parts + 1] = "path:" .. table.concat(filters.paths, "&")
-    end
-    if filters.created_after then parts[#parts + 1] = "created>:" .. filters.created_after end
+    local function add(prefix, list) if #list > 0 then parts[#parts + 1] = prefix .. table.concat(list, "|") end end
+    add("tag:",    filters.tags_or)
+    add("tag&:",   filters.tags_and)
+    add("tag!:",   filters.tags_not)
+    add("type:",   filters.types_or)
+    add("type!:",  filters.types_not)
+    add("area:",   filters.areas_or)
+    add("area!:",  filters.areas_not)
+    add("path:",   filters.paths)
+    add("path!:",  filters.paths_not or {})
+    if filters.created_after  then parts[#parts + 1] = "created>:" .. filters.created_after  end
     if filters.created_before then parts[#parts + 1] = "created<:" .. filters.created_before end
-    if filters.modified_after then parts[#parts + 1] = "updated>:" .. filters.modified_after end
+    if filters.modified_after  then parts[#parts + 1] = "updated>:" .. filters.modified_after  end
     if filters.modified_before then parts[#parts + 1] = "updated<:" .. filters.modified_before end
     if #parts == 0 then return "zk notes" end
     return "zk [" .. table.concat(parts, "  ") .. "]"
-end
-
--- 리스트에서 값 토글 (있으면 제거, 없으면 추가). 변경 여부 반환
-local function toggle_value(list, value)
-    for i, v in ipairs(list) do
-        if v == value then
-            table.remove(list, i)
-            return true
-        end
-    end
-    list[#list + 1] = value
-    return true
 end
 
 -- zk list 동기 실행 → snacks picker items (table 반환)
@@ -202,12 +165,7 @@ local function run_zk(filters)
     for line in raw:gmatch("[^\n]+") do
         local path, title, stem = line:match("^(.+)\t(.+)\t(.+)$")
         if path then
-            items[#items + 1] = {
-                text = title,
-                file = path,
-                title = title,
-                stem = stem,
-            }
+            items[#items + 1] = { text = title, file = path, title = title, stem = stem }
         end
     end
     return post_filter(items, filters)
@@ -215,18 +173,12 @@ end
 
 -- 날짜 후보 목록
 local date_presets = {
-    "today",
-    "yesterday",
-    "3 days ago",
-    "last week",
-    "last 2 weeks",
-    "last month",
-    "last 3 months",
-    "this year",
+    "today", "yesterday", "3 days ago", "last week",
+    "last 2 weeks", "last month", "last 3 months", "this year",
     "Manual input...",
 }
 
-local function ask_date(prompt, cb)
+local function ask_date(cb)
     vim.ui.select({ "created", "updated" }, { prompt = "필드 선택:" }, function(field)
         if not field then return end
         vim.ui.select({ "after", "before" }, { prompt = "방향 선택:" }, function(direction)
@@ -256,17 +208,12 @@ function M.open(source_buf, initial_filters)
 
     -- 필터 상태 (재열기 시 기존 필터 유지)
     local filters = initial_filters or {
-        tags_or = {},
-        tags_not = {},
-        types_or = {},
-        types_not = {},
-        areas_or = {},
-        areas_not = {},
-        paths = {},
-        created_after = nil,
-        created_before = nil,
-        modified_after = nil,
-        modified_before = nil,
+        tags_or = {}, tags_and = {}, tags_not = {},
+        types_or = {}, types_not = {},
+        areas_or = {}, areas_not = {},
+        paths = {}, paths_not = {},
+        created_after = nil, created_before = nil,
+        modified_after = nil, modified_before = nil,
     }
 
     local picker_ref = nil
@@ -280,38 +227,76 @@ function M.open(source_buf, initial_filters)
         end
     end
 
-    -- picker action 생성 헬퍼
-    local function make_select_action(candidates_fn, or_list, not_list, is_not)
+    -- 필터 선택 (vim.ui.select 반복 방식)
+    -- 선택 시 상태 순환 → 다시 목록 표시 → ">>> 확정" 또는 Esc 시 메인 picker 갱신
+    -- has_and=true: tag용 [A]nd→[O]r→[N]ot→[ ]none 순환 (4단계)
+    -- has_and=false: type/area용 [O]r→[N]ot→[ ]none 순환 (3단계)
+    local function make_filter_action(candidates_fn, or_list, and_list, not_list, label, has_and)
         return function(picker)
             picker_ref = picker
+
             local candidates = candidates_fn()
             if #candidates == 0 then
                 vim.notify("후보가 없습니다", vim.log.levels.INFO)
                 return
             end
-            vim.schedule(function()
-                vim.ui.select(candidates, { prompt = (is_not and "[NOT] " or "") .. "선택:" }, function(choice)
-                    if not choice then return end
-                    local target = is_not and not_list or or_list
-                    toggle_value(target, choice)
-                    refresh_picker()
+
+            -- [A]/[O]/[N]/[ ] prefix는 모두 3자 + 공백 = 4자
+            local function get_state(c)
+                if has_and and list_has(and_list, c) then return "and_" end
+                if list_has(or_list,  c) then return "or_"  end
+                if list_has(not_list, c) then return "not_" end
+                return "none_"
+            end
+
+            local state_label = { ["and_"] = "[A]", ["or_"] = "[O]", ["not_"] = "[N]", ["none_"] = "[ ]" }
+            -- 순환 순서: [ ]→[A]→[O]→[N]→[ ] (tag), [ ]→[O]→[N]→[ ] (type/area)
+            local state_cycle = has_and
+                and { ["none_"] = "and_", ["and_"] = "or_", ["or_"] = "not_", ["not_"] = "none_" }
+                or  { ["none_"] = "or_",  ["or_"]  = "not_", ["not_"] = "none_" }
+
+            local function cycle_state(c)
+                local next_st = state_cycle[get_state(c)] or "or_"
+                list_remove(or_list, c)
+                if has_and then list_remove(and_list, c) end
+                list_remove(not_list, c)
+                if next_st == "or_"  then or_list[#or_list + 1]   = c
+                elseif next_st == "and_" then and_list[#and_list + 1] = c
+                elseif next_st == "not_" then not_list[#not_list + 1] = c
+                end
+            end
+
+            local function open_select()
+                vim.schedule(function()
+                    local hint = has_and and "[ ]→[A]→[O]→[N]" or "[ ]→[O]→[N]"
+                    local display = { ">>> 확정" }
+                    for _, c in ipairs(candidates) do
+                        display[#display + 1] = (state_label[get_state(c)] or "[ ]") .. " " .. c
+                    end
+                    vim.ui.select(display, { prompt = label .. "  " .. hint .. "  (선택→순환, 확정):" }, function(choice)
+                        if not choice or choice == ">>> 확정" then
+                            refresh_picker()
+                            return
+                        end
+                        local raw = choice:sub(5)  -- "[X] value" → 5번째부터
+                        cycle_state(raw)
+                        open_select()
+                    end)
                 end)
-            end)
+            end
+
+            open_select()
         end
     end
 
-    -- path 계층 탐색 action
+    -- path 계층 탐색 action (OR/NOT/NONE 순환, vim.ui.select 반복 방식)
     local function path_action(picker)
         picker_ref = picker
-        -- 고정 순서: inbox → resource → project → area → archive, 이후 하위 디렉토리
         local root_order = { "inbox", "resource", "project", "area", "archive" }
         local ordered = {}
-        local seen = {}
         for _, root in ipairs(root_order) do
             if vim.fn.isdirectory(notebook .. "/" .. root) == 1 then
                 ordered[#ordered + 1] = root
-                seen[root] = true
-                -- 하위 디렉토리
                 local subs = {}
                 local handle = vim.uv.fs_scandir(notebook .. "/" .. root)
                 if handle then
@@ -330,23 +315,43 @@ function M.open(source_buf, initial_filters)
             end
         end
 
-        local display = {}
-        for _, d in ipairs(ordered) do
-            local active = false
-            for _, p in ipairs(filters.paths) do
-                if p == d then active = true; break end
-            end
-            display[#display + 1] = (active and "[+] " or "    ") .. d
+        local path_label = { or_ = "[O]", not_ = "[N]", none_ = "[ ]" }
+        local path_cycle = { none_ = "or_", or_ = "not_", not_ = "none_" }
+
+        local function get_path_state(d)
+            if list_has(filters.paths,     d) then return "or_"  end
+            if list_has(filters.paths_not, d) then return "not_" end
+            return "none_"
         end
 
-        vim.schedule(function()
-            vim.ui.select(display, { prompt = "Path (AND):" }, function(choice)
-                if not choice then return end
-                local raw = choice:gsub("^%[%+%] ", ""):gsub("^%s+", "")
-                toggle_value(filters.paths, raw)
-                refresh_picker()
+        local function cycle_path(d)
+            local next_st = path_cycle[get_path_state(d)] or "or_"
+            list_remove(filters.paths,     d)
+            list_remove(filters.paths_not, d)
+            if next_st == "or_"  then filters.paths[#filters.paths + 1]         = d
+            elseif next_st == "not_" then filters.paths_not[#filters.paths_not + 1] = d
+            end
+        end
+
+        local function open_path_select()
+            vim.schedule(function()
+                local display = { ">>> 확정" }
+                for _, d in ipairs(ordered) do
+                    display[#display + 1] = (path_label[get_path_state(d)] or "[ ]") .. " " .. d
+                end
+                vim.ui.select(display, { prompt = "Path  [ ]→[O]r→[N]ot  (선택→순환, 확정):" }, function(choice)
+                    if not choice or choice == ">>> 확정" then
+                        refresh_picker()
+                        return
+                    end
+                    local raw = choice:sub(5)
+                    cycle_path(raw)
+                    open_path_select()
+                end)
             end)
-        end)
+        end
+
+        open_path_select()
     end
 
     -- 현재 편집 파일 태그 토글 action
@@ -376,20 +381,19 @@ function M.open(source_buf, initial_filters)
             vim.notify("현재 노트에 태그가 없습니다", vim.log.levels.INFO)
             return
         end
-        -- 이미 필터에 있는 태그 표시
         local display = {}
         for _, t in ipairs(tags) do
-            local active = false
-            for _, v in ipairs(filters.tags_or) do
-                if v == t then active = true; break end
-            end
-            display[#display + 1] = (active and "[+] " or "    ") .. t
+            display[#display + 1] = (list_has(filters.tags_or, t) and "[+] " or "    ") .. t
         end
         vim.schedule(function()
-            vim.ui.select(display, { prompt = "현재 노트 태그 토글:" }, function(choice)
+            vim.ui.select(display, { prompt = "현재 노트 태그 (OR 토글):" }, function(choice)
                 if not choice then return end
-                local raw = choice:gsub("^%[%+%] ", ""):gsub("^%s+", "")
-                toggle_value(filters.tags_or, raw)
+                local raw = choice:gsub("^%[.%] ", ""):gsub("^%s+", "")
+                if list_has(filters.tags_or, raw) then
+                    list_remove(filters.tags_or, raw)
+                else
+                    filters.tags_or[#filters.tags_or + 1] = raw
+                end
                 refresh_picker()
             end)
         end)
@@ -399,7 +403,7 @@ function M.open(source_buf, initial_filters)
     local function date_action(picker)
         picker_ref = picker
         vim.schedule(function()
-            ask_date("날짜 필터", function(field, direction, value)
+            ask_date(function(field, direction, value)
                 local key = (field == "created" and "created" or "modified") .. "_" .. direction
                 filters[key] = value
                 refresh_picker()
@@ -413,17 +417,14 @@ function M.open(source_buf, initial_filters)
     end
 
     -- picker 열기
-    local snacks = require("snacks")
-    snacks.picker({
+    require("snacks").picker({
         title = build_title(filters),
         finder = finder,
         auto_close = false,
         format = function(item, _)
-            local text = item.title or item.text
-            local stem = item.stem or ""
             return {
-                { text, "SnacksPickerLabel" },
-                { "  " .. stem, "SnacksPickerComment" },
+                { item.title or item.text, "SnacksPickerLabel" },
+                { "  " .. (item.stem or ""), "SnacksPickerComment" },
             }
         end,
         preview = "file",
@@ -434,38 +435,46 @@ function M.open(source_buf, initial_filters)
             end
         end,
         actions = {
-            zk_tag_or    = make_select_action(function() return meta.tags or {} end, filters.tags_or, nil, false),
-            zk_type_or   = make_select_action(function() return meta.types or {} end, filters.types_or, nil, false),
-            zk_area_or   = make_select_action(function() return meta.areas or {} end, filters.areas_or, nil, false),
-            zk_tag_not   = make_select_action(function() return meta.tags or {} end, nil, filters.tags_not, true),
-            zk_type_not  = make_select_action(function() return meta.types or {} end, nil, filters.types_not, true),
-            zk_area_not  = make_select_action(function() return meta.areas or {} end, nil, filters.areas_not, true),
-            zk_path      = path_action,
-            zk_cur_tags  = current_tags_action,
-            zk_date      = date_action,
-            zk_clear     = function(picker)
+            zk_tag  = make_filter_action(function() return meta.tags or {} end,  filters.tags_or,  filters.tags_and,  filters.tags_not,  "tag",  true),
+            zk_type = make_filter_action(function() return meta.types or {} end, filters.types_or, filters.types_and, filters.types_not, "type", false),
+            zk_area = make_filter_action(function() return meta.areas or {} end, filters.areas_or, filters.areas_and, filters.areas_not, "area", false),
+            zk_path     = path_action,
+            zk_cur_tags = current_tags_action,
+            zk_date     = date_action,
+            zk_clear    = function(picker)
                 picker_ref = picker
-                filters.tags_or, filters.tags_not = {}, {}
-                filters.types_or, filters.types_not = {}, {}
-                filters.areas_or, filters.areas_not = {}, {}
-                filters.paths = {}
-                filters.created_after, filters.created_before = nil, nil
-                filters.modified_after, filters.modified_before = nil, nil
-                refresh_picker()
+                local title = build_title(filters)
+                if title == "zk notes" then
+                    vim.notify("적용된 필터 없음", vim.log.levels.INFO)
+                    return
+                end
+                vim.schedule(function()
+                    vim.ui.select({ "yes", "no" }, {
+                        prompt = "필터 초기화? 현재: " .. title,
+                    }, function(choice)
+                        if choice ~= "yes" then return end
+                        -- 테이블 재할당하면 액션 클로저 참조가 끊어짐 → 내용만 비움
+                        local function clear(t) while #t > 0 do table.remove(t) end end
+                        clear(filters.tags_or);  clear(filters.tags_and);  clear(filters.tags_not)
+                        clear(filters.types_or); clear(filters.types_not)
+                        clear(filters.areas_or); clear(filters.areas_not)
+                        clear(filters.paths); clear(filters.paths_not)
+                        filters.created_after, filters.created_before = nil, nil
+                        filters.modified_after, filters.modified_before = nil, nil
+                        refresh_picker()
+                    end)
+                end)
             end,
         },
         win = {
             input = {
                 keys = {
-                    ["<M-1>"] = { "zk_tag_or",   mode = { "i", "n" } },
-                    ["<M-2>"] = { "zk_type_or",  mode = { "i", "n" } },
-                    ["<M-3>"] = { "zk_area_or",  mode = { "i", "n" } },
+                    ["<M-1>"] = { "zk_tag",      mode = { "i", "n" } },
+                    ["<M-2>"] = { "zk_type",     mode = { "i", "n" } },
+                    ["<M-3>"] = { "zk_area",     mode = { "i", "n" } },
                     ["<M-4>"] = { "zk_cur_tags", mode = { "i", "n" } },
                     ["<M-5>"] = { "zk_path",     mode = { "i", "n" } },
                     ["<M-6>"] = { "zk_date",     mode = { "i", "n" } },
-                    ["<M-!>"] = { "zk_tag_not",  mode = { "i", "n" } },
-                    ["<M-@>"] = { "zk_type_not", mode = { "i", "n" } },
-                    ["<M-#>"] = { "zk_area_not", mode = { "i", "n" } },
                     ["<M-0>"] = { "zk_clear",    mode = { "i", "n" } },
                 },
             },
