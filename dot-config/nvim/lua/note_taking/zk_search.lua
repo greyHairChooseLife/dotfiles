@@ -251,11 +251,11 @@ local function ask_date(prompt, cb)
 end
 
 -- 메인 검색 picker
-function M.open(source_buf)
+function M.open(source_buf, initial_filters)
     local meta = read_metadata()
 
-    -- 필터 상태
-    local filters = {
+    -- 필터 상태 (재열기 시 기존 필터 유지)
+    local filters = initial_filters or {
         tags_or = {},
         tags_not = {},
         types_or = {},
@@ -272,9 +272,11 @@ function M.open(source_buf)
     local picker_ref = nil
 
     local function refresh_picker()
-        if picker_ref then
-            picker_ref:set_title(build_title(filters))
+        if picker_ref and not picker_ref.closed then
+            picker_ref.title = build_title(filters)
             picker_ref:refresh()
+        else
+            M.open(source_buf, filters)
         end
     end
 
@@ -287,11 +289,13 @@ function M.open(source_buf)
                 vim.notify("후보가 없습니다", vim.log.levels.INFO)
                 return
             end
-            vim.ui.select(candidates, { prompt = (is_not and "[NOT] " or "") .. "선택:" }, function(choice)
-                if not choice then return end
-                local target = is_not and not_list or or_list
-                toggle_value(target, choice)
-                refresh_picker()
+            vim.schedule(function()
+                vim.ui.select(candidates, { prompt = (is_not and "[NOT] " or "") .. "선택:" }, function(choice)
+                    if not choice then return end
+                    local target = is_not and not_list or or_list
+                    toggle_value(target, choice)
+                    refresh_picker()
+                end)
             end)
         end
     end
@@ -299,12 +303,35 @@ function M.open(source_buf)
     -- path 계층 탐색 action
     local function path_action(picker)
         picker_ref = picker
-        local all_dirs = scan_dirs(notebook)
-        if #all_dirs == 0 then return end
+        -- 고정 순서: inbox → resource → project → area → archive, 이후 하위 디렉토리
+        local root_order = { "inbox", "resource", "project", "area", "archive" }
+        local ordered = {}
+        local seen = {}
+        for _, root in ipairs(root_order) do
+            if vim.fn.isdirectory(notebook .. "/" .. root) == 1 then
+                ordered[#ordered + 1] = root
+                seen[root] = true
+                -- 하위 디렉토리
+                local subs = {}
+                local handle = vim.uv.fs_scandir(notebook .. "/" .. root)
+                if handle then
+                    while true do
+                        local name, ftype = vim.uv.fs_scandir_next(handle)
+                        if not name then break end
+                        if ftype == "directory" and not name:match("^%.") then
+                            subs[#subs + 1] = name
+                        end
+                    end
+                end
+                table.sort(subs)
+                for _, sub in ipairs(subs) do
+                    ordered[#ordered + 1] = root .. "/" .. sub
+                end
+            end
+        end
 
-        -- 이미 추가된 항목은 "[✓] " prefix
         local display = {}
-        for _, d in ipairs(all_dirs) do
+        for _, d in ipairs(ordered) do
             local active = false
             for _, p in ipairs(filters.paths) do
                 if p == d then active = true; break end
@@ -312,11 +339,13 @@ function M.open(source_buf)
             display[#display + 1] = (active and "[+] " or "    ") .. d
         end
 
-        vim.ui.select(display, { prompt = "Path (AND):" }, function(choice)
-            if not choice then return end
-            local raw = choice:gsub("^%[%+%] ", ""):gsub("^%s+", "")
-            toggle_value(filters.paths, raw)
-            refresh_picker()
+        vim.schedule(function()
+            vim.ui.select(display, { prompt = "Path (AND):" }, function(choice)
+                if not choice then return end
+                local raw = choice:gsub("^%[%+%] ", ""):gsub("^%s+", "")
+                toggle_value(filters.paths, raw)
+                refresh_picker()
+            end)
         end)
     end
 
@@ -356,21 +385,25 @@ function M.open(source_buf)
             end
             display[#display + 1] = (active and "[+] " or "    ") .. t
         end
-        vim.ui.select(display, { prompt = "현재 노트 태그 토글:" }, function(choice)
-            if not choice then return end
-            local raw = choice:gsub("^%[%+%] ", ""):gsub("^%s+", "")
-            toggle_value(filters.tags_or, raw)
-            refresh_picker()
+        vim.schedule(function()
+            vim.ui.select(display, { prompt = "현재 노트 태그 토글:" }, function(choice)
+                if not choice then return end
+                local raw = choice:gsub("^%[%+%] ", ""):gsub("^%s+", "")
+                toggle_value(filters.tags_or, raw)
+                refresh_picker()
+            end)
         end)
     end
 
     -- 날짜 필터 action
     local function date_action(picker)
         picker_ref = picker
-        ask_date("날짜 필터", function(field, direction, value)
-            local key = (field == "created" and "created" or "modified") .. "_" .. direction
-            filters[key] = value
-            refresh_picker()
+        vim.schedule(function()
+            ask_date("날짜 필터", function(field, direction, value)
+                local key = (field == "created" and "created" or "modified") .. "_" .. direction
+                filters[key] = value
+                refresh_picker()
+            end)
         end)
     end
 
@@ -384,6 +417,7 @@ function M.open(source_buf)
     snacks.picker({
         title = build_title(filters),
         finder = finder,
+        auto_close = false,
         format = function(item, _)
             local text = item.title or item.text
             local stem = item.stem or ""
