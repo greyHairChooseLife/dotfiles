@@ -39,7 +39,7 @@ end
 -- active_filters → zk list 인수 변환
 -- type/area 필터는 zk CLI 미지원 → post-filter로 처리
 local function build_zk_args(filters)
-    local args = { "list", "--quiet", "--format", "{{abs-path}}\t{{title}}\t{{filename-stem}}" }
+    local args = { "list", "--quiet", "--exclude", "docs", "--format", "{{abs-path}}\t{{title}}\t{{filename-stem}}" }
 
     -- tags OR (zk 네이티브 지원)
     if #filters.tags_or > 0 then
@@ -203,7 +203,7 @@ local function run_zk(filters)
         local path, title, stem = line:match("^(.+)\t(.+)\t(.+)$")
         if path then
             items[#items + 1] = {
-                text = title .. "  " .. stem,
+                text = title,
                 file = path,
                 title = title,
                 stem = stem,
