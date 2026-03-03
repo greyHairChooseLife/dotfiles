@@ -37,37 +37,14 @@ local function scan_dirs(base, prefix, result)
 end
 
 -- active_filters → zk list 인수 변환
+-- type/area 필터는 zk CLI 미지원 → post-filter로 처리
 local function build_zk_args(filters)
     local args = { "list", "--quiet", "--format", "{{abs-path}}\t{{title}}\t{{filename-stem}}" }
 
-    -- tags OR/NOT
+    -- tags OR (zk 네이티브 지원)
     if #filters.tags_or > 0 then
         args[#args + 1] = "--tag"
         args[#args + 1] = table.concat(filters.tags_or, ",")
-    end
-    for _, t in ipairs(filters.tags_not) do
-        args[#args + 1] = "--custom"
-        args[#args + 1] = "tag!=" .. t
-    end
-
-    -- type OR/NOT
-    if #filters.types_or > 0 then
-        args[#args + 1] = "--custom"
-        args[#args + 1] = "type=" .. table.concat(filters.types_or, ",")
-    end
-    for _, t in ipairs(filters.types_not) do
-        args[#args + 1] = "--custom"
-        args[#args + 1] = "type!=" .. t
-    end
-
-    -- area OR/NOT
-    if #filters.areas_or > 0 then
-        args[#args + 1] = "--custom"
-        args[#args + 1] = "area=" .. table.concat(filters.areas_or, ",")
-    end
-    for _, a in ipairs(filters.areas_not) do
-        args[#args + 1] = "--custom"
-        args[#args + 1] = "area!=" .. a
     end
 
     -- path AND
@@ -95,6 +72,81 @@ local function build_zk_args(filters)
     end
 
     return args
+end
+
+-- frontmatter에서 type/area/tags 읽기 (post-filter용)
+local function read_frontmatter(path)
+    local f = io.open(path, "r")
+    if not f then return {} end
+    local result = {}
+    local in_fm = false
+    local line_count = 0
+    for line in f:lines() do
+        line_count = line_count + 1
+        if line_count == 1 and line == "---" then
+            in_fm = true
+        elseif in_fm then
+            if line == "---" then break end
+            local key, val = line:match("^(%w+):%s*(.+)$")
+            if key then result[key] = val:match('^"(.*)"$') or val end
+        end
+        if line_count > 20 then break end -- frontmatter는 앞부분에만 있음
+    end
+    f:close()
+    return result
+end
+
+-- post-filter: type/area/tags_not 적용
+local function post_filter(items, filters)
+    if #filters.types_or == 0 and #filters.types_not == 0
+        and #filters.areas_or == 0 and #filters.areas_not == 0
+        and #filters.tags_not == 0 then
+        return items
+    end
+    local result = {}
+    for _, item in ipairs(items) do
+        local fm = read_frontmatter(item.file)
+        local item_type = fm.type or ""
+        local item_area = fm.area or ""
+        local item_tags = fm.tags or ""
+
+        -- type OR filter
+        if #filters.types_or > 0 then
+            local match = false
+            for _, t in ipairs(filters.types_or) do
+                if item_type == t then match = true; break end
+            end
+            if not match then goto continue end
+        end
+
+        -- type NOT filter
+        for _, t in ipairs(filters.types_not) do
+            if item_type == t then goto continue end
+        end
+
+        -- area OR filter
+        if #filters.areas_or > 0 then
+            local match = false
+            for _, a in ipairs(filters.areas_or) do
+                if item_area == a then match = true; break end
+            end
+            if not match then goto continue end
+        end
+
+        -- area NOT filter
+        for _, a in ipairs(filters.areas_not) do
+            if item_area == a then goto continue end
+        end
+
+        -- tags NOT filter
+        for _, t in ipairs(filters.tags_not) do
+            if item_tags:find(t, 1, true) then goto continue end
+        end
+
+        result[#result + 1] = item
+        ::continue::
+    end
+    return result
 end
 
 -- active_filters → 타이틀 문자열
@@ -141,38 +193,24 @@ local function toggle_value(list, value)
     return true
 end
 
--- zk list 실행 → snacks picker items
-local function run_zk(filters, cb)
+-- zk list 동기 실행 → snacks picker items (table 반환)
+local function run_zk(filters)
     local args = build_zk_args(filters)
+    local cmd = "zk " .. table.concat(vim.tbl_map(vim.fn.shellescape, args), " ")
+    local raw = vim.fn.system("cd " .. vim.fn.shellescape(notebook) .. " && " .. cmd)
     local items = {}
-    local stderr = {}
-    vim.system({ "zk", unpack(args) }, {
-        cwd = notebook,
-        stdout = function(_, data)
-            if not data then return end
-            for line in data:gmatch("[^\n]+") do
-                local path, title, stem = line:match("^(.+)\t(.+)\t(.+)$")
-                if path then
-                    items[#items + 1] = {
-                        text = title .. "  " .. stem,
-                        file = path,
-                        title = title,
-                        stem = stem,
-                    }
-                end
-            end
-        end,
-        stderr = function(_, data)
-            if data then stderr[#stderr + 1] = data end
-        end,
-    }, function(result)
-        if result.code ~= 0 and #items == 0 then
-            vim.schedule(function()
-                vim.notify("zk: " .. table.concat(stderr, ""), vim.log.levels.WARN)
-            end)
+    for line in raw:gmatch("[^\n]+") do
+        local path, title, stem = line:match("^(.+)\t(.+)\t(.+)$")
+        if path then
+            items[#items + 1] = {
+                text = title .. "  " .. stem,
+                file = path,
+                title = title,
+                stem = stem,
+            }
         end
-        cb(items)
-    end)
+    end
+    return post_filter(items, filters)
 end
 
 -- 날짜 후보 목록
@@ -336,16 +374,9 @@ function M.open(source_buf)
         end)
     end
 
-    -- finder: zk list 비동기 실행
+    -- finder: zk list 동기 실행 후 table 반환
     local function finder(opts, ctx)
-        return function(cb)
-            run_zk(filters, function(items)
-                for _, item in ipairs(items) do
-                    cb(item)
-                end
-                cb(nil) -- done
-            end)
-        end
+        return run_zk(filters)
     end
 
     -- picker 열기
