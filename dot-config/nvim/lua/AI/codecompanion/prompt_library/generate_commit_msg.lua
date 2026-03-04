@@ -61,7 +61,8 @@ return {
             name = "copilot",
             -- MEMO:: github copilot is not unlimited anymore
             -- model = "claude-3.5-sonnet",
-            model = "gemini-3-flash-preview",
+            -- model = "gemini-3-flash-preview",
+            model = "gpt-4.1",
         },
     },
     prompts = {
