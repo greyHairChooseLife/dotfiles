@@ -42,7 +42,9 @@ end
 local log_actions = {
     open_picker_files_from_last_commit = function(picker)
         local select = picker:current().commit
-        M.files_from_last_commit(select)
+        vim.schedule(function()
+            M.files_from_last_commit(select)
+        end)
     end,
     view_in_diffview = function(picker)
         local select = picker:current().commit
@@ -58,12 +60,13 @@ local log_actions = {
 }
 M.git_log = function()
     local config = {
+        auto_close = false,
         actions = log_actions,
         layout = { fullscreen = true },
         win = {
             input = {
                 keys = {
-                    ["<Space>"] = { "open_picker_files_from_last_commit", mode = { "n" } },
+                    ["<c-o>"] = { "open_picker_files_from_last_commit", mode = { "n", "i" } },
                     ["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
                     ["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
                     ["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
@@ -76,12 +79,13 @@ end
 M.git_log_line = function()
     -- vim.cmd("normal! <Esc>")
     local config = {
+        auto_close = false,
         actions = log_actions,
         layout = { fullscreen = true },
         win = {
             input = {
                 keys = {
-                    ["<Space>"] = { "open_picker_files_from_last_commit", mode = { "n" } },
+                    ["<c-o>"] = { "open_picker_files_from_last_commit", mode = { "n", "i" } },
                     ["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
                     ["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
                     ["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
@@ -93,12 +97,13 @@ M.git_log_line = function()
 end
 M.git_log_file = function()
     local config = {
+        auto_close = false,
         actions = log_actions,
         layout = { fullscreen = true },
         win = {
             input = {
                 keys = {
-                    ["<Space>"] = { "open_picker_files_from_last_commit", mode = { "n" } },
+                    ["<c-o>"] = { "open_picker_files_from_last_commit", mode = { "n", "i" } },
                     ["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
                     ["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
                     ["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
@@ -273,13 +278,26 @@ M.command_history = function()
 end
 M.files_from_last_commit = function(commit_hash)
     commit_hash = commit_hash or "HEAD" -- 기본값은 HEAD로 설정
+    local git_root = SN.git.get_root()
 
-    pick_cmd_result({
-        cmd = "git",
-        args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", commit_hash, "-r" },
-        name = "git_show",
+    local finder = function(opts, ctx)
+        return require("snacks.picker.source.proc").proc(vim.tbl_extend("force", opts, {
+            cmd = "git",
+            args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", commit_hash, "-r" },
+            cwd = git_root,
+            transform = function(item)
+                item.file = item.text
+                item.commit = commit_hash
+            end,
+        }), ctx)
+    end
+
+    snp.pick({
+        source = "git_commit_files",
+        finder = finder,
+        preview = "git_show",
         title = "Git Commit Files: " .. commit_hash,
-        preview = "git_diff",
+        layout = { fullscreen = true },
     })
 end
 M.qflist = function()
