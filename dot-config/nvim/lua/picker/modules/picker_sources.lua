@@ -287,6 +287,7 @@ M.files_from_last_commit = function(commit_hash)
             cwd = git_root,
             transform = function(item)
                 item.file = item.text
+                item.cwd = git_root
                 item.commit = commit_hash
             end,
         }), ctx)
