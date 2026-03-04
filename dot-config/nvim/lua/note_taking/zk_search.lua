@@ -296,6 +296,20 @@ function M.open(source_buf, initial_filters, opts)
         picker_ref = picker
         local root_order = { "inbox", "resource", "project", "area", "archive" }
         local ordered = {}
+
+        -- "current": source_buf 파일의 디렉토리 (notebook 기준 상대경로)
+        local current_dir = nil
+        if source_buf then
+            local buf_path = vim.api.nvim_buf_get_name(source_buf)
+            if buf_path ~= "" and buf_path:sub(1, #notebook) == notebook then
+                local rel = vim.fn.fnamemodify(buf_path, ":h"):sub(#notebook + 2)
+                if rel ~= "" then
+                    current_dir = rel
+                    ordered[#ordered + 1] = "current  (" .. rel .. ")"
+                end
+            end
+        end
+
         for _, root in ipairs(root_order) do
             if vim.fn.isdirectory(notebook .. "/" .. root) == 1 then
                 ordered[#ordered + 1] = root
@@ -320,18 +334,26 @@ function M.open(source_buf, initial_filters, opts)
         local path_label = { or_ = "[O]", not_ = "[N]", none_ = "[ ]" }
         local path_cycle = { none_ = "or_", or_ = "not_", not_ = "none_" }
 
+        -- display key → 실제 필터 값 매핑 ("current (...)" → current_dir)
+        local function resolve_path(d)
+            if current_dir and d:match("^current  %(") then return current_dir end
+            return d
+        end
+
         local function get_path_state(d)
-            if list_has(filters.paths,     d) then return "or_"  end
-            if list_has(filters.paths_not, d) then return "not_" end
+            local p = resolve_path(d)
+            if list_has(filters.paths,     p) then return "or_"  end
+            if list_has(filters.paths_not, p) then return "not_" end
             return "none_"
         end
 
         local function cycle_path(d)
+            local p = resolve_path(d)
             local next_st = path_cycle[get_path_state(d)] or "or_"
-            list_remove(filters.paths,     d)
-            list_remove(filters.paths_not, d)
-            if next_st == "or_"  then filters.paths[#filters.paths + 1]         = d
-            elseif next_st == "not_" then filters.paths_not[#filters.paths_not + 1] = d
+            list_remove(filters.paths,     p)
+            list_remove(filters.paths_not, p)
+            if next_st == "or_"  then filters.paths[#filters.paths + 1]         = p
+            elseif next_st == "not_" then filters.paths_not[#filters.paths_not + 1] = p
             end
         end
 
@@ -339,7 +361,11 @@ function M.open(source_buf, initial_filters, opts)
             vim.schedule(function()
                 local display = { ">>> 확정" }
                 for _, d in ipairs(ordered) do
-                    display[#display + 1] = (path_label[get_path_state(d)] or "[ ]") .. " " .. d
+                    if current_dir and d:match("^current  %(") then
+                        display[#display + 1] = "    " .. d
+                    else
+                        display[#display + 1] = (path_label[get_path_state(d)] or "[ ]") .. " " .. d
+                    end
                 end
                 vim.ui.select(display, { prompt = "Path  [ ]→[O]r→[N]ot  (선택→순환, 확정):" }, function(choice)
                     if not choice or choice == ">>> 확정" then
@@ -490,8 +516,8 @@ function M.open(source_buf, initial_filters, opts)
                     ["<M-1>"] = { "zk_tag",      mode = { "i", "n" } },
                     ["<M-2>"] = { "zk_type",     mode = { "i", "n" } },
                     ["<M-3>"] = { "zk_area",     mode = { "i", "n" } },
-                    ["<M-4>"] = { "zk_cur_tags", mode = { "i", "n" } },
-                    ["<M-5>"] = { "zk_path",     mode = { "i", "n" } },
+                    ["<M-4>"] = { "zk_path",     mode = { "i", "n" } },
+                    ["<M-5>"] = { "zk_cur_tags", mode = { "i", "n" } },
                     ["<M-6>"] = { "zk_date",     mode = { "i", "n" } },
                     ["<M-0>"] = { "zk_clear",    mode = { "i", "n" } },
                 },
