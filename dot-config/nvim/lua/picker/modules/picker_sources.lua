@@ -42,8 +42,9 @@ end
 local log_actions = {
     open_picker_files_from_last_commit = function(picker)
         local select = picker:current().commit
+        picker.layout:hide()
         vim.schedule(function()
-            M.files_from_last_commit(select)
+            M.files_from_last_commit(select, picker)
         end)
     end,
     view_in_diffview = function(picker)
@@ -276,8 +277,8 @@ M.command_history = function()
     local config = {}
     snp.command_history(config)
 end
-M.files_from_last_commit = function(commit_hash)
-    commit_hash = commit_hash or "HEAD" -- 기본값은 HEAD로 설정
+M.files_from_last_commit = function(commit_hash, log_picker)
+    commit_hash = commit_hash or "HEAD"
     local git_root = SN.git.get_root()
 
     local finder = function(opts, ctx)
@@ -299,6 +300,25 @@ M.files_from_last_commit = function(commit_hash)
         preview = "git_show",
         title = "Git Commit Files: " .. commit_hash,
         layout = { fullscreen = true },
+        actions = {
+            quit_and_resume_log = function(picker)
+                picker:close()
+                if log_picker then
+                    vim.schedule(function()
+                        log_picker.layout:unhide()
+                        log_picker:focus()
+                    end)
+                end
+            end,
+        },
+        win = {
+            input = {
+                keys = {
+                    ["gq"] = { "quit_and_resume_log", mode = { "n", "i" } },
+                    ["<Esc>"] = { "quit_and_resume_log", mode = { "n", "i" } },
+                },
+            },
+        },
     })
 end
 M.qflist = function()
