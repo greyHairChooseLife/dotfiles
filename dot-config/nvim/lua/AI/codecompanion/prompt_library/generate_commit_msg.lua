@@ -5,46 +5,50 @@ You are a commit assistant.
   Analyze the currently staged git files to determine whether it forms a clean, single-purpose commit.
 
 - Instructions
-  1. If so:
-     - Generate a commit message following the `commitizen` convention.
-     - Is anything missing or excessive?
-     - Some changes may be incomplete and not suitable for inclusion in a finalized commit. In such cases, it's preferable to leave them out and commit them later when complete.
-     - Output Style (Commit message style)
+  1. If it's a clean, single-purpose commit:
+     - Generate a commit message following the `commitizen` convention and matching the style of previous commits provided in the history.
+     - Output Style:
        - Title: concise, imperative English, under 50 characters
        - Body: Korean, 72-character line width
        - Use `-` bullet points
        - Avoid full sentences, use concise phrases
 
-  2. If not so:
-     - List the changes using `-` bullets for clarity, and recommend how to split them into logical commits.
-     - Recommand some git commands for better staging like `git add`or `git add --patch` or `git reset --soft` or etc.
+  2. If it's not a clean, single-purpose commit:
+     - First, output a diagnostic callout summarizing the staging status.
+     - Then, provide a single markdown code block containing a sequence of commands and messages for each logical commit group.
+     - Group each logical change as a "Step" with a comment.
+     - Format for Multiple Commits:
+       > [!WARNING]
+       > (Brief one-line summary of why the current stage needs splitting)
+       >
+       > (Brief explanation of the suggested logical groups)
 
-     > [!NOTE]
-     > Incomplete changes should be left out of the commit and held for later
-     > - Examples: unfinished functions, unused variables, missing test coverage, etc.
-     > - These changes are best committed once their purpose and completion are clear
-      - Output Style
-        - In case of explaination for better staging, format is important and should look like:
-          ````markdown
-          > [!WARNING]
-          > brief one line of explaination
-          >
-          > (only if need)entire and brief explanation.
+       ````markdown
+       # Step 1: (Brief description of the first logical change)
+       `git reset`
+       `git add <files_for_step_1>`
+       feat: (English title)
+       - (Korean detail)
 
-          (in English)feat: something
-          - (in Korean)change 1
-          - (in Korean)change 2
+       # Step 2: (Brief description of the second logical change)
+       `git add <files_for_step_2>`
+       fix: (English title)
+       - (Korean detail)
+       ````
 
-          (if needed)
-          _recommand_
-          `git add <somefile>`
-          `git reset --soft <somefile>`
-          ````
+    3. After you finishall analyzation and answer it, try to commit or commits including other commands like `git reset`, `git add` using @{run_command}. Remember to include details of commit messages if they exist.
+
+- Rules
+  - Incomplete changes (unfinished functions, unused variables, etc.) should be excluded.
+  - Titles must be in English; descriptions must be in Korean.
+  - Match the style of the provided history for consistency.
+  - Encapsulate all git commands and recommended messages within one code block.
 ]]
 
 return {
     interaction = "chat", -- chat, inline, workflow
     description = "", -- shown in the Action Pallete
+    tools = { "run_command" },
     opts = {
         alias = "generate_commit_msg", -- Allows the prompt to be triggered via :CodeCompanion /{alias}
         is_slash_cmd = false,
@@ -57,7 +61,7 @@ return {
             name = "copilot",
             -- MEMO:: github copilot is not unlimited anymore
             -- model = "claude-3.5-sonnet",
-            model = "gpt-4.1",
+            model = "gemini-3-flash-preview",
         },
     },
     prompts = {
@@ -80,7 +84,14 @@ return {
                     handle_staged:close()
                 end
 
-                local git_status = "### Git Staged\n\n"
+                local handle_history = io.popen("git log -n 5 --pretty=format:'%s%n%b'")
+                local history = ""
+                if handle_history ~= nil then
+                    history = handle_history:read("*a")
+                    handle_history:close()
+                end
+
+                local git_status = "### Recent Commit History (Last 5)\n````text\n" .. history .. "\n````\n\n### Git Staged\n\n"
 
                 if #staged > 0 then
                     git_status = git_status .. "#### Staged Changes Start(`git diff --no-ext-diff --staged`)\n````diff\n" .. staged .. "````\n\n"

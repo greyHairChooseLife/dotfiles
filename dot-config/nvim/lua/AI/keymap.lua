@@ -76,7 +76,19 @@ wk_map({
         },
         ["a"] = { cdc_func.add_buffer_reference, desc = "add buffer reference", mode = { "n", "v" } },
         ["A"] = { cdc_func.add_tab_buffers_reference, desc = "add All buffers in Tab reference", mode = { "n", "v" } },
-        ["C"] = { gen_command("pre", predefined.generate_commit_msg), desc = "generate commitm msg", mode = { "n" } },
+        -- ["C"] = { gen_command("pre", predefined.generate_commit_msg), desc = "generate commitm msg", mode = { "n" } },
+        ["C"] = {
+            function()
+                local result = vim.fn.system("git diff --cached --quiet")
+                if vim.v.shell_error == 0 then
+                    vim.notify("Nothing staged. Add files to git stage first.", vim.log.levels.WARN)
+                    return
+                end
+                vim.cmd("CodeCompanion " .. predefined.generate_commit_msg)
+            end,
+            desc = "generate commit msg",
+            mode = { "n" },
+        },
     },
 })
 
