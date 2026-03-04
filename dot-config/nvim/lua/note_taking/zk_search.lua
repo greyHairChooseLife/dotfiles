@@ -203,7 +203,7 @@ local function ask_date(cb)
 end
 
 -- 메인 검색 picker
--- opts: { mode = "open"|"insert_link", sel_buf, sel_start_row, sel_start_col, sel_end_row, sel_end_col, selected_text }
+-- opts: { mode = "open"|"insert_link"|"grep", sel_buf, sel_start_row, sel_start_col, sel_end_row, sel_end_col, selected_text }
 function M.open(source_buf, initial_filters, opts)
     local meta = read_metadata()
 
@@ -439,17 +439,51 @@ function M.open(source_buf, initial_filters, opts)
         end)
     end
 
+    local is_grep = opts.mode == "grep"
+
+    -- grep 모드: zk list로 필터된 파일에서 rg로 내용 검색 (live)
+    local function grep_finder(popts, ctx)
+        local files = run_zk(filters)
+        if #files == 0 then return {} end
+        local search = (ctx and ctx.filter and ctx.filter.search) or ""
+        if search == "" then return {} end
+        local rg_args = {
+            "rg", "--color=never", "--no-heading", "--with-filename",
+            "--line-number", "--column", "--smart-case",
+            search, "--",
+        }
+        for _, item in ipairs(files) do
+            rg_args[#rg_args + 1] = item.file
+        end
+        local raw = vim.fn.system(table.concat(vim.tbl_map(vim.fn.shellescape, rg_args), " "))
+        local items = {}
+        for line in raw:gmatch("[^\n]+") do
+            local path, lnum, col, text = line:match("^(.+):(%d+):(%d+):(.*)$")
+            if path then
+                local stem = vim.fn.fnamemodify(path, ":t:r")
+                items[#items + 1] = {
+                    text = text,
+                    file = path,
+                    pos  = { tonumber(lnum), tonumber(col) - 1 },
+                    stem = stem,
+                }
+            end
+        end
+        return items
+    end
+
     -- finder: zk list 동기 실행 후 table 반환
-    local function finder(opts, ctx)
+    local function finder(popts, ctx)
         return run_zk(filters)
     end
 
     -- picker 열기
     require("snacks").picker({
         title = build_title(filters),
-        finder = finder,
+        finder = is_grep and grep_finder or finder,
+        live = is_grep,
         auto_close = false,
-        format = function(item, _)
+        format = is_grep and "file" or function(item, _)
             return {
                 { item.title or item.text, "SnacksPickerLabel" },
                 { "  " .. (item.stem or ""), "SnacksPickerComment" },
@@ -526,6 +560,12 @@ function M.open(source_buf, initial_filters, opts)
     })
 end
 
+-- 노트 내용 검색 (grep 모드)
+function M.grep_notes()
+    local source_buf = vim.api.nvim_get_current_buf()
+    M.open(source_buf, nil, { mode = "grep" })
+end
+
 -- 링크 삽입: 기존 검색 picker를 insert_link 모드로 열기
 -- normal mode: 커서 위치에 [[stem]] 삽입
 -- visual mode: 선택 텍스트를 [[stem|alias]]로 교체
@@ -576,6 +616,7 @@ function M.insert_link(is_visual)
 
     M.open(sel_buf, nil, opts)
 end
+
 
 -- 최근 수정 노트 picker
 function M.open_recent()

@@ -13,18 +13,22 @@ local function zk_new_note(is_visual)
     local selected_text = nil
     local sel_buf, sel_start_row, sel_start_col, sel_end_row, sel_end_col
     if is_visual then
-        local util = require("zk.util")
-        selected_text = util.get_selected_text()
+        selected_text = require("utils").get_visual_text(true)
         sel_buf = vim.api.nvim_get_current_buf()
         -- '<, '> 마크로 선택 범위 확보 (0-indexed)
         local start_pos = vim.api.nvim_buf_get_mark(sel_buf, "<")
         local end_pos = vim.api.nvim_buf_get_mark(sel_buf, ">")
-        sel_start_row = start_pos[1] - 1
-        sel_start_col = start_pos[2]
-        sel_end_row = end_pos[1] - 1
-        -- end col은 마지막 문자 다음 위치
-        sel_end_col = end_pos[2]
-            + #vim.fn.strcharpart(vim.fn.strpart(vim.api.nvim_buf_get_lines(sel_buf, end_pos[1] - 1, end_pos[1], true)[1], end_pos[2]), 0, 1)
+        -- 마크가 유효하지 않으면 (line 0) visual 텍스트만 title로 사용, 링크 삽입 불가
+        if start_pos[1] == 0 or end_pos[1] == 0 then
+            sel_buf = nil
+        else
+            sel_start_row = start_pos[1] - 1
+            sel_start_col = start_pos[2]
+            sel_end_row = end_pos[1] - 1
+            -- end col은 마지막 문자 다음 위치
+            sel_end_col = end_pos[2]
+                + #vim.fn.strcharpart(vim.fn.strpart(vim.api.nvim_buf_get_lines(sel_buf, end_pos[1] - 1, end_pos[1], true)[1], end_pos[2]), 0, 1)
+        end
     end
 
     local function open_vsplit(path)
@@ -47,7 +51,7 @@ local function zk_new_note(is_visual)
         require("zk.api").new(nil, opts, function(err, res)
             assert(not err, tostring(err))
             vim.schedule(function()
-                if is_visual then
+                if is_visual and sel_buf then
                     local stem = vim.fn.fnamemodify(res.path, ":t:r")
                     local alias = selected_text or stem
                     local link = "[[" .. stem .. "|" .. alias .. "]]"
@@ -169,10 +173,11 @@ end
 wk_map({
     ["<Space>z"] = {
         group = "Zk",
-        order = { "n", "f", "o", "b", "l" },
+        order = { "n", "f", "w", "o", "b", "l" },
         ["n"] = {
             function()
-                local is_visual = vim.fn.mode() == "v" or vim.fn.mode() == "V"
+                local m = vim.fn.mode()
+                local is_visual = m == "v" or m == "V" or m == "\22"
                 zk_new_note(is_visual)
             end,
             desc = "새 노트 생성",
@@ -184,6 +189,11 @@ wk_map({
                 require("note_taking.zk_search").open(source_buf)
             end,
             desc = "노트 검색",
+            mode = "n",
+        },
+        ["w"] = {
+            function() require("note_taking.zk_search").grep_notes() end,
+            desc = "노트 내용 검색",
             mode = "n",
         },
         ["o"] = {
