@@ -8,46 +8,48 @@ return {
 
         -- MEMO:: header
         local function header()
-            local cwd = vim.fn.getcwd()
-            -- Git 디렉토리인지 확인
-            local git_dir_check = vim.fn.system("git rev-parse --is-inside-work-tree 2>/dev/null")
-            if git_dir_check:match("true") == nil then
-                return {
-                    "                                                                              " .. cwd,
-                    "Not git dir                                                                                                               ",
-                }
-            end
+            local home = vim.fn.expand("$HOME")
+            local function to_home(path) return path:gsub("^" .. home, "~") end
 
-            local fetch_output = vim.fn.system("git log --oneline HEAD..FETCH_HEAD")
-            local fetch_lines = {}
-            for line in fetch_output:gmatch("([^\n]*)\n?") do
-                table.insert(fetch_lines, line)
-            end
+            local cwd = to_home(vim.fn.getcwd())
+            local is_git = vim.fn.system("git rev-parse --is-inside-work-tree 2>/dev/null"):match("true")
 
-            local result = {
-                "                                                                                   " .. cwd,
-                " HEAD..FETCH_HEAD                                                                                                                                 ",
-                " ",
+            local col = "  %-22s  %s"
+            local lines = {
+                "",
+                col:format("󰙊 CWD", " " .. cwd),
             }
 
-            for _, line in ipairs(fetch_lines) do
-                table.insert(result, "  " .. line)
+            if is_git then
+                local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD 2>/dev/null"):gsub("\n", "")
+                local git_root = to_home(vim.fn.system("git rev-parse --show-toplevel 2>/dev/null"):gsub("\n", ""))
+                local last_mod = vim.fn.system("git log -1 --format='%cr,  \"%s\"' 2>/dev/null"):gsub("\n", "")
+                local cloned_at = vim.fn.system("date -d @$(stat -c '%Y' $(git rev-parse --git-dir)) '+%Y-%m-%d ' 2>/dev/null"):gsub("%s*$", "")
+
+                local fetch_head = vim.fn.system("git rev-parse --git-dir 2>/dev/null"):gsub("\n", "") .. "/FETCH_HEAD"
+                local fetch_info = "(never fetched)"
+                local f = io.open(fetch_head, "r")
+                if f then
+                    local first_line = f:read("*l")
+                    f:close()
+                    if first_line then
+                        local sha, ref = first_line:match("^(%x+)%s+%S+%s+'(.-)'")
+                        local fetch_time = vim.fn.system("date -d @$(stat -c '%Y' " .. fetch_head .. ") '+%Y-%m-%d %H:%M' 2>/dev/null"):gsub("%s*$", "")
+                        fetch_info = fetch_time .. "  " .. (ref or "") .. (sha and ("  " .. sha:sub(1, 7)) or "")
+                    end
+                end
+
+                table.insert(lines, col:format(" Git Root", git_root))
+                table.insert(lines, col:format("  │", ""))
+                table.insert(lines, col:format("  ├ Modified", last_mod .. ",  @[" .. branch .. "]"))
+                table.insert(lines, col:format("  ├ Fetched", fetch_info))
+                table.insert(lines, col:format("  └ Cloned", cloned_at))
+            else
+                table.insert(lines, col:format(" Git Root", "(not a git repo)"))
             end
 
-            table.insert(result, " origin/main..HEAD")
-            table.insert(result, "")
-
-            local workload_output = vim.fn.system("git log --oneline origin/main..HEAD")
-            local workload_lines = {}
-            for line in workload_output:gmatch("([^\n]*)\n?") do
-                table.insert(workload_lines, line)
-            end
-
-            for _, line in ipairs(workload_lines) do
-                table.insert(result, "  " .. line)
-            end
-
-            return result
+            table.insert(lines, "")
+            return lines
         end
         dashboard.section.header.val = header()
 
