@@ -5,7 +5,7 @@ local wk_map = require("utils").wk_map
 -- MEMO:: zk
 local function zk_new_note(is_visual)
     local notebook = vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")
-    local types = { "fleeting", "study", "cheatsheet", "plan", "index", "journal", "meeting", "master" }
+    local types = { "fleeting", "master", "troubleshoot", "reference", "study", "cheatsheet", "plan", "index", "journal", "meeting" }
     local para_roots = { "inbox", "project", "area", "resource", "archive" }
     local has_subdirs = { project = true, area = true, archive = true }
 
