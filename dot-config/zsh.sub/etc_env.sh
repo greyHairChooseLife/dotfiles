@@ -23,3 +23,6 @@ export XMODIFIERS=@im=kime
 # export GTK_IM_MODULE=ibus
 # export QT_IM_MODULE=ibus
 # export XMODIFIERS=@im=ibus
+
+# MEMO:: notes
+export ZK_NOTEBOOK_DIR="$HOME/Documents/zk"
