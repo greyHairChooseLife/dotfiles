@@ -46,6 +46,15 @@ local cmp_state = {
     sort = "lsp", -- 'buffer', 'lsp' or 'snippets', 어떤 completion이 로드되었는지 상태를 저장
 }
 
+local function zk_providers_extra()
+    local notebook = vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")
+    local path = vim.api.nvim_buf_get_name(0)
+    if vim.bo.filetype == "markdown" and path:sub(1, #notebook) == notebook then
+        return { "zk_frontmatter" }
+    end
+    return {}
+end
+
 ---Shows completion items from specified provider
 ---@param cmp table The completion engine instance
 ---@param sort string The provider to sort by ("lsp", "buffer", etc.)
@@ -54,10 +63,10 @@ local cmp_state = {
 local function show_provider(cmp, sort, initial_select)
     initial_select = initial_select or false
     if sort == "lsp" then
+        local providers = { sort, "path" }
+        vim.list_extend(providers, zk_providers_extra())
         cmp.show({
-            -- DEPRECATED:: 2025-05-21 codecompanion works out of box
-            -- providers = { sort, "path", "codecompanion" },
-            providers = { sort, "path" },
+            providers = providers,
             initial_selected_item_idx = initial_select == true and 1 or nil,
         })
     else

@@ -157,7 +157,9 @@ return {
                             ellipsis = false,
                             text = function(ctx)
                                 local icon = ctx.kind_icon
-                                if vim.tbl_contains({ "Path" }, ctx.source_name) then
+                                if ctx.source_name == "ZkFrontmatter" then
+                                    icon = "Zk"
+                                elseif vim.tbl_contains({ "Path" }, ctx.source_name) then
                                     local dev_icon, _ = require("nvim-web-devicons").get_icon(ctx.label)
                                     if dev_icon then icon = dev_icon end
                                 else
@@ -289,6 +291,8 @@ return {
                 },
                 -- define `dadbod` provider
                 dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
+                -- zk frontmatter 자동완성 (tags/area/type)
+                zk_frontmatter = { name = "ZkFrontmatter", module = "note_taking.blink_zk" },
                 -- Use the thesaurus source
                 thesaurus = {
                     name = "blink-cmp-words",
@@ -342,6 +346,8 @@ return {
                 sql = { "dadbod", "buffer" },
                 text = { "dictionary" },
                 markdown = {
+                    "lsp",
+                    "zk_frontmatter",
                     "dictionary" --[[ , "thesaurus" ]],
                 },
                 vimwiki = { "dictionary" },
