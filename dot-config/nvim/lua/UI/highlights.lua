@@ -371,7 +371,7 @@ vim.cmd([[
   highlight CodeCompanionH4Bg guibg=#242024 guifg=#e0af68 gui=bold
   highlight CodeCompanionH5Bg guibg=#242024 guifg=#8b8378 gui=bold
   highlight CodeCompanionH6Bg guibg=#242024 guifg=#B0C4DE gui=bold
-
+  highlight CodeCompanionDiffBanner guibg=#000000 guifg=#bb9af7 gui=italic
 
   " MEMO:: Snacks
   highlight SnacksPickerInputTitle guibg=#000000 guifg=#A1C98A

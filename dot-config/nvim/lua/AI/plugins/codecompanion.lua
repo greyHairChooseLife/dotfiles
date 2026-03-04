@@ -84,6 +84,20 @@ return {
                             signcolumn = "yes:1",
                         },
                     },
+
+                    floating_window = {
+                        -- 크기: 0~1은 비율, 1 이상은 절대값(columns/lines)
+                        width = 0.85,
+                        height = 0.8,
+                        border = "solid", -- "single"|"double"|"rounded"|"solid"|"shadow"
+                        relative = "editor",
+                        opts = {
+                            -- nvim_open_win의 win-local 옵션
+                            -- winhl = "Normal:NormalFloat,FloatBorder:FloatBorder",
+                            -- winhighlight = "Normal:MyDebugBg",
+                            signcolumn = "no",
+                        },
+                    },
                 },
                 action_palette = {
                     width = 95,
