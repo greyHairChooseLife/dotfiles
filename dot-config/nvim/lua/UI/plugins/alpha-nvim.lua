@@ -83,11 +83,12 @@ return {
             dashboard.button("cp", "c.c: Prompts", ":cd ~/.claude | e CLAUDE.md<CR>"),
             dashboard.button("ce", "c.c: Commands", ":cd ~/.claude | e commands<CR>"),
 
-            dashboard.button("_", "                              _______   doc _____", ""),
-            dashboard.button("1", "dev", ":cd ~/Documents/dev-wiki | :VimwikiIndex<CR>"),
-            dashboard.button("2", "job", ":cd ~/Documents/job-wiki | :2VimwikiIndex<CR>"),
-            dashboard.button("d", "all", ":cd ~/Documents | vi .<CR>"),
-
+            -- DEPRECATED:: 2026-03-04
+            -- dashboard.button("_", "                              _______   doc _____", ""),
+            -- dashboard.button("1", "dev", ":cd ~/Documents/dev-wiki | :VimwikiIndex<CR>"),
+            -- dashboard.button("2", "job", ":cd ~/Documents/job-wiki | :2VimwikiIndex<CR>"),
+            -- dashboard.button("d", "all", ":cd ~/Documents | vi .<CR>"),
+            --
             dashboard.button("_", "                              ______  configs ___", ""),
             dashboard.button("lz", "lazy plugins", ":Lazy<CR>"),
             dashboard.button("i3", "i3", ":cd ~/.config/i3 | e config<CR>"),
