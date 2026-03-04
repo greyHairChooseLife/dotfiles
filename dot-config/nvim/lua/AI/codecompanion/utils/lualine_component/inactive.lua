@@ -63,6 +63,7 @@ function M:init(options)
     M.super.init(self, options)
 
     local group = vim.api.nvim_create_augroup("CodeCompanionHooks_spinner_active", { clear = true })
+    local timer = nil
 
     vim.api.nvim_create_autocmd({ "User" }, {
         pattern = { "CodeCompanionRequestStarted", "CodeCompanionRequestFinished" },
@@ -70,8 +71,18 @@ function M:init(options)
         callback = function(args)
             if args.match == "CodeCompanionRequestStarted" then
                 self.processing = true
+                if not timer then
+                    timer = vim.loop.new_timer()
+                    timer:start(0, 50, vim.schedule_wrap(function() require("lualine").refresh({ place = { "statusline" } }) end))
+                end
             elseif args.match == "CodeCompanionRequestFinished" then
                 self.processing = false
+                if timer then
+                    timer:stop()
+                    timer:close()
+                    timer = nil
+                end
+                require("lualine").refresh({ place = { "statusline" } })
             end
         end,
     })
