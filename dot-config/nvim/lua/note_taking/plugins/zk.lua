@@ -104,6 +104,35 @@ return {
             end,
         })
 
+        -- updated: frontmatter 자동 갱신
+        vim.api.nvim_create_autocmd("BufWritePre", {
+            pattern = "*.md",
+            callback = function(ev)
+                local path = ev.file
+                if path:sub(1, #notebook) ~= notebook then return end
+                local rel = path:sub(#notebook + 2)
+                if rel:match("^docs/") then return end
+                local today = os.date("%Y-%m-%d")
+                local lines = vim.api.nvim_buf_get_lines(ev.buf, 0, -1, false)
+                local in_fm = false
+                for i, line in ipairs(lines) do
+                    if line == "---" then
+                        if not in_fm then
+                            in_fm = true
+                        else
+                            break
+                        end
+                    elseif in_fm then
+                        if line:match("^updated:%s*") then
+                            local new_line = "updated: " .. today
+                            if new_line ~= line then vim.api.nvim_buf_set_lines(ev.buf, i - 1, i, false, { new_line }) end
+                            break
+                        end
+                    end
+                end
+            end,
+        })
+
         require("zk").setup({
             -- Can be "telescope", "fzf", "fzf_lua", "minipick", "snacks_picker",
             -- or select" (`vim.ui.select`).

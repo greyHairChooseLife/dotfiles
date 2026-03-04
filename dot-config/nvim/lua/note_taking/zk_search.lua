@@ -203,7 +203,8 @@ local function ask_date(cb)
 end
 
 -- 메인 검색 picker
-function M.open(source_buf, initial_filters)
+-- opts: { mode = "open"|"insert_link", sel_buf, sel_start_row, sel_start_col, sel_end_row, sel_end_col, selected_text }
+function M.open(source_buf, initial_filters, opts)
     local meta = read_metadata()
 
     -- 필터 상태 (재열기 시 기존 필터 유지)
@@ -216,6 +217,7 @@ function M.open(source_buf, initial_filters)
         modified_after = nil, modified_before = nil,
     }
 
+    opts = opts or {}
     local picker_ref = nil
 
     local function refresh_picker()
@@ -223,7 +225,7 @@ function M.open(source_buf, initial_filters)
             picker_ref.title = build_title(filters)
             picker_ref:refresh()
         else
-            M.open(source_buf, filters)
+            M.open(source_buf, filters, opts)
         end
     end
 
@@ -430,7 +432,23 @@ function M.open(source_buf, initial_filters)
         preview = "file",
         confirm = function(picker, item)
             picker:close()
-            if item and item.file then
+            if not item then return end
+            if opts.mode == "insert_link" then
+                local stem = item.stem or vim.fn.fnamemodify(item.file, ":t:r")
+                local link
+                if opts.selected_text then
+                    link = "[[" .. stem .. "|" .. opts.selected_text .. "]]"
+                else
+                    link = "[[" .. stem .. "]]"
+                end
+                vim.api.nvim_buf_set_text(
+                    opts.sel_buf, opts.sel_start_row, opts.sel_start_col,
+                    opts.sel_end_row, opts.sel_end_col, { link }
+                )
+                if not opts.selected_text then
+                    vim.api.nvim_win_set_cursor(0, { opts.sel_start_row + 1, opts.sel_start_col + #link })
+                end
+            else
                 vim.cmd("edit " .. vim.fn.fnameescape(item.file))
             end
         end,
@@ -479,6 +497,89 @@ function M.open(source_buf, initial_filters)
                 },
             },
         },
+    })
+end
+
+-- 링크 삽입: 기존 검색 picker를 insert_link 모드로 열기
+-- normal mode: 커서 위치에 [[stem]] 삽입
+-- visual mode: 선택 텍스트를 [[stem|alias]]로 교체
+function M.insert_link(is_visual)
+    local sel_buf = vim.api.nvim_get_current_buf()
+    local opts = { mode = "insert_link", sel_buf = sel_buf }
+
+    if is_visual then
+        local start_pos = vim.api.nvim_buf_get_mark(sel_buf, "<")
+        local end_pos   = vim.api.nvim_buf_get_mark(sel_buf, ">")
+        -- '<,'>  마크가 없으면 (처음 실행 등) normal mode처럼 fallback
+        if start_pos[1] == 0 then
+            is_visual = false
+        else
+            opts.sel_start_row = start_pos[1] - 1
+            opts.sel_start_col = start_pos[2]
+            opts.sel_end_row   = end_pos[1] - 1
+
+            -- linewise visual (V): end col = 2147483647 → 줄 끝으로 clamp
+            local end_line = vim.api.nvim_buf_get_lines(sel_buf, end_pos[1] - 1, end_pos[1], true)[1] or ""
+            local raw_col = end_pos[2]
+            if raw_col >= #end_line then
+                opts.sel_end_col = #end_line
+            else
+                opts.sel_end_col = raw_col
+                    + #vim.fn.strcharpart(vim.fn.strpart(end_line, raw_col), 0, 1)
+            end
+
+            -- selected_text 수집
+            local lines = vim.api.nvim_buf_get_lines(sel_buf, start_pos[1] - 1, end_pos[1], false)
+            if #lines == 1 then
+                opts.selected_text = lines[1]:sub(start_pos[2] + 1, opts.sel_end_col)
+            else
+                lines[1] = lines[1]:sub(start_pos[2] + 1)
+                lines[#lines] = lines[#lines]:sub(1, opts.sel_end_col)
+                opts.selected_text = table.concat(lines, " ")
+            end
+        end
+    end
+
+    if not is_visual then
+        local cursor = vim.api.nvim_win_get_cursor(0)
+        opts.sel_start_row = cursor[1] - 1
+        opts.sel_start_col = cursor[2]
+        opts.sel_end_row   = opts.sel_start_row
+        opts.sel_end_col   = opts.sel_start_col
+    end
+
+    M.open(sel_buf, nil, opts)
+end
+
+-- 최근 수정 노트 picker
+function M.open_recent()
+    local raw = vim.fn.system(
+        "cd " .. vim.fn.shellescape(notebook) .. " && zk list --quiet --exclude docs --sort modified- --limit 10 --format '{{abs-path}}\t{{title}}\t{{filename-stem}}'"
+    )
+    local items = {}
+    for line in raw:gmatch("[^\n]+") do
+        local path, title, stem = line:match("^(.+)\t(.+)\t(.+)$")
+        if path then
+            items[#items + 1] = { text = title, file = path, title = title, stem = stem }
+        end
+    end
+
+    require("snacks").picker({
+        title = "zk recent",
+        finder = function() return items end,
+        format = function(item, _)
+            return {
+                { item.title or item.text, "SnacksPickerLabel" },
+                { "  " .. (item.stem or ""), "SnacksPickerComment" },
+            }
+        end,
+        preview = "file",
+        confirm = function(picker, item)
+            picker:close()
+            if item and item.file then
+                vim.cmd("edit " .. vim.fn.fnameescape(item.file))
+            end
+        end,
     })
 end
 

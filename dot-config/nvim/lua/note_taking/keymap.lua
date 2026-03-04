@@ -169,7 +169,7 @@ end
 wk_map({
     ["<Space>z"] = {
         group = "Zk",
-        order = { "n", "f", "b", "l" },
+        order = { "n", "f", "o", "b", "l" },
         ["n"] = {
             function()
                 local is_visual = vim.fn.mode() == "v" or vim.fn.mode() == "V"
@@ -186,15 +186,23 @@ wk_map({
             desc = "노트 검색",
             mode = "n",
         },
+        ["o"] = {
+            function() require("note_taking.zk_search").open_recent() end,
+            desc = "최근 노트 열기",
+            mode = "n",
+        },
         ["b"] = {
             "<cmd>ZkBacklinks<CR>",
             desc = "백링크 검색",
             mode = "n",
         },
         ["l"] = {
-            "<cmd>ZkInsertLink<CR>",
+            function()
+                local is_visual = vim.fn.mode() == "v" or vim.fn.mode() == "V"
+                require("note_taking.zk_search").insert_link(is_visual)
+            end,
             desc = "링크 삽입",
-            mode = "n",
+            mode = { "n", "v" },
         },
     },
 })
