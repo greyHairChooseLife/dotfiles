@@ -10,6 +10,14 @@ alias tree='tree -C -I "node_modules/"'
 # System info
 alias df='df -h'
 alias free='free -m'
+alias p='ping'
+ping() {
+    if [ $# -eq 0 ]; then
+        command ping google.com
+    else
+        command ping "$@"
+    fi
+}
 
 # Search
 alias rg='rg --ignore-case'
