@@ -170,6 +170,23 @@ local function zk_new_note(is_visual)
     end)
 end
 
+-- CLI용 nvim User commands (nvim -c "Zn" 형태로 호출)
+vim.api.nvim_create_user_command("Zn", function()
+    vim.cmd("cd " .. vim.fn.fnameescape(vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")))
+    zk_new_note(false)
+end, {})
+
+vim.api.nvim_create_user_command("Zf", function()
+    vim.cmd("cd " .. vim.fn.fnameescape(vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")))
+    local source_buf = vim.api.nvim_get_current_buf()
+    require("note_taking.zk_search").open(source_buf)
+end, {})
+
+vim.api.nvim_create_user_command("Zo", function()
+    vim.cmd("cd " .. vim.fn.fnameescape(vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")))
+    require("note_taking.zk_search").open_recent()
+end, {})
+
 wk_map({
     ["<Space>z"] = {
         group = "Zk",

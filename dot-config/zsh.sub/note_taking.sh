@@ -89,3 +89,9 @@ _update_readme_with_english_study_note() {
         return 1
     fi
 }
+
+alias zcld='cd $ZK_NOTEBOOK_DIR && claude'
+alias zcd='cd $ZK_NOTEBOOK_DIR'
+zn() { nvim -c "Zn" }
+zf() { nvim -c "Zf" }
+zo() { nvim -c "Zo" }
