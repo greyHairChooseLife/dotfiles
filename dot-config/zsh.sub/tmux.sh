@@ -50,3 +50,13 @@ alias 1='tm.1_title'
 alias 2='tm.2_toggle_border'
 # select tmux window and copy its layout
 alias tlayout='zsh ${HOME}/dotfiles/dot-config/zsh.sub/scripts/tmux/cp_layout_fzf.sh'
+
+# tmux new session with title
+tn() {
+    local title="${1:-anon}"
+    if [ -n "$TMUX" ]; then
+        tmux new-session -d -s "$title" && tmux switch-client -t "$title"
+    else
+        tmux new-session -s "$title"
+    fi
+}
