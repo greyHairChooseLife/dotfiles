@@ -10,6 +10,7 @@ return {
             end
             return { "treesitter", "indent" }
         end,
+        close_fold_kinds_for_ft = {},
         fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate, ctx)
             local newVirtText = {}
             local firstLine = vim.api.nvim_buf_get_lines(ctx.bufnr, lnum - 1, lnum, false)[1] or ""
@@ -75,4 +76,42 @@ return {
             return newVirtText
         end,
     },
+    config = function(_, opts)
+        local ufo = require("ufo")
+        ufo.setup(opts)
+
+        -- prevent ufo from re-closing folds on TextChanged
+        vim.defer_fn(function()
+            for _, au in ipairs(vim.api.nvim_get_autocmds({ group = "Ufo", event = "TextChanged" })) do
+                pcall(vim.api.nvim_del_autocmd, au.id)
+            end
+        end, 100)
+
+
+        local function next_closed_fold(direction)
+            local lnum = vim.fn.line(".")
+            local total = vim.fn.line("$")
+            local step = direction == "next" and 1 or -1
+            local i = lnum + step
+            while i >= 1 and i <= total do
+                if vim.fn.foldclosed(i) == i then
+                    vim.fn.cursor(i, 1)
+                    return
+                end
+                i = i + step
+            end
+        end
+
+        vim.keymap.set("n", "zn", function() next_closed_fold("next") end, { desc = "Next fold" })
+        vim.keymap.set("n", "zp", function() next_closed_fold("prev") end, { desc = "Prev fold" })
+
+        vim.api.nvim_create_autocmd("BufWinEnter", {
+            group = vim.api.nvim_create_augroup("UfoReattach", { clear = true }),
+            callback = function()
+                if vim.bo.buftype == "" then
+                    ufo.attach()
+                end
+            end,
+        })
+    end,
 }
