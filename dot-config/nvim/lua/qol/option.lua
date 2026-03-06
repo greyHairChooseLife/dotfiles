@@ -21,7 +21,7 @@ opt.signcolumn = "yes:2"
 -- opt.foldcolumn = "2"
 opt.fillchars = {
     vert = "┃", -- 수직 창 구분선
-    fold = "·", -- 접힌 텍스트 표시
+    fold = " ", -- 접힌 텍스트 표시
     foldopen = "▾", -- 펼쳐진 fold 표시
     foldsep = "│", -- fold 열 구분선
     foldclose = "▸", -- 접힌 fold 표시
@@ -44,11 +44,11 @@ opt.autoindent = true
 opt.tabstop = 2
 opt.shiftwidth = 2
 
--- Folding settings
-opt.foldexpr = "nvim_treesitter#foldexpr()"
+-- Folding settings (managed by nvim-ufo)
+vim.o.foldtext = ""
 opt.foldlevel = 99
-opt.foldmethod = "indent"
-opt.foldenable = false
+opt.foldlevelstart = 99
+opt.foldenable = true
 opt.formatoptions:remove("f") -- Prevent auto-folding during formatting
 
 -- Session settings

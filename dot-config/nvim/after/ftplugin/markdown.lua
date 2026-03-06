@@ -1,52 +1,12 @@
 local map = vim.keymap.set
 
-vim.opt.tabstop = 4 -- 탭을 2칸으로 설정
-vim.opt.shiftwidth = 4 -- 자동 들여쓰기 2칸
-vim.opt.softtabstop = 4 -- 백스페이스로 2칸씩 지우기
-vim.opt.expandtab = true -- 탭을 공백으로 변환
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.softtabstop = 4
+vim.opt.expandtab = true
 
 map({ "n", "v" }, "<Right>", "<Esc>WviWo")
 map({ "n", "v" }, "<Left>", "<Esc>BviWo")
-local function deprecated_ToggleBracket()
-    local cursor_pos = vim.api.nvim_win_get_cursor(0)
-    local line_num = cursor_pos[1]
-    local col_num = cursor_pos[2]
-    local line = vim.api.nvim_get_current_line()
-
-    local header_pattern = "^#+%s"
-    local link_pattern = "%[%s*.+%]%(.+%)"
-    local unchecked_pattern = " %[%-%] $"
-    local unchecked_inline = "%[%-%]"
-    local checked_pattern = "%[x%]"
-
-    -- 1. 현재 라인이 '# ', '## ', '### '... 혹은 링크 패턴으로 시작하는지 확인
-    if string.match(line, header_pattern) or string.match(line, link_pattern) then
-        if string.match(line, unchecked_pattern) then
-            line = string.gsub(line, unchecked_pattern, "")
-        else
-            line = line .. " [-] "
-        end
-    else
-        -- 2. 라인에 '[-]'가 있는지 확인
-        if string.match(line, unchecked_inline) then
-            line = string.gsub(line, unchecked_inline, "[x] ")
-        elseif string.match(line, checked_pattern) then
-            line = string.gsub(line, checked_pattern, "[-] ")
-        else
-            local before_cursor = string.sub(line, 1, col_num)
-            local after_cursor = string.sub(line, col_num + 1)
-            line = before_cursor .. "[-] " .. after_cursor
-
-            vim.api.nvim_set_current_line(line)
-            vim.api.nvim_win_set_cursor(0, { line_num, col_num + 5 })
-            vim.cmd("startinsert!")
-            return
-        end
-    end
-
-    vim.api.nvim_set_current_line(line)
-    vim.api.nvim_win_set_cursor(0, { line_num, col_num })
-end
 
 local function ToggleBracket()
     local cursor_pos = vim.api.nvim_win_get_cursor(0)
@@ -126,3 +86,11 @@ map("v", "<C-i>", ":lua require('markdowny').italic()<cr>", { buffer = true })
 map("v", "<C-c>", ":lua require('markdowny').cancel()<cr>", { buffer = true })
 map("v", "<C-k>", ":lua require('markdowny').link()<cr>", { buffer = true })
 map("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = true })
+
+map("n", "<CR>", "<cmd>RenderMarkdown buf_toggle<CR>")
+
+-- Folding
+vim.opt_local.foldmethod = "expr"
+vim.opt_local.foldexpr = "v:lua.markdown_fold_expr(v:lnum)"
+vim.opt_local.foldtext = "v:lua.markdown_fold_text(v:foldstart, v:foldend, v:foldlevel)"
+vim.opt_local.foldenable = true

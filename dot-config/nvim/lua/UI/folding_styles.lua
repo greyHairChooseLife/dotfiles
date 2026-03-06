@@ -29,7 +29,7 @@ _G.markdown_fold_text = function(foldstart, foldend, foldlevel)
     elseif foldlevel == 6 then
         total_width = 50
     end
-    local line_icon_fill = string.rep(line_icon, total_width - #line_start_icon / 2)
+    local line_icon_fill = string.rep(line_icon, total_width - vim.fn.strdisplaywidth(line_start_icon))
     local line_fill = line_start_icon .. line_icon_fill .. line_end_icon
 
     local line_count = foldend - foldstart + 1
@@ -60,8 +60,7 @@ _G.markdown_fold_expr = function(lnum)
     if is_lv3_header then return "2" end
     if is_lv4_header then return "3" end
     if is_lv5_header then return "4" end
-    if is_lv5_header then return "5" end
-    if is_lv6_header then return "6" end
+    if is_lv6_header then return "5" end
     if string.match(curr_line, "^%s*$") and string.match(next_line, "^###%s") then return "1" end
     if string.match(curr_line, "^%s*$") and string.match(next_line, "^####%s") then return "2" end
     if string.match(curr_line, "^%s*$") and string.match(next_line, "^#####%s") then return "3" end
