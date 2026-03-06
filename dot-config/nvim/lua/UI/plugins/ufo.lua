@@ -55,19 +55,21 @@ return {
                 sufWidth = sufWidth + vim.fn.strdisplaywidth(chunk[1])
             end
 
-            local targetWidth = width - sufWidth
+            local targetWidth = math.max(0, width - sufWidth)
             local curWidth = 0
             for _, chunk in ipairs(virtText) do
                 local chunkText = chunk[1]
                 local chunkWidth = vim.fn.strdisplaywidth(chunkText)
                 if targetWidth > curWidth + chunkWidth then
                     table.insert(newVirtText, chunk)
+                    curWidth = curWidth + chunkWidth
                 else
                     chunkText = truncate(chunkText, targetWidth - curWidth)
+                    local truncatedWidth = vim.fn.strdisplaywidth(chunkText)
                     table.insert(newVirtText, { chunkText, chunk[2] })
+                    curWidth = curWidth + truncatedWidth
                     break
                 end
-                curWidth = curWidth + chunkWidth
             end
 
             for _, chunk in ipairs(suffix) do
@@ -79,6 +81,24 @@ return {
     config = function(_, opts)
         local ufo = require("ufo")
         ufo.setup(opts)
+
+        local orig_cursor_hl = vim.api.nvim_get_hl(0, { name = "Cursor" })
+        vim.api.nvim_create_autocmd("CursorMoved", {
+            group = vim.api.nvim_create_augroup("UfoCursorMismatch", { clear = true }),
+            callback = function()
+                local lnum = vim.fn.line(".")
+                local fold_start = vim.fn.foldclosed(lnum)
+                if fold_start ~= -1 and fold_start ~= lnum then
+                    vim.api.nvim_set_hl(0, "Cursor", { bg = "#c678dd", fg = "#282c34" })
+                    vim.api.nvim_set_hl(0, "SmearCursor", { bg = "#c678dd", fg = "#282c34" })
+                    vim.api.nvim_set_hl(0, "SmearCursorHideable", { bg = "#c678dd", fg = "#282c34" })
+                else
+                    vim.api.nvim_set_hl(0, "Cursor", orig_cursor_hl)
+                    vim.api.nvim_set_hl(0, "SmearCursor", {})
+                    vim.api.nvim_set_hl(0, "SmearCursorHideable", {})
+                end
+            end,
+        })
 
         -- prevent ufo from re-closing folds on TextChanged or returning to normal mode
         vim.defer_fn(function()
@@ -103,6 +123,13 @@ return {
             end
         end
 
+        vim.keymap.set("n", "w", function()
+            if vim.fn.foldclosed(vim.fn.line(".")) ~= -1 then
+                vim.cmd("normal! 10zo")
+            else
+                vim.cmd("normal! w")
+            end
+        end, { desc = "w (open fold if closed)" })
         vim.keymap.set("n", "zn", function() next_closed_fold("next") end, { desc = "Next fold" })
         vim.keymap.set("n", "zp", function() next_closed_fold("prev") end, { desc = "Prev fold" })
         vim.keymap.set("n", "zx", function()
