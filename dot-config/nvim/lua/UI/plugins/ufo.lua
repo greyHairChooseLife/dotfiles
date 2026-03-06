@@ -19,11 +19,20 @@ return {
             local barLen = math.min(50, math.max(1, math.floor(lineCount / 2)))
             local bar = string.rep("󰇘", barLen)
 
+            local baseLevel = vim.fn.foldlevel(lnum)
+            local maxLevel = baseLevel
+            for row = lnum + 1, endLnum - 1 do
+                local l = vim.fn.foldlevel(row)
+                if l > maxLevel then maxLevel = l end
+            end
+            local depth = maxLevel - baseLevel
+            local depthText = depth > 0 and (" (+%d)"):format(depth) or ""
+
             -- import block: skip closing bracket, just show line count
             local isImport = firstLine:match("^%s*import%s")
             local suffix
             if isImport then
-                suffix = { { ("  " .. bar .. " %d lines more"):format(lineCount + 1), "Comment" } }
+                suffix = { { ("  " .. bar .. " %d lines more" .. depthText):format(lineCount + 1), "Comment" } }
             else
                 local endVirtText = ctx.get_fold_virt_text(endLnum)
                 local endTrimmed = {}
@@ -34,7 +43,7 @@ return {
                         table.insert(endTrimmed, chunk)
                     end
                 end
-                suffix = { { ("  " .. bar .. " %d lines " .. bar .. "  "):format(lineCount), "Comment" } }
+                suffix = { { ("  " .. bar .. " %d lines" .. depthText .. " " .. bar .. "  "):format(lineCount), "Comment" } }
                 for _, chunk in ipairs(endTrimmed) do
                     table.insert(suffix, chunk)
                 end
