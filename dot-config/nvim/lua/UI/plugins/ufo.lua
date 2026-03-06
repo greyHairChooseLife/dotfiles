@@ -105,6 +105,32 @@ return {
         vim.keymap.set("n", "zn", function() next_closed_fold("next") end, { desc = "Next fold" })
         vim.keymap.set("n", "zp", function() next_closed_fold("prev") end, { desc = "Prev fold" })
 
+        vim.keymap.set("n", "zx", function()
+            local lnum = vim.fn.line(".")
+            local curLevel = vim.fn.foldlevel(lnum)
+            if curLevel == 0 then return end
+
+            -- find the start of the current fold level
+            local foldstart = lnum
+            while foldstart > 1 and vim.fn.foldlevel(foldstart - 1) >= curLevel do
+                foldstart = foldstart - 1
+            end
+            local foldend = lnum
+            local total = vim.fn.line("$")
+            while foldend < total and vim.fn.foldlevel(foldend + 1) >= curLevel do
+                foldend = foldend + 1
+            end
+
+            -- close all folds at current level and deeper within the range
+            for i = foldend, foldstart, -1 do
+                if vim.fn.foldlevel(i) >= curLevel and vim.fn.foldclosed(i) == -1 then
+                    vim.fn.cursor(i, 1)
+                    vim.cmd("normal! zc")
+                end
+            end
+            vim.fn.cursor(foldstart, 1)
+        end, { desc = "Close current and nested folds" })
+
         vim.api.nvim_create_autocmd("BufWinEnter", {
             group = vim.api.nvim_create_augroup("UfoReattach", { clear = true }),
             callback = function()
