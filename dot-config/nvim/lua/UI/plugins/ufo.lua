@@ -80,13 +80,14 @@ return {
         local ufo = require("ufo")
         ufo.setup(opts)
 
-        -- prevent ufo from re-closing folds on TextChanged
+        -- prevent ufo from re-closing folds on TextChanged or returning to normal mode
         vim.defer_fn(function()
-            for _, au in ipairs(vim.api.nvim_get_autocmds({ group = "Ufo", event = "TextChanged" })) do
-                pcall(vim.api.nvim_del_autocmd, au.id)
+            for _, event in ipairs({ "TextChanged", "ModeChanged" }) do
+                for _, au in ipairs(vim.api.nvim_get_autocmds({ group = "Ufo", event = event })) do
+                    pcall(vim.api.nvim_del_autocmd, au.id)
+                end
             end
         end, 100)
-
 
         local function next_closed_fold(direction)
             local lnum = vim.fn.line(".")
@@ -104,13 +105,12 @@ return {
 
         vim.keymap.set("n", "zn", function() next_closed_fold("next") end, { desc = "Next fold" })
         vim.keymap.set("n", "zp", function() next_closed_fold("prev") end, { desc = "Prev fold" })
-
         vim.keymap.set("n", "zx", function()
             local lnum = vim.fn.line(".")
             local curLevel = vim.fn.foldlevel(lnum)
             if curLevel == 0 then return end
 
-            -- find the start of the current fold level
+            -- find the boundary of the current fold
             local foldstart = lnum
             while foldstart > 1 and vim.fn.foldlevel(foldstart - 1) >= curLevel do
                 foldstart = foldstart - 1
@@ -121,22 +121,33 @@ return {
                 foldend = foldend + 1
             end
 
-            -- close all folds at current level and deeper within the range
-            for i = foldend, foldstart, -1 do
-                if vim.fn.foldlevel(i) >= curLevel and vim.fn.foldclosed(i) == -1 then
-                    vim.fn.cursor(i, 1)
-                    vim.cmd("normal! zc")
+            -- collect max depth first, close deepest folds first
+            local maxDepth = curLevel
+            for i = foldstart, foldend do
+                local l = vim.fn.foldlevel(i)
+                if l > maxDepth then maxDepth = l end
+            end
+
+            for depth = maxDepth, curLevel, -1 do
+                local i = foldstart
+                while i <= foldend do
+                    if vim.fn.foldlevel(i) == depth and vim.fn.foldclosed(i) == -1 then
+                        vim.fn.cursor(i, 1)
+                        vim.cmd("normal! zc")
+                        -- skip to after this fold
+                        i = vim.fn.foldclosedend(i) + 1
+                    else
+                        i = i + 1
+                    end
                 end
             end
             vim.fn.cursor(foldstart, 1)
-        end, { desc = "Close current and nested folds" })
+        end, { desc = "Close current and nested folds recursively" })
 
         vim.api.nvim_create_autocmd("BufWinEnter", {
             group = vim.api.nvim_create_augroup("UfoReattach", { clear = true }),
             callback = function()
-                if vim.bo.buftype == "" then
-                    ufo.attach()
-                end
+                if vim.bo.buftype == "" then ufo.attach() end
             end,
         })
     end,
