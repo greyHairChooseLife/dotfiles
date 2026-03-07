@@ -82,3 +82,6 @@ alias aws-tui='claws'     # github.com/clawscli/claws
 alias regex='trex'        # github.com/samyakbardiya/trex
 alias db='sqlit'
 alias nnd='~/.local/bin/nnd'
+
+# MEMO:: temperaliy
+alias jg='~/Documents/dev-wiki/notes/Project/krafton_jungle'

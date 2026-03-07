@@ -89,8 +89,5 @@ map("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = true })
 
 map("n", "<CR>", "<cmd>RenderMarkdown buf_toggle<CR>")
 
--- Folding
-vim.opt_local.foldmethod = "expr"
-vim.opt_local.foldexpr = "v:lua.markdown_fold_expr(v:lnum)"
-vim.opt_local.foldtext = "v:lua.markdown_fold_text(v:foldstart, v:foldend, v:foldlevel)"
+-- Folding: ufo custom provider handles fold ranges and display
 vim.opt_local.foldenable = true

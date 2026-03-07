@@ -197,19 +197,19 @@ return {
             -- | background | optional override for the background                 |
             -- | foreground | optional override for the foreground                 |
             custom = {
-                TODO = {
-                    pattern = "TODO",
-                    background = "RenderMarkdownMyTodoHeader",
-                },
+                -- TODO = {
+                --     pattern = "TODO",
+                --     background = "RenderMarkdownMyTodoHeader",
+                -- },
                 -- 다 했으면 그런 헤더는 사라져야지?
                 -- TODOfin = {
                 --   pattern = "TODO:fin",
                 --   background = "RenderMarkdownMyTodoFinHeader",
                 -- },
-                REFERENCE = {
-                    pattern = "REFERENCE",
-                    background = "RenderMarkdownMyReferenceHeader",
-                },
+                -- REFERENCE = {
+                --     pattern = "REFERENCE",
+                --     background = "RenderMarkdownMyReferenceHeader",
+                -- },
             },
         },
         code = {
