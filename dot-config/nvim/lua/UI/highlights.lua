@@ -239,6 +239,10 @@ vim.cmd([[
   " @markup.raw
   " @markup
 
+  "MEMO:: Fold Text
+  highlight FoldText guifg=#c678dd
+  highlight FoldTextCodeblock guifg=#c678dd guibg=#181818
+  highlight FoldTextCodeblockReverse guifg=#181818
 
   " MEMO:: QuickFix
   highlight Delimiter guifg=#9ece6a

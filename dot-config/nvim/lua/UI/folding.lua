@@ -16,11 +16,26 @@ function M.markdown_provider(bufnr)
         local curr = lines[lnum] or ""
         local next = lines[lnum + 1] or ""
 
-        if prev:match("^######%s") then header_levels[lnum] = 5; return 5 end
-        if prev:match("^#####%s") then header_levels[lnum] = 4; return 4 end
-        if prev:match("^####%s") then header_levels[lnum] = 3; return 3 end
-        if prev:match("^###%s") then header_levels[lnum] = 2; return 2 end
-        if prev:match("^##%s") then header_levels[lnum] = 1; return 1 end
+        if prev:match("^######%s") then
+            header_levels[lnum] = 5
+            return 5
+        end
+        if prev:match("^#####%s") then
+            header_levels[lnum] = 4
+            return 4
+        end
+        if prev:match("^####%s") then
+            header_levels[lnum] = 3
+            return 3
+        end
+        if prev:match("^###%s") then
+            header_levels[lnum] = 2
+            return 2
+        end
+        if prev:match("^##%s") then
+            header_levels[lnum] = 1
+            return 1
+        end
 
         header_levels[lnum] = get_hl(lnum - 1)
 
@@ -35,6 +50,7 @@ function M.markdown_provider(bufnr)
                 local hl = get_hl(lnum)
                 return math.max(hl, pfl - 1)
             end
+            return get_hl(lnum)
         end
 
         if curr:match("^>%s*%[!") then return get_fl(lnum - 1) end
@@ -53,8 +69,8 @@ function M.markdown_provider(bufnr)
         if is_list and prev_is_bold then return get_fl(lnum - 1) + 1 end
         if is_list and prev_is_list then return get_fl(lnum - 1) end
 
-        -- 테이블: 헤더 행은 레벨 그대로, 구분선(---) 행부터 +1
-        if curr:match("^|") and prev:match("^|") and curr:match("^|%s*[-:]+") then return get_fl(lnum - 1) + 1 end
+        -- 테이블: 헤더·구분선은 레벨 그대로, 데이터 행(구분선 다음 |)부터 +1
+        if curr:match("^|") and prev:match("^|%s*[-:]+") then return get_fl(lnum - 1) + 1 end
         if curr:match("^|") and prev:match("^|") then return get_fl(lnum - 1) end
         if curr:match("^|") then return get_fl(lnum - 1) end
 
@@ -101,11 +117,27 @@ end
 
 -- markdown: ufo fold_virt_text_handler
 function M.markdown_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
-    local newVirtText = {}
     local lineCount = endLnum - lnum - 1
-
+    local firstLine = vim.api.nvim_buf_get_lines(ctx.bufnr, lnum - 1, lnum, false)[1] or ""
+    local prevLine = vim.api.nvim_buf_get_lines(ctx.bufnr, lnum - 2, lnum - 1, false)[1] or ""
+    local isHeader = prevLine:match("^#+ ")
 
     local baseLevel = vim.fn.foldlevel(lnum)
+
+    if not isHeader then
+        local isCodeblock = prevLine:match("^```")
+        local isTable = firstLine:match("^|")
+        if isCodeblock then
+            return {
+                { ("   󰇘󰇘󰇘  %d lines               "):format(lineCount + 1), "FoldTextCodeblock" },
+                { "█▉▊▋▌▍▎", "FoldTextCodeblockReverse" },
+            }
+        end
+        if isTable then return { { ("  󰇘󰇘 %d entries"):format(lineCount + 2), "FoldText" } } end
+        return { { ("  %d lines"):format(lineCount + 2), "FoldText" } }
+    end
+
+    local newVirtText = {}
     local maxLevel = baseLevel
     for row = lnum + 1, endLnum - 1 do
         local l = vim.fn.foldlevel(row)
@@ -115,15 +147,12 @@ function M.markdown_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
     local depthText = depth > 0 and (" (+%d)"):format(depth) or ""
 
     local countText = ("%d lines" .. depthText):format(lineCount + 1)
-    local firstLineWidth = 0
-    for _, chunk in ipairs(virtText) do
-        firstLineWidth = firstLineWidth + vim.fn.strdisplaywidth(chunk[1])
-    end
     local fillLenMap = { [1] = 92, [2] = 76, [3] = 50, [4] = 32, [5] = 17 }
     local fillLen = fillLenMap[baseLevel] or 60
     local fillSpanMap = { [1] = 4, [2] = 20, [3] = 46, [4] = 64, [5] = 79 }
     local fillSpan = fillSpanMap[baseLevel] or 60
-    local suffix = { { "  " .. string.rep("░", fillLen) .. " " .. string.rep("-", fillSpan - 2) .. " " .. countText, "Comment" } }
+    -- local suffix = { { "  " .. string.rep("░", fillLen) .. " " .. string.rep("-", fillSpan - 2) .. " " .. countText, "Comment" } }
+    local suffix = { { "  " .. string.rep("░", fillLen) .. " ", "Comment" }, { string.rep("-", fillSpan - 2) .. " " .. countText, "FoldText" } }
 
     local sufWidth = vim.fn.strdisplaywidth(suffix[1][1])
     local targetWidth = math.max(0, width - sufWidth)
@@ -141,6 +170,7 @@ function M.markdown_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
         end
     end
     table.insert(newVirtText, suffix[1])
+    table.insert(newVirtText, suffix[2])
     return newVirtText
 end
 
@@ -165,7 +195,7 @@ function M.default_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
     local isImport = firstLine:match("^%s*import%s")
     local suffix
     if isImport then
-        suffix = { { ("  " .. bar .. " %d lines" .. depthText):format(lineCount + 1), "Comment" } }
+        suffix = { { ("  " .. bar .. " %d lines" .. depthText):format(lineCount + 1), "FoldText" } }
     else
         local endVirtText = ctx.get_fold_virt_text(endLnum)
         local endTrimmed = {}
@@ -176,7 +206,7 @@ function M.default_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
                 table.insert(endTrimmed, chunk)
             end
         end
-        suffix = { { ("  " .. bar .. " %d lines" .. depthText .. " " .. bar .. "  "):format(lineCount), "Comment" } }
+        suffix = { { ("  " .. bar .. " %d lines" .. depthText .. " " .. bar .. "  "):format(lineCount), "FoldText" } }
         for _, chunk in ipairs(endTrimmed) do
             table.insert(suffix, chunk)
         end

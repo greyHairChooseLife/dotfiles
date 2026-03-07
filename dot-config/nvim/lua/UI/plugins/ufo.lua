@@ -11,9 +11,7 @@ return {
         close_fold_kinds_for_ft = {},
         fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate, ctx)
             local folding = require("UI.folding")
-            if vim.bo[ctx.bufnr].filetype == "markdown" then
-                return folding.markdown_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
-            end
+            if vim.bo[ctx.bufnr].filetype == "markdown" then return folding.markdown_virt_text(virtText, lnum, endLnum, width, truncate, ctx) end
             return folding.default_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
         end,
     },
