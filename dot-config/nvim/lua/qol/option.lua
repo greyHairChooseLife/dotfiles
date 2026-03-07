@@ -9,6 +9,7 @@ opt.termguicolors = true
 -- vim.cmd'colorscheme yourfavcolorscheme'
 
 -- General editor settings
+opt.modeline = false
 opt.mouse = ""
 opt.clipboard = "unnamedplus"
 opt.undofile = true -- Maintain undo history between sessions
@@ -18,7 +19,7 @@ opt.swapfile = false
 opt.number = false -- just leap & status-line
 opt.relativenumber = false -- just leap & status-line
 opt.signcolumn = "yes:2"
--- opt.foldcolumn = "2"
+opt.foldcolumn = "0"
 opt.fillchars = {
     vert = "┃", -- 수직 창 구분선
     fold = " ", -- 접힌 텍스트 표시
@@ -49,9 +50,11 @@ vim.o.foldtext = ""
 opt.foldlevel = 99
 opt.foldlevelstart = 99
 opt.foldenable = true
+opt.foldopen:append("jump")
 opt.formatoptions:remove("f") -- Prevent auto-folding during formatting
 
 -- Session settings
+-- note: folds is kept for manual session saving (:mksession), but ufo-managed folds won't persist
 opt.sessionoptions = "globals,blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 
 -- opt.completeopt = { "menu", "menuone", "noselect" }

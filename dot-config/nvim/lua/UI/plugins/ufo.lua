@@ -6,7 +6,85 @@ return {
         enable_get_fold_virt_text = true,
         provider_selector = function(bufnr, filetype, buftype)
             if filetype == "markdown" then
-                return "" -- use our custom foldexpr
+                -- custom provider: foldexpr 로직으로 ufo fold ranges 계산
+                return function(bufnr)
+                    local foldingrange = require("ufo.model.foldingrange")
+                    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+                    local total = #lines
+
+                    local levels = {}
+                    local function get_fl(i) return levels[i] or 0 end
+
+                    local function compute(lnum)
+                        local prev = lines[lnum - 1] or ""
+                        local curr = lines[lnum] or ""
+                        local next = lines[lnum + 1] or ""
+
+                        if prev:match("^######%s") then return 5 end
+                        if prev:match("^#####%s")  then return 4 end
+                        if prev:match("^####%s")   then return 3 end
+                        if prev:match("^###%s")    then return 2 end
+                        if prev:match("^##%s")     then return 1 end
+
+                        if curr:match("^%s*$") then
+                            if next:match("^######%s") then return 4 end
+                            if next:match("^#####%s")  then return 3 end
+                            if next:match("^####%s")   then return 2 end
+                            if next:match("^###%s")    then return 1 end
+                            if next:match("^##%s")     then return 0 end
+                        end
+
+                        if lnum == total then return 0 end
+
+                        if curr:match("^>%s*%[!") then
+                            return get_fl(lnum - 1) + 1
+                        end
+                        if curr:match("^>") and prev:match("^>") then
+                            return get_fl(lnum - 1)
+                        end
+
+                        if curr:match("^%*%*[^%*]+%*%*%s*$") then
+                            local nb = next:match("^%s*[-*+]%s") or next:match("^%s*%d+%.%s")
+                            if nb then return get_fl(lnum - 1) + 1 end
+                        end
+
+                        if curr:match("^%s*[-*+]%s") or curr:match("^%s*%d+%.%s") then
+                            local pfl = get_fl(lnum - 1)
+                            if pfl > 0 then return pfl end
+                        end
+
+                        return get_fl(lnum - 1)
+                    end
+
+                    for i = 1, total do
+                        levels[i] = compute(i)
+                    end
+
+                    -- foldlevel 배열에서 fold ranges 추출
+                    local ranges = {}
+                    local stack = {}
+                    for i = 1, total do
+                        local fl = levels[i]
+                        -- 현재 레벨보다 높은 fold 닫기
+                        while #stack > 0 and stack[#stack].level > fl do
+                            local top = table.remove(stack)
+                            if i - 1 > top.lnum then
+                                table.insert(ranges, foldingrange.new(top.lnum - 1, i - 2))
+                            end
+                        end
+                        if fl > 0 and (fl > get_fl(i - 1) or (fl == get_fl(i - 1) and (#stack == 0 or stack[#stack].level ~= fl))) then
+                            table.insert(stack, { lnum = i, level = fl })
+                        end
+                    end
+                    while #stack > 0 do
+                        local top = table.remove(stack)
+                        if total > top.lnum then
+                            table.insert(ranges, foldingrange.new(top.lnum - 1, total - 1))
+                        end
+                    end
+
+                    return ranges
+                end
             end
             return { "treesitter", "indent" }
         end,
@@ -29,11 +107,12 @@ return {
             local depth = maxLevel - baseLevel
             local depthText = depth > 0 and (" (+%d)"):format(depth) or ""
 
-            -- import block: skip closing bracket, just show line count
+            -- import block or markdown: skip closing line, just show line count
             local isImport = firstLine:match("^%s*import%s")
+            local isMarkdown = vim.bo[ctx.bufnr].filetype == "markdown"
             local suffix
-            if isImport then
-                suffix = { { ("  " .. bar .. " %d lines more" .. depthText):format(lineCount + 1), "Comment" } }
+            if isImport or isMarkdown then
+                suffix = { { ("  " .. bar .. " %d lines" .. depthText):format(lineCount + 1), "Comment" } }
             else
                 local endVirtText = ctx.get_fold_virt_text(endLnum)
                 local endTrimmed = {}
