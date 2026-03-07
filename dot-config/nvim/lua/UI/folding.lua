@@ -15,25 +15,21 @@ function M.markdown_provider(bufnr)
         local next = lines[lnum + 1] or ""
 
         if prev:match("^######%s") then return 5 end
-        if prev:match("^#####%s")  then return 4 end
-        if prev:match("^####%s")   then return 3 end
-        if prev:match("^###%s")    then return 2 end
-        if prev:match("^##%s")     then return 1 end
+        if prev:match("^#####%s") then return 4 end
+        if prev:match("^####%s") then return 3 end
+        if prev:match("^###%s") then return 2 end
+        if prev:match("^##%s") then return 1 end
 
         if curr:match("^%s*$") then
             if next:match("^######%s") then return 4 end
-            if next:match("^#####%s")  then return 3 end
-            if next:match("^####%s")   then return 2 end
-            if next:match("^###%s")    then return 1 end
-            if next:match("^##%s")     then return 0 end
+            if next:match("^#####%s") then return 3 end
+            if next:match("^####%s") then return 2 end
+            if next:match("^###%s") then return 1 end
+            if next:match("^##%s") then return 0 end
         end
 
-        if curr:match("^>%s*%[!") then
-            return get_fl(lnum - 1) + 1
-        end
-        if curr:match("^>") and prev:match("^>") then
-            return get_fl(lnum - 1)
-        end
+        if curr:match("^>%s*%[!") then return get_fl(lnum - 1) + 1 end
+        if curr:match("^>") and prev:match("^>") then return get_fl(lnum - 1) end
 
         if curr:match("^%*%*[^%*]+%*%*%s*$") then
             local nb = next:match("^%s*[-*+]%s") or next:match("^%s*%d+%.%s")
@@ -58,9 +54,7 @@ function M.markdown_provider(bufnr)
         local fl = levels[i]
         while #stack > 0 and stack[#stack].level > fl do
             local top = table.remove(stack)
-            if i - 1 > top.lnum then
-                table.insert(ranges, foldingrange.new(top.lnum - 1, i - 2))
-            end
+            if i - 1 > top.lnum then table.insert(ranges, foldingrange.new(top.lnum - 1, i - 2)) end
         end
         if fl > 0 and (fl > get_fl(i - 1) or (fl == get_fl(i - 1) and (#stack == 0 or stack[#stack].level ~= fl))) then
             table.insert(stack, { lnum = i, level = fl })
@@ -68,9 +62,7 @@ function M.markdown_provider(bufnr)
     end
     while #stack > 0 do
         local top = table.remove(stack)
-        if total > top.lnum then
-            table.insert(ranges, foldingrange.new(top.lnum - 1, total - 1))
-        end
+        if total > top.lnum then table.insert(ranges, foldingrange.new(top.lnum - 1, total - 1)) end
     end
 
     return ranges
@@ -90,13 +82,16 @@ function M.markdown_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
     local depth = maxLevel - baseLevel
     local depthText = depth > 0 and (" (+%d)"):format(depth) or ""
 
-    local countText = ("  %d lines" .. depthText):format(lineCount + 1)
+    local countText = ("%d lines" .. depthText):format(lineCount + 1)
     local firstLineWidth = 0
     for _, chunk in ipairs(virtText) do
         firstLineWidth = firstLineWidth + vim.fn.strdisplaywidth(chunk[1])
     end
-    local fillLen = math.max(1, width - firstLineWidth - vim.fn.strdisplaywidth(countText))
-    local suffix = { { string.rep("░", fillLen) .. countText, "Comment" } }
+    local fillLenMap = { [1] = 92, [2] = 76, [3] = 50, [4] = 32, [5] = 17 }
+    local fillLen = fillLenMap[baseLevel] or 60
+    local fillSpanMap = { [1] = 4, [2] = 20, [3] = 46, [4] = 64, [5] = 79 }
+    local fillSpan = fillSpanMap[baseLevel] or 60
+    local suffix = { { "  " .. string.rep("░", fillLen) .. " " .. string.rep("-", fillSpan - 2) .. " " .. countText, "Comment" } }
 
     local sufWidth = vim.fn.strdisplaywidth(suffix[1][1])
     local targetWidth = math.max(0, width - sufWidth)
@@ -123,7 +118,7 @@ function M.default_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
     local firstLine = vim.api.nvim_buf_get_lines(ctx.bufnr, lnum - 1, lnum, false)[1] or ""
     local lineCount = endLnum - lnum - 1
 
-    local barLen = math.min(50, math.max(1, math.floor(lineCount / 2)))
+    local barLen = math.min(30, math.max(1, math.floor(lineCount / 2)))
     local bar = string.rep("󰇘", barLen)
 
     local baseLevel = vim.fn.foldlevel(lnum)
@@ -203,12 +198,12 @@ _G.codecompanion_fold_expr = function(lnum)
     local curr_line = vim.fn.getline(lnum)
     local next_line = vim.fn.getline(lnum + 1)
 
-    if string.match(prev_line, "^##%s")    then return "1" end
-    if string.match(prev_line, "^###%s")   then return "2" end
-    if string.match(prev_line, "^####%s")  then return "3" end
+    if string.match(prev_line, "^##%s") then return "1" end
+    if string.match(prev_line, "^###%s") then return "2" end
+    if string.match(prev_line, "^####%s") then return "3" end
     if string.match(prev_line, "^#####%s") then return "4" end
-    if string.match(curr_line, "^%s*$") and string.match(next_line, "^###%s")   then return "1" end
-    if string.match(curr_line, "^%s*$") and string.match(next_line, "^####%s")  then return "2" end
+    if string.match(curr_line, "^%s*$") and string.match(next_line, "^###%s") then return "1" end
+    if string.match(curr_line, "^%s*$") and string.match(next_line, "^####%s") then return "2" end
     if string.match(curr_line, "^%s*$") and string.match(next_line, "^#####%s") then return "3" end
     if string.match(curr_line, "^%s*$") and string.match(next_line, "^######%s") then return "4" end
     if string.match(curr_line, "^%s*$") and string.match(next_line, "^##%s") then return "0" end

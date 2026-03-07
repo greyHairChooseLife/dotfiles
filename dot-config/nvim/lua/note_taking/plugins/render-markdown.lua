@@ -99,6 +99,12 @@ return {
                 if #sections == 4 then
                     return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                              "
                 end
+                if #sections == 5 then
+                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                "
+                end
+                if #sections == 6 then
+                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                               "
+                end
                 if #sections == 5 then return " ▂▂▂▂▂▂▂▂▂▂▂▂▂ " end
                 if #sections == 6 then return " ▂▂▂▂ " end
             end,
