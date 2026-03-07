@@ -28,8 +28,6 @@ function M.markdown_provider(bufnr)
             if next:match("^##%s")     then return 0 end
         end
 
-        if lnum == total then return 0 end
-
         if curr:match("^>%s*%[!") then
             return get_fl(lnum - 1) + 1
         end
