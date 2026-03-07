@@ -8,28 +8,17 @@ return {
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
     opts = {
-        -- Whether Markdown should be rendered by default or not
         enabled = true,
-        -- Filetypes this plugin will run on
         file_types = {
             "markdown",
             "vimwiki",
             "gitcommit",
             "codecompanion",
         },
-        -- Takes buffer as input, if it returns true this plugin will not attach to the buffer
         ignore = function() return false end,
-        -- Maximum file size (in MB) that this plugin will attempt to render
-        -- Any file larger than this will effectively be ignored
         max_file_size = 1.5,
-        -- Milliseconds that must pass before updating marks, updates occur
-        -- within the context of the visible window, not the entire buffer
         debounce = 30,
-        -- The level of logs to write to file: vim.fn.stdpath('state') .. '/render-markdown.log'
-        -- Only intended to be used for plugin development / debugging
         log_level = "error",
-        -- Vim modes that will show a rendered view of the markdown file
-        -- All other modes will be uneffected by this plugin
         render_modes = { "n", "v", "V", "c", "i" },
         nested = false,
         on = {
@@ -40,14 +29,12 @@ return {
             -- Called after plugin clears a buffer.
             clear = function() end,
         },
-        -- Set to avoid seeing warnings for conflicts in health check
         acknowledge_conflicts = false,
         anti_conceal = {
             -- This enables hiding any added text on the line the cursor is on
             -- This does have a performance penalty as we must listen to the 'CursorMoved' event
             enabled = false,
         },
-        -- completions = { blink = { enabled = true } },
         padding = {
             -- Highlight to use when adding whitespace, should match background.
             highlight = "NoteBackground",
@@ -290,8 +277,6 @@ return {
             -- scope_highlight = { "RenderMarkdownBulletItem", "Normal", "Normal", "Normal", "Normal", "Normal" },
             -- scope_priority = 5,
         },
-        -- Checkboxes are a special instance of a 'list_item' that start with a 'shortcut_link'
-        -- There are two special states for unchecked & checked defined in the markdown grammar
         checkbox = {
             -- Turn on / off checkbox state rendering
             enabled = true,
@@ -385,15 +370,15 @@ return {
             cell = "padded",
             -- Gets placed in delimiter row for each column, position is based on alignmnet
             alignment_indicator = "━",
-      -- Characters used to replace table border
-      -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
-      -- stylua: ignore
-      border = {
-        '┌', '┬', '┐',
-        '├', '┼', '┤',
-        '└', '┴', '┘',
-        '│', '─',
-      },
+            -- Characters used to replace table border
+            -- Correspond to top(3), delimiter(3), bottom(3), vertical, & horizontal
+            -- stylua: ignore
+            border = {
+              '┌', '┬', '┐',
+              '├', '┼', '┤',
+              '└', '┴', '┘',
+              '│', '─',
+            },
             -- Highlight for table heading, delimiter, and the line above
             head = "RenderMarkdownTableHead",
             -- Highlight for everything else, main table rows and the line below
