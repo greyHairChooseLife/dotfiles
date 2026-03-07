@@ -7,18 +7,22 @@ function M.markdown_provider(bufnr)
     local total = #lines
 
     local levels = {}
+    local header_levels = {}
     local function get_fl(i) return levels[i] or 0 end
+    local function get_hl(i) return header_levels[i] or 0 end
 
     local function compute(lnum)
         local prev = lines[lnum - 1] or ""
         local curr = lines[lnum] or ""
         local next = lines[lnum + 1] or ""
 
-        if prev:match("^######%s") then return 5 end
-        if prev:match("^#####%s") then return 4 end
-        if prev:match("^####%s") then return 3 end
-        if prev:match("^###%s") then return 2 end
-        if prev:match("^##%s") then return 1 end
+        if prev:match("^######%s") then header_levels[lnum] = 5; return 5 end
+        if prev:match("^#####%s") then header_levels[lnum] = 4; return 4 end
+        if prev:match("^####%s") then header_levels[lnum] = 3; return 3 end
+        if prev:match("^###%s") then header_levels[lnum] = 2; return 2 end
+        if prev:match("^##%s") then header_levels[lnum] = 1; return 1 end
+
+        header_levels[lnum] = get_hl(lnum - 1)
 
         if curr:match("^%s*$") then
             if next:match("^######%s") then return 4 end
@@ -26,26 +30,53 @@ function M.markdown_provider(bufnr)
             if next:match("^####%s") then return 2 end
             if next:match("^###%s") then return 1 end
             if next:match("^##%s") then return 0 end
+            if next:match("^>") or next:match("^%*%*[^%*]+%*%*%s*$") or next:match("^%s*[-*+]%s") or next:match("^%s*%d+%.%s") or next:match("^|") then
+                local pfl = get_fl(lnum - 1)
+                local hl = get_hl(lnum)
+                return math.max(hl, pfl - 1)
+            end
         end
 
-        if curr:match("^>%s*%[!") then return get_fl(lnum - 1) + 1 end
+        if curr:match("^>%s*%[!") then return get_fl(lnum - 1) end
+        if curr:match("^>") and prev:match("^>%s*%[!") then return get_fl(lnum - 1) + 1 end
         if curr:match("^>") and prev:match("^>") then return get_fl(lnum - 1) end
+        if curr:match("^>") then return get_fl(lnum - 1) + 1 end
 
         if curr:match("^%*%*[^%*]+%*%*%s*$") then
             local nb = next:match("^%s*[-*+]%s") or next:match("^%s*%d+%.%s")
-            if nb then return get_fl(lnum - 1) + 1 end
+            if nb then return get_fl(lnum - 1) end
         end
 
-        if curr:match("^%s*[-*+]%s") or curr:match("^%s*%d+%.%s") then
-            local pfl = get_fl(lnum - 1)
-            if pfl > 0 then return pfl end
-        end
+        local is_list = curr:match("^%s*[-*+]%s") or curr:match("^%s*%d+%.%s")
+        local prev_is_bold = prev:match("^%*%*[^%*]+%*%*%s*$")
+        local prev_is_list = prev:match("^%s*[-*+]%s") or prev:match("^%s*%d+%.%s")
+        if is_list and prev_is_bold then return get_fl(lnum - 1) + 1 end
+        if is_list and prev_is_list then return get_fl(lnum - 1) end
+
+        -- 테이블: 헤더 행은 레벨 그대로, 구분선(---) 행부터 +1
+        if curr:match("^|") and prev:match("^|") and curr:match("^|%s*[-:]+") then return get_fl(lnum - 1) + 1 end
+        if curr:match("^|") and prev:match("^|") then return get_fl(lnum - 1) end
+        if curr:match("^|") then return get_fl(lnum - 1) end
 
         return get_fl(lnum - 1)
     end
 
+    local in_codeblock = false
+    local codeblock_start_level = 0
     for i = 1, total do
         levels[i] = compute(i)
+        local line = lines[i] or ""
+        if line:match("^```") then
+            if not in_codeblock then
+                in_codeblock = true
+                codeblock_start_level = levels[i]
+            else
+                in_codeblock = false
+                levels[i] = codeblock_start_level + 1
+            end
+        elseif in_codeblock then
+            levels[i] = codeblock_start_level + 1
+        end
     end
 
     local ranges = {}
@@ -72,6 +103,7 @@ end
 function M.markdown_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
     local newVirtText = {}
     local lineCount = endLnum - lnum - 1
+
 
     local baseLevel = vim.fn.foldlevel(lnum)
     local maxLevel = baseLevel
