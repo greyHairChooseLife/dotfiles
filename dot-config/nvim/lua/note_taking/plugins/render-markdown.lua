@@ -84,59 +84,23 @@ return {
             -- | right   | '#'s are concealed and icon is appended to right side                          |
             -- | inline  | '#'s are concealed and icon is inlined on left side                            |
             -- | overlay | icon is left padded with spaces and inserted on left hiding any additional '#' |
-            position = "overlay",
-            -- Replaces '#+' of 'atx_h._marker'
-            -- The number of '#' in the heading determines the 'level'
-            -- The 'level' is used to index into the array using a cycle
-            -- icons = { '󰲡 ', '󰲣', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' }, 󰨑
-            -- icons = { ' 󰑣 ', ' 󰬺 ', '   󰬻 ', '     󰬼 ', '     ##### ', '       ###### ' },
-            -- icons = { ' ', '    ', '      ', '         ', '     ##### ', '       ###### ' },
-            -- icons = {
-            -- 	"",
-            -- 	"",
-            -- 	"",
-            -- 	" ",
-            -- 	" ",
-            -- 	" ",
-            -- },
-            -- icons = function(sections)
-            -- 	return table.concat(sections, ".") .. ". "
-            -- end,
-            icons = { "󰼏  ", "󰼐  ", "󰼑  ", "󰼒  ", "󰼓  ", "󰼔  " },
-            _icons = function(ctx)
+            position = "inline",
+            -- icons = { "󰼏  ", " 󰼐  ", "   󰼑  ", "     󰼒  ", "       󰼓  ", "         󰼔  " },
+            icons = function(ctx)
                 local sections = ctx.sections
-                -- table.remove(sections, 1)
-                -- if #sections > 0 then
-                --     if #sections == 2 then
-                --         return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                              "
-                --             .. table.concat(sections, ".")
-                --             .. ". "
-                --     end
-                --     if #sections == 3 then
-                --         return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                       "
-                --             .. table.concat(sections, ".")
-                --             .. ". "
-                --     end
-                --     if #sections == 4 then
-                --         return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                         "
-                --             .. table.concat(sections, ".")
-                --             .. ". "
-                --     end
-                --     if #sections == 5 then return " ▁▁▁▁ " end
-                --     return table.concat(sections, ".") .. ". "
-                -- end
                 if #sections <= 1 then return end
 
                 if #sections == 2 then
-                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂       "
+                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂    "
                 end
                 if #sections == 3 then
                     return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                    "
                 end
                 if #sections == 4 then
-                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                           "
+                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                              "
                 end
-                if #sections == 5 then return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ " end
+                if #sections == 5 then return " ▂▂▂▂▂▂▂▂▂▂▂▂▂ " end
+                if #sections == 6 then return " ▂▂▂▂ " end
             end,
             -- Turn on / off any sign column related rendering
             sign = false,
@@ -147,15 +111,15 @@ return {
             --  block: width of the heading text
             --  full: full width of the window
             -- width = { "block", "full", "block" },
-            width = { "full" },
+            width = { "full", "block" },
             -- left_margin = { 30, 0, 0, 0 },
             -- left_pad = { 3, 80, 3, 0 },
             -- right_pad = { 3, 2, 10, 1 },
             -- min_width = { 70, 100, 50, 5 },
             left_margin = { 0, 0, 0, 0, 0 },
             left_pad = { 0, 0, 0, 0 },
-            right_pad = { 3, 0, 0, 0, 0 },
-            min_width = { 100, 100, 100, 100, 100 },
+            -- right_pad = { 3, 5 },
+            min_width = { 100, 100, 100, 100, 10 },
             -- The 'level' is used to index into the array using a clamp
             -- Highlight for the heading icon and extends through the entire line
             backgrounds = {
