@@ -79,6 +79,7 @@ function M.markdown_provider(bufnr)
 
     local in_codeblock = false
     local codeblock_start_level = 0
+    local codeblock_start_lnum = 0
     for i = 1, total do
         levels[i] = compute(i)
         local line = lines[i] or ""
@@ -86,12 +87,18 @@ function M.markdown_provider(bufnr)
             if not in_codeblock then
                 in_codeblock = true
                 codeblock_start_level = levels[i]
+                codeblock_start_lnum = i
             else
                 in_codeblock = false
                 levels[i] = codeblock_start_level + 1
             end
         elseif in_codeblock then
-            levels[i] = codeblock_start_level + 1
+            -- keep first 5 content lines at base level so they stay visible
+            if i <= codeblock_start_lnum + 5 then
+                levels[i] = codeblock_start_level
+            else
+                levels[i] = codeblock_start_level + 1
+            end
         end
     end
 
@@ -125,11 +132,18 @@ function M.markdown_virt_text(virtText, lnum, endLnum, width, truncate, ctx)
     local baseLevel = vim.fn.foldlevel(lnum)
 
     if not isHeader then
-        local isCodeblock = prevLine:match("^```")
+        local isCodeblock = false
+        for row = lnum - 1, math.max(1, lnum - 7), -1 do
+            local line = vim.api.nvim_buf_get_lines(ctx.bufnr, row - 1, row, false)[1] or ""
+            if line:match("^```") then
+                isCodeblock = true
+                break
+            end
+        end
         local isTable = firstLine:match("^|")
         if isCodeblock then
             return {
-                { ("   󰇘󰇘󰇘  %d lines               "):format(lineCount + 1), "FoldTextCodeblock" },
+                { ("  +++ %d more lines     "):format(lineCount + 1), "FoldTextCodeblock" },
                 { "█▉▊▋▌▍▎", "FoldTextCodeblockReverse" },
             }
         end
