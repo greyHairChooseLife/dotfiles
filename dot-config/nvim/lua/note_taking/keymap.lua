@@ -175,13 +175,11 @@ vim.api.nvim_create_user_command("Zn", function()
     vim.cmd("cd " .. vim.fn.fnameescape(vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")))
     zk_new_note(false)
 end, {})
-
 vim.api.nvim_create_user_command("Zf", function()
     vim.cmd("cd " .. vim.fn.fnameescape(vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")))
     local source_buf = vim.api.nvim_get_current_buf()
     require("note_taking.zk_search").open(source_buf)
 end, {})
-
 vim.api.nvim_create_user_command("Zo", function()
     vim.cmd("cd " .. vim.fn.fnameescape(vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")))
     require("note_taking.zk_search").open_recent()
@@ -190,7 +188,7 @@ end, {})
 wk_map({
     ["<Space>z"] = {
         group = "Zk",
-        order = { "n", "f", "w", "o", "b", "l" },
+        order = { "n", "f", "w", "o", "b", "l", "m" },
         ["n"] = {
             function()
                 local m = vim.fn.mode()
@@ -230,6 +228,145 @@ wk_map({
             end,
             desc = "링크 삽입",
             mode = { "n", "v" },
+        },
+        ["m"] = {
+            function()
+                local notebook = vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")
+                local buf_path = vim.api.nvim_buf_get_name(0)
+                if buf_path == "" or buf_path:sub(1, #notebook) ~= notebook then
+                    vim.notify("zk 노트가 아님", vim.log.levels.WARN)
+                    return
+                end
+
+                local types = { "fleeting", "master", "troubleshoot", "reference", "study", "cheatsheet", "plan", "index", "journal", "meeting" }
+
+                -- 현재 frontmatter에서 type 읽기
+                local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+                local current_type = nil
+                local type_line_idx = nil
+                local in_fm = false
+                for i, line in ipairs(lines) do
+                    if line == "---" then
+                        if not in_fm then
+                            in_fm = true
+                        else
+                            break
+                        end
+                    elseif in_fm then
+                        local v = line:match("^type:%s*(.+)$")
+                        if v then
+                            current_type = v:match("^%s*(.-)%s*$")
+                            type_line_idx = i
+                            break
+                        end
+                    end
+                end
+
+                local para_roots = { "inbox", "project", "area", "resource", "archive" }
+                local has_subdirs = { project = true, area = true, archive = true }
+
+                local current_dir = vim.fn.fnamemodify(buf_path, ":h"):sub(#notebook + 2)
+
+                local function do_move(new_type, target_dir)
+                    -- 1. frontmatter type 변경 (type이 달라진 경우만)
+                    if type_line_idx and new_type ~= current_type then
+                        vim.api.nvim_buf_set_lines(0, type_line_idx - 1, type_line_idx, false, { "type: " .. new_type })
+                    end
+
+                    -- 2. 파일명 + 경로 변경
+                    local old_name = vim.fn.fnamemodify(buf_path, ":t")
+                    local new_name = old_name:gsub("^[^_]+", new_type, 1)
+                    local old_stem = vim.fn.fnamemodify(old_name, ":r")
+                    local new_stem = vim.fn.fnamemodify(new_name, ":r")
+                    local abs_target_dir = notebook .. "/" .. target_dir
+                    if vim.fn.isdirectory(abs_target_dir) == 0 then vim.fn.mkdir(abs_target_dir, "p") end
+                    local new_path = abs_target_dir .. "/" .. new_name
+
+                    vim.cmd("write")
+                    vim.fn.rename(buf_path, new_path)
+                    vim.cmd("edit " .. vim.fn.fnameescape(new_path))
+                    vim.cmd("bdelete " .. vim.fn.bufnr(buf_path))
+
+                    -- 3. 백링크 업데이트
+                    vim.system({ "zk", "list", "--quiet", "--format", "{{abs-path}}" }, { cwd = notebook }, function(result)
+                        if result.code ~= 0 then return end
+                        local updated = {}
+                        for path in result.stdout:gmatch("[^\n]+") do
+                            local f = io.open(path, "r")
+                            if f then
+                                local content = f:read("*a")
+                                f:close()
+                                local new_content = content:gsub("%[%[" .. vim.pesc(old_stem) .. "(|?[^%]]*)]%]", "[[" .. new_stem .. "%1]]")
+                                if new_content ~= content then
+                                    local fw = io.open(path, "w")
+                                    if fw then
+                                        fw:write(new_content)
+                                        fw:close()
+                                        updated[#updated + 1] = vim.fn.fnamemodify(path, ":~")
+                                    end
+                                end
+                            end
+                        end
+                        vim.schedule(function()
+                            local msg = ("type  : %s → %s\npath  : %s → %s"):format(current_type, new_type, current_dir, target_dir)
+                            if #updated > 0 then msg = msg .. "\nb-link: " .. table.concat(updated, ", ") end
+                            vim.notify(msg, vim.log.levels.INFO)
+                        end)
+                    end)
+                end
+
+                local function ask_subdir(new_type, root)
+                    local root_path = notebook .. "/" .. root
+                    local subdirs = {}
+                    local handle = vim.uv.fs_scandir(root_path)
+                    if handle then
+                        while true do
+                            local name, ftype = vim.uv.fs_scandir_next(handle)
+                            if not name then break end
+                            if ftype == "directory" and not name:match("^%.") then subdirs[#subdirs + 1] = name end
+                        end
+                    end
+                    table.sort(subdirs)
+                    subdirs[#subdirs + 1] = "+ Create New..."
+                    vim.ui.select(subdirs, { prompt = "디렉토리 선택:" }, function(choice)
+                        if not choice then return end
+                        if choice == "+ Create New..." then
+                            vim.ui.input({ prompt = "새 디렉토리 이름: " }, function(name)
+                                if not name or name == "" then return end
+                                do_move(new_type, root .. "/" .. name)
+                            end)
+                        else
+                            do_move(new_type, root .. "/" .. choice)
+                        end
+                    end)
+                end
+
+                local function ask_path(new_type)
+                    local location_items = { "* current (" .. current_dir .. ")" }
+                    local display_to_raw = { ["* current (" .. current_dir .. ")"] = current_dir }
+                    for _, r in ipairs(para_roots) do
+                        local label = r:gsub("^%l", string.upper)
+                        location_items[#location_items + 1] = label
+                        display_to_raw[label] = r
+                    end
+                    vim.ui.select(location_items, { prompt = "이동할 위치:" }, function(choice)
+                        if not choice then return end
+                        local raw = display_to_raw[choice]
+                        if has_subdirs[raw] then
+                            ask_subdir(new_type, raw)
+                        else
+                            do_move(new_type, raw)
+                        end
+                    end)
+                end
+
+                vim.ui.select(types, { prompt = "새 type 선택 (현재: " .. (current_type or "?") .. "):" }, function(new_type)
+                    if not new_type then return end
+                    ask_path(new_type)
+                end)
+            end,
+            desc = "노트 type 변경",
+            mode = "n",
         },
     },
 })

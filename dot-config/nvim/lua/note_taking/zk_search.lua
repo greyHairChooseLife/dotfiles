@@ -508,6 +508,7 @@ function M.open(source_buf, initial_filters, opts)
                 if not opts.selected_text then
                     vim.api.nvim_win_set_cursor(0, { opts.sel_start_row + 1, opts.sel_start_col + #link })
                 end
+                vim.api.nvim_buf_call(opts.sel_buf, function() vim.cmd("w") end)
             else
                 vim.cmd("edit " .. vim.fn.fnameescape(item.file))
             end
