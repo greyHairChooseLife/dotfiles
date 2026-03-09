@@ -112,11 +112,6 @@ vim.api.nvim_create_autocmd("FileType", {
             "winhighlight",
             "Normal:CodeCompanionNormal," .. "SignColumn:CodeCompanionSignColumn," .. "EndOfBuffer:CodeCompanionEOB," .. "Folded:CodeCompanionFolded"
         )
-
-        vim.opt_local.foldmethod = "expr"
-        vim.opt_local.foldenable = true
-        vim.opt_local.foldtext = "v:lua.codecompanion_fold_text(v:foldstart, v:foldend, v:foldlevel)"
-        vim.opt_local.foldexpr = "v:lua.codecompanion_fold_expr(v:lnum)"
     end,
 })
 

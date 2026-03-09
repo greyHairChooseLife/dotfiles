@@ -88,6 +88,3 @@ map("v", "<C-k>", ":lua require('markdowny').link()<cr>", { buffer = true })
 map("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = true })
 
 map("n", "<CR>", "<cmd>RenderMarkdown buf_toggle<CR>")
-
--- Folding: ufo custom provider handles fold ranges and display
-vim.opt_local.foldenable = true

@@ -45,17 +45,8 @@ opt.autoindent = true
 opt.tabstop = 2
 opt.shiftwidth = 2
 
--- Folding settings (managed by nvim-ufo)
-vim.o.foldtext = ""
-opt.foldlevel = 99
-opt.foldlevelstart = 99
-opt.foldenable = true
-opt.foldopen:append("jump")
-opt.formatoptions:remove("f") -- Prevent auto-folding during formatting
-
 -- Session settings
--- note: folds is kept for manual session saving (:mksession), but ufo-managed folds won't persist
-opt.sessionoptions = "globals,blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+opt.sessionoptions = "globals,blank,buffers,curdir,help,tabpages,winsize,winpos,terminal,localoptions"
 
 -- opt.completeopt = { "menu", "menuone", "noselect" }
 opt.completeopt = { "menu", "menuone", "popup" }
