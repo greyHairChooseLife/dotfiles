@@ -47,7 +47,9 @@ local function _compute_levels(lines)
     local headers = {} -- { {lnum, depth} }
     for i = 1, total do
         local h = lines[i]:match("^(#+)%s")
-        if h then headers[#headers + 1] = { lnum = i, depth = #h } end
+        -- MEMO:: replace with this line below to include header level 1.
+        -- if h then headers[#headers + 1] = { lnum = i, depth = #h } end
+        if h and #h > 1 then headers[#headers + 1] = { lnum = i, depth = #h - 1 } end
     end
 
     -- 2단계: 각 헤더의 섹션 끝(= 같거나 상위 헤더 바로 앞 라인) 계산
