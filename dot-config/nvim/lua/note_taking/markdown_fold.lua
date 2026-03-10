@@ -1,227 +1,247 @@
 -- Markdown custom fold expression and fold text
 
 -- Highlight groups for fold text
--- 처음 로드 시 한 번만 설정
 local _fold_hl_initialized = false
 local function _ensure_fold_highlights()
     if _fold_hl_initialized then return end
     _fold_hl_initialized = true
-
-    -- 헤더 레벨별 배경색 (H1 밝음 → H4 어두움)
     vim.api.nvim_set_hl(0, "MdFoldH1", { bg = "#3a3a52", fg = "#c0caf5", bold = true })
     vim.api.nvim_set_hl(0, "MdFoldH2", { bg = "#2e3a4a", fg = "#9aa5ce", bold = true })
     vim.api.nvim_set_hl(0, "MdFoldH3", { bg = "#263040", fg = "#7882a4" })
     vim.api.nvim_set_hl(0, "MdFoldH4", { bg = "#1e2638", fg = "#565f89" })
-    -- dots & lines 색상
     vim.api.nvim_set_hl(0, "MdFoldDots", { fg = "#414868" })
     vim.api.nvim_set_hl(0, "MdFoldInfo", { fg = "#565f89", italic = true })
-    -- 코드블록/리스트/callout
     vim.api.nvim_set_hl(0, "MdFoldBlock", { bg = "#1e2030", fg = "#737aa2" })
 end
 
--- foldexpr: 각 라인의 fold level을 반환
--- 반환값 규칙:
---   "0"        = fold 없음
---   "1"~"6"    = fold level
---   ">1"~">6"  = fold 시작 (fold level N)
---   "<1"~"<6"  = fold 끝
---   "="        = 이전 라인과 동일한 fold level
+-- 버퍼별 fold level 캐시
+local _cache = {}
 
--- 코드블록 헬퍼: lnum이 코드블록 내부인지, 블록 시작 라인을 반환
--- 반환: (in_block: bool, block_start: number|nil)
--- 조건: ``` 포함 총 5줄 이상인 블록만 fold 대상
-function _md_fold_code_block(lnum)
-    local total = vim.fn.line("$")
-    -- 위로 올라가며 ``` 찾기
-    local start_lnum = nil
-    for i = lnum, 1, -1 do
-        local l = vim.fn.getline(i)
-        if l:match("^%s*```") then
-            start_lnum = i
-            break
+-- 헤더 섹션 범위를 먼저 결정한 뒤, 범위 기반으로 level 할당
+local function _compute_levels(lines)
+    local total = #lines
+    local levels = {}
+    local foldexprs = {}
+
+    -- 0단계: frontmatter 처리 (파일 첫 줄이 "---"인 경우)
+    local frontmatter_end = 0
+    if lines[1] and lines[1]:match("^%-%-%-$") then
+        for i = 2, total do
+            if lines[i]:match("^%-%-%-$") then
+                frontmatter_end = i
+                break
+            end
+        end
+        if frontmatter_end > 2 then
+            levels[1] = 0
+            for i = 2, frontmatter_end - 1 do
+                levels[i] = 1
+            end
+            foldexprs[2] = ">1"
+            foldexprs[frontmatter_end] = "0"
+            levels[frontmatter_end] = 0
         end
     end
-    if not start_lnum then return false, nil end
-    -- 위에서 찾은 ``` 가 opening인지 closing인지 판별
-    -- opening: 그 위에 ``` 쌍이 없어야 함
-    local open_count = 0
-    for i = 1, start_lnum do
-        if vim.fn.getline(i):match("^%s*```") then
-            open_count = open_count + 1
+
+    -- 1단계: 모든 헤더 위치와 레벨 수집
+    local headers = {} -- { {lnum, depth} }
+    for i = 1, total do
+        local h = lines[i]:match("^(#+)%s")
+        if h then headers[#headers + 1] = { lnum = i, depth = #h } end
+    end
+
+    -- 2단계: 각 헤더의 섹션 끝(= 같거나 상위 헤더 바로 앞 라인) 계산
+    for idx, hdr in ipairs(headers) do
+        local section_end = total
+        for j = idx + 1, #headers do
+            if headers[j].depth <= hdr.depth then
+                section_end = headers[j].lnum - 1
+                break
+            end
+        end
+        hdr.section_end = section_end
+    end
+
+    -- 3단계: level 할당
+    -- 헤더 라인: depth - 1 (fold 밖)
+    -- 헤더 다음 라인 ~ section_end: depth (fold 안)
+    -- 어디에도 속하지 않는 라인: 0
+
+    -- 먼저 전부 0으로 초기화
+    for i = 1, total do
+        levels[i] = 0
+    end
+
+    -- 얕은 헤더부터 처리, max로 갱신하므로 깊은 헤더가 자연스럽게 덮어씀
+    for _, hdr in ipairs(headers) do
+        -- 헤더 라인 자체
+        foldexprs[hdr.lnum] = tostring(math.max(hdr.depth - 1, 0))
+        levels[hdr.lnum] = math.max(hdr.depth - 1, 0)
+
+        -- 헤더 다음 라인이 있고, section_end가 헤더보다 뒤에 있을 때만 fold
+        if hdr.lnum < total and hdr.section_end > hdr.lnum then
+            local fold_start = hdr.lnum + 1
+            local fold_end = hdr.section_end
+
+            -- fold 시작 라인
+            foldexprs[fold_start] = ">" .. hdr.depth
+
+            -- fold 범위 안의 라인: 더 깊은 헤더가 이미 높은 값을 줬을 수 있으므로 max
+            for i = fold_start, fold_end do
+                if levels[i] < hdr.depth then levels[i] = hdr.depth end
+            end
         end
     end
-    -- open_count가 홀수면 opening
-    if open_count % 2 == 0 then return false, nil end  -- closing이므로 무시
 
-    -- closing ``` 찾기
-    local end_lnum = nil
-    for i = start_lnum + 1, total do
-        if vim.fn.getline(i):match("^%s*```") then
-            end_lnum = i
-            break
+    -- section_end 바깥 라인은 0 초기화 상태 유지
+
+    -- 4단계: 코드블록 후처리
+    local in_codeblock = false
+    local cb_start_level = 0
+    local cb_start_lnum = 0
+
+    for i = 1, total do
+        local line = lines[i] or ""
+        if line:match("^%s*```") then
+            if not in_codeblock then
+                in_codeblock = true
+                cb_start_level = levels[i]
+                cb_start_lnum = i
+            else
+                in_codeblock = false
+                foldexprs[i] = nil
+                levels[i] = cb_start_level + 1
+            end
+        elseif in_codeblock then
+            foldexprs[i] = nil
+            if i <= cb_start_lnum + 3 then
+                levels[i] = cb_start_level
+            else
+                levels[i] = cb_start_level + 1
+            end
         end
     end
-    if not end_lnum then return false, nil end
 
-    -- 총 라인 수 체크 (5줄 이상)
-    local block_size = end_lnum - start_lnum + 1
-    if block_size < 5 then return false, nil end
-
-    -- lnum이 블록 범위 내인지
-    if lnum >= start_lnum and lnum <= end_lnum then
-        return true, start_lnum
+    -- 5단계: 테이블 후처리
+    local i = 1
+    while i <= total do
+        local line = lines[i] or ""
+        local is_separator = line:match("^|%s*%-%-%-") or line:match("^%s*|?%-%-%-")
+        if is_separator then
+            local prev_line = lines[i - 1] or ""
+            if prev_line:match("^|") then
+                local data_start = i + 1
+                local data_end = data_start - 1
+                for j = data_start, total do
+                    if (lines[j] or ""):match("^|") then
+                        data_end = j
+                    else
+                        break
+                    end
+                end
+                local data_count = data_end - data_start + 1
+                if data_count >= 3 then
+                    local base = levels[i]
+                    for j = data_start, data_end do
+                        foldexprs[j] = nil
+                        levels[j] = base + 1
+                    end
+                end
+                i = data_end + 1
+            else
+                i = i + 1
+            end
+        else
+            i = i + 1
+        end
     end
-    return false, nil
+
+    -- 6단계: callout/리스트 후처리
+    for i = 1, total do
+        local curr = lines[i] or ""
+        local prev = lines[i - 1] or ""
+
+        -- 코드블록 안이면 건너뜀
+        if foldexprs[i] == nil and not curr:match("^%s*```") then
+            if curr:match("^>%s*%[!") then
+                -- callout 시작: 현재 level 유지
+            elseif curr:match("^>") and prev:match("^>%s*%[!") then
+                levels[i] = levels[i] + 1
+            elseif curr:match("^>") and prev:match("^>") then
+                levels[i] = levels[i - 1]
+            elseif curr:match("^>") then
+                levels[i] = levels[i] + 1
+            else
+                local is_list = curr:match("^%s*[-*+]%s") or curr:match("^%s*%d+%.%s")
+                if is_list then
+                    local prev_is_list = prev:match("^%s*[-*+]%s") or prev:match("^%s*%d+%.%s")
+                    if not prev_is_list then
+                        -- 리스트 첫 줄: level 유지 (fold 밖)
+                    else
+                        -- 리스트 두 번째 줄부터: +1
+                        levels[i] = levels[i] + 1
+                    end
+                end
+            end
+        end
+    end
+
+    return levels, foldexprs
 end
 
--- 리스트 헬퍼: lnum이 리스트 블록 내부인지, 블록 시작 라인을 반환
--- - 로 시작하는 연속된 라인 (들여쓰기 무관) 3줄 이상
-function _md_fold_list_block(lnum)
-    local line = vim.fn.getline(lnum)
-    -- 현재 라인이 리스트 라인인지
-    if not line:match("^%s*%-") then return false, nil end
-
-    -- 블록 시작 찾기 (위로 올라가며)
-    local start_lnum = lnum
-    for i = lnum - 1, 1, -1 do
-        local l = vim.fn.getline(i)
-        if l:match("^%s*%-") then
-            start_lnum = i
-        else
-            break
-        end
-    end
-
-    -- 블록 끝 찾기 (아래로 내려가며)
-    local total = vim.fn.line("$")
-    local end_lnum = lnum
-    for i = lnum + 1, total do
-        local l = vim.fn.getline(i)
-        if l:match("^%s*%-") then
-            end_lnum = i
-        else
-            break
-        end
-    end
-
-    -- 3줄 이상인지
-    local block_size = end_lnum - start_lnum + 1
-    if block_size < 3 then return false, nil end
-
-    return true, start_lnum
-end
-
--- callout 헬퍼: lnum이 callout 블록 내부인지, 블록 시작 라인을 반환
--- > 로 시작하는 연속된 라인 3줄 이상, 독립 처리
-function _md_fold_callout_block(lnum)
-    local line = vim.fn.getline(lnum)
-    if not line:match("^>") then return false, nil end
-
-    -- 블록 시작 찾기
-    local start_lnum = lnum
-    for i = lnum - 1, 1, -1 do
-        local l = vim.fn.getline(i)
-        if l:match("^>") then
-            start_lnum = i
-        else
-            break
-        end
-    end
-
-    -- 블록 끝 찾기
-    local total = vim.fn.line("$")
-    local end_lnum = lnum
-    for i = lnum + 1, total do
-        local l = vim.fn.getline(i)
-        if l:match("^>") then
-            end_lnum = i
-        else
-            break
-        end
-    end
-
-    -- 3줄 이상인지
-    local block_size = end_lnum - start_lnum + 1
-    if block_size < 3 then return false, nil end
-
-    return true, start_lnum
+local function _get_cache(bufnr)
+    local tick = vim.api.nvim_buf_get_changedtick(bufnr)
+    local cached = _cache[bufnr]
+    if cached and cached.changedtick == tick then return cached.levels, cached.foldexprs end
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+    local levels, foldexprs = _compute_levels(lines)
+    _cache[bufnr] = { changedtick = tick, levels = levels, foldexprs = foldexprs }
+    return levels, foldexprs
 end
 
 function MarkdownFoldExpr()
+    local bufnr = vim.api.nvim_get_current_buf()
     local lnum = vim.v.lnum
-    local line = vim.fn.getline(lnum)
+    local levels, foldexprs = _get_cache(bufnr)
 
-    -- 1. 헤더: # 레벨에 따라 fold level 부여
-    --    헤더 라인 자체는 fold 시작점 (노출됨)
-    local heading_level = line:match("^(#+)%s")
-    if heading_level then
-        return ">" .. #heading_level
-    end
+    if foldexprs[lnum] then return foldexprs[lnum] end
 
-    -- 2. 코드블록: ``` 로 시작하는 라인 처리
-    local in_code, code_start = _md_fold_code_block(lnum)
-    if in_code and code_start then
-        local offset = lnum - code_start
-        if offset >= 3 then  -- 4번째 줄부터 (0-indexed: offset 3)
-            return ">1"
-        end
-        return "="
-    end
+    local curr = levels[lnum] or 0
+    local prev = levels[lnum - 1] or 0
 
-    -- 3. 리스트: - 로 시작하는 블록 처리
-    local in_list, list_start = _md_fold_list_block(lnum)
-    if in_list and list_start then
-        local offset = lnum - list_start
-        if offset >= 2 then  -- 3번째 줄부터 (0-indexed: offset 2)
-            return ">1"
-        end
-        return "="
-    end
-
-    -- 4. callout: > 로 시작하는 블록 처리
-    local in_callout, callout_start = _md_fold_callout_block(lnum)
-    if in_callout and callout_start then
-        local offset = lnum - callout_start
-        if offset >= 1 then  -- 2번째 줄부터 (0-indexed: offset 1)
-            return ">1"
-        end
-        return "="
-    end
-
+    if curr > prev then return ">" .. curr end
+    if curr < prev then return tostring(curr) end
     return "="
 end
 
--- foldtext: 접힌 fold의 표시 텍스트 반환
+-- foldtext
 
 local HEADING_WIDTHS = { 100, 80, 60, 40 }
 local HEADING_HL = { "MdFoldH1", "MdFoldH2", "MdFoldH3", "MdFoldH4" }
 
-function _md_foldtext_heading_hl(line, level, fold_size, win_width)
+local function _md_foldtext_heading_hl(line, level, fold_size, win_width)
     local hl = HEADING_HL[math.min(level, 4)]
     local target_width = HEADING_WIDTHS[math.min(level, 4)]
     target_width = math.min(target_width, win_width - 2)
-
-    local suffix = " (" .. fold_size .. " lines)"
+    local suffix = " " .. fold_size .. " lines"
     local available = target_width - #line - #suffix
-    local dots = available > 0 and string.rep("·", available) or ""
-
+    local dots = available > 0 and string.rep("▀", available) or ""
     return {
-        { line, hl },
+        -- { line, hl },
+        { "  ", "MdFoldDots" },
         { dots, "MdFoldDots" },
         { suffix, "MdFoldInfo" },
     }
 end
 
-function _md_foldtext_block_hl(line, fold_size, win_width)
+local function _md_foldtext_block_hl(line, fold_size, win_width)
     local fixed_width = 60
     fixed_width = math.min(fixed_width, win_width - 2)
-
     local suffix = " (" .. fold_size .. " lines)"
     local available = fixed_width - #line - #suffix
-    local dots = available > 0 and string.rep("·", available) or ""
-
+    local dots = available > 0 and string.rep("+", available) or ""
     return {
-        { line, "MdFoldBlock" },
+        -- { line, "MdFoldBlock" },
         { dots, "MdFoldDots" },
         { suffix, "MdFoldInfo" },
     }
@@ -234,17 +254,14 @@ function MarkdownFoldText()
     local fold_size = vim.v.foldend - vim.v.foldstart
     local win_width = vim.fn.winwidth(0)
 
-    local heading_level = line:match("^(#+)%s")
-    if heading_level then
-        return _md_foldtext_heading_hl(line, #heading_level, fold_size, win_width)
-    end
+    -- foldstart 위에 헤더가 있으면 헤더를 foldtext로 표시
+    local prev_line = lnum > 1 and vim.fn.getline(lnum - 1) or ""
+    local prev_heading = prev_line:match("^(#+)%s")
+    if prev_heading then return _md_foldtext_heading_hl(prev_line, #prev_heading, fold_size, win_width) end
 
-    if line:match("^%s*```") or line:match("^%s*%-") or line:match("^>") then
-        return _md_foldtext_block_hl(line, fold_size, win_width)
-    end
+    if line:match("^%s*```") or line:match("^%s*%-") or line:match("^>") or line:match("^|") then return _md_foldtext_block_hl(line, fold_size, win_width) end
 
     return { { line .. " ··· (" .. fold_size .. " lines)", "MdFoldBlock" } }
 end
 
--- 모듈 로드 완료 표시 (require 캐싱용)
 return true
