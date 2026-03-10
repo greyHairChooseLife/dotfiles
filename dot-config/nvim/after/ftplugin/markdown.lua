@@ -1,11 +1,21 @@
 -- Markdown custom folding
-require("note_taking.markdown_fold")
-vim.opt_local.foldmethod = "expr"
-vim.opt_local.foldexpr = "v:lua.MarkdownFoldExpr()"
-vim.opt_local.foldtext = "v:lua.MarkdownFoldText()"
-vim.opt_local.foldlevel = 99
-vim.opt_local.foldlevelstart = 99
-vim.opt_local.foldcolumn = "1"  -- markdown은 foldcolumn 표시
+-- vim.schedule 필요 이유:
+--   ftplugin 실행 시점에는 BufReadPost autocmd 체인이 아직 진행 중이다.
+--   이 체인 안에서 loadview 등 다른 핸들러가 foldexpr를 덮어쓰기 때문에
+--   setlocal을 즉시 실행해도 이후에 리셋된다.
+--   vim.schedule로 현재 이벤트 루프가 끝난 뒤 실행하면
+--   모든 autocmd가 완료된 후 마지막으로 설정되어 덮어쓰임을 방지한다.
+local ok, err = pcall(require, "note_taking.markdown_fold")
+if not ok then vim.notify("markdown_fold load error: " .. tostring(err), vim.log.levels.ERROR) end
+vim.schedule(function()
+    vim.cmd([[
+        setlocal foldmethod=expr
+        setlocal foldexpr=v:lua.MarkdownFoldExpr()
+        setlocal foldtext=v:lua.MarkdownFoldText()
+        setlocal foldlevel=99
+        setlocal foldcolumn=1
+    ]])
+end)
 
 local map = vim.keymap.set
 
