@@ -33,7 +33,6 @@ map({ "n", "v" }, "Q", ",")
 
 map({ "n", "v" }, "zk", "10<C-e>")
 map({ "n", "v" }, "zj", "10<C-y>")
-map({ "n", "v" }, "zo", "za") -- toggle fold uni-key
 -- map({ "n", "v" }, "zz", "zz5<C-e>") -- toggle fold uni-key
 -- map({ "n", "v" }, "zZ", "zz", { noremap = true }) -- toggle fold uni-key
 map({ "n", "v" }, "gH", "0") -- move cursor
@@ -144,16 +143,7 @@ map("v", "<A-l>", ">gv")
 map("i", "cl<cr>", Insert_console_log, opt)
 map("v", "cl<cr>", Insert_console_log_Visual, opt)
 
--- FOLD는 항상  mkview
-map("n", "zc", "zc<cmd>mkview<CR>")
-map("n", "zo", "zo<cmd>mkview<CR>")
-map("n", "zO", "zO<cmd>mkview<CR>")
-map("n", "zm", "zm<cmd>mkview<CR>")
-map("n", "zM", "zM<cmd>mkview<CR>")
-map("n", "zr", "zr<cmd>mkview<CR>")
-map("n", "zR", "zR<cmd>mkview<CR>")
-map("n", "zf", "zf<cmd>mkview<CR>")
-map("n", "zd", "zd<cmd>mkview<CR>")
+map("n", "zo", "za") -- toggle fold uni-key (mkview는 autocmd가 처리)
 
 map("v", "V", "<Esc>^v$h")
 
