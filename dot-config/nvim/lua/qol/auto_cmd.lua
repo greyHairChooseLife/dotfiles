@@ -93,6 +93,14 @@ vim.api.nvim_create_autocmd("TabClosed", {
     end,
 })
 
+-- MEMO:: Fold view 자동 저장
+vim.api.nvim_create_autocmd("BufWinLeave", {
+    pattern = "*",
+    callback = function()
+        if vim.bo.buftype == "" then vim.cmd("silent! mkview") end
+    end,
+})
+
 vim.api.nvim_create_autocmd("BufReadPost", {
     pattern = "*",
     callback = function()
