@@ -245,6 +245,12 @@ vim.api.nvim_create_autocmd("TermOpen", {
     end,
 })
 
+-- 숫자 global marks (0~9) 자동 삭제: shada에서 로드된 후 지움
+vim.api.nvim_create_autocmd("VimEnter", {
+    once = true,
+    callback = function() pcall(vim.cmd, "delmarks 0123456789") end,
+})
+
 -- TODO: 이거 왜 설정한거지? 찾아서 정리 해두기
 -- REMOVE KEYMAP FROM NO-WHERE
 vim.api.nvim_create_autocmd("VimEnter", {
