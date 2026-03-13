@@ -143,7 +143,7 @@ map("v", "<A-l>", ">gv")
 map("i", "cl<cr>", Insert_console_log, opt)
 map("v", "cl<cr>", Insert_console_log_Visual, opt)
 
-map("n", "zo", "za") -- toggle fold uni-key (mkview는 autocmd가 처리)
+-- map("n", "zo", "za") -- toggle fold uni-key (mkview는 autocmd가 처리)
 
 map("v", "V", "<Esc>^v$h")
 
