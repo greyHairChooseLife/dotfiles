@@ -290,3 +290,9 @@ vim.keymap.set({ "n", "v" }, "dml", "<Plug>(Marks-deleteline)")
 vim.keymap.set({ "n", "v" }, "dmb", "<Plug>(Marks-deletebuf)")
 vim.keymap.set({ "n", "v" }, "mj", "<Plug>(Marks-next)")
 vim.keymap.set({ "n", "v" }, "mk", "<Plug>(Marks-prev)")
+
+-- A~Z global marks 전체 삭제
+vim.keymap.set("n", "dmg", function()
+    vim.cmd("delmarks A-Z")
+    vim.notify("Global marks A-Z deleted", vim.log.levels.INFO)
+end, { desc = "Delete all global marks A-Z" })
