@@ -185,10 +185,62 @@ vim.api.nvim_create_user_command("Zo", function()
     require("note_taking.zk_search").open_recent()
 end, {})
 
+local function zk_delete_note()
+    local notebook = vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")
+    local buf_path = vim.api.nvim_buf_get_name(0)
+    if buf_path == "" or buf_path:sub(1, #notebook) ~= notebook then
+        vim.notify("zk 노트가 아님", vim.log.levels.WARN)
+        return
+    end
+
+    local title = vim.fn.fnamemodify(buf_path, ":t:r")
+
+    local function confirm_delete()
+        vim.ui.input({ prompt = ("Delete '%s'? (y/n): "):format(title) }, function(input)
+            if input ~= "y" then return end
+            local bufnr = vim.api.nvim_get_current_buf()
+            vim.fn.delete(buf_path)
+            vim.api.nvim_buf_delete(bufnr, { force = true })
+            vim.notify("Deleted: " .. title, vim.log.levels.INFO)
+        end)
+    end
+
+    require("zk.api").list(nil, { linkTo = { buf_path }, select = { "title", "absPath" } }, function(err, backlinks)
+        assert(not err, tostring(err))
+        vim.schedule(function()
+            if not backlinks or #backlinks == 0 then
+                vim.notify("백링크 없음", vim.log.levels.INFO)
+                confirm_delete()
+                return
+            end
+
+            local items = {}
+            for _, note in ipairs(backlinks) do
+                items[#items + 1] = {
+                    text = note.title or vim.fn.fnamemodify(note.absPath, ":t:r"),
+                    file = note.absPath,
+                }
+            end
+
+            Snacks.picker({
+                title = ("Backlinks to '%s' (%d)"):format(title, #backlinks),
+                items = items,
+                format = function(item) return { { item.text, "SnacksPickerLabel" } } end,
+                preview = "file",
+                layout = { preset = "vertical" },
+                confirm = function(picker)
+                    picker:close()
+                    confirm_delete()
+                end,
+            })
+        end)
+    end)
+end
+
 wk_map({
     ["<Space>z"] = {
         group = "Zk",
-        order = { "n", "f", "w", "o", "b", "l", "m" },
+        order = { "n", "f", "w", "o", "b", "l", "m", "d" },
         ["n"] = {
             function()
                 local m = vim.fn.mode()
@@ -228,6 +280,11 @@ wk_map({
             end,
             desc = "링크 삽입",
             mode = { "n", "v" },
+        },
+        ["d"] = {
+            zk_delete_note,
+            desc = "노트 삭제",
+            mode = "n",
         },
         ["m"] = {
             function()
