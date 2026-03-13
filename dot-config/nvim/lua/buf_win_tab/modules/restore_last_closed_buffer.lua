@@ -22,35 +22,6 @@ local function save_closed_buffer(event)
     end
 end
 
-local function restore_last_closed_buffer()
-    if #closed_buffers_stack > 0 then
-        local last_buffer = closed_buffers_stack[1]
-        local status, error = pcall(function() vim.cmd("vnew " .. vim.fn.fnameescape(last_buffer)) end)
-
-        if status then
-            table.remove(closed_buffers_stack, 1)
-            if #vim.api.nvim_list_wins() == 2 and type(_G.ReloadLayout) == "function" then _G.ReloadLayout() end
-        else
-            vim.notify("Failed to restore buffer: " .. error, vim.log.levels.ERROR)
-        end
-    else
-        vim.notify("No buffer history to restore", vim.log.levels.INFO)
-    end
-end
-
-local function show_closed_buffer_history()
-    if #closed_buffers_stack == 0 then
-        vim.notify("No buffer history saved", vim.log.levels.INFO)
-        return
-    end
-
-    print("Recently closed buffers:")
-    for i, path in ipairs(closed_buffers_stack) do
-        local filename = vim.fn.fnamemodify(path, ":t")
-        print(string.format("%d: %s", i, filename))
-    end
-end
-
 local function restore_buffer_by_index(index)
     if not index or index < 1 or index > #closed_buffers_stack then
         vim.notify("Invalid buffer index", vim.log.levels.WARN)
@@ -66,6 +37,40 @@ local function restore_buffer_by_index(index)
     else
         vim.notify("Failed to restore buffer: " .. error, vim.log.levels.ERROR)
     end
+end
+
+local function restore_last_closed_buffer()
+    if #closed_buffers_stack > 0 then
+        restore_buffer_by_index(1)
+    else
+        vim.notify("No buffer history to restore", vim.log.levels.INFO)
+    end
+end
+
+local function show_closed_buffer_history()
+    if #closed_buffers_stack == 0 then
+        vim.notify("No buffer history saved", vim.log.levels.INFO)
+        return
+    end
+
+    local items = {}
+    for i, path in ipairs(closed_buffers_stack) do
+        items[i] = {
+            idx = i,
+            text = vim.fn.fnamemodify(path, ":~:."),
+            file = path,
+        }
+    end
+
+    require("snacks").picker({
+        title = "Closed Buffers",
+        items = items,
+        format = "file",
+        confirm = function(picker, item)
+            picker:close()
+            if item then restore_buffer_by_index(item.idx) end
+        end,
+    })
 end
 
 vim.api.nvim_create_autocmd("BufDelete", {
