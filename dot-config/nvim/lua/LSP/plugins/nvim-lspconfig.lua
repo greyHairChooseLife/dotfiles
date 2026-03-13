@@ -80,6 +80,7 @@ return {
             terraformls = {},
             -- markdown_oxide = {},
             -- marksman = {},
+            zk = { workspace_required = false },
         }
         local disabled_server = {
             "pylsp",
