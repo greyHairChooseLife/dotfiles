@@ -20,7 +20,7 @@ vim.cmd([[
   highlight CurSearch gui=bold guibg=#0000FF guifg=white
   highlight Visual guibg=#4d6652 guifg=NONE
   highlight CursorLine guibg=#1d202f guifg=NONE
-  highlight Folded guibg=#24283b guifg=#4d6652 gui=italic
+  highlight Folded guibg=#24283b guifg=NONE gui=NONE
   highlight StatusLine guibg=#24283b
   highlight StatusLineNC guibg=#24283b
   highlight FoldColumn guifg=#24283b

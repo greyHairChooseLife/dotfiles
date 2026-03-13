@@ -25,6 +25,7 @@ opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 opt.foldlevel = 99
 opt.foldlevelstart = 99
 opt.foldnestmax = 4
+require("UI.foldtext")
 opt.fillchars = {
     vert = "┃", -- 수직 창 구분선
     fold = " ", -- 접힌 텍스트 표시

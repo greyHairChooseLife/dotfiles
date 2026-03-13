@@ -60,3 +60,50 @@ wk_map({
         ["r"] = { "<cmd>RenderMarkdown buf_toggle<CR>", desc = "  rendering toggle", mode = { "n" } },
     },
 })
+
+map({ "n", "v" }, "w", function()
+    local line = vim.fn.line(".")
+    if vim.fn.foldclosed(line) ~= -1 then
+        vim.cmd("normal! zv0w")
+    else
+        vim.cmd("normal! w")
+    end
+end, { noremap = true, silent = true })
+
+-- 다음 접힌 라인으로 이동
+map({ "n", "v" }, "zn", function()
+    local cur = vim.fn.line(".")
+    local last = vim.fn.line("$")
+
+    -- 현재 커서가 fold 안에 있으면 해당 fold의 끝으로 건너뜀
+    local fold_end = vim.fn.foldclosedend(cur)
+    local start = fold_end ~= -1 and fold_end + 1 or cur + 1
+
+    for l = start, last do
+        if vim.fn.foldclosed(l) == l then
+            vim.api.nvim_win_set_cursor(0, { l, 0 })
+            -- vim.cmd("normal! zz")
+            return
+        end
+    end
+end, { noremap = true, silent = true })
+
+-- 이전 접힌 라인으로 이동
+map({ "n", "v" }, "zp", function()
+    local cur = vim.fn.line(".")
+
+    -- 현재 커서가 fold 안에 있으면 해당 fold의 시작으로 건너뜀
+    local fold_start = vim.fn.foldclosed(cur)
+    local start = fold_start ~= -1 and fold_start - 1 or cur - 1
+
+    for l = start, 1, -1 do
+        if vim.fn.foldclosed(l) == l then
+            vim.api.nvim_win_set_cursor(0, { l, 0 })
+            -- vim.cmd("normal! zz")
+            return
+        end
+    end
+end, { noremap = true, silent = true })
+
+map({ "n", "v" }, "zN", "<cmd>normal! zj<CR>", { noremap = true, silent = true })
+map({ "n", "v" }, "zP", "<cmd>normal! zk<CR>", { noremap = true, silent = true })
