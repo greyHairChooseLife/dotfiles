@@ -239,10 +239,49 @@ local function _md_foldtext_heading_hl(line, level, fold_size, win_width)
     }
 end
 
-local function _md_foldtext_block_hl(line, fold_size, win_width)
+local function _md_foldtext_codeblock_hl(line, fold_size, win_width)
     local fixed_width = 60
     fixed_width = math.min(fixed_width, win_width - 2)
-    local suffix = " (" .. fold_size .. " lines)"
+    local suffix = " (" .. fold_size .. " lineskkk)"
+    local available = fixed_width - #line - #suffix
+    local dots = available > 0 and string.rep("+", available) or ""
+    return {
+        -- { line, "MdFoldBlock" },
+        { dots, "MdFoldDots" },
+        { suffix, "MdFoldInfo" },
+    }
+end
+
+local function _md_foldtext_bulletpoint_hl(line, fold_size, win_width)
+    local fixed_width = 60
+    fixed_width = math.min(fixed_width, win_width - 2)
+    local suffix = " (" .. fold_size .. " lineskkk)"
+    local available = fixed_width - #line - #suffix
+    local dots = available > 0 and string.rep("+", available) or ""
+    return {
+        -- { line, "MdFoldBlock" },
+        { dots, "MdFoldDots" },
+        { suffix, "MdFoldInfo" },
+    }
+end
+
+local function _md_foldtext_callout_hl(line, fold_size, win_width)
+    local fixed_width = 60
+    fixed_width = math.min(fixed_width, win_width - 2)
+    local suffix = " (" .. fold_size .. " lineskkk)"
+    local available = fixed_width - #line - #suffix
+    local dots = available > 0 and string.rep("+", available) or ""
+    return {
+        -- { line, "MdFoldBlock" },
+        { dots, "MdFoldDots" },
+        { suffix, "MdFoldInfo" },
+    }
+end
+
+local function _md_foldtext_table_hl(line, fold_size, win_width)
+    local fixed_width = 60
+    fixed_width = math.min(fixed_width, win_width - 2)
+    local suffix = " (" .. fold_size .. " lineskkk)"
     local available = fixed_width - #line - #suffix
     local dots = available > 0 and string.rep("+", available) or ""
     return {
@@ -264,8 +303,17 @@ function MarkdownFoldText()
     local prev_heading = prev_line:match("^(#+)%s")
     if prev_heading then return _md_foldtext_heading_hl(prev_line, #prev_heading, fold_size, win_width) end
 
-    if line:match("^%s*```") or line:match("^%s*%-") or line:match("^%s*>") or line:match("^%s*|") then
-        return _md_foldtext_block_hl(line, fold_size, win_width)
+    local prev_codeblock_line = lnum > 4 and vim.fn.getline(lnum - 4) or ""
+    local prev_codeblock = prev_codeblock_line:match("^%s*```")
+    if prev_codeblock then return _md_foldtext_codeblock_hl(line, fold_size, win_width) end
+
+    local prev_callout = prev_line:match("^%s*>%s*%[!")
+    if prev_callout then return _md_foldtext_callout_hl(prev_line, fold_size, win_width) end
+
+    if line:match("^%s*[-*+]%s") or line:match("^%s*%d+%.%s") then
+        return _md_foldtext_bulletpoint_hl(line, fold_size, win_width)
+    elseif line:match("^%s*|") then
+        return _md_foldtext_table_hl(line, fold_size, win_width)
     end
 
     return { { line .. " ··· (" .. fold_size .. " lines)", "MdFoldBlock" } }
