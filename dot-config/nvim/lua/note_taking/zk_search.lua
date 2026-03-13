@@ -520,6 +520,13 @@ function M.open(source_buf, initial_filters, opts)
             zk_path     = path_action,
             zk_cur_tags = current_tags_action,
             zk_date     = date_action,
+            zk_yank = function(picker)
+                local item = picker:current()
+                if not item then return end
+                local name = item.stem or vim.fn.fnamemodify(item.file, ":t:r")
+                vim.fn.setreg("+", name)
+                vim.notify("Yanked: " .. name, vim.log.levels.INFO)
+            end,
             zk_clear    = function(picker)
                 picker_ref = picker
                 local title = build_title(filters)
@@ -555,6 +562,7 @@ function M.open(source_buf, initial_filters, opts)
                     ["<M-5>"] = { "zk_cur_tags", mode = { "i", "n" } },
                     ["<M-6>"] = { "zk_date",     mode = { "i", "n" } },
                     ["<M-0>"] = { "zk_clear",    mode = { "i", "n" } },
+                    ["<C-y>"] = { "zk_yank",     mode = { "i", "n" } },
                 },
             },
         },

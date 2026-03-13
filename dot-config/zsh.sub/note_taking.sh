@@ -95,3 +95,4 @@ alias zcd='cd $ZK_NOTEBOOK_DIR'
 zn() { nvim -c "Zn" }
 zf() { nvim -c "Zf" }
 zo() { nvim -c "Zo" }
+zw() { nvim -c "Zw" }
