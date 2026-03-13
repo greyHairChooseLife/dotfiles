@@ -286,7 +286,7 @@ wk_map({
 
 vim.keymap.set({ "n", "v" }, "m;", "<Plug>(Marks-toggle)")
 -- vim.keymap.set({ "n", "v" }, "dm.", "<Plug>(Marks-delete)")
-vim.keymap.set({ "n", "v" }, "dmm", "<Plug>(Marks-deleteline)")
-vim.keymap.set({ "n", "v" }, "dmM", "<Plug>(Marks-deletebuf)")
+vim.keymap.set({ "n", "v" }, "dml", "<Plug>(Marks-deleteline)")
+vim.keymap.set({ "n", "v" }, "dmb", "<Plug>(Marks-deletebuf)")
 vim.keymap.set({ "n", "v" }, "mj", "<Plug>(Marks-next)")
 vim.keymap.set({ "n", "v" }, "mk", "<Plug>(Marks-prev)")
