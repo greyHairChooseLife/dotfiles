@@ -77,11 +77,20 @@ vim.api.nvim_create_autocmd("BufDelete", {
     callback = save_closed_buffer,
 })
 
+vim.api.nvim_create_autocmd("WinClosed", {
+    callback = function(event)
+        local win = tonumber(event.match)
+        if not win or not vim.api.nvim_win_is_valid(win) then return end
+        local buf = vim.api.nvim_win_get_buf(win)
+        save_closed_buffer({ buf = buf })
+    end,
+})
+
 local wk_map = require("utils").wk_map
 wk_map({
     ["<Space>b"] = {
         order = { "r", "h" },
-        group = "   Buffer",
+        group = "Buffer",
         ["r"] = { restore_last_closed_buffer, desc = "revive", mode = "n" },
         ["h"] = { show_closed_buffer_history, desc = "history", mode = "n" },
     },
