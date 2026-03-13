@@ -21,7 +21,7 @@ dynamic_title = true
 [font]
 # normal.family = "D2Coding"
 normal.family = "D2CodingLigature Nerd Font Propo"
-size = 11.0  # current
+size = 15.0  # current
 # size = 11.0  # cbpm labtop
 # size = 9.0 # x390
 # size = 15.0 # portable monitor
@@ -39,6 +39,7 @@ bindings = [
   # { key = "'", mode = "Vi", action = "SemanticSearchBackward" },
   # { key = "[", mods = "Control", chars = "\u001b[" },
   { key = "[", mods = "Control", chars = "\u001b[27;5;91~" },
+  { key = "i", mods = "Control", chars = "\u001b[105;5u" },
   { key = "Return", mods = "Shift", chars = "\u001b\r" },     # Shift + Return => linebreak for claude_code
 ]
 
