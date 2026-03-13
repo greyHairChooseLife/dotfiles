@@ -604,7 +604,10 @@ M.copy_path = function(mode)
     if mode == "absolute" then
         path = vim.fn.expand("%:p")
     elseif mode == "relative" then
-        path = vim.fn.expand("%")
+        local abs_path = vim.fn.expand("%:p")
+        local cwd = vim.fn.getcwd()
+        -- fnamemodify로 상대화
+        path = vim.fn.fnamemodify(abs_path, ":." .. cwd)
     elseif mode == "filename" then
         path = vim.fn.expand("%:t")
     elseif mode == "directory" then
@@ -620,7 +623,7 @@ M.copy_path = function(mode)
     end
 
     vim.fn.setreg("+", path)
-    vim.notify("Copied " .. mode .. " path: " .. path, vim.log.levels.INFO)
+    vim.notify("Copied " .. mode .. ".\r\n" .. path, vim.log.levels.INFO)
 end
 
 M.create_floating_window = function(content, filetype, width, height, row, col)

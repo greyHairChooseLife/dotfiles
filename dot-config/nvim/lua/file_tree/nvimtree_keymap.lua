@@ -100,7 +100,7 @@ M.nvim_tree_on_attach = function(bufnr)
         local node = api.tree.get_node_under_cursor()
         local dir_path = node.absolute_path:match("(.*/)") or ""
         vim.fn.system("echo -n '" .. dir_path .. "' | xclip -selection clipboard")
-        print("Copied " .. dir_path)
+        vim.notify("Copied directory.\r\n" .. dir_path, vim.log.levels.INFO)
     end, opts("Copy Dir-path"))
     map("n", ",r", function()
         if vim.bo.filetype == "NvimTree" and #vim.api.nvim_tabpage_list_wins(vim.api.nvim_get_current_tabpage()) == 1 then
