@@ -30,26 +30,55 @@ return {
             },
             diagnostics = false, -- disables diagnostics
         },
-        plugins = {
-            -- uncomment any of the lines below to disable that option in Focus mode
-            -- options = {
-            --   disable some global vim options (vim.o...) e.g.
-            --   ruler = false
-            -- },
-            -- twilight = { enabled = true }, -- enable to start Twilight when zen mode opens
-            -- gitsigns = { enabled = false }, -- disables git signs
-            -- tmux = { enabled = false }, -- disables the tmux statusline
-            -- diagnostics = { enabled = false }, -- disables diagnostics
-            -- todo = { enabled = false }, -- if set to "true", todo-comments.nvim highlights will be disabled
-        },
-        -- callback where you can add custom code when the focus window opens
-        on_open = function(_win)
-            -- require("utils").setOpt(
-            -- 	"winhighlight",
-            -- 	"Normal:NoteBackground,FloatBorder:NoteBorder,FloatTitle:NoteTitle,EndOfBuffer:NoteEOB,FoldColumn:NoteFoldColumn"
-            -- )
+        plugins = {},
+        on_open = function(_win) end,
+        on_close = function()
+            -- parent 윈도우의 winhighlight 복원
+            local saved = vim.g._focus_saved_parent_whl
+            local focus = require("focus.views.focus")
+            local win = focus.parent
+            if saved and win and vim.api.nvim_win_is_valid(win) then
+                vim.api.nvim_set_option_value("winhighlight", saved, { scope = "local", win = win })
+            end
+            vim.g._focus_saved_parent_whl = nil
         end,
-        -- callback where you can add custom code when the focus window closes
-        on_close = function() end,
     },
+    config = function(_, opts)
+        require("focus").setup(opts)
+
+        -- fix_hl monkey-patch: parent 윈도우의 winhighlight 보존
+        local focus_view = require("focus.views.focus")
+        local orig_fix_hl = focus_view.fix_hl
+
+        focus_view.fix_hl = function(win, backdrop)
+            -- backdrop 윈도우 (bg_win)는 원래대로 처리
+            if backdrop then
+                orig_fix_hl(win, backdrop)
+                return
+            end
+
+            -- focus 윈도우가 아닌 윈도우에는 winhighlight를 건드리지 않음
+            if win ~= focus_view.win then return end
+
+            -- focus 윈도우: parent의 winhighlight를 저장하고 focus 윈도우에 계승
+            if not vim.g._focus_saved_parent_whl and focus_view.parent and vim.api.nvim_win_is_valid(focus_view.parent) then
+                vim.g._focus_saved_parent_whl = vim.api.nvim_get_option_value("winhighlight", { scope = "local", win = focus_view.parent })
+            end
+
+            local parent_whl = vim.g._focus_saved_parent_whl or ""
+            -- parent의 winhighlight를 focus 윈도우에 적용하되, NormalFloat도 매핑
+            local hl = parent_whl
+            if hl ~= "" then
+                local normal_target = hl:match("Normal:([^,]+)")
+                if normal_target then
+                    hl = hl .. ",NormalFloat:" .. normal_target
+                end
+            else
+                hl = "NormalFloat:Normal"
+            end
+
+            vim.api.nvim_set_option_value("winhighlight", hl, { scope = "local", win = win })
+            vim.api.nvim_set_option_value("winblend", 0, { scope = "local", win = win })
+        end
+    end,
 }

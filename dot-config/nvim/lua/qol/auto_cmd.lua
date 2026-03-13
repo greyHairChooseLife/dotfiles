@@ -16,21 +16,16 @@ vim.api.nvim_create_autocmd("WinEnter", {
 
         -- 플로팅 윈도우는 'relative' 필드가 비어있지 않음
         if config.relative ~= "" then
-            -- 플로팅 윈도우에만 적용할 키맵 설정
-            if vim.bo.filetype ~= "VoltWindow" then vim.keymap.set({ "n", "v" }, "gq", "<cmd>quit<CR>", { buffer = true, silent = true }) end
-
-        -- 추가 옵션 설정 (예: 텍스트 너비 조정)
-        -- vim.bo.textwidth = 80
+            -- focus.nvim은 편집 중인 버퍼를 그대로 플로팅 윈도우에 표시하므로,
+            -- buffer-local gq 키맵을 설정하면 Focus 종료 후에도 남아서 gq가 오동작함
+            local is_focus = pcall(require, "focus") and require("focus.views.focus").is_open() and require("focus.views.focus").win == win
+            -- 플로팅 윈도우에만 적용할 키맵 설정 (focus.nvim 윈도우 제외)
+            if vim.bo.filetype ~= "VoltWindow" and not is_focus then
+                vim.keymap.set({ "n", "v" }, "gq", "<cmd>quit<CR>", { buffer = true, silent = true })
+            end
         else
-            -- 플로팅 윈도우가 아닐 경우, 필요하다면 키맵을 제거하거나 기본 설정으로 복원
-            --
-            -- 예: 특정 키맵을 해제
-            -- vim.keymap.del('n', 'PP', { buffer = true })
-            -- vim.keymap.del('v', 'i', { buffer = true })
-            -- vim.keymap.del('v', 'a', { buffer = true })
-
-            -- 추가 옵션 복원
-            -- vim.bo.textwidth = 0
+            -- 플로팅 윈도우가 아닌 윈도우에 진입할 때, buffer-local gq 키맵이 남아있으면 제거
+            pcall(vim.keymap.del, { "n", "v" }, "gq", { buffer = true })
         end
     end,
 })
