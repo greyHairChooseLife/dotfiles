@@ -160,8 +160,8 @@ PACMAN_PKGS=(
     bluetui
     tree-sitter
     flameshot
-    worktrunk
     uv
+    hurl
 )
 
 AUR_PKGS=(
@@ -197,6 +197,7 @@ AUR_PKGS=(
     ytdl
     aws-session-manager-plugin
     tree-sitter-cli-github-bin
+    worktrunk-bin
 )
 
 echo "Installing pacman packages..."

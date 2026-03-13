@@ -74,7 +74,7 @@
     ; template = /home/etr/.gitmessage
 
 [merge]
-	; ff = false
+	ff = false
 
 [fetch]
 	tags = true
