@@ -1,5 +1,5 @@
 btkb() {
-    case "$HOSTNAME" in
+    case "$(cat /etc/hostname)" in
         "sy-Lenovo-ideapad" | "cbpm-labtop" | "sy-x390") ;;
         *)
             echo "Not a recognized hostname"
