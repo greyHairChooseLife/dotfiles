@@ -131,11 +131,11 @@ local function _compute_levels(lines)
         local is_separator = line:match("^|%s*%-%-%-") or line:match("^%s*|?%-%-%-")
         if is_separator then
             local prev_line = lines[i - 1] or ""
-            if prev_line:match("^|") then
+            if prev_line:match("^%s*|") then
                 local data_start = i + 1
                 local data_end = data_start - 1
                 for j = data_start, total do
-                    if (lines[j] or ""):match("^|") then
+                    if (lines[j] or ""):match("^%s*|") then
                         data_end = j
                     else
                         break
@@ -165,13 +165,13 @@ local function _compute_levels(lines)
 
         -- 코드블록 안이면 건너뜀
         if foldexprs[i] == nil and not curr:match("^%s*```") then
-            if curr:match("^>%s*%[!") then
+            if curr:match("^%s*>%s*%[!") then
                 -- callout 시작: 현재 level 유지
-            elseif curr:match("^>") and prev:match("^>%s*%[!") then
+            elseif curr:match("^%s*>") and prev:match("^%s*>%s*%[!") then
                 levels[i] = levels[i] + 1
-            elseif curr:match("^>") and prev:match("^>") then
+            elseif curr:match("^%s*>") and prev:match("^%s*>") then
                 levels[i] = levels[i - 1]
-            elseif curr:match("^>") then
+            elseif curr:match("^%s*>") then
                 levels[i] = levels[i] + 1
             else
                 local is_list = curr:match("^%s*[-*+]%s") or curr:match("^%s*%d+%.%s")
@@ -264,7 +264,9 @@ function MarkdownFoldText()
     local prev_heading = prev_line:match("^(#+)%s")
     if prev_heading then return _md_foldtext_heading_hl(prev_line, #prev_heading, fold_size, win_width) end
 
-    if line:match("^%s*```") or line:match("^%s*%-") or line:match("^>") or line:match("^|") then return _md_foldtext_block_hl(line, fold_size, win_width) end
+    if line:match("^%s*```") or line:match("^%s*%-") or line:match("^%s*>") or line:match("^%s*|") then
+        return _md_foldtext_block_hl(line, fold_size, win_width)
+    end
 
     return { { line .. " ··· (" .. fold_size .. " lines)", "MdFoldBlock" } }
 end
