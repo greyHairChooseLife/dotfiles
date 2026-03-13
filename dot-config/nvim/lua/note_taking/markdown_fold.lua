@@ -1,19 +1,5 @@
 -- Markdown custom fold expression and fold text
 
--- Highlight groups for fold text
-local _fold_hl_initialized = false
-local function _ensure_fold_highlights()
-    if _fold_hl_initialized then return end
-    _fold_hl_initialized = true
-    vim.api.nvim_set_hl(0, "MdFoldH1", { bg = "#3a3a52", fg = "#c0caf5", bold = true })
-    vim.api.nvim_set_hl(0, "MdFoldH2", { bg = "#2e3a4a", fg = "#9aa5ce", bold = true })
-    vim.api.nvim_set_hl(0, "MdFoldH3", { bg = "#263040", fg = "#7882a4" })
-    vim.api.nvim_set_hl(0, "MdFoldH4", { bg = "#1e2638", fg = "#565f89" })
-    vim.api.nvim_set_hl(0, "MdFoldDots", { fg = "#414868" })
-    vim.api.nvim_set_hl(0, "MdFoldInfo", { fg = "#565f89", italic = true })
-    vim.api.nvim_set_hl(0, "MdFoldBlock", { bg = "#1e2030", fg = "#737aa2" })
-end
-
 -- 버퍼별 fold level 캐시
 local _cache = {}
 
@@ -218,81 +204,63 @@ end
 
 -- foldtext
 
--- H1 제외이므로 index 1=H2, 2=H3, 3=H4, 4=H5
-local HEADING_WIDTHS = { 92, 76, 50, 32, 17 }
-local HEADING_HL = { "MdFoldH1", "MdFoldH2", "MdFoldH3", "MdFoldH4" }
-
 local function _md_foldtext_heading_hl(line, level, fold_size, win_width)
+    -- H1 제외이므로 index 1=H2, 2=H3, 3=H4, 4=H5
+    local HEADING_WIDTHS = { 92, 76, 50, 32, 17 }
     -- level = 원래 # 개수 (2~5), index로 변환 (H2→1, H3→2, ...)
     local idx = math.max(level - 1, 1)
     idx = math.min(idx, #HEADING_WIDTHS)
-    local hl = HEADING_HL[idx]
     local target_width = HEADING_WIDTHS[idx]
     target_width = math.min(target_width, win_width - 2)
-    local suffix = "+--" .. string.format("%3d", fold_size) .. " lines  "
-    local pad = target_width - #suffix
+    local info = "+--" .. string.format("%3d", fold_size) .. " lines  "
+    local pad = target_width - #info
     local dots = pad > 0 and string.rep("█", pad) or ""
     return {
-        { "  ", "MdFoldDots" },
-        { dots, "MdFoldDots" },
-        { suffix, "MdFoldInfo" },
+        { "  " },
+        { dots, "MdFoldBlock" },
+        { info, "MDFoldHeaderInfo" },
     }
 end
 
 local function _md_foldtext_codeblock_hl(line, fold_size, win_width)
-    local fixed_width = 60
-    fixed_width = math.min(fixed_width, win_width - 2)
-    local suffix = " (" .. fold_size .. " lineskkk)"
-    local available = fixed_width - #line - #suffix
-    local dots = available > 0 and string.rep("+", available) or ""
+    local indent = line:match("^(%s*)")
+    local info = "  +++ " .. fold_size .. " lines more                       "
+    local suffix = "▉▊▋▌▍▎"
     return {
-        -- { line, "MdFoldBlock" },
-        { dots, "MdFoldDots" },
-        { suffix, "MdFoldInfo" },
+        { indent, "FoldIndent" },
+        { info, "FoldTextCodeblock" },
+        { suffix, "FoldTextCodeblockReverse" },
     }
 end
 
 local function _md_foldtext_bulletpoint_hl(line, fold_size, win_width)
-    local fixed_width = 60
-    fixed_width = math.min(fixed_width, win_width - 2)
-    local suffix = " (" .. fold_size .. " lineskkk)"
-    local available = fixed_width - #line - #suffix
-    local dots = available > 0 and string.rep("+", available) or ""
+    local indent = line:match("^(%s*)")
+    local info = "  +-- " .. fold_size .. " lines"
     return {
-        -- { line, "MdFoldBlock" },
-        { dots, "MdFoldDots" },
-        { suffix, "MdFoldInfo" },
+        { indent, "FoldIndent" },
+        { info, "FoldText" },
     }
 end
 
 local function _md_foldtext_callout_hl(line, fold_size, win_width)
-    local fixed_width = 60
-    fixed_width = math.min(fixed_width, win_width - 2)
-    local suffix = " (" .. fold_size .. " lineskkk)"
-    local available = fixed_width - #line - #suffix
-    local dots = available > 0 and string.rep("+", available) or ""
+    local indent = line:match("^(%s*)")
+    local info = "█ +-- " .. fold_size + 1 .. " lines"
     return {
-        -- { line, "MdFoldBlock" },
-        { dots, "MdFoldDots" },
-        { suffix, "MdFoldInfo" },
+        { indent, "FoldIndent" },
+        { info, "FoldText" },
     }
 end
 
 local function _md_foldtext_table_hl(line, fold_size, win_width)
-    local fixed_width = 60
-    fixed_width = math.min(fixed_width, win_width - 2)
-    local suffix = " (" .. fold_size .. " lineskkk)"
-    local available = fixed_width - #line - #suffix
-    local dots = available > 0 and string.rep("+", available) or ""
+    local indent = line:match("^(%s*)")
+    local info = "  entries: " .. fold_size + 1
     return {
-        -- { line, "MdFoldBlock" },
-        { dots, "MdFoldDots" },
-        { suffix, "MdFoldInfo" },
+        { indent, "FoldIndent" },
+        { info, "FoldText" },
     }
 end
 
 function MarkdownFoldText()
-    _ensure_fold_highlights()
     local lnum = vim.v.foldstart
     local line = vim.fn.getline(lnum)
     local fold_size = vim.v.foldend - vim.v.foldstart
@@ -316,7 +284,7 @@ function MarkdownFoldText()
         return _md_foldtext_table_hl(line, fold_size, win_width)
     end
 
-    return { { line .. " ··· (" .. fold_size .. " lines)", "MdFoldBlock" } }
+    return { { line .. " ··· (" .. fold_size .. " lines)", "FoldText" } }
 end
 
 return true

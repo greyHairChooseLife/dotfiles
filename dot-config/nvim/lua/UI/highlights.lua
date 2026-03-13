@@ -240,6 +240,9 @@ vim.cmd([[
   " @markup
 
   "MEMO:: Fold Text
+  highlight FoldIndent guifg=NONE guibg=NONE
+  highlight MDFoldBlock guifg=#2e3a4a guibg=NONE
+  highlight MDFoldHeaderInfo guifg=#c678dd guibg=#2e3a4a
   highlight FoldText guifg=#c678dd
   highlight FoldTextCodeblock guifg=#c678dd guibg=#181818
   highlight FoldTextCodeblockReverse guifg=#181818
