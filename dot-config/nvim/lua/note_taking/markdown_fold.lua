@@ -218,18 +218,21 @@ end
 
 -- foldtext
 
-local HEADING_WIDTHS = { 100, 80, 60, 40 }
+-- H1 제외이므로 index 1=H2, 2=H3, 3=H4, 4=H5
+local HEADING_WIDTHS = { 92, 76, 50, 32, 17 }
 local HEADING_HL = { "MdFoldH1", "MdFoldH2", "MdFoldH3", "MdFoldH4" }
 
 local function _md_foldtext_heading_hl(line, level, fold_size, win_width)
-    local hl = HEADING_HL[math.min(level, 4)]
-    local target_width = HEADING_WIDTHS[math.min(level, 4)]
+    -- level = 원래 # 개수 (2~5), index로 변환 (H2→1, H3→2, ...)
+    local idx = math.max(level - 1, 1)
+    idx = math.min(idx, #HEADING_WIDTHS)
+    local hl = HEADING_HL[idx]
+    local target_width = HEADING_WIDTHS[idx]
     target_width = math.min(target_width, win_width - 2)
-    local suffix = " " .. fold_size .. " lines"
-    local available = target_width - #line - #suffix
-    local dots = available > 0 and string.rep("▀", available) or ""
+    local suffix = "+--" .. string.format("%3d", fold_size) .. " lines  "
+    local pad = target_width - #suffix
+    local dots = pad > 0 and string.rep("█", pad) or ""
     return {
-        -- { line, hl },
         { "  ", "MdFoldDots" },
         { dots, "MdFoldDots" },
         { suffix, "MdFoldInfo" },
