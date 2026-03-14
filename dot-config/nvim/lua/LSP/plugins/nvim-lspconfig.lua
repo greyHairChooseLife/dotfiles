@@ -81,6 +81,7 @@ return {
             -- markdown_oxide = {},
             -- marksman = {},
             zk = { workspace_required = false },
+            lemminx = {},
         }
         local disabled_server = {
             "pylsp",

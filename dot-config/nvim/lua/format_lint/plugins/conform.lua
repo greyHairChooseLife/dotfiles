@@ -25,6 +25,9 @@ return {
                 toml = { "taplo" },
                 c = { "clang-format" },
                 terraform = { "terraform" },
+                xml = { "xmlformat" },
+                hpf = { "xmlformat" },
+                rdf = { "xmlformat" },
             },
             formatters = {
                 kulala = {
@@ -64,26 +67,21 @@ return {
                 lsp_fallback = true,
             },
         })
+        vim.api.nvim_create_user_command("Conform", function()
+            local bufnr = vim.api.nvim_get_current_buf()
+            local filetype = vim.bo[bufnr].filetype
+            local formatters = require("conform").list_formatters_for_buffer(bufnr)
+
+            local formatted = require("conform").format({
+                bufnr = bufnr,
+                lsp_fallback = true,
+                async = false,
+            })
+
+            vim.notify("Filetype: " .. filetype)
+            vim.notify("Available formatters: " .. vim.inspect(formatters))
+            vim.notify("Formatting result: " .. tostring(formatted))
+        end, {})
     end,
-    keys = {
-        -- {
-        -- 	"<leader>rf",
-        -- 	function()
-        -- 		local bufnr = vim.api.nvim_get_current_buf()
-        -- 		local filetype = vim.bo[bufnr].filetype
-        -- 		local formatters = require("conform").list_formatters_for_buffer(bufnr)
-
-        -- 		local formatted = require("conform").format({
-        -- 			bufnr = bufnr,
-        -- 			lsp_fallback = true,
-        -- 			async = false,
-        -- 		})
-
-        -- 		vim.notify("Filetype: " .. filetype)
-        -- 		vim.notify("Available formatters: " .. vim.inspect(formatters))
-        -- 		vim.notify("Formatting result: " .. tostring(formatted))
-        -- 	end,
-        -- 	desc = "Format with debug info",
-        -- },
-    },
+    keys = {},
 }
