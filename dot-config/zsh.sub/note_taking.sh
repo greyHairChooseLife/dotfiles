@@ -96,3 +96,20 @@ zn() { nvim -c "Zn" }
 zf() { nvim -c "Zf" }
 zo() { nvim -c "Zo" }
 zw() { nvim -c "Zw" }
+
+z() {
+    local choice=$(cat <<EOF | fzf-tmux -p 30%
+create New note
+Find note
+latest (Old)
+Word grep
+EOF
+    )
+
+    case "$choice" in
+        create*) zn ;;
+        Find*) zf ;;
+        latest*) zo ;;
+        Word*) zw ;;
+    esac
+}
