@@ -1,0 +1,28 @@
+session_name: nvim-config
+start_directory: ${HOME}/dotfiles # 모든 window/pane의 기본 디렉토리 (window/pane별로 덮어쓸 수 있음)
+suppress_history: false # true로 설정하면 아래 명령들이 쉘 히스토리에 남지 않음
+
+# 세션 전체에서 사용할 환경 변수
+environment:
+    MY_VAR: some-value
+    # SSH_KEY_PATH: ${HOME}/.ssh/my-key.pem
+
+windows:
+    - window_name: config
+      panes:
+        - shell_command:
+            - tm.1_title 'config' # 상태바에 표시할 pane 제목 설정
+            - vi dot-config/nvim/
+
+    - window_name: AI
+      focus: true # 세션 로드 시 이 window로 포커스
+      panes:
+        - shell_command:
+            - tm.1_title 'claude-code' # 상태바에 표시할 pane 제목 설정
+            - claude
+
+    - window_name: test
+      panes:
+        - shell_command:
+            - tm.1_title 'test' # 상태바에 표시할 pane 제목 설정
+            - ff
