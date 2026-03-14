@@ -294,5 +294,6 @@ vim.keymap.set({ "n", "v" }, "mk", "<Plug>(Marks-prev)")
 -- A~Z global marks 전체 삭제
 vim.keymap.set("n", "dmg", function()
     vim.cmd("delmarks A-Z")
+    vim.cmd("wshada!")
     vim.notify("Global marks A-Z deleted", vim.log.levels.INFO)
 end, { desc = "Delete all global marks A-Z" })
