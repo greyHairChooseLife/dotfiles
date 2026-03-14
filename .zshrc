@@ -62,3 +62,4 @@ setopt auto_cd
 setopt hist_ignore_dups
 
 export PATH="$HOME/.local/bin:$PATH"
+export DISABLE_AUTO_TITLE='true' # tmuxp asks it.

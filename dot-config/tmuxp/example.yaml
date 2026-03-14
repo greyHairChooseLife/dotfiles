@@ -1,33 +1,68 @@
-session_name: example
-start_directory: ${HOME}
-# before_script: "${HOME}/test.sh"
-shell_command_before:
-    - echo ${PWD}
-    - echo "This is example."
+session_name: my-project
+start_directory: ${HOME}/path/to/project # 모든 window/pane의 기본 디렉토리 (window/pane별로 덮어쓸 수 있음)
+suppress_history: false # true로 설정하면 아래 명령들이 쉘 히스토리에 남지 않음
+
+# 세션 전체에서 사용할 환경 변수
+environment:
+    MY_VAR: some-value
+    # SSH_KEY_PATH: ${HOME}/.ssh/my-key.pem
+
+# 모든 pane 시작 전에 실행할 명령 (리스트 또는 단일 문자열)
+# shell_command_before:
+#     - source .venv/bin/activate
+#     - export ENV=dev
+
 windows:
-    - window_name: first-win
-      layout: main-horizontal
-      start_directory: docs/
-      options:
-        main-pane-height: 67%
+    # --- 에디터 ---
+    - window_name: code
+      focus: true # 세션 로드 시 이 window로 포커스
+      layout: main-vertical # 내장 레이아웃: main-vertical, main-horizontal, even-horizontal, even-vertical, tiled
+      # layout: "abc1,220x65,0,0{140x65,0,0,1,79x65,141,0,2}"  # `tmux display -p '#{window_layout}'` 로 복사한 정확한 레이아웃 문자열
       panes:
         - shell_command:
-            - set_pane_title 'pane_title_comming_here' # set pane name
-            - man echo
-        - shell_command: ls -la
-          focus: 'true'
-          start_directory: /
-        - shell_command: null
-        - shell_command: null
-    - window_name: second-win
-      focus: true
-      layout: tiled
-      start_directory: ~/Documents/
-      panes:
+            - tm.1_title 'editor' # 상태바에 표시할 pane 제목 설정
+            - vi .
+          focus: true # window 내에서 포커스될 pane
+
         - shell_command:
-            - cmd: nvim .
-        - shell_command:
-            - cmd: cmatrix
+            - tm.1_title 'terminal'
+            - cmd: git log --oneline --graph --all # cmd + enter:false = 명령을 입력만 하고 실행하지 않음
               enter: false
-        - shell_command: null
-        - shell_command: btop
+
+    # --- 서버 / 실행 ---
+    - window_name: run
+      layout: even-horizontal
+      # start_directory: ./subdir  # window별 디렉토리 덮어쓰기
+      panes:
+        - shell_command:
+            - tm.1_title 'dev server'
+            - cmd: npm run dev
+              enter: false
+          focus: true
+
+        - shell_command:
+            - tm.1_title 'logs'
+            - watch -n 1 'tail -n 20 logs/app.log'
+
+    # --- 문서 ---
+    - window_name: docs
+      layout: even-horizontal
+      panes:
+        - shell_command: vi README.md
+        - shell_command: vi TODO.md
+          focus: true
+        - shell_command: vi ./tmuxp.yaml # 이 세션 스펙 파일 편집
+
+# --- AI ---
+# - window_name: ai
+#   panes:
+#       - shell_command: vi -c CodeCompanionChat -c only
+
+# --- Docker (필요 시 주석 해제) ---
+# - window_name: docker
+#   panes:
+#       - shell_command: lazydocker
+#         focus: true
+#       - shell_command:
+#             - cmd: docker compose up
+#               enter: false
