@@ -91,19 +91,19 @@ return {
                 if #sections <= 1 then return end
 
                 if #sections == 2 then
-                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂    "
+                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂  "
                 end
                 if #sections == 3 then
-                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                    "
+                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                  "
                 end
                 if #sections == 4 then
-                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                              "
+                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                            "
                 end
                 if #sections == 5 then
-                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                "
+                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                              "
                 end
                 if #sections == 6 then
-                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                               "
+                    return " ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂                                                                             "
                 end
                 if #sections == 5 then return " ▂▂▂▂▂▂▂▂▂▂▂▂▂ " end
                 if #sections == 6 then return " ▂▂▂▂ " end
@@ -225,7 +225,7 @@ return {
             -- Width of the generated line:
             --  <integer>: a hard coded width value
             --  full: full width of the window
-            width = "full",
+            width = 94,
             -- Highlight for the whole line generated from the icon
             highlight = "RenderMarkdownDash",
         },

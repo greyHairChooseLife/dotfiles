@@ -2,7 +2,7 @@ local map = vim.keymap.set
 local opt = { noremap = true, silent = true }
 
 map("i", ",t", function() -- 2025-01-20
-    vim.api.nvim_put({ "- [ ] " }, "c", false, true)
+    vim.api.nvim_put({ "- [ ]   " }, "c", false, true)
 end, opt)
 
 -- 날짜 찍기

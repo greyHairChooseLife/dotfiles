@@ -81,7 +81,7 @@ return {
                 vim.cmd("only")
             end),
             dashboard.button("cp", "c.c: Prompts", ":cd ~/.claude | e CLAUDE.md<CR>"),
-            dashboard.button("ce", "c.c: Commands", ":cd ~/.claude | e commands<CR>"),
+            dashboard.button("cs", "c.c: Skills", ":cd ~/.claude | e skills<CR>"),
 
             -- DEPRECATED:: 2026-03-04
             -- dashboard.button("_", "                              _______   doc _____", ""),
