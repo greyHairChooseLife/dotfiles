@@ -583,9 +583,13 @@ function M.insert_link(is_visual)
     local opts = { mode = "insert_link", sel_buf = sel_buf }
 
     if is_visual then
+        -- visual mode가 아직 살아있는 상태에서 yank → 현재 선택 텍스트 + 마크 업데이트
+        vim.cmd('noau normal! "vy"')
+        local yanked = vim.fn.getreg("v")
+        vim.fn.setreg("v", {})
+
         local start_pos = vim.api.nvim_buf_get_mark(sel_buf, "<")
         local end_pos   = vim.api.nvim_buf_get_mark(sel_buf, ">")
-        -- '<,'>  마크가 없으면 (처음 실행 등) normal mode처럼 fallback
         if start_pos[1] == 0 then
             is_visual = false
         else
@@ -603,15 +607,7 @@ function M.insert_link(is_visual)
                     + #vim.fn.strcharpart(vim.fn.strpart(end_line, raw_col), 0, 1)
             end
 
-            -- selected_text 수집
-            local lines = vim.api.nvim_buf_get_lines(sel_buf, start_pos[1] - 1, end_pos[1], false)
-            if #lines == 1 then
-                opts.selected_text = lines[1]:sub(start_pos[2] + 1, opts.sel_end_col)
-            else
-                lines[1] = lines[1]:sub(start_pos[2] + 1)
-                lines[#lines] = lines[#lines]:sub(1, opts.sel_end_col)
-                opts.selected_text = table.concat(lines, " ")
-            end
+            opts.selected_text = yanked:gsub("\n", " ")
         end
     end
 
