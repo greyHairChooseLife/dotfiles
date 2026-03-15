@@ -22,6 +22,7 @@ windows:
             - claude
 
     - window_name: test
+      start_directory: ${HOME}
       panes:
         - shell_command:
             - tm.1_title 'test' # 상태바에 표시할 pane 제목 설정
