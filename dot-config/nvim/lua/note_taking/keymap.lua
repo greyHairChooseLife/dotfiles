@@ -203,7 +203,7 @@ local function zk_delete_note()
         vim.ui.input({ prompt = ("Delete '%s'? (y/n): "):format(title) }, function(input)
             if input ~= "y" then return end
             local bufnr = vim.api.nvim_get_current_buf()
-            vim.fn.delete(buf_path)
+            vim.fn.system("trash " .. buf_path) -- run trash comand instead of vim.fn.delete(buf_path)
             vim.api.nvim_buf_delete(bufnr, { force = true })
             vim.notify("Deleted: " .. title, vim.log.levels.INFO)
         end)
