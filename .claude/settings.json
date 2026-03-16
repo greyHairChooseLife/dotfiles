@@ -1,70 +1,70 @@
 {
-    "env": {
-        "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-    },
-    "includeCoAuthoredBy": true,
-    "permissions": {
-        "allow": [
-            "Bash(ls:*)",
-            "Bash(curl:*)",
-            "Bash(cat:*)",
-            "Bash(date:*)",
-            "Bash(rg:*)",
-            "Bash(fd:*)",
-            "Bash(grep:*)",
-            "Bash(find:*)",
-            "Bash(ssh:*)",
-            "Bash(chmod:*)",
-            "Bash(echo:*)",
-            "Bash(test:*)",
-            "Bash(git status:*)",
-            "Bash(git log:*)",
-            "Bash(git diff:*)",
-            "Bash(git show:*)",
-            "Bash(gitdiff:*)",
-            "Bash(gitshow:*)",
-            "Bash(code:*)",
-            "Bash(codenvim:*)",
-            "Bash(tmux capture-pane:*)",
-            "Bash(showtmuxpane:*)",
-            "Bash(nohup codenvim:*)",
-            "Bash(nohup code:*)",
-            "Bash(gemini:*)",
-            "Glob",
-            "Grep",
-            "Read",
-            "Task",
-            "TodoWrite",
-            "WebSearch",
-            "WebFetch",
-            "AskUserQuestion"
-        ],
-        "deny": [
-            "Read(.envrc)",
-            "Read(~/.aws/**)",
-            "Read(~/.ssh/**)",
-            "Read(~/.local/state/bash.sub/**)"
-        ],
-        "defaultMode": "default"
-    },
-    "statusLine": {
-        "type": "command",
-        "command": "$HOME/.claude/statusline-command.sh"
-    },
-    "enabledPlugins": {
-        "lua-lsp@claude-plugins-official": true,
-        "context7@claude-plugins-official": true,
-        "pyright-lsp@claude-plugins-official": true,
-        "superpowers@claude-plugins-official": true,
-        "typescript-lsp@claude-plugins-official": true,
-        "code-simplifier@claude-plugins-official": true,
-        "skill-creator@claude-plugins-official": true
-    },
-    "outputStyle": "Default",
-    "alwaysThinkingEnabled": false,
-    "effortLevel": "medium",
-    "promptSuggestionEnabled": false,
-    "voiceEnabled": true,
-    "teammateMode": "tmux",
-    "autoCompactEnabled": false
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "includeCoAuthoredBy": true,
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(date:*)",
+      "Bash(rg:*)",
+      "Bash(fd:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(ssh:*)",
+      "Bash(chmod:*)",
+      "Bash(echo:*)",
+      "Bash(test:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(gitdiff:*)",
+      "Bash(gitshow:*)",
+      "Bash(code:*)",
+      "Bash(codenvim:*)",
+      "Bash(tmux capture-pane:*)",
+      "Bash(showtmuxpane:*)",
+      "Bash(nohup codenvim:*)",
+      "Bash(nohup code:*)",
+      "Bash(gemini:*)",
+      "Glob",
+      "Grep",
+      "Read",
+      "Task",
+      "TodoWrite",
+      "WebSearch",
+      "WebFetch",
+      "AskUserQuestion"
+    ],
+    "deny": [
+      "Read(.envrc)",
+      "Read(~/.aws/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.local/state/bash.sub/**)"
+    ],
+    "defaultMode": "default"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "$HOME/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "lua-lsp@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true
+  },
+  "outputStyle": "Default",
+  "alwaysThinkingEnabled": false,
+  "effortLevel": "medium",
+  "promptSuggestionEnabled": false,
+  "voiceEnabled": true,
+  "teammateMode": "tmux",
+  "autoCompactEnabled": false
 }
