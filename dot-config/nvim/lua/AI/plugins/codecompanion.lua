@@ -220,5 +220,6 @@ return {
         require("AI.codecompanion.utils.extmarks").setup()
         require("AI.codecompanion.utils.save_english_study_records").setup()
         require("AI.codecompanion.utils.save_english_study_notes").setup()
+        require("AI.codecompanion.utils.filter_models").setup()
     end,
 }
