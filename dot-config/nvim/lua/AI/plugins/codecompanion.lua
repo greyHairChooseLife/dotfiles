@@ -123,24 +123,24 @@ return {
                         show_presets = false,
                     },
 
-                    claude_code = function()
-                        return require("codecompanion.adapters").extend("claude_code", {
-                            env = {
-                                CLAUDE_CODE_OAUTH_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN",
-                            },
-                        })
-                    end,
+                    -- claude_code = function()
+                    --     return require("codecompanion.adapters").extend("claude_code", {
+                    --         env = {
+                    --             CLAUDE_CODE_OAUTH_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN",
+                    --         },
+                    --     })
+                    -- end,
 
-                    gemini_cli = function()
-                        return require("codecompanion.adapters").extend("gemini_cli", {
-                            defaults = {
-                                auth_method = "gemini-api-key", -- "oauth-personal"|"gemini-api-key"|"vertex-ai"
-                            },
-                            env = {
-                                api_key = "GEMINI_API_KEY",
-                            },
-                        })
-                    end,
+                    -- gemini_cli = function()
+                    --     return require("codecompanion.adapters").extend("gemini_cli", {
+                    --         defaults = {
+                    --             auth_method = "gemini-api-key", -- "oauth-personal"|"gemini-api-key"|"vertex-ai"
+                    --         },
+                    --         env = {
+                    --             api_key = "GEMINI_API_KEY",
+                    --         },
+                    --     })
+                    -- end,
                 },
 
                 http = {
