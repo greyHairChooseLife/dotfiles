@@ -1,14 +1,18 @@
 -- Markdown custom folding
--- vim.schedule 필요 이유:
+-- BufWinEnter autocmd 사용 이유:
 --   ftplugin 실행 시점에는 BufReadPost autocmd 체인이 아직 진행 중이다.
---   이 체인 안에서 loadview 등 다른 핸들러가 foldexpr를 덮어쓰기 때문에
---   setlocal을 즉시 실행해도 이후에 리셋된다.
---   vim.schedule로 현재 이벤트 루프가 끝난 뒤 실행하면
---   모든 autocmd가 완료된 후 마지막으로 설정되어 덮어쓰임을 방지한다.
+--   vim.schedule만으로는 nvim-tree 등 플러그인이 창에 버퍼를 표시하면서
+--   foldexpr를 전역값으로 재설정하는 경우를 막지 못한다.
+--   BufWinEnter는 버퍼가 실제로 창에 표시된 직후 발생하므로
+--   어떤 경로(직접 열기, nvim-tree, picker 등)로 열어도 마지막에 실행된다.
 local ok, err = pcall(require, "note_taking.markdown_fold")
 if not ok then vim.notify("markdown_fold load error: " .. tostring(err), vim.log.levels.ERROR) end
-vim.schedule(
-    function()
+
+local bufnr = vim.api.nvim_get_current_buf()
+vim.api.nvim_create_autocmd("BufWinEnter", {
+    buffer = bufnr,
+    once = true,
+    callback = function()
         vim.cmd([[
         setlocal foldmethod=expr
         setlocal foldexpr=v:lua.MarkdownFoldExpr()
@@ -16,8 +20,8 @@ vim.schedule(
         setlocal foldlevel=99
         setlocal foldcolumn=1
     ]])
-    end
-)
+    end,
+})
 
 local map = vim.keymap.set
 
