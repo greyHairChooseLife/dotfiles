@@ -153,15 +153,7 @@ return {
                         return require("codecompanion.adapters").extend("copilot", {
                             -- github copilot premium request calculation
                             -- https://docs.github.com/en/copilot/about-github-copilot/github-copilot-features#user-content-fnref-2
-                            schema = {
-                                model = {
-                                    default = "grok-code-fast-1",
-                                    -- default = "gpt-4.1",
-                                    -- default = "claude-sonnet-4",
-                                    -- default = "claude-3.7-sonnet",
-                                    -- default = "claude-3.7-sonnet-thought",
-                                },
-                            },
+                            schema = { model = { default = "gemini-3-flash-preview" } },
                         })
                     end,
                     anthropic = function() return require("codecompanion.adapters").extend("anthropic", {}) end,
@@ -197,11 +189,6 @@ return {
                         regenerate = { modes = { n = "gR" } },
                         copilot_stats = { modes = { n = "gs" } },
                     },
-                    adapter = {
-                        name = "copilot",
-                        -- model = "gpt-4.1",
-                        model = "grok-code-fast-1",
-                    },
                     slash_commands = {
                         ["buffer"] = { opts = { provider = "snacks" }, keymaps = { modes = { n = { "<C-b>" } } } },
                         ["file"] = { opts = { provider = "snacks" }, keymaps = { modes = { n = { "<C-f>" } } } },
@@ -214,8 +201,7 @@ return {
                 inline = {
                     adapter = {
                         name = "copilot",
-                        -- model = "gpt-4.1",
-                        model = "grok-code-fast-1",
+                        model = "gemini-3-flash-preview",
                     },
                     keymaps = {
                         accept_change = { modes = { n = "ca" } },
