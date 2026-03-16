@@ -53,7 +53,7 @@ opt.tabstop = 2
 opt.shiftwidth = 2
 
 -- Session settings
-opt.sessionoptions = "globals,blank,buffers,curdir,help,tabpages,winsize,winpos,terminal,localoptions"
+opt.sessionoptions = "globals,blank,buffers,curdir,help,tabpages,winsize,winpos,terminal"
 
 -- opt.completeopt = { "menu", "menuone", "noselect" }
 opt.completeopt = { "menu", "menuone", "popup" }

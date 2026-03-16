@@ -32,6 +32,7 @@ Examples:
 - Prefer `#` headers for organization
     - Do not use level 1 and 2 headers
 - Use `-` for bullet points
+- When generating Markdown files, use 4 spaces between the list marker and text (`-   item`, `1.  item`), and 4 spaces for nested list indentation.
 - Break down complex ideas into digestible chunks
 
 
