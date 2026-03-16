@@ -7,15 +7,17 @@
 --   모든 autocmd가 완료된 후 마지막으로 설정되어 덮어쓰임을 방지한다.
 local ok, err = pcall(require, "note_taking.markdown_fold")
 if not ok then vim.notify("markdown_fold load error: " .. tostring(err), vim.log.levels.ERROR) end
-vim.schedule(function()
-    vim.cmd([[
+vim.schedule(
+    function()
+        vim.cmd([[
         setlocal foldmethod=expr
         setlocal foldexpr=v:lua.MarkdownFoldExpr()
         setlocal foldtext=v:lua.MarkdownFoldText()
         setlocal foldlevel=99
         setlocal foldcolumn=1
     ]])
-end)
+    end
+)
 
 local map = vim.keymap.set
 
