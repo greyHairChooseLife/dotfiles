@@ -626,6 +626,42 @@ M.copy_path = function(mode)
     vim.notify("Copied " .. mode .. ".\r\n" .. path, vim.log.levels.INFO)
 end
 
+--- Copy paths of all buffers shown in the current tab's windows.
+---@param mode  "directory" | "absolute" | "relative" | "filename"
+---@return nil
+M.copy_paths_in_tab = function(mode)
+    local wins = vim.api.nvim_tabpage_list_wins(0)
+    local seen = {}
+    local paths = {}
+    for _, win in ipairs(wins) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        local bufname = vim.api.nvim_buf_get_name(buf)
+        if bufname ~= "" then
+            local path
+            if mode == "absolute" then
+                path = vim.fn.fnamemodify(bufname, ":p")
+            elseif mode == "relative" then
+                path = vim.fn.fnamemodify(bufname, ":.")
+            elseif mode == "filename" then
+                path = vim.fn.fnamemodify(bufname, ":t")
+            elseif mode == "directory" then
+                path = vim.fn.fnamemodify(bufname, ":p:h")
+            end
+            if path and path ~= "" and not seen[path] then
+                seen[path] = true
+                table.insert(paths, path)
+            end
+        end
+    end
+    if #paths == 0 then
+        vim.notify("No file paths to copy.", vim.log.levels.WARN)
+        return
+    end
+    local result = table.concat(paths, "\n")
+    vim.fn.setreg("+", result)
+    vim.notify("Copied " .. #paths .. " " .. mode .. " paths.\n" .. result, vim.log.levels.INFO)
+end
+
 M.create_floating_window = function(content, filetype, width, height, row, col)
     local lines
     if type(content) == "string" then
