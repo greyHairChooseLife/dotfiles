@@ -195,7 +195,7 @@ return {
             -- Amount of padding to add to the right of code blocks when width is 'block'
             right_pad = 5,
             left_margin = 0,
-            min_width = 100,
+            min_width = 94,
             -- Width of the code block background:
             --  block: width of the code block
             --  full: full width of the window
@@ -333,6 +333,8 @@ return {
             --  normal: applies the 'cell' style rendering to each row of the table
             --  full: normal + a top & bottom line that fill out the table when lengths match
             style = "full",
+            -- It will use virtual text for showing top/bottom borders.
+            border_virtual = true,
             -- Determines how individual cells of a table are rendered:
             --  overlay: writes completely over the table, removing conceal behavior and highlights
             --  raw: replaces only the '|' characters in each row, leaving the cells unmodified
