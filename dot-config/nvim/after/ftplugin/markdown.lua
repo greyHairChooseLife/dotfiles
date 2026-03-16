@@ -115,3 +115,7 @@ map("v", "<C-k>", ":lua require('markdowny').link()<cr>", { buffer = true })
 map("v", "<C-e>", ":lua require('markdowny').code()<cr>", { buffer = true })
 
 map("n", "<CR>", "<cmd>RenderMarkdown buf_toggle<CR>")
+
+-- 다음/이전 마크다운 링크로 이동 ([text](url) 또는 [[wikilink]] 패턴)
+map("n", "<C-n>", function() vim.fn.search("]\\s*(\\|\\[\\[", "sW") end, { buffer = true })
+map("n", "<C-p>", function() vim.fn.search("]\\s*(\\|\\[\\[", "sbW") end, { buffer = true })
