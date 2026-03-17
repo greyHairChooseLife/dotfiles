@@ -159,6 +159,7 @@ PACMAN_PKGS=(
     zsh
     bluetui
     tree-sitter
+    flameshot
 )
 
 AUR_PKGS=(
