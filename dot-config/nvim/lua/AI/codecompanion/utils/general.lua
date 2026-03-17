@@ -1,6 +1,10 @@
 local M = {}
 
-local cdc = require("codecompanion")
+local cdc = nil
+local function get_cdc()
+    if not cdc then cdc = require("codecompanion") end
+    return cdc
+end
 
 local util = {
     ---Add line numbers to the table of content
@@ -49,7 +53,7 @@ local util = {
 }
 
 M.inspect = function()
-    local chat_buf = cdc.buf_get_chat()
+    local chat_buf = get_cdc().buf_get_chat()
     local is_chat_visible = next(chat_buf) ~= nil
     print(is_chat_visible and "있다" or "없다. ")
     print(vim.inspect(chat_buf))
@@ -87,7 +91,7 @@ M.test = function()
 
     -- local content = require("codecompanion.utils.buffers").format_with_line_numbers(bufnr)
 
-    -- local chat = cdc.last_chat()
+    -- local chat = get_cdc().last_chat()
     -- if chat.ui:is_visible() then
     --   return chat.ui:hide()
     -- end
@@ -99,23 +103,23 @@ M.create_new = function()
 
     if #windows == 1 and vim.bo.filetype == "codecompanion" then
         vim.cmd("vnew")
-        cdc.chat()
+        get_cdc().chat()
         vim.cmd("only")
     else
-        cdc.chat()
+        get_cdc().chat()
     end
 end
 
 M.toggle_last_chat = function()
     require("utils").save_cursor_position()
-    cdc.toggle()
+    get_cdc().toggle()
     require("utils").restore_cursor_position()
 end
 
 M.focus_last_chat = function()
-    local chat = cdc.last_chat()
+    local chat = get_cdc().last_chat()
 
-    if not chat then return cdc.chat() end
+    if not chat then return get_cdc().chat() end
 
     if chat.ui:is_visible() and not chat.ui:is_active() then
         vim.api.nvim_set_current_win(chat.ui.winnr)
@@ -140,7 +144,7 @@ M.add_buffer_reference = function()
 
             local content = require("codecompanion.utils.buffers").get_content(bufnr, { start_line - 1, end_line })
 
-            local name = cdc.last_chat().context:make_id_from_buf(bufnr)
+            local name = get_cdc().last_chat().context:make_id_from_buf(bufnr)
             if name == "" then name = "Buffer " .. bufnr end
 
             local path = vim.api.nvim_buf_get_name(bufnr)
@@ -156,7 +160,7 @@ M.add_buffer_reference = function()
                 content
             )
             -- 채팅 버퍼에 간단히 표시
-            cdc.last_chat():add_buf_message({
+            get_cdc().last_chat():add_buf_message({
                 role = "user",
                 content = formatted_content,
             }, { visible = true })
@@ -171,7 +175,7 @@ M.add_buffer_reference = function()
         local content = chat_helpers.format_buffer_for_llm(bufnr, buf_utils.get_info(bufnr).path)
         local path = vim.api.nvim_buf_get_name(bufnr)
         local message = "Here is the content from"
-        local name = cdc.last_chat().context:make_id_from_buf(bufnr)
+        local name = get_cdc().last_chat().context:make_id_from_buf(bufnr)
 
         if name == "" then name = "Buffer " .. bufnr end
         local id = "<buf>" .. name .. "</buf>"
@@ -186,7 +190,7 @@ M.add_buffer_reference = function()
         )
 
         -- Check for duplicate before adding
-        local chat = cdc.last_chat()
+        local chat = get_cdc().last_chat()
         if chat then
             for _, ctx in ipairs(chat.context_items) do
                 if ctx.id == id then
@@ -197,12 +201,12 @@ M.add_buffer_reference = function()
         end
 
         -- Add reference if not duplicate
-        cdc.last_chat():add_message({
+        get_cdc().last_chat():add_message({
             role = "user",
             content = formatted_content,
         }, { context_id = id, visible = false })
 
-        cdc.last_chat().context:add({
+        get_cdc().last_chat().context:add({
             bufnr = bufnr,
             id = id,
             path = path,
@@ -210,10 +214,10 @@ M.add_buffer_reference = function()
             opts = { watched = true },
         })
 
-        cdc.last_chat().ui:set_virtual_text("Added: " .. vim.fn.fnamemodify(path, ":t"))
+        get_cdc().last_chat().ui:set_virtual_text("Added: " .. vim.fn.fnamemodify(path, ":t"))
     end
 
-    local chat = cdc.last_chat()
+    local chat = get_cdc().last_chat()
     local mode = vim.fn.mode()
     if mode == "n" then
         if not chat or not chat.ui:is_visible() then M.toggle_last_chat() end
@@ -239,10 +243,10 @@ end
 
 -- 현재 탭의 모든 버퍼를 컨텍스트로 추가하는 함수
 M.add_tab_buffers_reference = function()
-    local chat = cdc.last_chat()
+    local chat = get_cdc().last_chat()
     if not chat or not chat.ui:is_visible() then
         M.toggle_last_chat()
-        chat = cdc.last_chat()
+        chat = get_cdc().last_chat()
     end
 
     -- 현재 탭의 모든 버퍼를 가져옴
