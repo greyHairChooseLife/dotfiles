@@ -10,3 +10,4 @@ dot-config/claws/chat/*
 !.claude/keybindings.json
 !.claude/settings.json
 !.claude/statusline-command.sh
+dot-config/alacritty/local.toml
