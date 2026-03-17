@@ -1,6 +1,11 @@
 #!/bin/bash
 
-sudo pacman -S --needed \
+# Set GOPATH before installing go to prevent ~/go from being created
+export GOPATH="$HOME/.go"
+export GOBIN="$HOME/.go/bin"
+export PATH="$GOBIN:$PATH"
+
+sudo pacman -S --needed --noconfirm \
     7zip \
     alacritty \
     alsa-utils \
@@ -59,10 +64,10 @@ sudo pacman -S --needed \
     xclip \
     xdg-utils \
     xdotool \
+    xorg-server \
     xorg-bdftopcf \
     xorg-iceauth \
     xorg-mkfontscale \
-    xorg-server \
     xorg-sessreg \
     xorg-setxkbmap \
     xorg-smproxy \
@@ -143,12 +148,11 @@ sudo pacman -S --needed \
     zsh
 
 # Install AUR packages
-yay -S --needed \
+yay -S --needed --noconfirm \
     brave-bin \
     i3-scrot \
     kime-bin \
     mons \
-    python-edge-tts \
     python-openai-whisper \
     sysz \
     ttf-d2coding-nerd \
@@ -174,6 +178,11 @@ yay -S --needed \
     lazyactions-bin \
     pandoc-bin
 
+# Set GOPATH early to prevent ~/go from being created
+export GOPATH="$HOME/.go"
+export GOBIN="$HOME/.go/bin"
+export PATH="$GOBIN:$PATH"
+
 # Enable important services
 sudo systemctl enable NetworkManager
 sudo systemctl enable bluetooth
@@ -188,3 +197,27 @@ mkdir -p $HOME/.local/state/bash.sub
 # 기본 템플릿 파일
 touch $HOME/.local/state/bash.sub/api-key.sh # template
 touch $HOME/.local/state/bash.sub/ssh.sh # template
+
+# Verify critical packages are installed
+echo ""
+echo "Verifying critical packages..."
+CRITICAL=(xorg-server xorg-xinit i3-wm i3status alacritty feh rofi zsh)
+MISSING=()
+for pkg in "${CRITICAL[@]}"; do
+    if ! pacman -Q "$pkg" &>/dev/null; then
+        MISSING+=("$pkg")
+    fi
+done
+
+if [ ${#MISSING[@]} -eq 0 ]; then
+    echo "All critical packages installed."
+else
+    echo "MISSING packages detected:"
+    for pkg in "${MISSING[@]}"; do
+        echo "  - $pkg"
+    done
+    read -p "Install missing packages now? (y/n): " fix_answer
+    if [ "$fix_answer" == 'y' ]; then
+        sudo pacman -S "${MISSING[@]}"
+    fi
+fi
