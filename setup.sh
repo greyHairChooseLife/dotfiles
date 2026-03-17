@@ -44,19 +44,13 @@ read -p "Install basic packages? (y/n): " install_answer
 if [ "$install_answer" == 'y' ]; then
     echo "Starting package installation..."
     bash scripts/install_pkgs.sh
-    echo "Update mime desktop at '/usr/share/applications/'"
-    sudo bash scripts/mime_desktop.sh
 
-    if [ $? -ne 0 ]; then
-        echo "An error occurred during package installation."
-        read -p "Do you want to continue? (y/n): " continue_answer
-        if [ "$continue_answer" != 'y' ]; then
-            echo "Canceled."
-            exit 1
-        fi
-    else
-        echo "Package installation completed."
+    echo "Updating MIME type associations in /usr/share/applications/..."
+    if ! sudo bash scripts/mime_desktop.sh; then
+        echo "WARNING: MIME desktop update failed."
     fi
+
+    echo "Package installation completed."
 fi
 
 # 2. Install zsh plugins (zsh is now installed)

@@ -471,6 +471,7 @@ exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec --no-startup-id nitrogen --restore --set-zoom-fill; sleep 1; picom -b
 exec_always --no-startup-id fix_xcursor
 exec --no-startup-id xbanish
+exec --no-startup-id dunst
 exec --no-startup-id brave
 exec --no-startup-id kime
 exec --no-startup-id flameshot
