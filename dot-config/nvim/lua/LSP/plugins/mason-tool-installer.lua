@@ -1,0 +1,45 @@
+return {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = false,
+    dependencies = { "williamboman/mason.nvim" },
+    config = function()
+        require("mason-tool-installer").setup({
+            ensure_installed = {
+                -- LSP servers
+                "asm-lsp",
+                "awk-language-server",
+                "basedpyright",
+                "bash-language-server",
+                "biome",
+                "clangd",
+                "docker-compose-language-service",
+                "dockerfile-language-server",
+                "emmylua_ls",
+                "html-lsp",
+                "lemminx",
+                "lua-language-server",
+                "marksman",
+                "python-lsp-server",
+                "ruff",
+                "superhtml",
+                "taplo",
+                "terraform-ls",
+                "typescript-language-server",
+                "yaml-language-server",
+                "zk",
+                -- Formatters / Linters / DAP
+                "beautysh",
+                "clang-format",
+                "cmakelang",
+                "codelldb",
+                "debugpy",
+                "latexindent",
+                "prettierd",
+                "shfmt",
+                "stylua",
+                "xmlformatter",
+                "yamlfmt",
+            },
+        })
+    end,
+}
