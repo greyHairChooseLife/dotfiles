@@ -56,7 +56,6 @@ return {
             "jsdoc",
             "json5",
             "json",
-            "latex",
             "luadoc",
             "luap",
             "lua",
@@ -150,8 +149,8 @@ return {
     config = function(_, opts)
         require("nvim-treesitter").setup(opts)
         vim.treesitter.language.register("markdown", "vimwiki")
-        -- install ensure_installed list
-        -- better run manually
-        -- if opts.ensure_installed and #opts.ensure_installed > 0 then require("nvim-treesitter").install(opts.ensure_installed) end
+        if opts.ensure_installed and #opts.ensure_installed > 0 then
+            require("nvim-treesitter.install").ensure_installed(opts.ensure_installed)
+        end
     end,
 }
