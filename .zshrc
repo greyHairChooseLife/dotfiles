@@ -39,7 +39,7 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
   local dir file
   for dir in $sub_dirs; do
     [[ -d $dir ]] || continue
-    for file in $dir/*.sh(N); do
+    for file in $dir/*.(sh|zsh)(N); do
       source $file
     done
   done
