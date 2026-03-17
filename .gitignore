@@ -11,3 +11,4 @@ dot-config/claws/chat/*
 !.claude/settings.json
 !.claude/statusline-command.sh
 dot-config/alacritty/local.toml
+dot-config/nvim/lazy-lock.json

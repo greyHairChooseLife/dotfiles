@@ -1,6 +1,7 @@
 return {
     -- TODO: Lazyvim에서 가져오긴 했다만, 뭘 의미하는걸까.. 하나하나 살펴볼 필요가 있다.
     "nvim-treesitter/nvim-treesitter",
+    branch = "master",
     version = false, -- last release is way too old and doesn't work on Windows
     build = ":TSUpdate",
     event = { "BufReadPre", "BufNewFile" },
@@ -149,8 +150,6 @@ return {
     config = function(_, opts)
         require("nvim-treesitter").setup(opts)
         vim.treesitter.language.register("markdown", "vimwiki")
-        if opts.ensure_installed and #opts.ensure_installed > 0 then
-            require("nvim-treesitter.install").ensure_installed(opts.ensure_installed)
-        end
+        if opts.ensure_installed and #opts.ensure_installed > 0 then require("nvim-treesitter.install").ensure_installed(opts.ensure_installed) end
     end,
 }

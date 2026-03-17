@@ -70,5 +70,6 @@
   "promptSuggestionEnabled": false,
   "voiceEnabled": true,
   "teammateMode": "tmux",
-  "autoCompactEnabled": false
+  "autoCompactEnabled": false,
+  "model": "opus[1m]"
 }
