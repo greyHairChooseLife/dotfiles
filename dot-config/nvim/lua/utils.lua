@@ -630,13 +630,19 @@ end
 ---@param mode  "directory" | "absolute" | "relative" | "filename"
 ---@return nil
 M.copy_paths_in_tab = function(mode)
+    local excluded_filetypes = {
+        NvimTree = true,
+        codecompanion = true,
+    }
     local wins = vim.api.nvim_tabpage_list_wins(0)
     local seen = {}
     local paths = {}
     for _, win in ipairs(wins) do
         local buf = vim.api.nvim_win_get_buf(win)
         local bufname = vim.api.nvim_buf_get_name(buf)
-        if bufname ~= "" then
+        local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
+        local filetype = vim.api.nvim_get_option_value("filetype", { buf = buf })
+        if bufname ~= "" and buftype == "" and not excluded_filetypes[filetype] and vim.fn.filereadable(bufname) == 1 then
             local path
             if mode == "absolute" then
                 path = vim.fn.fnamemodify(bufname, ":p")
