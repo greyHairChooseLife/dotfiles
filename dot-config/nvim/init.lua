@@ -1,6 +1,9 @@
 -- Global variables
 vim.g.mapleader = "\\" -- 리더 키 설정
 
+-- nvim-treesitter parser install dir
+vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "/site")
+
 -- specs table
 local workflows = {
     "qol",

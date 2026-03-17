@@ -55,7 +55,6 @@ return {
             "jq",
             "jsdoc",
             "json5",
-            "jsonc",
             "json",
             "latex",
             "luadoc",
@@ -75,7 +74,7 @@ return {
             "readline",
             "regex",
             "requirements",
-            "robots",
+            "robot",
             "rust",
             "sql",
             "ssh_config",
@@ -151,5 +150,6 @@ return {
     config = function(_, opts)
         require("nvim-treesitter").setup(opts)
         vim.treesitter.language.register("markdown", "vimwiki")
+        if opts.ensure_installed and #opts.ensure_installed > 0 then require("nvim-treesitter").install(opts.ensure_installed) end
     end,
 }

@@ -158,6 +158,7 @@ PACMAN_PKGS=(
     pass
     zsh
     bluetui
+    tree-sitter
 )
 
 AUR_PKGS=(
@@ -192,6 +193,7 @@ AUR_PKGS=(
     xbanish
     ytdl
     aws-session-manager-plugin
+    tree-sitter-cli-github-bin
 )
 
 echo "Installing pacman packages..."
