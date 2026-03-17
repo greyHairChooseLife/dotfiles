@@ -1,35 +1,87 @@
-# DEPRECATED:: 2025-12-30
-# alias a='eval $(cat ~/.commands | sed '/^#/d' | fzf --reverse)'
+COMMANDER_YAML="$HOME/.commands.yaml"
+
+# Build fzf entry list from YAML: "[category] desc  |  cmd"
+_commander_build_list() {
+    local cat_filter="$1"
+    if [[ -n "$cat_filter" ]]; then
+        yq -r ".${cat_filter}[]? | \"[${cat_filter}] \(.desc)  |  \(.cmd)\"" "$COMMANDER_YAML" 2>/dev/null
+    else
+        yq -r 'keys[]' "$COMMANDER_YAML" 2>/dev/null | while read -r cat; do
+            yq -r ".${cat}[]? | \"[${cat}] \(.desc)  |  \(.cmd)\"" "$COMMANDER_YAML" 2>/dev/null
+        done
+    fi | sed '/^\[.*\]  *|  *$/d; s/\\n$//'
+}
+
+# Category selector
+_commander_select_category() {
+    yq -r 'keys[]' "$COMMANDER_YAML" 2>/dev/null | fzf-tmux -p 40% \
+        --prompt 'category> ' \
+        --border \
+        --color='border:yellow'
+}
 
 a() {
-    local selected
+    [[ -f "$COMMANDER_YAML" ]] || { echo "No commands file: $COMMANDER_YAML"; return 1; }
+
+    local selected cmd
     local ansi_strip="s/\x1b\[[0-9;]*m//g"
 
-    # 1. 구분선(---)은 제외하고 목록을 보여줌
-    # 2. fzf 프리뷰에서 bat을 통해 쉘 문법 강조 적용
-    selected=$(grep -vE "^(#|$)" ~/.commands | fzf-tmux -p 60% \
+    selected=$(_commander_build_list | fzf-tmux -p 70% \
         --ansi \
-        --height 40% \
         --border \
         --padding 0 \
         --color='border:green' \
-        --preview "grep -B 1 -F -- {} ~/.commands | bat --color=always --style=plain --language=sh" \
-        --preview-window='top:5' \
-        --header "ENTER: 실행 | CTRL-C: 취소")
+        --delimiter '  \\|  ' \
+        --header "ENTER: execute | Alt-c: filter category | Ctrl-C: cancel" \
+        --preview 'echo {-1} | sed "s/^ *//" | bat --color=always --style=plain --language=sh' \
+        --preview-window='top:5:wrap' \
+    )
 
-    # 선택된 줄이 있고, 주석(#)으로 시작하지 않을 때만 실행
-    if [[ -n "$selected" ]]; then
-        if [[ "$selected" =~ ^# ]]; then
-            echo "주석은 실행할 수 없습니다: $selected"
-        else
-            # 히스토리에 기록하고 실행
-            print -s "$selected" 2> /dev/null || history -s "$selected"
+    [[ -z "$selected" ]] && return
 
-            # ANSI 색상 코드 제거 (순수 텍스트 추출)
-            selected=$(echo "$selected" | sed "$ansi_strip")
+    # Extract command: everything after "  |  "
+    cmd="${selected##*  |  }"
+    # Trim whitespace
+    cmd="${cmd#"${cmd%%[![:space:]]*}"}"
+    cmd="${cmd%"${cmd##*[![:space:]]}"}"
+    [[ -z "$cmd" ]] && return
 
-            echo -e "\033[1;32mExecuting:\033[0m $selected"
-            eval "$selected"
-        fi
-    fi
+    print -s "$cmd" 2>/dev/null
+    cmd=$(echo "$cmd" | sed "$ansi_strip")
+    echo -e "\033[1;32mExecuting:\033[0m $cmd"
+    eval "$cmd"
+}
+
+# Category-filtered version: select category first, then command
+ac() {
+    [[ -f "$COMMANDER_YAML" ]] || { echo "No commands file: $COMMANDER_YAML"; return 1; }
+
+    local cat selected cmd
+    local ansi_strip="s/\x1b\[[0-9;]*m//g"
+
+    cat=$(_commander_select_category)
+    [[ -z "$cat" ]] && return
+
+    selected=$(_commander_build_list "$cat" | fzf-tmux -p 70% \
+        --ansi \
+        --border \
+        --padding 0 \
+        --color='border:green' \
+        --delimiter '  \\|  ' \
+        --header "[$cat] ENTER: execute | Ctrl-C: cancel" \
+        --preview 'echo {-1} | sed "s/^ *//" | bat --color=always --style=plain --language=sh' \
+        --preview-window='top:5:wrap' \
+    )
+
+    [[ -z "$selected" ]] && return
+
+    cmd="${selected##*  |  }"
+    cmd="${cmd#"${cmd%%[![:space:]]*}"}"
+    cmd="${cmd%"${cmd##*[![:space:]]}"}"
+    [[ -z "$cmd" ]] && return
+
+    print -s "$cmd" 2>/dev/null
+    cmd=$(echo "$cmd" | sed "$ansi_strip")
+    echo -e "\033[1;32mExecuting:\033[0m $cmd"
+    eval "$cmd"
 }
