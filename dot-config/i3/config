@@ -359,7 +359,7 @@ bar {
 
 	i3bar_command i3bar
 	# status_command i3blocks
-	status_command i3status -c $HOME/.config/i3/i3status.conf
+	status_command $HOME/.config/i3/i3status-wrapper.sh
 	# status_command i3status
 	# status_command i3status-rs ~/.config/i3status-rust/config.toml
 	position bottom
