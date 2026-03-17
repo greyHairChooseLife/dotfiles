@@ -126,10 +126,41 @@ global_history() {
     )"
 }
 
-# Optional: Cleanup old PID files
-cleanup_old_history() {
-    find ~/.zsh_history_dir -name "pid_*" -mtime +7 -delete
+# LRU cleanup: keep total history lines under MAX_HISTORY_LINES
+MAX_HISTORY_LINES=50000
+
+cleanup_history_lru() {
+    local histdir="$HOME/.zsh_history_dir"
+    local total
+    total=$(cat "$histdir"/pid_* 2>/dev/null | wc -l)
+
+    if (( total <= MAX_HISTORY_LINES )); then
+        return
+    fi
+
+    local excess=$(( total - MAX_HISTORY_LINES ))
+
+    # Merge all entries with source file, sort by timestamp, find oldest to remove
+    local tmpmerge=$(mktemp)
+    for f in "$histdir"/pid_*; do
+        [ -s "$f" ] || continue
+        awk -v file="$f" '{print file "\t" $0}' "$f"
+    done | sort -t$'\t' -k2,3 | head -n "$excess" > "$tmpmerge"
+
+    # Remove oldest lines from their respective files
+    while IFS=$'\t' read -r file line; do
+        local tmp=$(mktemp)
+        grep -F -v -x -- "$line" "$file" > "$tmp" && mv "$tmp" "$file"
+    done < "$tmpmerge"
+
+    # Remove empty pid files
+    find "$histdir" -name "pid_*" -empty -delete
+
+    rm -f "$tmpmerge"
 }
+
+# Run LRU cleanup on shell startup
+cleanup_history_lru > /dev/null 2>&1 &!
 
 # Command aliases
 alias hip='per_process_history'      # Current process history
