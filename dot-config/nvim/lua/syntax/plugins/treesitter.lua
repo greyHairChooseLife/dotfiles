@@ -7,13 +7,92 @@ return {
         opts = {},
         ---@param opts TSConfig
         config = function(_, opts)
-            require("nvim-treesitter").setup(opts)
+            local ts = require("nvim-treesitter")
+            ts.setup(opts)
             vim.treesitter.language.register("bash", "zsh")
 
-            -- highlight 자동 활성화 (main 브랜치에서 모듈이 없을 때 대비)
+            local ensure_installed = {
+                "angular",
+                "asm",
+                "astro",
+                "awk",
+                "bash",
+                "c",
+                "cmake",
+                "cpp",
+                "css",
+                "csv",
+                "d",
+                "desktop",
+                "diff",
+                "disassembly",
+                "dockerfile",
+                "editorconfig",
+                "git_config",
+                "git_rebase",
+                "gitattributes",
+                "gitcommit",
+                "gitignore",
+                "go",
+                "gomod",
+                "gosum",
+                "html",
+                "htmldjango",
+                "http",
+                "ini",
+                "javascript",
+                "jq",
+                "jsdoc",
+                "json",
+                "json5",
+                "lua",
+                "luadoc",
+                "luap",
+                "make",
+                "markdown",
+                "markdown_inline",
+                "nginx",
+                "pem",
+                "perl",
+                "printf",
+                "prisma",
+                "prolog",
+                "python",
+                "query",
+                "readline",
+                "regex",
+                "requirements",
+                "robot",
+                "rust",
+                "sql",
+                "ssh_config",
+                "terraform",
+                "tmux",
+                "toml",
+                "tsx",
+                "typescript",
+                "vim",
+                "vimdoc",
+                "xml",
+                "xresources",
+                "yaml",
+            }
+
+            -- ensure_installed: 미설치 파서만 설치 (비동기)
+            local installed = ts.get_installed()
+            local installed_set = {}
+            for _, lang in ipairs(installed) do
+                installed_set[lang] = true
+            end
+            local missing = vim.tbl_filter(function(lang) return not installed_set[lang] end, ensure_installed)
+            if #missing > 0 then ts.install(missing) end
+
             vim.api.nvim_create_autocmd("FileType", {
                 callback = function(ev)
                     if vim.bo[ev.buf].buftype ~= "" then return end
+                    -- auto_install: 목록 외 파서도 파일 열 때 자동 설치
+                    local lang = vim.treesitter.language.get_lang(vim.bo[ev.buf].filetype)
+                    if lang and not vim.list_contains(ts.get_installed(), lang) then ts.install({ lang }) end
                     local ok = pcall(vim.treesitter.start, ev.buf)
                     if not ok then vim.notify("treesitter: no parser for " .. vim.bo[ev.buf].filetype, vim.log.levels.WARN) end
                 end,
@@ -23,6 +102,7 @@ return {
     {
         "nvim-treesitter/nvim-treesitter-textobjects",
         branch = "main",
+        lazy = false,
         dependencies = { "nvim-treesitter/nvim-treesitter" },
         config = function()
             require("nvim-treesitter-textobjects").setup({
@@ -91,6 +171,7 @@ return {
     {
         "nvim-treesitter/nvim-treesitter-context",
         branch = "master", -- this plugin uses 'master' branch no port to main branch yet
+        lazy = false,
         dependencies = { "nvim-treesitter/nvim-treesitter" },
         opts = {
             enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
@@ -112,102 +193,6 @@ return {
                 local ok, stats = pcall(vim.uv.fs_stat, filename)
                 return not (ok and stats and stats.size > max_filesize)
             end,
-        },
-    },
-    {
-        "MeanderingProgrammer/treesitter-modules.nvim",
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
-        opts = {
-            ensure_installed = {
-                "angular",
-                "asm",
-                "astro",
-                "awk",
-                "bash",
-                "c",
-                "cmake",
-                "cpp",
-                "css",
-                "csv",
-                "d",
-                "desktop",
-                "diff",
-                "disassembly",
-                "dockerfile",
-                "editorconfig",
-                "git_config",
-                "git_rebase",
-                "gitattributes",
-                "gitcommit",
-                "gitignore",
-                "go",
-                "gomod",
-                "gosum",
-                "html",
-                "htmldjango",
-                "http",
-                "ini",
-                "javascript",
-                "jq",
-                "jsdoc",
-                "json",
-                "json5",
-                "lua",
-                "luadoc",
-                "luap",
-                "make",
-                "markdown",
-                "markdown_inline",
-                "nginx",
-                "pem",
-                "perl",
-                "printf",
-                "prisma",
-                "prolog",
-                "python",
-                "query",
-                "readline",
-                "regex",
-                "requirements",
-                "robot",
-                "rust",
-                "sql",
-                "ssh_config",
-                "terraform",
-                "tmux",
-                "toml",
-                "tsx",
-                "typescript",
-                "vim",
-                "vimdoc",
-                "xml",
-                "xresources",
-                "yaml",
-            },
-            auto_install = true,
-            -- highlight = {
-            --     enable = true,
-            --
-            --     disable = function(lang, buf)
-            --         -- buf may be nil or invalid in some contexts on the main branch
-            --         if not buf or type(buf) ~= "number" then return false end
-            --         local max_filesize = 100 * 1024 -- 100 KB
-            --         local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-            --         if ok and stats and stats.size > max_filesize then return true end
-            --     end,
-            --
-            --     additional_vim_regex_highlighting = false,
-            -- },
-            -- indent = { enable = true, },
-            -- incremental_selection = {
-            --     enable = false,
-            --     keymaps = {
-            --         init_selection = "<leader>ss",
-            --         node_incremental = "<leader>si",
-            --         scope_incremental = "<leader>sc",
-            --         node_decremental = "<leader>sn", -- Changed from <leader>sd to avoid conflict with Buffer Diagnostics
-            --     },
-            -- },
         },
     },
 }
