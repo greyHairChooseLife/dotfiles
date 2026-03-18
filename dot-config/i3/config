@@ -318,7 +318,7 @@ mode "resize" {
 
 # Lock screen
 # bindsym $mod+9 exec --no-startup-id i3lock --color 00291c --show-failed-attempts
-bindsym $mod+9 exec --no-startup-id i3lock --image $HOME/Pictures/bg/screen_lock.png --show-failed-attempts
+bindsym $mod+9 exec --no-startup-id i3lock --image /home/sy/Pictures/bg/lock.png --show-failed-attempts
 
 # Color palette used for the terminal ( ~/.Xresources file )
 # Colors are gathered based on the documentation:
@@ -468,7 +468,8 @@ mode "$mode_gaps_outer" {
 # NOTE: Autostart applications
 
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-exec --no-startup-id nitrogen --restore --set-zoom-fill; sleep 1; picom -b
+# exec --no-startup-id nitrogen --restore --set-zoom-fill; sleep 1; picom -b
+exec --no-startup-id feh --bg-fill ~/Pictures/bg/wallpaper.jpg; sleep 1; picom -b
 exec_always --no-startup-id fix_xcursor
 exec --no-startup-id xbanish
 exec --no-startup-id dunst
