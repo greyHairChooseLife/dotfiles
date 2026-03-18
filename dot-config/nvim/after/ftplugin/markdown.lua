@@ -5,13 +5,13 @@
 --   foldexpr를 전역값으로 재설정하는 경우를 막지 못한다.
 --   BufWinEnter는 버퍼가 실제로 창에 표시된 직후 발생하므로
 --   어떤 경로(직접 열기, nvim-tree, picker 등)로 열어도 마지막에 실행된다.
+--   once = false: split/vsplit/tab 등 새 윈도우에서도 fold 옵션이 설정되어야 함
 local ok, err = pcall(require, "note_taking.markdown_fold")
 if not ok then vim.notify("markdown_fold load error: " .. tostring(err), vim.log.levels.ERROR) end
 
 local bufnr = vim.api.nvim_get_current_buf()
 vim.api.nvim_create_autocmd("BufWinEnter", {
     buffer = bufnr,
-    once = true,
     callback = function()
         vim.cmd([[
         setlocal foldmethod=expr

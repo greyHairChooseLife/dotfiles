@@ -375,6 +375,14 @@ local keymaps = {
     },
 }
 
+-- Reapply foldmethod to fix folds broken by opening buffers in new windows.
+-- Borrowed from snacks.picker's built-in jump action (snacks/picker/actions.lua:156-161).
+local function fix_folds()
+    if vim.wo.foldmethod == "expr" then
+        vim.schedule(function() vim.opt.foldmethod = "expr" end)
+    end
+end
+
 local setPostIfPossible = function(item)
     vim.cmd("normal! zz")
     if item.pos then
@@ -383,6 +391,7 @@ local setPostIfPossible = function(item)
         vim.cmd("normal! zz")
         BlinkCursorLine()
     end
+    fix_folds()
 end
 
 local actions = {
