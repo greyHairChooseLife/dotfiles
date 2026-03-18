@@ -179,7 +179,7 @@ vim.cmd([[
 
   highlight RenderMarkdownHtmlBUF guifg=#CA4500
 
-  highlight RenderMarkdownH1Bg guifg=#24283b guibg=#f0f8ff gui=bold,italic
+  highlight RenderMarkdownH1Bg guifg=#FFBF00 guibg=#004F4F gui=bold,italic
   highlight RenderMarkdownH2Bg guibg=#24283b guifg=#1e90ff
   highlight RenderMarkdownH3Bg guibg=#24283b guifg=#e0af68
   highlight RenderMarkdownH4Bg guibg=#24283b guifg=#DCDCAA
@@ -246,6 +246,8 @@ vim.cmd([[
   highlight FoldText guifg=#c678dd
   highlight FoldTextCodeblock guifg=#c678dd guibg=#181818
   highlight FoldTextCodeblockReverse guifg=#181818
+  highlight FoldTextMDTable guifg=#c678dd guibg=#2e3a4a
+  highlight FoldTextMDTableSuffix guifg=#2e3a4a
 
   " MEMO:: QuickFix
   highlight Delimiter guifg=#9ece6a

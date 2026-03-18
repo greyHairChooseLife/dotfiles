@@ -39,6 +39,7 @@ return {
                 "stylua",
                 "xmlformatter",
                 "yamlfmt",
+                "terraform",
             },
         })
     end,

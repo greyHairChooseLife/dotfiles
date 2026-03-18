@@ -253,10 +253,12 @@ end
 
 local function _md_foldtext_table_hl(line, fold_size, win_width)
     local indent = line:match("^(%s*)")
-    local info = "  entries: " .. fold_size + 1
+    local info = "  + entries: " .. fold_size + 1 .. " "
+    local suffix = "▉▊▋▌▍▎"
     return {
         { indent, "FoldIndent" },
-        { info, "FoldText" },
+        { info, "FoldTextMDTable" },
+        { suffix, "FoldTextMDTableSuffix" },
     }
 end
 
