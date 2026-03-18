@@ -46,7 +46,8 @@ btkb() {
     fi
 }
 
-blue() {
+alias blue="bluetui"
+_blue() {
     local selected_device
     local mac_address
 

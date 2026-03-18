@@ -1,6 +1,7 @@
 return {
     "stevearc/conform.nvim",
     event = { "BufReadPre", "BufNewFile" },
+    cmd = "Conform",
     config = function()
         require("conform").setup({
             formatters_by_ft = {
@@ -20,6 +21,7 @@ return {
                 },
                 bash = { "shfmt", stop_after_first = true },
                 sh = { "beautysh", "shfmt", stop_after_first = true },
+                zsh = { "beautysh", "shfmt", stop_after_first = true }, -- 일부 zsh 문법에는 대응하지 못한다.
                 yaml = { "yamlfmt", "prettierd", "prettier", stop_after_first = true },
                 toml = { "taplo" },
                 c = { "clang-format" },
