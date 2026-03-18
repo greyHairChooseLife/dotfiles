@@ -171,7 +171,8 @@ return {
     {
         "nvim-treesitter/nvim-treesitter-context",
         branch = "master", -- this plugin uses 'master' branch no port to main branch yet
-        lazy = false,
+        enabled = false,
+        lazy = true,
         dependencies = { "nvim-treesitter/nvim-treesitter" },
         opts = {
             enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
