@@ -5,6 +5,20 @@ return {
         lazy = false,
         build = ":TSUpdate",
         opts = {},
+        ---@param opts TSConfig
+        config = function(_, opts)
+            require("nvim-treesitter").setup(opts)
+            vim.treesitter.language.register("bash", "zsh")
+
+            -- highlight 자동 활성화 (main 브랜치에서 모듈이 없을 때 대비)
+            vim.api.nvim_create_autocmd("FileType", {
+                callback = function(ev)
+                    if vim.bo[ev.buf].buftype ~= "" then return end
+                    local ok = pcall(vim.treesitter.start, ev.buf)
+                    if not ok then vim.notify("treesitter: no parser for " .. vim.bo[ev.buf].filetype, vim.log.levels.WARN) end
+                end,
+            })
+        end,
     },
     {
         "nvim-treesitter/nvim-treesitter-textobjects",
@@ -171,32 +185,29 @@ return {
                 "yaml",
             },
             auto_install = true,
-
-            highlight = {
-                enable = true,
-
-                disable = function(lang, buf)
-                    -- buf may be nil or invalid in some contexts on the main branch
-                    if not buf or type(buf) ~= "number" then return false end
-                    local max_filesize = 100 * 1024 -- 100 KB
-                    local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-                    if ok and stats and stats.size > max_filesize then return true end
-                end,
-
-                additional_vim_regex_highlighting = false,
-            },
-            indent = {
-                enable = true,
-            },
-            incremental_selection = {
-                enable = false,
-                keymaps = {
-                    init_selection = "<leader>ss",
-                    node_incremental = "<leader>si",
-                    scope_incremental = "<leader>sc",
-                    node_decremental = "<leader>sn", -- Changed from <leader>sd to avoid conflict with Buffer Diagnostics
-                },
-            },
+            -- highlight = {
+            --     enable = true,
+            --
+            --     disable = function(lang, buf)
+            --         -- buf may be nil or invalid in some contexts on the main branch
+            --         if not buf or type(buf) ~= "number" then return false end
+            --         local max_filesize = 100 * 1024 -- 100 KB
+            --         local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+            --         if ok and stats and stats.size > max_filesize then return true end
+            --     end,
+            --
+            --     additional_vim_regex_highlighting = false,
+            -- },
+            -- indent = { enable = true, },
+            -- incremental_selection = {
+            --     enable = false,
+            --     keymaps = {
+            --         init_selection = "<leader>ss",
+            --         node_incremental = "<leader>si",
+            --         scope_incremental = "<leader>sc",
+            --         node_decremental = "<leader>sn", -- Changed from <leader>sd to avoid conflict with Buffer Diagnostics
+            --     },
+            -- },
         },
     },
 }
