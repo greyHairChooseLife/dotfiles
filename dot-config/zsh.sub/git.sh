@@ -1,4 +1,5 @@
 # >>> git
+alias g='git'
 alias ga='git add'
 alias gco='git commit'
 alias gch='git checkout'
@@ -13,8 +14,8 @@ alias gfd='git fetch --dry-run'
 
 alias gb='git branch'
 alias gba='git branch --all'
+alias gsc='git switch'
 alias gs='git status'
-alias gss='git status --short'
 alias gl='git log'
 # alias gd='git --no-pager diff | delta --diff-so-fancy'
 function gd() { git --no-pager diff "$@" | delta --diff-so-fancy }

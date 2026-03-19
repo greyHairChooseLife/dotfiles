@@ -160,6 +160,7 @@ PACMAN_PKGS=(
     bluetui
     tree-sitter
     flameshot
+    worktrunk
 )
 
 AUR_PKGS=(
