@@ -1,6 +1,7 @@
 local M = {}
 
 local excluded_models = {
+    ["GPT-4.1 (0x)"] = false,
     ["GPT-5 mini (0x)"] = false,
     ["Claude Haiku 4.5 (0.33x)"] = false,
     ["Claude Sonnet 4.6 (1x)"] = false,

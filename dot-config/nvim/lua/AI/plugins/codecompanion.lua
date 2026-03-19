@@ -201,7 +201,7 @@ return {
                 inline = {
                     adapter = {
                         name = "copilot",
-                        model = "gemini-3-flash-preview",
+                        model = "gpt-4.1",
                     },
                     keymaps = {
                         accept_change = { modes = { n = "ca" } },

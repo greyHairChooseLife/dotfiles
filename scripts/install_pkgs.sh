@@ -161,6 +161,7 @@ PACMAN_PKGS=(
     tree-sitter
     flameshot
     worktrunk
+    uv
 )
 
 AUR_PKGS=(
