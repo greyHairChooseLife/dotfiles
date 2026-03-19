@@ -50,7 +50,7 @@ gf_origin() {
     target=$(
         for remote in $(git remote); do
             git ls-remote --heads --quiet "$remote" \
-                                                    | awk -v r="$remote" '{sub("refs/heads/", "", $2); print r "/" $2}'
+                | awk -v r="$remote" '{sub("refs/heads/", "", $2); print r "/" $2}'
         done | fzf --prompt="Fetch Remote Branch> " --preview "echo {} | sed 's#/# #' | xargs git ls-remote"
     )
 
@@ -66,7 +66,7 @@ gf_origin() {
 
     # 3. 명령어 생성 및 실행
     # 로컬의 refs/remotes/remote/branch 에 강제로 업데이트합니다.
-    cmd="git fetch $remote $branch:refs/remotes/$remote/$branch"
+    cmd="git fetch ${remote} ${branch}:refs/remotes/${remote}/${branch}"
 
     echo "Running: $cmd"
     eval "$cmd"
@@ -86,7 +86,7 @@ gf() {
     targets=$(
         for remote in $(git remote); do
             git ls-remote --heads --quiet "$remote" \
-                                                    | awk -v r="$remote" '{sub("refs/heads/", "", $2); print r "/" $2}'
+                | awk -v r="$remote" '{sub("refs/heads/", "", $2); print r "/" $2}'
         done | fzf -m --prompt="Select Branches (Tab to multi-select)> "
     )
 
@@ -100,16 +100,16 @@ gf() {
         branch="${line#*/}"
 
         echo "Fetching $remote/$branch..."
-        git fetch "$remote" "$branch:refs/remotes/$remote/$branch"
+        git fetch "$remote" "${branch}:refs/remotes/${remote}/${branch}"
     done
 }
 
 # DEPRECATED:: 2025-12-09
 # function gf() {
 #     fetch_cmd=$(git fetch --dry-run --all 2>&1 \
-#                 | tac \
-#                 | fzf \
-#                 | awk '/new branch/ {split($NF,a,"/"); remote=a[1]; branch=a[2]; print "git fetch " remote " " branch ":refs/remotes/" remote "/" branch}')
+    #                 | tac \
+    #                 | fzf \
+    #                 | awk '/new branch/ {split($NF,a,"/"); remote=a[1]; branch=a[2]; print "git fetch " remote " " branch ":refs/remotes/" remote "/" branch}')
 #
 #     if [[ -z $fetch_cmd ]]; then
 #         exit 0
