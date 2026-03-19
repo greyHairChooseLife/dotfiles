@@ -105,6 +105,12 @@ gf() {
     done
 }
 
+wtn() {
+    local prev=$(pwd)
+    wt switch "$@"
+    cd "$prev" # back to original worktree
+}
+
 # DEPRECATED:: 2025-12-09
 # function gf() {
 #     fetch_cmd=$(git fetch --dry-run --all 2>&1 \

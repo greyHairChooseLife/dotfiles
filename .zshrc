@@ -16,9 +16,9 @@ PURE_PROMPT_VICMD_SYMBOL=" >"
 # 2. Completion 시스템
 autoload -Uz compinit
 if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
-  compinit
+    compinit
 else
-  compinit -C
+    compinit -C
 fi
 
 # 3. Completion 스타일
@@ -31,23 +31,23 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # 5. Syntax highlighting
 [[ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
-  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # 6. 서브 설정 파일
 () {
-  local sub_dirs=("$HOME/.config/zsh.sub" "$HOME/.local/state/zsh.sub")
-  local dir file
-  for dir in $sub_dirs; do
-    [[ -d $dir ]] || continue
-    for file in $dir/*.(sh|zsh)(N); do
-      source $file
+    local sub_dirs=("$HOME/.config/zsh.sub" "$HOME/.local/state/zsh.sub")
+    local dir file
+    for dir in $sub_dirs; do
+        [[ -d $dir ]] || continue
+        for file in $dir/*.(sh|zsh)(N); do
+            source $file
+        done
     done
-  done
 }
 
 # 7. fzf
 if [[ ! -f ~/.fzf.zsh ]] || [[ $(command -v fzf) -nt ~/.fzf.zsh ]]; then
-  fzf --zsh > ~/.fzf.zsh 2>/dev/null
+    fzf --zsh > ~/.fzf.zsh 2>/dev/null
 fi
 [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 
@@ -63,3 +63,5 @@ setopt hist_ignore_dups
 
 export PATH="$HOME/.local/bin:$PATH"
 export DISABLE_AUTO_TITLE='true' # tmuxp asks it.
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi

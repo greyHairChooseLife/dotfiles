@@ -82,6 +82,7 @@ tm.2_toggle_border() {
     fi
 }
 
+alias name_pane='tm.1_title'
 alias 1='tm.1_title'
 alias 2='tm.2_toggle_border'
 # select tmux window and copy its layout

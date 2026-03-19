@@ -1,0 +1,36 @@
+# https://worktrunk.dev/hook/
+
+[post-create]
+tmux = """
+S={{ branch | sanitize }}
+W={{ worktree_path }}
+
+# 현재 세션에 새 윈도우 생성
+tmux new-window -n "$S" -c "$W"
+
+# 4-pane 레이아웃
+tmux split-window -v -t "$S" -c "$W"
+tmux split-window -v -t "$S.1" -c "$W"
+tmux split-window -v -t "$S.2" -c "$W"
+tmux split-window -v -t "$S.3" -c "$W"
+tmux split-window -v -t "$S.4" -c "$W"
+
+# 각 pane에서 서비스 시작
+tmux send-keys -t "$S.1" 'name_pane AI && claude' Enter
+tmux send-keys -t "$S.2" 'name_pane Plan' Enter
+tmux send-keys -t "$S.3" 'name_pane shell' Enter
+tmux send-keys -t "$S.4" 'name_pane infra' Enter
+tmux send-keys -t "$S.5" 'name_pane BackEnd' Enter
+tmux send-keys -t "$S.6" 'name_pane Frontend' Enter
+
+tmux select-layout -t "$S" even-horizontal
+tmux select-pane -t "$S.2"
+
+tmux last-window
+"""
+
+[post-start]
+copy = "wt step copy-ignored"
+
+[post-remove]
+tmux = "tmux -S /tmp/tmux-$(id -u)/default kill-window -t '={{ branch | sanitize }}' 2>/dev/null || true"
