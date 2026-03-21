@@ -19,7 +19,31 @@ map("n", "gpre", "<cmd>Gitsigns preview_hunk<CR>", opt) -- show diff
 map("n", "gbl", "<cmd>Gitsigns blame_line<CR>", opt) -- show diff
 
 local wk_map = require("utils").wk_map
-wk_map({ ["<leader>g"] = { group = "󰊢  Git" } })
+wk_map({
+    ["<leader>g"] = {
+        group = "󰊢  Git",
+        order = { "c" },
+        ["c"] = {
+            function()
+                local git_dir = vim.fn.finddir(".git", vim.fn.getcwd() .. ";")
+                local in_conflict = git_dir ~= ""
+                    and (
+                        vim.fn.filereadable(git_dir .. "/MERGE_HEAD") == 1
+                        or vim.fn.filereadable(git_dir .. "/REBASE_HEAD") == 1
+                        or vim.fn.isdirectory(git_dir .. "/rebase-merge") == 1
+                        or vim.fn.isdirectory(git_dir .. "/rebase-apply") == 1
+                    )
+                if not in_conflict then
+                    vim.notify("No conflict state", vim.log.levels.WARN)
+                    return
+                end
+                vim.cmd("DiffviewOpen")
+            end,
+            desc = "  Conflict",
+            mode = "n",
+        },
+    },
+})
 wk_map({
     -- git log
     ["<leader>gl"] = {
