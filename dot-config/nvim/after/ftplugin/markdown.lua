@@ -14,12 +14,12 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     buffer = bufnr,
     callback = function()
         vim.cmd([[
-        setlocal foldmethod=expr
-        setlocal foldexpr=v:lua.MarkdownFoldExpr()
-        setlocal foldtext=v:lua.MarkdownFoldText()
-        setlocal foldlevel=99
-        setlocal foldcolumn=1
-    ]])
+            setlocal foldmethod=expr
+            setlocal foldexpr=v:lua.MarkdownFoldExpr()
+            setlocal foldtext=v:lua.MarkdownFoldText()
+            setlocal foldlevel=99
+            setlocal foldcolumn=3
+        ]])
     end,
 })
 

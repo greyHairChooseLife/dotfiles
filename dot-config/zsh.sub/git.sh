@@ -105,10 +105,15 @@ gf() {
     done
 }
 
-wtn() {
-    local prev=$(pwd)
-    wt switch "$@"
-    cd "$prev" # back to original worktree
+wts() {
+    # local prev=$(pwd)
+    local first="$1"
+    if [[ "$first" == "-"  ]]; then
+        wt switch -
+    else
+        wt switch -c "$@"
+    fi
+    # cd "$prev" # back to original worktree
 }
 
 # DEPRECATED:: 2025-12-09

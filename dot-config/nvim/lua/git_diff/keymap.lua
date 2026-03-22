@@ -15,7 +15,8 @@ map("v", "gstu", Visual_undo_stage, opt) -- stage hunk
 map("n", "gstb", "<cmd>Gitsigns stage_buffer | NvimTreeRefresh<CR>", opt) -- stage buffer
 map("n", "greh", "<cmd>Gitsigns reset_hunk | NvimTreeRefresh<CR>", opt) -- reset hunk, de-active
 map("v", "greh", Visual_reset, opt) -- reset hunk, de-active
-map("n", "gpre", "<cmd>Gitsigns preview_hunk<CR>", opt) -- show diff
+map("n", "gpre", "<cmd>Gitsigns preview_hunk_inline<CR>", opt) -- show diff
+map("n", "gprE", "<cmd>Gitsigns preview_hunk<CR>", opt) -- show diff
 map("n", "gbl", "<cmd>Gitsigns blame_line<CR>", opt) -- show diff
 
 local wk_map = require("utils").wk_map

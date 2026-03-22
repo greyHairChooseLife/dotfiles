@@ -85,3 +85,5 @@ alias nnd='~/.local/bin/nnd'
 
 # MEMO:: temperaliy
 alias jg='~/Documents/dev-wiki/notes/Project/krafton_jungle'
+
+alias mr='mise run'

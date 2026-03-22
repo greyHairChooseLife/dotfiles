@@ -162,6 +162,8 @@ PACMAN_PKGS=(
     flameshot
     uv
     hurl
+    mise
+    pulsemixer
 )
 
 AUR_PKGS=(

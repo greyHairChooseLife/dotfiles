@@ -12,7 +12,6 @@ local excluded_models = {
     ["Claude Opus 4.5 (3x)"] = true,
     ["Claude Sonnet 4 (1x)"] = true,
     ["Claude Sonnet 4.5 (1x)"] = true,
-    ["GPT-4.1 (0x)"] = true,
     ["GPT-4o (0x)"] = true,
     ["GPT-5.1 (1x)"] = true,
     ["GPT-5.1-Codex (1x)"] = true,
