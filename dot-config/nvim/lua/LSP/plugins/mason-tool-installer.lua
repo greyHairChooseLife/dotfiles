@@ -27,6 +27,9 @@ return {
                 "typescript-language-server",
                 "yaml-language-server",
                 "zk",
+                "css-lsp",
+                "css-variables-language-server",
+                "cssmodules-language-server",
                 -- Formatters / Linters / DAP
                 "beautysh",
                 "clang-format",

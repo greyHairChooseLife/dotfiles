@@ -82,6 +82,9 @@ return {
             -- marksman = {},
             zk = { workspace_required = false },
             lemminx = {},
+            cssvars = {}, -- css-variables-language-server
+            cssmodules_ls = {}, -- cssmodules-language-server
+            cssls = {}, -- css-lsp
         }
         local disabled_server = {
             "pylsp",
