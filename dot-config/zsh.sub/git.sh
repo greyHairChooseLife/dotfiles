@@ -108,7 +108,9 @@ gf() {
 wts() {
     # local prev=$(pwd)
     local first="$1"
-    if [[ "$first" == "-"  ]]; then
+    if [[ -z "$first" ]]; then
+        wt switch
+    elif [[ "$first" == "-"  ]]; then
         wt switch -
     else
         wt switch -c "$@"
