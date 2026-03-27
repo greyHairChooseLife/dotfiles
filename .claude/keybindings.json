@@ -40,7 +40,7 @@
         {
             "context": "Settings",
             "bindings": {
-                "escape": null,
+                "escape": "select:cancel",
                 "up": "select:previous",
                 "down": "select:next",
                 "k": "select:previous",
@@ -61,7 +61,7 @@
                 "y": "confirm:yes",
                 "n": "confirm:no",
                 "enter": "confirm:yes",
-                "escape": null,
+                "escape": "confirm:cancel",
                 "up": "confirm:previous",
                 "down": "confirm:next",
                 "tab": "confirm:nextField",
@@ -179,7 +179,7 @@
                 "ctrl+n": "select:next",
                 "ctrl+p": "select:previous",
                 "enter": "select:accept",
-                "escape": null
+                "escape": "select:cancel"
             }
         },
         {
