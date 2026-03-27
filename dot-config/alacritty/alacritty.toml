@@ -63,7 +63,8 @@ program = "/bin/zsh"
 alphabet = "jfkdls;ahgurieowpq"
 
 [[hints.enabled]]
-command = "xdg-open" # Linux/BSD용 명령어
+# command = "xdg-open" # Linux/BSD용 명령어
+command = { program = "brave", args = ["--new-window"] }
 # command = "open"   # macOS용 명령어
 # command = { program = "cmd", args = ["/c", "start", ""] } # Windows용 명
 

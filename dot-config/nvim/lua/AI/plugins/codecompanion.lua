@@ -197,6 +197,10 @@ return {
                         ["symbols"] = { opts = { provider = "snacks" } },
                     },
                     -- variables = {},
+                    adapter = {
+                        name = "copilot",
+                        model = "gpt-4.1",
+                    },
                 },
                 inline = {
                     adapter = {

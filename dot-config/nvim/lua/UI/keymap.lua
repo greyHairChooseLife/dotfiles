@@ -58,6 +58,7 @@ wk_map({
         },
         ["v"] = { ToggleVirtualText, desc = "virtual text toggle", mode = { "n" } },
         ["r"] = { "<cmd>RenderMarkdown buf_toggle<CR>", desc = "  rendering toggle", mode = { "n" } },
+        ["c"] = { "<cmd>HighlightColors Toggle<CR>", desc = "Color toggle", mode = { "n" } },
     },
 })
 
