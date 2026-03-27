@@ -87,3 +87,4 @@ alias nnd='~/.local/bin/nnd'
 alias jg='~/Documents/dev-wiki/notes/Project/krafton_jungle'
 
 alias mr='mise run'
+alias wifi='wifitui'
