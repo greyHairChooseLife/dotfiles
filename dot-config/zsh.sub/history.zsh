@@ -24,6 +24,8 @@ save_successful_history() {
     local exit_code=$?
     if [[ $exit_code -eq 127 ]]; then
         # Remove the last command from history if that is typo command
+        fc -W
+        sed -i '$ d' "$HISTFILE"
         fc -R
     else
         local last_cmd=$(fc -ln -1 | sed 's/^[[:space:]]*//')
@@ -42,6 +44,7 @@ delete_history_entry() {
     local tmpfile
     tmpfile=$(mktemp)
     grep -F -v -- "$entry" "$histfile" > "$tmpfile" && mv "$tmpfile" "$histfile"
+    rm -f "$tmpfile"
 }
 delete_history_entry_global() {
     local entry="$1"
@@ -65,7 +68,7 @@ precmd_functions+=(save_successful_history)
 get_full_field_list_per_process() {
     local pid="${1:-$$}"
     cat ~/.zsh_history_dir/pid_"$pid" 2> /dev/null \
-        | awk '{ key=""; for (i=3; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
+        | awk '{ key=""; for (i=4; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
         | sort -n -k1,2
 }
 get_full_field_list_per_process_no_path() {
@@ -78,7 +81,7 @@ per_process_history() {
     local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
 
     eval "$(
-        get_full_field_list_per_process \
+        get_full_field_list_per_process ${pid} \
             | fzf \
                 --tac \
                 --header '<Alt+1>: filter by '${PWD}' ' \
@@ -147,10 +150,11 @@ cleanup_history_lru() {
         awk -v file="$f" '{print file "\t" $0}' "$f"
     done | sort -t$'\t' -k2,3 | head -n "$excess" > "$tmpmerge"
 
-    # Remove oldest lines from their respective files
+    # Remove oldest lines from their respective files (one match at a time)
     while IFS=$'\t' read -r file line; do
         local tmp=$(mktemp)
-        grep -F -v -x -- "$line" "$file" > "$tmp" && mv "$tmp" "$file"
+        awk -v target="$line" 'found || $0 != target { print } !found && $0 == target { found=1 }' "$file" > "$tmp" && mv "$tmp" "$file"
+        rm -f "$tmp"
     done < "$tmpmerge"
 
     # Remove empty pid files
@@ -159,8 +163,11 @@ cleanup_history_lru() {
     rm -f "$tmpmerge"
 }
 
-# Run LRU cleanup on shell startup
-cleanup_history_lru > /dev/null 2>&1 &!
+# Run LRU cleanup on shell startup (with flock to prevent race conditions)
+(
+    flock -n 9 || exit 0
+    cleanup_history_lru
+) 9>"$HOME/.zsh_history_dir/.cleanup.lock" > /dev/null 2>&1 &!
 
 # Command aliases
 alias hip='per_process_history'      # Current process history
