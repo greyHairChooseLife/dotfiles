@@ -1,10 +1,10 @@
 # Create history directory if it doesn't exist
 mkdir -p ~/.zsh_history_dir
 
-# PID-based history file
-export HISTFILE=~/.zsh_history_dir/pid_$$
+# Separate zsh internal history from custom history
+export HISTFILE=~/.zsh_history_dir/.zsh_internal_hist_$$
 export HISTSIZE=500
-export SAVEHIST=200000
+export SAVEHIST=0
 
 edit_and_return_command() {
     # 현재 줄을 임시 파일에 저장
@@ -19,19 +19,15 @@ edit_and_return_command() {
     zle reset-prompt
 }
 
+# Format: timestamp<TAB>pwd<TAB>command
 # Function to save only successful commands
 save_successful_history() {
     local exit_code=$?
-    if [[ $exit_code -eq 127 ]]; then
-        # Remove the last command from history if that is typo command
-        fc -W
-        sed -i '$ d' "$HISTFILE"
-        fc -R
-    else
+    if [[ $exit_code -ne 127 ]]; then
         local last_cmd=$(fc -ln -1 | sed 's/^[[:space:]]*//')
         if [[ -n "$last_cmd" ]]; then
             local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-            echo "$timestamp $(pwd) $last_cmd" >> ~/.zsh_history_dir/pid_$$
+            printf '%s\t%s\t%s\n' "$timestamp" "$(pwd)" "$last_cmd" >> ~/.zsh_history_dir/pid_$$
         fi
     fi
     return $exit_code
@@ -65,48 +61,65 @@ delete_history_entry_global() {
 # Use precmd hook for zsh
 precmd_functions+=(save_successful_history)
 
+_hist_format() {
+    local cols=${COLUMNS:-$(tput cols)}
+    awk -F'\t' -v cols="$cols" '{
+        cmd=$1; meta=$3"  "$2
+        pad=cols-length(cmd)-length(meta)
+        if(pad<4) pad=4
+        printf "%s%*s%s\t%s\n", cmd, pad, "", meta, cmd
+    }'
+}
 get_full_field_list_per_process() {
     local pid="${1:-$$}"
     cat ~/.zsh_history_dir/pid_"$pid" 2> /dev/null \
-        | awk '{ key=""; for (i=4; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
-        | sort -n -k1,2
+        | awk -F'\t' '{ if (!seen[$3]++) print $3"\t"$1"\t"$2 }' \
+        | sort -t$'\t' -k2,2 \
+        | _hist_format
 }
 get_full_field_list_per_process_no_path() {
     local pid="${1:-$$}"
-    get_full_field_list_per_process $pid | awk '{$3="..."; print $0}'
+    cat ~/.zsh_history_dir/pid_"$pid" 2> /dev/null \
+        | awk -F'\t' '{ if (!seen[$3]++) print $3"\t"$1"\t..." }' \
+        | sort -t$'\t' -k2,2 \
+        | _hist_format
 }
 per_process_history() {
     local pid="${1:-$$}"
-    local pwd_escaped=$(printf ' %s ' "'${PWD}\\")
+    local pwd_escaped=$(printf ' %s ' "'${PWD}")
     local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
 
     eval "$(
         get_full_field_list_per_process ${pid} \
             | fzf \
                 --tac \
+                --delimiter '\t' \
+                --with-nth=1 \
                 --header '<Alt+1>: filter by '${PWD}' ' \
                 --prompt 'history -PID- > ' \
-                --bind 'ctrl-e:execute(printf "%s" {4..} | xclip -selection clipboard)+abort' \
-                --bind 'alt-e:execute(printf "%s" {4..} | xclip -selection clipboard)' \
+                --bind 'ctrl-e:execute(printf "%s" {2} | xclip -selection clipboard)+abort' \
+                --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \
                 --bind "alt-1:put(${today})" \
                 --bind "alt-2:put(${pwd_escaped})" \
                 --bind "alt-3:reload(get_full_field_list_per_process ${pid})" \
                 --bind "alt-4:reload(get_full_field_list_per_process_no_path ${pid})" \
                 --bind "alt-d:execute(delete_history_entry ${pid} {})+reload(get_full_field_list_per_process ${pid})" \
-            | awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}'
+            | awk -F'\t' '{print $2}'
     )"
 }
 
-# Global history function (using rg)
-# datetime으로 시작하는것만 추려
+# Global history function
 get_full_field_list_global() {
     cat ~/.zsh_history_dir/pid_* 2> /dev/null \
-        | awk '{ key=""; for (i=4; i<=NF; i++) key = key $i OFS; if (!seen[key]++) print }' \
-        | rg -- '^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}' \
-        | sort -n -k1,2
+        | awk -F'\t' 'NF>=3 { if (!seen[$3]++) print $3"\t"$1"\t"$2 }' \
+        | sort -t$'\t' -k2,2 \
+        | _hist_format
 }
 get_full_field_list_global_no_path() {
-    get_full_field_list_global | awk '{$3="..."; print $0}'
+    cat ~/.zsh_history_dir/pid_* 2> /dev/null \
+        | awk -F'\t' 'NF>=3 { if (!seen[$3]++) print $3"\t"$1"\t..." }' \
+        | sort -t$'\t' -k2,2 \
+        | _hist_format
 }
 global_history() {
     local pwd_escaped=$(printf ' %s ' "'${PWD}")
@@ -116,16 +129,18 @@ global_history() {
         get_full_field_list_global \
             | fzf \
                 --tac \
+                --delimiter '\t' \
+                --with-nth=1 \
                 --header '<Alt+1>: filter by '${PWD}' ' \
                 --prompt 'history -Global- > ' \
-                --bind 'ctrl-e:execute(printf "%s" {4..} | xclip -selection clipboard)+abort' \
-                --bind 'alt-e:execute(printf "%s" {4..} | xclip -selection clipboard)' \
+                --bind 'ctrl-e:execute(printf "%s" {2} | xclip -selection clipboard)+abort' \
+                --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \
                 --bind "alt-1:put(${today})" \
                 --bind "alt-2:put(${pwd_escaped})" \
                 --bind "alt-3:reload(get_full_field_list_global)" \
                 --bind "alt-4:reload(get_full_field_list_global_no_path)" \
                 --bind "alt-d:execute(delete_history_entry_global {})+reload(get_full_field_list_global)" \
-            | awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}'
+            | awk -F'\t' '{print $2}'
     )"
 }
 
@@ -143,19 +158,34 @@ cleanup_history_lru() {
 
     local excess=$(( total - MAX_HISTORY_LINES ))
 
-    # Merge all entries with source file, sort by timestamp, find oldest to remove
+    # Collect lines to delete per file, then remove in batch
     local tmpmerge=$(mktemp)
     for f in "$histdir"/pid_*; do
         [ -s "$f" ] || continue
-        awk -v file="$f" '{print file "\t" $0}' "$f"
-    done | sort -t$'\t' -k2,3 | head -n "$excess" > "$tmpmerge"
+        awk -v file="$f" -v OFS='\t' '{print file, $0}' "$f"
+    done | sort -t$'\t' -k2,2 | head -n "$excess" > "$tmpmerge"
 
-    # Remove oldest lines from their respective files (one match at a time)
+    # Group deletions by file for batch processing
+    local prev_file="" tmp=""
     while IFS=$'\t' read -r file line; do
-        local tmp=$(mktemp)
-        awk -v target="$line" 'found || $0 != target { print } !found && $0 == target { found=1 }' "$file" > "$tmp" && mv "$tmp" "$file"
-        rm -f "$tmp"
+        if [[ "$file" != "$prev_file" ]]; then
+            # Flush previous file
+            if [[ -n "$prev_file" && -n "$tmp" ]]; then
+                mv "$tmp" "$prev_file"
+            fi
+            tmp=$(mktemp)
+            cat "$file" > "$tmp"
+            prev_file="$file"
+        fi
+        # Remove first occurrence of the line
+        local tmp2=$(mktemp)
+        awk -v target="$line" 'found || $0 != target { print } !found && $0 == target { found=1 }' "$tmp" > "$tmp2"
+        mv "$tmp2" "$tmp"
     done < "$tmpmerge"
+    # Flush last file
+    if [[ -n "$prev_file" && -n "$tmp" ]]; then
+        mv "$tmp" "$prev_file"
+    fi
 
     # Remove empty pid files
     find "$histdir" -name "pid_*" -empty -delete
@@ -163,10 +193,15 @@ cleanup_history_lru() {
     rm -f "$tmpmerge"
 }
 
-# Run LRU cleanup on shell startup (with flock to prevent race conditions)
+# Run LRU cleanup at most once per day (with flock to prevent race conditions)
 (
     flock -n 9 || exit 0
+    marker="$HOME/.zsh_history_dir/.last_cleanup"
+    if [[ -f "$marker" ]]; then
+        [[ "$(cat "$marker")" == "$(date '+%Y-%m-%d')" ]] && exit 0
+    fi
     cleanup_history_lru
+    date '+%Y-%m-%d' > "$marker"
 ) 9>"$HOME/.zsh_history_dir/.cleanup.lock" > /dev/null 2>&1 &!
 
 # Command aliases
