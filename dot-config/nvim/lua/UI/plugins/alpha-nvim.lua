@@ -96,7 +96,9 @@ return {
             dashboard.button("tm", "tmux", ":cd ~/.config/tmux | e tmux.conf<CR>"),
             dashboard.button("vi", "vi", ":cd ~/.config | e nvim<CR>"),
             dashboard.button("ba", "bash", ":cd ~/.config | e zsh.sub/<CR>"),
-            dashboard.button("sc", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
+            dashboard.button("sn", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
+            dashboard.button("a", "my commands", ":e ~/.commands.yaml<CR>"),
+            dashboard.button("sc", "my scripts", ":e ~/dotfiles/scripts/bin<CR>"),
             dashboard.button("_", "                              ______  sessions __", ""),
             dashboard.button("sv", "Session View", function()
                 vim.cmd("AutoSession search")

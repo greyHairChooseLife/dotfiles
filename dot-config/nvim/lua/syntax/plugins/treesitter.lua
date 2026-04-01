@@ -94,7 +94,7 @@ return {
                     local lang = vim.treesitter.language.get_lang(vim.bo[ev.buf].filetype)
                     if lang and not vim.list_contains(ts.get_installed(), lang) then ts.install({ lang }) end
                     local ok = pcall(vim.treesitter.start, ev.buf)
-                    if not ok then vim.notify("treesitter: no parser for " .. vim.bo[ev.buf].filetype, vim.log.levels.WARN) end
+                    if not ok then vim.schedule(function() vim.notify("treesitter: no parser for " .. vim.bo[ev.buf].filetype, vim.log.levels.WARN) end) end
                 end,
             })
         end,

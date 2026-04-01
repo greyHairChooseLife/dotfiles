@@ -164,6 +164,8 @@ PACMAN_PKGS=(
     hurl
     mise
     pulsemixer
+    taskwarrior-tui
+    ttyd
 )
 
 AUR_PKGS=(
