@@ -170,6 +170,75 @@ local function zk_new_note(is_visual)
     end)
 end
 
+local function zk_new_note_programmatic(opts)
+    -- Programmatic note creation via zk.api. Designed for headless Neovim usage
+    -- (no UI interaction). The created note path is written to `opts.out_file` if
+    -- provided; otherwise the process exits silently.
+    --
+    -- @param opts table
+    --   @field area      string  Knowledge area. Default: "personal"
+    --   @field note_type string  Note type (must match a template name). Default: "fleeting"
+    --                            Available: fleeting, master, troubleshoot, reference,
+    --                                       study, cheatsheet, plan, index, journal, meeting
+    --   @field location  string  Destination directory. Relative paths are resolved
+    --                            under ZK_NOTEBOOK_DIR; absolute paths are used as-is.
+    --                            Default: "inbox"
+    --   @field title     string  Note title. Default: "untitled"
+    --   @field out_file  string  If set, the absolute path of the created note is
+    --                            written to this file. Intended for shell capture.
+    --
+    -- Example (Lua):
+    --   zk_new_note_programmatic({
+    --       area      = "personal",
+    --       note_type = "fleeting",
+    --       location  = "inbox",
+    --       title     = "Quick thought",
+    --       out_file  = "/tmp/zk_out",
+    --   })
+    --
+    -- Example (shell via ZnAPI user command):
+    --   nvim --headless -c 'ZnAPI {"area":"work","note_type":"journal","location":"inbox","title":"Standup","out_file":"/tmp/zk_out"}'
+    --
+    -- Example (zn-api shell function):
+    --   path=$(zn-api work journal inbox "Standup")
+    --
+    -- Example (Python subprocess):
+    --   result = subprocess.check_output(["zsh", "-i", "-c", "zn-api personal fleeting inbox 'My note'"], text=True)
+    --   note_path = result.strip()
+    local notebook = vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")
+
+    local dir = opts.location or "inbox"
+    -- 절대경로면 그대로, 상대경로면 notebook 기준으로
+    local abs_dir = dir:sub(1, 1) == "/" and dir or (notebook .. "/" .. dir)
+    if vim.fn.isdirectory(abs_dir) == 0 then vim.fn.mkdir(abs_dir, "p") end
+
+    local note_opts = {
+        template = (opts.note_type or "fleeting") .. ".md",
+        dir = abs_dir,
+        title = opts.title or "untitled",
+        extra = {
+            type = opts.note_type or "fleeting",
+            area = opts.area or "personal",
+        },
+        edit = false,
+    }
+
+    require("zk.api").new(nil, note_opts, function(err, res)
+        assert(not err, tostring(err))
+        vim.schedule(function()
+            local out_file = opts.out_file
+            if out_file and out_file ~= "" then
+                local f = io.open(out_file, "w")
+                if f then
+                    f:write(res.path)
+                    f:close()
+                end
+            end
+            vim.cmd("qa")
+        end)
+    end)
+end
+
 -- CLI용 nvim User commands (nvim -c "Zn" 형태로 호출)
 vim.api.nvim_create_user_command("Zn", function()
     vim.cmd("cd " .. vim.fn.fnameescape(vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")))
@@ -188,6 +257,16 @@ vim.api.nvim_create_user_command("Zw", function()
     vim.cmd("cd " .. vim.fn.fnameescape(vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")))
     require("note_taking.zk_search").grep_notes()
 end, {})
+vim.api.nvim_create_user_command("ZnAPI", function(cmd_opts)
+    vim.cmd("cd " .. vim.fn.fnameescape(vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")))
+    local ok, opts = pcall(vim.json.decode, cmd_opts.args)
+    if not ok then
+        vim.notify("ZnAPI: invalid JSON args", vim.log.levels.ERROR)
+        vim.cmd("qa")
+        return
+    end
+    zk_new_note_programmatic(opts)
+end, { nargs = 1 })
 
 local function zk_delete_note()
     local notebook = vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")

@@ -7,19 +7,17 @@ a:
 
 taskwarrior:
     - desc: "delete all deleted tasks"
-      cmd: |
-        task status:deleted purge
+      cmd: task status:deleted purge
+    - desc: "taskwarrior command pallet"
+      cmd: vi ~/dotfiles/scripts/bin/taskwarrior-cheatsheet.yaml
 
 share_something:
     - desc: "share process using QR code"
-      cmd: |
-        ssh -p 443 -R0:localhost:3000 qr@free.pinggy.io
+      cmd: ssh -p 443 -R0:localhost:3000 qr@free.pinggy.io
     - desc: "share file using QR code"
-      cmd: |
-        share-file-using-QR-code.sh
+      cmd: share-file-using-QR-code.sh
     - desc: "share docker image"
-      cmd: |
-        share-docker-image-temporarily.sh
+      cmd: share-docker-image-temporarily.sh
 
 git_github:
     - desc: "List repositories for a specific user or organization"
@@ -240,6 +238,8 @@ hardware:
     - desc: "Get detailed CPU information"
       cmd: |
         lscpu
+    - desc: "change cpu governor [powersave|performance]"
+      cmd: change-cpu-performance.sh
     - desc: "Show memory usage details"
       cmd: |
         cat /proc/meminfo

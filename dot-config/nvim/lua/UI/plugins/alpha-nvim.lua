@@ -94,11 +94,12 @@ return {
             dashboard.button("i3", "i3", ":cd ~/.config/i3 | e config<CR>"),
             dashboard.button("te", "term", ":cd ~/.config/alacritty | e alacritty.toml<CR>"),
             dashboard.button("tm", "tmux", ":cd ~/.config/tmux | e tmux.conf<CR>"),
+            dashboard.button("tw", "taskwarrior", ":cd ~/Documents/zk | e .task<CR>"),
             dashboard.button("vi", "vi", ":cd ~/.config | e nvim<CR>"),
             dashboard.button("ba", "bash", ":cd ~/.config | e zsh.sub/<CR>"),
             dashboard.button("sn", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
-            dashboard.button("a", "my commands", ":e ~/.commands.yaml<CR>"),
-            dashboard.button("sc", "my scripts", ":e ~/dotfiles/scripts/bin<CR>"),
+            dashboard.button("a", "my commands", ":cd ~/dotfiles | e .commands.yaml<CR>"),
+            dashboard.button("sc", "my scripts", ":cd ~/dotfiles | e scripts/bin<CR>"),
             dashboard.button("_", "                              ______  sessions __", ""),
             dashboard.button("sv", "Session View", function()
                 vim.cmd("AutoSession search")

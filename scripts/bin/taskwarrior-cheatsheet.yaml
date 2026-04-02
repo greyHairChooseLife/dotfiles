@@ -1,0 +1,175 @@
+# Taskwarrior 핵심 속성 활용 가이드
+
+# | 속성   | 명칭     | 기능                         | 효과                                           |
+# |--------|----------|------------------------------|------------------------------------------------|
+# | due    | 마감일   | 작업 완료 목표 시점 설정     | 해당 날짜가 지나면 Overdue로 강조됨            |
+# | until  | 유효기한 | 작업이 자동 삭제되는 시점    | 기한 도과 시 목록에서 영구 제거됨              |
+# | wait   | 대기일   | 작업이 목록에 나타나는 시점  | 설정 전까지 task next에서 숨겨짐 (노이즈 감소) |
+# | recur  | 반복주기 | 작업의 재발생 간격 설정      | due를 기준점으로 다음 작업을 자동 생성함       |
+
+due:
+    - global-desc: "마감일 설정. 지나면 Overdue로 강조됨"
+    # --- 절대 키워드 ---
+    - desc: "due | 오늘 마감"
+      cmd: task <id> modify due:today
+    - desc: "due | 내일 마감"
+      cmd: task <id> modify due:tomorrow
+    - desc: "due | 오늘 자정 마감 (= today)"
+      cmd: task <id> modify due:eod
+    - desc: "due | 이번 주 말 마감 (일요일)"
+      cmd: task <id> modify due:eow
+    - desc: "due | 이번 달 말 마감"
+      cmd: task <id> modify due:eom
+    - desc: "due | 올해 말 마감"
+      cmd: task <id> modify due:eoy
+    # --- 요일 지정 ---
+    - desc: "due | 이번 주 월요일 마감"
+      cmd: task <id> modify due:mon
+    - desc: "due | 이번 주 화요일 마감"
+      cmd: task <id> modify due:tue
+    - desc: "due | 이번 주 수요일 마감"
+      cmd: task <id> modify due:wed
+    - desc: "due | 이번 주 목요일 마감"
+      cmd: task <id> modify due:thu
+    - desc: "due | 이번 주 금요일 마감"
+      cmd: task <id> modify due:fri
+    - desc: "due | 이번 주 토요일 마감"
+      cmd: task <id> modify due:sat
+    - desc: "due | 이번 주 일요일 마감"
+      cmd: task <id> modify due:sun
+    # --- 상대 표현 ---
+    - desc: "due | 2시간 30분 후 마감"
+      cmd: task <id> modify due:now+2h+30min
+    - desc: "due | 3일 후 마감"
+      cmd: task <id> modify due:today+3d
+    - desc: "due | 2주 후 마감"
+      cmd: task <id> modify due:today+2w
+    - desc: "due | 1달 후 마감"
+      cmd: task <id> modify due:today+1m
+    - desc: "due | 이번 달 말 3일 전 마감"
+      cmd: task <id> modify due:eom-3d
+    # --- 절대 날짜 ---
+    - desc: "due | 특정 날짜 마감 (YYYY-MM-DD)"
+      cmd: task <id> modify due:2026-05-01
+    # --- 제거 ---
+    - desc: "due | 마감일 제거"
+      cmd: "task <id> modify due:"
+
+until:
+    - global-desc: "유효기한 설정. 이 날짜가 지나면 작업이 자동으로 deleted 상태가 됨"
+    # --- 절대 키워드 ---
+    - desc: "until | 오늘 자정까지만 유효 (오늘 못 하면 자동 삭제)"
+      cmd: task <id> modify until:eod
+    - desc: "until | 내일까지만 유효"
+      cmd: task <id> modify until:tomorrow
+    - desc: "until | 이번 주 말까지만 유효"
+      cmd: task <id> modify until:eow
+    - desc: "until | 이번 달 말까지만 유효"
+      cmd: task <id> modify until:eom
+    # --- 상대 표현 ---
+    - desc: "until | 3일 후까지만 유효"
+      cmd: task <id> modify until:today+3d
+    - desc: "until | 1주 후까지만 유효"
+      cmd: task <id> modify until:today+1w
+    - desc: "until | 마감일 당일까지만 유효 (due와 같이 쓸 때)"
+      cmd: task <id> modify until:due
+    # --- 절대 날짜 ---
+    - desc: "until | 특정 날짜까지만 유효 (YYYY-MM-DD)"
+      cmd: task <id> modify until:2026-06-30
+    # --- 제거 ---
+    - desc: "until | 유효기한 제거"
+      cmd: "task <id> modify until:"
+
+scheduled:
+    - global-desc: "작업 시작 예정일 설정. wait과 달리 task list엔 보이지만 task next에선 숨겨짐"
+    # --- 상대 표현 ---
+    - desc: "scheduled | 3시간 후부터 시작 예정"
+      cmd: task <id> modify scheduled:now+3h
+    - desc: "scheduled | 2일 후부터 시작 예정"
+      cmd: task <id> modify scheduled:today+2d
+    - desc: "scheduled | 1주 후부터 시작 예정"
+      cmd: task <id> modify scheduled:today+1w
+    - desc: "scheduled | 마감 3일 전부터 시작 예정 (due 설정 필요)"
+      cmd: task <id> modify scheduled:due-3d
+    - desc: "scheduled | 마감 1주 전부터 시작 예정 (due 설정 필요)"
+      cmd: task <id> modify scheduled:due-1w
+    # --- 절대 날짜 ---
+    - desc: "scheduled | 특정 날짜부터 시작 예정 (YYYY-MM-DD)"
+      cmd: task <id> modify scheduled:2026-04-25
+    # --- 제거 ---
+    - desc: "scheduled | 시작 예정일 제거"
+      cmd: "task <id> modify scheduled:"
+
+wait:
+    - global-desc: "wait 기간 동안 task next에서 숨겨짐. 지나면 자동으로 나타남"
+    # --- 상대 표현 ---
+    - desc: "wait | 3시간 후부터 보이게"
+      cmd: task <id> modify wait:now+3h
+    - desc: "wait | 2일 후부터 보이게"
+      cmd: task <id> modify wait:today+2d
+    - desc: "wait | 1주 후부터 보이게"
+      cmd: task <id> modify wait:today+1w
+    - desc: "wait | 마감 3일 전부터 보이게 (due 설정 필요)"
+      cmd: task <id> modify wait:due-3d
+    - desc: "wait | 마감 1주 전부터 보이게 (due 설정 필요)"
+      cmd: task <id> modify wait:due-1w
+    # --- 절대 날짜 ---
+    - desc: "wait | 특정 날짜부터 보이게 (YYYY-MM-DD)"
+      cmd: task <id> modify wait:2026-04-25
+    # --- 제거 ---
+    - desc: "wait | 대기 해제 (즉시 목록에 표시)"
+      cmd: "task <id> modify wait:"
+
+recur:
+    - global-desc: "반복 주기 설정. due가 반드시 있어야 함. due 기준으로 다음 작업 자동 생성"
+    # --- 주기 키워드 ---
+    - desc: "recur | 매일 반복"
+      cmd: task <id> modify recur:daily due:today
+    - desc: "recur | 평일(월~금)만 반복"
+      cmd: task <id> modify recur:weekdays due:today
+    - desc: "recur | 매주 반복"
+      cmd: task <id> modify recur:weekly due:mon
+    - desc: "recur | 격주 반복"
+      cmd: task <id> modify recur:biweekly due:mon
+    - desc: "recur | 매월 반복"
+      cmd: task <id> modify recur:monthly due:som
+    - desc: "recur | 매년 반복"
+      cmd: task <id> modify recur:yearly due:soy
+    # --- 커스텀 주기 ---
+    - desc: "recur | 50분마다 반복 (휴식 타이머 등)"
+      cmd: task <id> modify recur:50min due:now+50min wait:due-10min
+    - desc: "recur | 10일마다 반복"
+      cmd: task <id> modify recur:10d due:today
+    - desc: "recur | 6개월마다 반복"
+      cmd: task <id> modify recur:6m due:2026-07-01 wait:due-1m
+
+depends:
+    - global-desc: "선행 작업 설정. 선행이 완료될 때까지 blocked(D) 상태로 task next에서 숨겨짐"
+    # --- 단일 depends ---
+    - desc: "depends | 단일 선행 작업 지정"
+      cmd: task <id> modify depends:<id>
+    - desc: "depends | 선행 작업 추가 (기존 depends에 덧붙임)"
+      cmd: task <id> modify depends+<id>
+    - desc: "depends | 선행 작업 제거 (나머지 depends 유지)"
+      cmd: task <id> modify depends-<id>
+    # --- 복수 depends ---
+    - desc: "depends | 여러 선행 작업 동시 지정"
+      cmd: task <id> modify depends:<id1>,<id2>
+    # --- 확인 ---
+    - desc: "depends | 현재 작업이 막고 있는 작업 목록 보기 (blocking)"
+      cmd: task <id> info
+    - desc: "depends | blocked 상태인 작업 전체 보기"
+      cmd: task +BLOCKED list
+    - desc: "depends | blocking 상태인 작업 전체 보기 (다른 작업을 막고 있는 것)"
+      cmd: task +BLOCKING list
+    # --- 제거 ---
+    - desc: "depends | 모든 선행 작업 제거"
+      cmd: "task <id> modify depends:"
+
+combinations:
+    - desc: "combo | 미래 작업 사전 등록 + 마감 전에만 보이게"
+      cmd: task add 보고서제출 due:2026-05-01 wait:2026-04-25
+      explain: 4월 25일 전까지는 목록에 보이지 않다가, 이후부터 마감일(5월 1일)까지 나타남
+    - desc: "combo | 반복 작업 + 마감 직전에만 보이게 (노이즈 감소)"
+      cmd: task add 월세납부 due:25th recur:monthly wait:due-5d
+      explain: 이번 달 월세를 내면 다음 달 작업이 생기지만, 마감 5일 전까지는 숨겨져 있음
