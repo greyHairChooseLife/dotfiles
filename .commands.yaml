@@ -1,0 +1,801 @@
+# Commander - command reference library
+
+a:
+    - desc: "update this file"
+      cmd: |
+        vi $COMMANDER_YAML
+
+taskwarrior:
+    - desc: "delete all deleted tasks"
+      cmd: |
+        task status:deleted purge
+
+share_something:
+    - desc: "share process using QR code"
+      cmd: |
+        ssh -p 443 -R0:localhost:3000 qr@free.pinggy.io
+    - desc: "share file using QR code"
+      cmd: |
+        share-file-using-QR-code.sh
+    - desc: "share docker image"
+      cmd: |
+        share-docker-image-temporarily.sh
+
+git_github:
+    - desc: "List repositories for a specific user or organization"
+      cmd: |
+        gh repo list <username/org>
+    - desc: "Clone a repository from one of your organizations"
+      cmd: |
+        gh org list | fzf-tmux
+    - desc: ""
+      cmd: |
+        org=$(gh org list | fzf) && repo=$(gh repo list "$org" | fzf | awk '{print $1}') && gh repo clone "$repo"
+    - desc: "Clone repository using a specific branch"
+      cmd: |
+        gh repo clone <owner>/<repo> -- -b <branch-name>
+    - desc: "Create branch from git rev"
+      cmd: |
+        git checkout -b <new-branch-name> [<start-point>]
+    - desc: "branch 관리: 로컬에서 필요없는 remote upstream 지우기"
+      cmd: |
+        git branch -d -r <remote-name>/<bracnh-name>
+    - desc: "remote: origin 브랜치 싹 정리"
+      cmd: |
+        git branch -r | grep 'origin/' | grep -v 'HEAD' | xargs git branch -rd
+    - desc: ""
+      cmd: |
+        git push origin --delete <branch-name>
+    - desc: "local branch가 어떤 remote branch와 연결되었지 (있다면)표시"
+      cmd: |
+        git branch -vv
+    - desc: "local branch와 연결된 upstream 제거(git push하면 자동으로 upstream 설정으로 upload됨)"
+      cmd: |
+        git branch --unset-upstream <local-branch-name>
+    - desc: "Rename the current branch"
+      cmd: |
+        git branch -m [<old-branch>] <new-branch>
+    - desc: "직전 revision 되돌리기(기록 남기면서). 구간 지정도 가능한데, conflict 발생 가능하다."
+      cmd: |
+        git revert HEAD
+    - desc: "다운받기 전에 확인만"
+      cmd: |
+        git fetch --dry-run
+    - desc: "PR 생성: 기본 브랜치 지정"
+      cmd: |
+        gh pr create --base <base-branch>
+    - desc: "특정 리포지토리에 PR 생성"
+      cmd: |
+        gh pr create --repo greyHairChooseLife/jg-websocket --base main
+    - desc: "PR 병합"
+      cmd: |
+        gh pr merge <pr-number>
+    - desc: "PR diff 확인 (delta와 함께 사용 가능)"
+      cmd: |
+        gh pr diff <pr-number>
+    - desc: "PR 체크아웃"
+      cmd: |
+        gh pr checkout <pr-number>
+    - desc: "Issue 생성"
+      cmd: |
+        gh issue create
+    - desc: "Issue 목록 조회"
+      cmd: |
+        gh issue list
+    - desc: "Issue 상세 보기"
+      cmd: |
+        gh issue view <issue-number>
+    - desc: "Issue 편집"
+      cmd: |
+        gh issue edit <issue-number>
+    - desc: "Issue 닫기"
+      cmd: |
+        gh issue close <issue-number>
+    - desc: "Issue 다시 열기"
+      cmd: |
+        gh issue reopen <issue-number>
+    - desc: "Issue에 댓글 추가"
+      cmd: |
+        gh issue comment <issue-number>
+    - desc: "Issue에 담당자 할당"
+      cmd: |
+        gh issue assign <issue-number>
+    - desc: "commit author 변경"
+      cmd: |
+        git commit --amend --author="팀원 이름 <팀원 이메일>" --no-edit
+    - desc: "특정 revision([commit|branch|tag]) 상태로 다운로드.zip"
+      cmd: |
+        curl -L  https://github.com/<user>/<repo>/archive/[commit|branch|tag].zip -o output.zip
+
+gh_gist:
+    - desc: "gist 보기"
+      cmd: |
+        gh gist view $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
+    - desc: "gist 삭제"
+      cmd: |
+        gh gist delete $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
+    - desc: "gist 수정"
+      cmd: |
+        gh gist edit $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
+    - desc: "gist clone"
+      cmd: |
+        gh gist clone $(gh gist list -L 30 | column -t -s $'\t' | fzf | awk '{print $1}')
+
+appendix:
+    - desc: ""
+      cmd: |
+        | column -t -s $'\t'
+    - desc: ""
+      cmd: |
+        | awk '{print $3}'
+    - desc: ""
+      cmd: |
+        | sed -i 's/old-string/new-string/g'
+    - desc: "Delete the 2nd line:"
+      cmd: |
+        | sed '2d'
+    - desc: "Delete lines 2 to 4:"
+      cmd: |
+        | sed '2,4d'
+    - desc: "Delete lines matching a pattern (e.g., starting with \"my\"):"
+      cmd: |
+        | sed '/^my/d'
+    - desc: "case sensitive"
+      cmd: |
+        | grep -s "Call stack"
+    - desc: "only matched (instead of entire line)"
+      cmd: |
+        | grep -o -- "0x.*[0-9a-f]"
+
+misc:
+    - desc: "grep around 5 lines"
+      cmd: |
+        rg -C 5 "pattern" /path/to/file
+    - desc: "NOT starting with \"test\""
+      cmd: |
+        rg -v "^test" file.txt
+    - desc: "Print the 9th column of a command's output (useful for `ls -l`)"
+      cmd: |
+        sed -i 's/old-string/new-string/g' filename.txt
+    - desc: ""
+      cmd: |
+        ls -l | awk '{print $3}'
+    - desc: "Monitor a command's output, updating every second"
+      cmd: |
+        watch -n 1 'command'
+    - desc: "Set the desktop background with feh"
+      cmd: |
+        feh --bg-scale /path/to/image.jpg
+    - desc: "Extract a range of pages from a PDF"
+      cmd: |
+        pdfseparate -f <first_page_number> -l <last_page_number> input.pdf page_%d.pdf
+    - desc: ""
+      cmd: |
+        pdfunite page_*.pdf output.pdf
+    - desc: "Compress a PDF to a smaller size (for ebooks)"
+      cmd: |
+        ghostscript -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -o small.pdf large.pdf
+    - desc: "Combine multiple PDF files into one"
+      cmd: |
+        pdfunite file1.pdf file2.pdf output.pdf
+    - desc: "what is this?"
+      cmd: |
+        type <alias or function>
+    - desc: "regex maker"
+      cmd: |
+        regex <path/to/file>
+    - desc: "1초마다 ps aux를 실행하고 그 결과를 sig로 실시간 스트리밍"
+      cmd: |
+        while true; do <ps aux>; sleep 1; done | sig
+    - desc: "port 모두보기"
+      cmd: |
+        pvw -A
+    - desc: "port <특정> 보기"
+      cmd: |
+        pvw -A --ports <port>
+    - desc: "파일 찾아서 출력해서 interactive grep"
+      cmd: |
+        fd 'tmuxp.' -x cat | sig -a
+    - desc: "how to see inspect --help properly"
+      cmd: |
+        curl --help all | fzf --preview "curl --help all | grep -A 15 {}"
+    - desc: "create zip of everyting (- hidden)"
+      cmd: |
+        zip -r myfiles.zip .
+    - desc: "create zip of everyting (+ hidden)"
+      cmd: |
+        zip -r archive.zip .* *
+    - desc: "터치패드 장치 ID 확인 (터치패드 이름과 ID 찾기)"
+      cmd: |
+        xinput list
+    - desc: "터치패드 임시 비활성화 (ID는 xinput list로 확인)"
+      cmd: |
+        xinput disable <ID>
+    - desc: "터치패드 재활성화"
+      cmd: |
+        xinput enable <ID>
+
+hardware:
+    - desc: "Save the current display layout to a profile with autorandr"
+      cmd: |
+        autorandr --save <profile-name>
+    - desc: "Load a saved display profile"
+      cmd: |
+        autorandr --load <profile-name>
+    - desc: "Let autorandr automatically detect and apply the correct profile"
+      cmd: |
+        autorandr --change
+    - desc: "Check battery status and charge thresholds"
+      cmd: |
+        tlp-stat -b
+    - desc: ""
+      cmd: |
+        sudo tlp fullcharge
+    - desc: "Set battery charge thresholds (e.g., start at 75%, stop at 80%)"
+      cmd: |
+        sudo tlp setcharge 75 80 BAT0
+    - desc: "Calibrate the battery (run on AC power)"
+      cmd: |
+        sudo tlp recalibrate
+    - desc: "Get detailed CPU information"
+      cmd: |
+        lscpu
+    - desc: "Show memory usage details"
+      cmd: |
+        cat /proc/meminfo
+    - desc: "List block devices (disks and partitions)"
+      cmd: |
+        lsblk
+    - desc: "Show kernel version and system info"
+      cmd: |
+        uname -a
+    - desc: "View a process tree"
+      cmd: |
+        pstree
+    - desc: "모니터"
+      cmd: |
+        mons -S 0,7:R
+    - desc: ""
+      cmd: |
+        xrandr --output DP-2-2 --mode 1920x1200 --rotate left
+
+c_language:
+    - desc: "Compile a C file with debug symbols and no optimizations"
+      cmd: |
+        gcc -g -O0 main.c -o main.out
+    - desc: "Generate a `compile_commands.json` file for a make-based project"
+      cmd: |
+        bear -- make
+
+debugging:
+    - desc: "Disassemble an executable and interleave with source code, view in less"
+      cmd: |
+        objdump -d -S a.out | less
+
+docker:
+    - desc: "Build a Docker image from a Dockerfile in the 'config' directory"
+      cmd: |
+        docker build -t <my-image-name> -f <path/to/Dockerfile>
+    - desc: "Run a container in detached mode with a volume mount"
+      cmd: |
+        docker run -d --name <container_name> -v </host/path>:</container/path> <img_name>
+    - desc: "Execute a shell inside a running container"
+      cmd: |
+        docker exec -it <container_name> bash
+    - desc: "List all containers (running and stopped)"
+      cmd: |
+        docker ps -a
+    - desc: "'config' 디렉토리의 Dockerfile에서 Docker 이미지를 빌드"
+      cmd: |
+        docker build -t <my-image-name> -f <path/to/Dockerfile>
+    - desc: "분리 모드로 볼륨 마운트와 함께 컨테이너 실행"
+      cmd: |
+        docker run -d --name <container_name> -v </host/path>:</container/path> <img_name>
+    - desc: "실행 중인 컨테이너 내부에서 셸 실행"
+      cmd: |
+        docker exec -it <container_name> bash
+    - desc: "모든 컨테이너 목록 보기 (실행 중 및 중지됨)"
+      cmd: |
+        docker ps -a
+    - desc: "실행 중인 컨테이너 중지"
+      cmd: |
+        docker stop <container_name>
+    - desc: "중지된 컨테이너 제거"
+      cmd: |
+        docker rm <container_name>
+    - desc: "Docker 이미지 제거"
+      cmd: |
+        docker rmi <image_name>
+    - desc: "dangling 이미지 모두 제거"
+      cmd: |
+        docker rmi $(docker images -f "dangling=true" -q)
+    - desc: "컨테이너의 로그 보기"
+      cmd: |
+        docker logs <container_name>
+    - desc: "모든 볼륨 목록 보기"
+      cmd: |
+        docker volume ls
+    - desc: "특정 볼륨 제거"
+      cmd: |
+        docker volume rm <volume_name>
+    - desc: "모든 사용하지 않는 컨테이너, 네트워크, 이미지 제거 (댕글링 이미지 포함)"
+      cmd: |
+        docker system prune -f
+    - desc: "모든 사용하지 않는 컨테이너, 네트워크, 이미지, 볼륨 제거"
+      cmd: |
+        docker system prune --all --volumes --force -f
+    - desc: "모든 중지된 컨테이너 제거"
+      cmd: |
+        docker container prune -f
+    - desc: "사용하지 않는 이미지 제거"
+      cmd: |
+        docker image prune -f
+    - desc: "사용하지 않는 볼륨 제거"
+      cmd: |
+        docker volume prune -f
+    - desc: "List docker context"
+      cmd: |
+        docker context list
+    - desc: "Use docker context"
+      cmd: |
+        docker context use <name-of-context>
+    - desc: "Remove the context"
+      cmd: |
+        docker context rm <name-of-context>
+    - desc: "Create docker context, need to configure ssh-key through ssh config"
+      cmd: |
+        docker context create <name-of-context> --description <description> --docker "host=ssh://43.202.251.227"
+    - desc: "Change docker context"
+      cmd: |
+        dctx
+    - desc: "Add docker context"
+      cmd: |
+        dctx-add
+    - desc: "Remove docker context"
+      cmd: |
+        dctx-rm
+    - desc: "inspect why healthcheck failed"
+      cmd: |
+        docker inspect --format='{{json .State.Health}}' <container-name> | jq
+
+networking:
+    - desc: "내꺼"
+      cmd: |
+        ssh -i ~/.ssh/dev-server.pem ubuntu@52.79.120.81
+    - desc: "내꺼"
+      cmd: |
+        ssh -i ~/.ssh/dev-server.pem ubuntu@ec2-52-79-120-81.ap-northeast-2.compute.amazonaws.com
+    - desc: "ssh 접속; ssh-config(~/.ssh/config) 읽어서 host 선택하고 접속"
+      cmd: |
+        s
+    - desc: "ssh config 수정(~/.ssh/config)"
+      cmd: |
+        se
+    - desc: "Connect to a Wi-Fi network, prompting for a password"
+      cmd: |
+        nmcli device wifi connect <SSID> --ask
+    - desc: "비번 보여주기"
+      cmd: |
+        nmcli -s -g 802-11-wireless-security.psk connection show $(nmcli connection show | grep -i wifi |awk '{print $1 "\t" $3 "\t"  $4}'| column -t -s $'\t' | fzf | awk '{print $1}')
+    - desc: "Check network link status for a specific interface"
+      cmd: |
+        ip link show
+    - desc: "공인아이피 확인"
+      cmd: |
+        curl https://api.ipify.org; echo
+    - desc: "sshfs"
+      cmd: |
+        sshfs -o IdentityFile=~/.ssh/dev-server.pem,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 ubuntu@3.39.132.9:/home/ubuntu/sshfs ~/jg/05.NMM/sshfs
+    - desc: "일반적인 언마운트 시도"
+      cmd: |
+        fusermount3 -u ~/ec2_mount
+    - desc: "SSH 키 생성 (기본 RSA 키)"
+      cmd: |
+        ssh-keygen -t rsa -b 4096 -C "<your_email@example.com>"
+    - desc: "SSH 접속 (호스트 별칭 사용, ~/.ssh/config에 설정된 경우)"
+      cmd: |
+        ssh -i "<path/to/ssh-key.pem>" <username>@<host>
+    - desc: "파일 전송 (remote   local)"
+      cmd: |
+        scp <user>@<hostname>:/<remote/path>/<remotefile.txt> <local/path>/
+    - desc: "디렉토리 전송 (local   remote)"
+      cmd: |
+        scp -r <localdir> <user>@<hostname>:/<remote/path>/
+    - desc: "rsync로 디렉토리를 동기화 (local   remote, 압축 및 아카이브 모드 및 진행률)"
+      cmd: |
+        rsync -e "ssh -i <path/to/key>" -avzP <localdir>/ <user>@<hostname>:/<remote/path>/
+    - desc: "rsync로 디렉토리를 동기화 (remote   local)"
+      cmd: |
+        rsync -e "ssh -i <path/to/key>" -avzP <user>@<hostname>:/<remote/path>/ <localdir>/
+    - desc: "포트 포워딩 (로컬 포트 8080을 원격 서버의 80으로 노출)"
+      cmd: |
+        ssh -L 8080:localhost:80 <user>@<hostname>
+    - desc: "SSH 터널을 통해 SOCKS 프록시 설정 (동적 프록시, remote를 프록시 서버로)"
+      cmd: |
+        ssh -D 1080 <user>@<hostname>
+    - desc: "원격 서버에서 명령 실행 (접속 없이)"
+      cmd: |
+        ssh <user>@<hostname> "<command>"
+
+remote_dev:
+    - desc: "동기화 세션 생성 (로컬   원격, 양방향 동기화 시작), --name: 별칭, --ignore-vcs: .gitignore 준수"
+      cmd: |
+        mutagen sync create --ignore-vcs <local/path> <ssh_alias>:<remote/path> --name=<session_name>
+    - desc: "동기화 일시 정지 (세션 설정은 유지하되, 파일 전송만 멈춤)"
+      cmd: |
+        mutagen sync pause <session_name>
+    - desc: "동기화 재개 (일시 정지된 세션을 다시 시작)"
+      cmd: |
+        mutagen sync resume <session_name>
+    - desc: "동기화 세션 영구 삭제 (더 이상 동기화하지 않을 때)"
+      cmd: |
+        mutagen sync terminate <session_name>
+    - desc: "현재 실행 중인 모든 동기화 세션 상태 확인 (상태, 충돌 여부 등)"
+      cmd: |
+        mutagen sync list
+    - desc: "Mutagen 데몬(백그라운드 프로세스) 전체 종료 (다시 명령어를 입력하면 자동으로 재시작됨)"
+      cmd: |
+        mutagen daemon stop
+    - desc: "특정 세션의 동기화 과정을 실시간으로 모니터링 (종료하려면 Ctrl+C)"
+      cmd: |
+        mutagen sync monitor <session_name>
+    - desc: "동기화 강제 적용 (변경사항이 반영되지 않았을 때 즉시 동기화 시도)"
+      cmd: |
+        mutagen sync flush <session_name>
+
+find_fd:
+    - desc: "Find all .txt files in current directory"
+      cmd: |
+        find . -name "*.txt"
+    - desc: "Find files modified in last 7 days"
+      cmd: |
+        find . -mtime -7
+    - desc: "Find and delete .log files"
+      cmd: |
+        find . -name "*.log" -exec rm {} \;
+    - desc: "Find directories only"
+      cmd: |
+        find . -type d
+    - desc: "file a or b"
+      cmd: |
+        find . -name '*.c' -o -name '*.h'
+    - desc: "Find all .md files with fd"
+      cmd: |
+        fd "\.md$"
+    - desc: "Find files with 'test' in name"
+      cmd: |
+        fd test
+    - desc: "Find .txt files and open with vim"
+      cmd: |
+        fd -e txt -x vim {}
+    - desc: "Case-insensitive search in specific dir"
+      cmd: |
+        fd -i pattern /path/to/dir
+    - desc: "fd: Find .md files AND larger than 1KB"
+      cmd: |
+        fd -e md --size +1k
+    - desc: "fd: Find files with 'test' OR 'example' in name"
+      cmd: |
+        fd "test|example"
+
+disasm:
+    - desc: "Display private headers (program headers) of the ELF file"
+      cmd: |
+        objdump -p <file> | vi -c "set ft=asm"
+    - desc: "Disassemble the executable sections of the ELF file"
+      cmd: |
+        objdump -d <file> | vi -c "set ft=asm"
+    - desc: "Display file header information of the ELF file"
+      cmd: |
+        objdump -f <file> | vi -c "set ft=asm"
+    - desc: "Display program headers and segment information using readelf"
+      cmd: |
+        readelf -l <file> | vi -c "set ft=asm"
+
+aws_configuration:
+    - desc: "기본 리전 설정 (설정 후에는 --region 생략 가능)"
+      cmd: |
+        aws configure set region ap-northeast-2
+    - desc: "설정된 프로필 확인"
+      cmd: |
+        aws configure list
+    - desc: "현재 IAM 자격 증명 확인"
+      cmd: |
+        aws sts get-caller-identity
+    - desc: "aws tui (powered by claws)"
+      cmd: |
+        aws-tui
+
+aws_ec2_read_manage:
+    - desc: "[조회] 실행 중인 인스턴스 목록 (ID, 이름, 상태, IP, 타입)"
+      cmd: |
+        aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" --query "Reservations[*].Instances[*].{ID:InstanceId,Name:Tags[?Key=='Name']|[0].Value,State:State.Name,IP:PublicIpAddress,Type:InstanceType}" --output table
+    - desc: "[조회] 사용 가능한 AMI 목록 (내 계정 소유)"
+      cmd: |
+        aws ec2 describe-images --owners self --query "Images[*].{ID:ImageId,Name:Name,Created:CreationDate}" --output table
+    - desc: "Ubuntu (Canonical) AMI"
+      cmd: |
+        aws ec2 describe-images --owners 099720109477 --output json
+    - desc: ""
+      cmd: |
+        aws ec2 describe-images --owners 099720109477 --output json | jq '.Images[] | select(.Description | contains("amd64"))'
+    - desc: "Amazon Linux AMI"
+      cmd: |
+        aws ec2 describe-images --owners amazon --output json
+    - desc: "instance type 조회"
+      cmd: |
+        aws ec2 describe-instance-types --output json
+    - desc: "instance type 주요 요소 조회 및 필터링"
+      cmd: |
+        aws ec2 describe-instance-types --output json | jq '.InstanceTypes[] | {InstanceType, CurrentGeneration, FreeTierEligible, ProcessorInfo, VCpuInfo, MemoryInfo, NetworkInfo} | select(.InstanceType | contains("t3."))'
+    - desc: "[관리] 인스턴스 시작/중지/재부팅"
+      cmd: |
+        aws ec2 start-instances --instance-ids <instance-id>
+    - desc: ""
+      cmd: |
+        aws ec2 stop-instances --instance-ids <instance-id>
+    - desc: ""
+      cmd: |
+        aws ec2 reboot-instances --instance-ids <instance-id>
+    - desc: ""
+      cmd: |
+        aws ec2 modify-instance-attribute --instance-id <instance-id> --instance-type <instance-type>
+    - desc: "[관리] 인스턴스 생성 (최소 설정)"
+      cmd: |
+        aws ec2 run-instances --image-id <ami-id> --count 1 --instance-type t2.micro --key-name <key-pair-name>
+    - desc: "[삭제] 인스턴스 종료 (삭제)"
+      cmd: |
+        aws ec2 terminate-instances --instance-ids <instance-id>
+    - desc: "인스턴스 태그 create/update"
+      cmd: |
+        aws ec2 create-tags --resources <instance-id> --tags Key=<tag-name>,Value=<tag-value>
+    - desc: "인스턴스 태그 delete"
+      cmd: |
+        aws ec2 delete-tags --resources <instance-id> --tags Key=<tag-name>
+    - desc: "[조회] EBS 볼륨 목록 (ID, 크기, 상태, 타입, 연결된 인스턴스)"
+      cmd: |
+        aws ec2 describe-volumes --query "Volumes[*].{ID:VolumeId,Size:Size,State:State,Type:VolumeType,InstanceId:Attachments[0].InstanceId}" --output table
+    - desc: "[조회] 특정 EBS 볼륨 상세 정보"
+      cmd: |
+        aws ec2 describe-volumes --volume-ids <volume-id>
+    - desc: "[관리] EBS 볼륨 생성 (예: 10GB gp3 타입, 특정 가용 영역)"
+      cmd: |
+        aws ec2 create-volume --size 10 --volume-type gp3 --availability-zone <availability-zone>
+    - desc: "[관리] EBS 볼륨 연결 (인스턴스에 /dev/sdf로 연결)"
+      cmd: |
+        aws ec2 attach-volume --volume-id <volume-id> --instance-id <instance-id> --device /dev/sdf
+    - desc: "[관리] EBS 볼륨 분리"
+      cmd: |
+        aws ec2 detach-volume --volume-id <volume-id>
+    - desc: "[관리] EBS 볼륨 크기 수정 (예: 20GB로 확장)"
+      cmd: |
+        aws ec2 modify-volume --volume-id <volume-id> --size 20
+    - desc: "[삭제] EBS 볼륨 삭제"
+      cmd: |
+        aws ec2 delete-volume --volume-id <volume-id>
+
+aws_key_pair_security_group:
+    - desc: "[조회] 키 페어 목록 (이름, 지문)"
+      cmd: |
+        aws ec2 describe-key-pairs --query "KeyPairs[*].{Name:KeyName,Fingerprint:KeyFingerprint}" --output table
+    - desc: "[관리] 키 페어 생성 (생성된 키는 파일로 저장해야 함)"
+      cmd: |
+        aws ec2 create-key-pair --key-name <new-key-name> --query "KeyMaterial" --output text > <new-key-name>.pem
+    - desc: "[삭제] 키 페어 삭제"
+      cmd: |
+        aws ec2 delete-key-pair --key-name <key-name>
+    - desc: "[조회] 보안 그룹 목록 (ID, 이름, 설명, VPC ID)"
+      cmd: |
+        aws ec2 describe-security-groups --query "SecurityGroups[*].{ID:GroupId,Name:GroupName,Desc:Description,VpcId:VpcId}" --output table
+    - desc: "[조회] 특정 보안 그룹의 인바운드 규칙 확인"
+      cmd: |
+        aws ec2 describe-security-groups --group-ids <sg-id> --query "SecurityGroups[*].IpPermissions"
+    - desc: "[관리] 보안 그룹 생성"
+      cmd: |
+        aws ec2 create-security-group --group-name <sg-name> --description "My security group"
+    - desc: "[관리] 인바운드 규칙 추가 (예: SSH 22번 포트 허용)"
+      cmd: |
+        aws ec2 authorize-security-group-ingress --group-id <sg-id> --protocol tcp --port 22 --cidr 0.0.0.0/0
+    - desc: "[삭제] 보안 그룹 삭제"
+      cmd: |
+        aws ec2 delete-security-group --group-id <sg-id>
+
+aws_lambda_read_manage:
+    - desc: "[조회] 함수 목록 확인 (이름, 런타임, 마지막 수정일)"
+      cmd: |
+        aws lambda list-functions --query "Functions[*].{Name:FunctionName,Runtime:Runtime,LastModified:LastModified}" --output table
+    - desc: "[조회] 특정 함수 상세 정보"
+      cmd: |
+        aws lambda get-function --function-name <function-name>
+    - desc: "[관리] 함수 실행 (결과는 response.json에 저장)"
+      cmd: |
+        aws lambda invoke --function-name <function-name> response.json
+    - desc: "[관리] 함수 코드 업데이트 (zip 파일 업로드)"
+      cmd: |
+        aws lambda update-function-code --function-name <function-name> --zip-file fileb://function.zip
+    - desc: "[삭제] 함수 삭제"
+      cmd: |
+        aws lambda delete-function --function-name <function-name>
+
+aws_s3_read_manage:
+    - desc: "[조회] 버킷 목록"
+      cmd: |
+        aws s3 ls
+    - desc: "[조회] 버킷 내용 확인"
+      cmd: |
+        aws s3 ls s3://<bucket-name> --recursive
+    - desc: "[조회] 버킷 메타데이터"
+      cmd: |
+        aws s3api head-bucket --bucket <bucket-name>
+    - desc: "[조회] 버킷 정책 확인"
+      cmd: |
+        aws s3api get-bucket-policy --bucket <bucket-name>
+    - desc: "[관리] 버킷 생성"
+      cmd: |
+        aws s3 mb s3://<new-bucket-name>
+    - desc: "[관리] 파일 업로드"
+      cmd: |
+        aws s3 cp <local-file> s3://<bucket-name>/
+    - desc: "[관리] 파일 다운로드"
+      cmd: |
+        aws s3 cp s3://<bucket-name>/<file> <local-path>
+    - desc: "[관리] 파일 동기화"
+      cmd: |
+        aws s3 sync <local-dir> s3://<bucket-name>/
+    - desc: "[삭제] 객체 삭제 및 버킷 삭제"
+      cmd: |
+        aws s3 rm s3://<bucket-name>/<file-path>
+    - desc: "[!주의! 강제 삭제] 파일이 있어도 버킷 통째로 삭제"
+      cmd: |
+        aws s3 rb s3://<bucket-name> --force
+
+ssm_connectivity:
+    - desc: "[접속] 로컬에서 특정 EC2로 SSM 세션 시작"
+      cmd: |
+        aws ssm start-session --target <instance-id>
+    - desc: "[관리] SSM 세션 강제 종료"
+      cmd: |
+        aws ssm terminate-session --session-id <session-id>
+    - desc: "[조회] 현재 활성화된 모든 SSM 세션 목록 확인 (누가 붙어있나?)"
+      cmd: |
+        aws ssm describe-sessions --state Active
+    - desc: "[관리] 특정 세션 ID를 지정하여 강제 종료"
+      cmd: |
+        aws ssm terminate-session --session-id <session-id>
+
+cloudwatch:
+    - desc: "[조회] 특정 로그 그룹 목록 확인"
+      cmd: |
+        aws logs describe-log-groups
+    - desc: "[조회] 실시간 로그 스트림 덤프"
+      cmd: |
+        aws logs tail /aws/rds/instance/<instance-name>/postgresql --follow
+
+systemd:
+    - desc: "서비스 상태 확인"
+      cmd: |
+        systemctl status <service-name>
+    - desc: "서비스 시작/중지/재시작"
+      cmd: |
+        sudo systemctl start <service-name>
+    - desc: "부팅 시 자동 시작 활성화"
+      cmd: |
+        sudo systemctl enable <service-name>
+    - desc: "서비스 로그 실시간 확인"
+      cmd: |
+        journalctl -u <service-name> -f
+    - desc: "부팅 이후 로그 확인"
+      cmd: |
+        journalctl -b
+    - desc: "디스크 사용량이 큰 저널 정리 (100MB 이하로)"
+      cmd: |
+        sudo journalctl --vacuum-size=100M
+    - desc: "실패한 서비스 목록"
+      cmd: |
+        systemctl --failed
+    - desc: "서비스 파일 위치 확인"
+      cmd: |
+        systemctl show -p FragmentPath <service-name>
+    - desc: "타이머 목록 (cron 대체)"
+      cmd: |
+        systemctl list-timers --all
+
+pacman:
+    - desc: "패키지 검색"
+      cmd: |
+        pacman -Ss <keyword>
+    - desc: "설치된 패키지 정보"
+      cmd: |
+        pacman -Qi <package>
+    - desc: "패키지가 설치한 파일 목록"
+      cmd: |
+        pacman -Ql <package>
+    - desc: "어떤 패키지가 이 파일을 소유하는지"
+      cmd: |
+        pacman -Qo <file-path>
+    - desc: "고아 패키지 제거 (의존성 없는 패키지)"
+      cmd: |
+        pacman -Rns $(pacman -Qdtq)
+    - desc: "패키지 캐시 정리 (최근 3버전만 유지)"
+      cmd: |
+        paccache -r
+    - desc: "명시적으로 설치한 패키지 목록"
+      cmd: |
+        pacman -Qe
+    - desc: "미러 리스트 갱신 (reflector)"
+      cmd: |
+        sudo reflector --country Korea,Japan --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+
+disk_fs:
+    - desc: "디스크 사용량 요약"
+      cmd: |
+        df -h
+    - desc: "현재 디렉토리 용량 (상위 10개)"
+      cmd: |
+        du -sh * | sort -rh | head -10
+    - desc: "대용량 파일 찾기 (100MB 이상)"
+      cmd: |
+        find / -xdev -type f -size +100M 2>/dev/null | head -20
+    - desc: "디스크 I/O 모니터링"
+      cmd: |
+        iostat -x 1
+    - desc: "마운트된 파일시스템 목록"
+      cmd: |
+        findmnt --real
+    - desc: "SMART 디스크 상태 확인"
+      cmd: |
+        sudo smartctl -a /dev/<disk>
+
+process:
+    - desc: "CPU 사용률 상위 프로세스"
+      cmd: |
+        ps aux --sort=-%cpu | head -15
+    - desc: "메모리 사용률 상위 프로세스"
+      cmd: |
+        ps aux --sort=-%mem | head -15
+    - desc: "특정 포트를 사용하는 프로세스 확인"
+      cmd: |
+        ss -tlnp | grep <port>
+    - desc: "프로세스 트리 (특정 PID)"
+      cmd: |
+        pstree -p <pid>
+    - desc: "프로세스의 열린 파일 목록"
+      cmd: |
+        lsof -p <pid>
+    - desc: "좀비 프로세스 찾기"
+      cmd: |
+        ps aux | awk '$8=="Z"'
+
+text_processing:
+    - desc: "CSV 특정 열만 추출 (1,3번째)"
+      cmd: |
+        awk -F',' '{print $1, $3}' <file.csv>
+    - desc: "중복 줄 제거 (정렬 없이)"
+      cmd: |
+        awk '!seen[$0]++' <file>
+    - desc: "파일 간 diff를 컬러로 보기"
+      cmd: |
+        diff --color=always <file1> <file2> | less -R
+    - desc: "JSON pretty print"
+      cmd: |
+        cat <file.json> | jq '.'
+    - desc: "특정 패턴 사이의 텍스트 추출"
+      cmd: |
+        sed -n '/START/,/END/p' <file>
+    - desc: "탭을 공백 4개로 변환"
+      cmd: |
+        expand -t 4 <file> > <output>
+
+encryption:
+    - desc: "파일 암호화 (gpg, 대칭키)"
+      cmd: |
+        gpg -c <file>
+    - desc: "파일 복호화"
+      cmd: |
+        gpg -d <file.gpg> > <output>
+    - desc: "파일 SHA256 체크섬"
+      cmd: |
+        sha256sum <file>
+    - desc: "SSH 공개키 지문 확인"
+      cmd: |
+        ssh-keygen -lf ~/.ssh/id_rsa.pub
