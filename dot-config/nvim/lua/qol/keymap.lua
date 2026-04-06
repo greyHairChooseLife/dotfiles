@@ -301,3 +301,8 @@ vim.keymap.set("n", "dmg", function()
     vim.cmd("wshada!")
     vim.notify("Global marks A-Z deleted", vim.log.levels.INFO)
 end, { desc = "Delete all global marks A-Z" })
+
+vim.keymap.set("n", "gx", function()
+    local url = vim.fn.expand("<cfile>")
+    vim.ui.open(url, { cmd = { "brave", "--new-window" } })
+end, { desc = "Open URL in new Brave window" })
