@@ -60,6 +60,7 @@ zstyle ':fzf-tab:*' continuous-trigger '/'
 unsetopt nomatch
 setopt auto_cd
 setopt hist_ignore_dups
+setopt hist_ignore_space
 
 export PATH="$HOME/.local/bin:$PATH"
 export DISABLE_AUTO_TITLE='true' # tmuxp asks it.

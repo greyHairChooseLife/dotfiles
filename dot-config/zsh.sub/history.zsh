@@ -25,7 +25,7 @@ save_successful_history() {
     local exit_code=$?
     if [[ $exit_code -ne 127 ]]; then
         local last_cmd=$(fc -ln -1 | sed 's/^[[:space:]]*//')
-        if [[ -n "$last_cmd" ]]; then
+        if [[ -n "$last_cmd" ]] && [[ "$last_cmd" != "hi" ]] && [[ "$last_cmd" != "hip" ]]; then
             local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
             printf '%s\t%s\t%s\n' "$timestamp" "$(pwd)" "$last_cmd" >> ~/.zsh_history_dir/pid_$$
         fi
@@ -89,7 +89,8 @@ per_process_history() {
     local pwd_escaped=$(printf ' %s ' "'${PWD}")
     local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
 
-    eval "$(
+    local selected
+    selected=$(
         get_full_field_list_per_process ${pid} \
             | fzf \
                 --tac \
@@ -105,8 +106,19 @@ per_process_history() {
                 --bind "alt-4:reload(get_full_field_list_per_process_no_path ${pid})" \
                 --bind "alt-d:execute(delete_history_entry ${pid} {})+reload(get_full_field_list_per_process ${pid})" \
             | awk -F'\t' '{print $2}'
-    )"
+    )
+    if [[ -n "$selected" ]]; then
+        if zle; then
+            BUFFER="$selected"
+            CURSOR=${#BUFFER}
+            zle reset-prompt
+        else
+            print -s -- "$selected"
+            eval "$selected"
+        fi
+    fi
 }
+zle -N per_process_history
 
 # Global history function
 get_full_field_list_global() {
@@ -125,7 +137,8 @@ global_history() {
     local pwd_escaped=$(printf ' %s ' "'${PWD}")
     local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
 
-    eval "$(
+    local selected
+    selected=$(
         get_full_field_list_global \
             | fzf \
                 --tac \
@@ -141,8 +154,19 @@ global_history() {
                 --bind "alt-4:reload(get_full_field_list_global_no_path)" \
                 --bind "alt-d:execute(delete_history_entry_global {})+reload(get_full_field_list_global)" \
             | awk -F'\t' '{print $2}'
-    )"
+    )
+    if [[ -n "$selected" ]]; then
+        if zle; then
+            BUFFER="$selected"
+            CURSOR=${#BUFFER}
+            zle reset-prompt
+        else
+            print -s -- "$selected"
+            eval "$selected"
+        fi
+    fi
 }
+zle -N global_history
 
 # LRU cleanup: keep total history lines under MAX_HISTORY_LINES
 MAX_HISTORY_LINES=50000
@@ -205,5 +229,5 @@ cleanup_history_lru() {
 ) 9>"$HOME/.zsh_history_dir/.cleanup.lock" > /dev/null 2>&1 &!
 
 # Command aliases
-alias hip='per_process_history'      # Current process history
-alias hi='global_history'     # Global history across all processes
+alias hip=' per_process_history'      # Current process history
+alias hi=' global_history'     # Global history across all processes
