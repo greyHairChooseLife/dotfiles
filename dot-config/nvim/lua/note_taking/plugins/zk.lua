@@ -112,10 +112,47 @@ return {
                 if path:sub(1, #notebook) ~= notebook then return end
                 local rel = path:sub(#notebook + 2)
                 if rel:match("^docs/") then return end
+
+                -- 디스크 파일과 버퍼를 비교해 실제 변경이 있는지 확인
+                local disk_lines = {}
+                local f = io.open(path, "r")
+                if f then
+                    for line in f:lines() do disk_lines[#disk_lines + 1] = line end
+                    f:close()
+                end
+                local buf_lines = vim.api.nvim_buf_get_lines(ev.buf, 0, -1, false)
+
+                -- updated 라인을 제외하고 비교
+                local function strip_updated(ls)
+                    local result = {}
+                    local in_fm, done = false, false
+                    for _, line in ipairs(ls) do
+                        if not done and line == "---" then
+                            if not in_fm then in_fm = true
+                            else done = true end
+                            result[#result + 1] = line
+                        elseif in_fm and not done and line:match("^updated:%s*") then
+                            -- skip
+                        else
+                            result[#result + 1] = line
+                        end
+                    end
+                    return result
+                end
+
+                local disk_stripped = strip_updated(disk_lines)
+                local buf_stripped = strip_updated(buf_lines)
+                if #disk_stripped == #buf_stripped then
+                    local changed = false
+                    for i = 1, #disk_stripped do
+                        if disk_stripped[i] ~= buf_stripped[i] then changed = true; break end
+                    end
+                    if not changed then return end
+                end
+
                 local today = os.date("%Y-%m-%d")
-                local lines = vim.api.nvim_buf_get_lines(ev.buf, 0, -1, false)
                 local in_fm = false
-                for i, line in ipairs(lines) do
+                for i, line in ipairs(buf_lines) do
                     if line == "---" then
                         if not in_fm then
                             in_fm = true
