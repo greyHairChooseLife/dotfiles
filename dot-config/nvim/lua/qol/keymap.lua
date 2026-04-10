@@ -306,3 +306,6 @@ vim.keymap.set("n", "gx", function()
     local url = vim.fn.expand("<cfile>")
     vim.ui.open(url, { cmd = { "brave", "--new-window" } })
 end, { desc = "Open URL in new Brave window" })
+
+-- MEMO:: Undo tree
+wk_map({ ["<Space>"] = { ["U"] = { "<cmd>Atone<CR>", desc = "Undotree", mode = "n" } } })
