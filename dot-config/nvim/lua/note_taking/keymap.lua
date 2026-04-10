@@ -138,7 +138,8 @@ local function zk_new_note(is_visual)
     end
     local area_items = {}
     for _, a in ipairs(meta_areas) do
-        area_items[#area_items + 1] = a
+        -- it won't be created manually
+        if a ~= "taskwarrior" then area_items[#area_items + 1] = a end
     end
     area_items[#area_items + 1] = "+ New area..."
 
