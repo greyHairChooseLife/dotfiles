@@ -701,6 +701,12 @@ M.create_floating_window = function(content, filetype, width, height, row, col)
     return win, buf
 end
 
+--- Print a transient message (no history, no notify popup)
+---@param msg string
+M.echo = function(msg)
+    vim.api.nvim_echo({ { msg, "None" } }, false, {})
+end
+
 M.get_valid_rev = function(rev)
     -- Check if the provided rev is valid
     local result = vim.fn.system({ "git", "rev-parse", "--verify", rev })

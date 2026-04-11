@@ -416,6 +416,8 @@ local function feedjump(count, direction)
     vim.api.nvim_feedkeys(resolved, "n", false)
 end
 
+local echo = function(msg) require("utils").echo(msg) end
+
 -- Jump through jumplist, skipping entries in the same buffer (cross-buffer only)
 function M.jumplist_cross_buffer(direction)
     local jumplist, current_idx = unpack(vim.fn.getjumplist())
@@ -431,7 +433,7 @@ function M.jumplist_cross_buffer(direction)
         end
         target_idx = target_idx + step
     end
-    vim.notify("No cross-buffer jump entry found", vim.log.levels.INFO)
+    echo(direction == "prev" and "jumplist: no older cross-buffer entry" or "jumplist: no newer cross-buffer entry")
 end
 
 -- Jump through jumplist, staying within contiguous same-buffer segment.
@@ -443,12 +445,12 @@ function M.jumplist_same_buffer(direction)
     local target_idx = current_idx + step
 
     if target_idx < 0 or target_idx >= #jumplist then
-        vim.notify("No same-buffer jump entry found", vim.log.levels.INFO)
+        echo(direction == "prev" and "jumplist: no older entry" or "jumplist: no newer entry")
         return
     end
 
     if jumplist[target_idx + 1].bufnr ~= current_buf then
-        vim.notify("Blocked by a different buffer entry", vim.log.levels.INFO)
+        echo(direction == "prev" and "jumplist: no older entry in this buffer" or "jumplist: no newer entry in this buffer")
         return
     end
 
