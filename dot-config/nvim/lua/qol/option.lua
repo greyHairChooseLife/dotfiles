@@ -12,7 +12,7 @@ opt.termguicolors = true
 opt.modeline = false
 opt.mouse = ""
 opt.clipboard = "unnamedplus"
-opt.undofile = true -- Maintain undo history between sessions
+opt.undofile = false -- Maintain undo history between sessions
 opt.swapfile = false
 
 -- UI settings
