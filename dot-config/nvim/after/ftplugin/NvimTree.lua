@@ -1,6 +1,5 @@
 -- load resource
 local map = vim.keymap.set
-local api = require("nvim-tree.api")
 local opts = { buffer = true, silent = true }
 local utils = require("utils")
 
@@ -55,10 +54,12 @@ map({ "n", "v" }, "i", function()
     local util = require("oil.util")
     local node = require("nvim-tree.api").tree.get_node_under_cursor()
 
+    if not node then return end
+
     utils.close_FT_buffers("oil") -- 기존 oil 버퍼는 닫는다.
 
-    path = vim.fn.fnamemodify(node.absolute_path, ":h")
-    name = node.name
+    local path = vim.fn.fnamemodify(node.absolute_path, ":h")
+    local name = node.name
     -- oil을 열고
     vim.cmd("vsplit")
     oil.open(path)
@@ -68,8 +69,13 @@ map({ "n", "v" }, "i", function()
         vim.cmd("normal ggO") -- oil 버퍼의 첫 줄로 이동, 한 줄 띄우고
         -- 그 자리에 가상 텍스트로 현재 oil path를 표시한다.
         local buf = vim.api.nvim_get_current_buf()
-        modified_path = string.gsub(path, "^/home/sy", "~")
-        vim.api.nvim_buf_set_virtual_text(buf, 0, 0, { { modified_path .. "/..", "NvimTreeRootFolder" } }, {})
+        local modified_path = string.gsub(path, "^/home/sy", "~")
+        -- vim.api.nvim_buf_set_virtual_text(buf, 0, 0, { { modified_path .. "/..", "NvimTreeRootFolder" } }, {})
+
+        vim.api.nvim_buf_set_extmark(buf, vim.api.nvim_create_namespace("nvimtree_virtual_text"), 0, 0, {
+            virt_text = { { modified_path .. "/..", "NvimTreeRootFolder" } },
+            virt_text_pos = "overlay",
+        })
         -- nvim-tree에서 포커싱된 노드로 커서 이동
         vim.fn.search(name)
     end)
