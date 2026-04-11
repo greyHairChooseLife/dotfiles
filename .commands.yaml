@@ -128,7 +128,7 @@ appendix:
         | awk '{print $3}'
     - desc: ""
       cmd: |
-        | sed -i 's/old-string/new-string/g'
+        | sed -i 's/old-string/new-string/g' <file path>
     - desc: "Delete the 2nd line:"
       cmd: |
         | sed '2d'
@@ -154,7 +154,7 @@ misc:
         rg -v "^test" file.txt
     - desc: "Print the 9th column of a command's output (useful for `ls -l`)"
       cmd: |
-        sed -i 's/old-string/new-string/g' filename.txt
+        sed -i 's/old-string/new-string/g' <file path>
     - desc: ""
       cmd: |
         ls -l | awk '{print $3}'

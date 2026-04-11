@@ -47,6 +47,14 @@ map({ "n", "v" }, "<A-Enter><Space>", function()
 
     if is_tree_visible then utils.tree:open() end
 end)
+map({ "n", "v" }, "<A-Enter><A-Space>", function()
+    local utils = require("utils")
+    local is_tree_visible = utils.tree:is_visible()
+
+    CloseOtherBuffersInCurrentTab()
+
+    if is_tree_visible then utils.tree:open() end
+end)
 map({ "n", "v" }, "<A-Enter><A-Enter>", function()
     -- it will not close nvim-tree
     Close_all_hidden_buffers()
