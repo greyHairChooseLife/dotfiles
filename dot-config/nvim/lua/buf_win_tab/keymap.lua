@@ -15,9 +15,13 @@ map("n", "g<Tab>", BufferNextDropLast)
 -- <C-i>와 <Tab>은 터미널에서 동일한 키코드(0x09)이므로,
 -- alacritty에서 <C-i>를 CSI u 시퀀스(\x1b[105;5u)로 보내도록 설정한다.
 -- 이렇게 하면 neovim이 <Tab>과 <C-i>를 구분하여:
---   <Tab>  = buffer navigation (위에 매핑됨)
---   <C-i>  = jumplist forward (아래 noremap으로 원래 기능 유지)
-map("n", "<C-i>", "<C-i>", opt)
+--   <Tab>    = buffer navigation (위에 매핑됨)
+--   <C-o/i>  = jumplist (same-buffer segment only)
+--   <C-A-o/i> = jumplist (cross-buffer only, skips same-buffer entries)
+map("n", "<C-o>", function() JumplistSameBuffer("prev") end, opt)
+map("n", "<C-i>", function() JumplistSameBuffer("next") end, opt)
+map("n", "<C-A-o>", function() JumplistCrossBuffer("prev") end, opt)
+map("n", "<C-A-i>", function() JumplistCrossBuffer("next") end, opt)
 
 -- Quit
 map({ "n", "i" }, "<leader>Q", "<cmd>qa!<CR>")

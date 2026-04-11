@@ -410,6 +410,51 @@ function M.open_float_window(opts)
     return win, buf
 end
 
+local function feedjump(count, direction)
+    local key = direction == "prev" and "<C-o>" or "<C-i>"
+    local resolved = vim.api.nvim_replace_termcodes(count .. key, true, false, true)
+    vim.api.nvim_feedkeys(resolved, "n", false)
+end
+
+-- Jump through jumplist, skipping entries in the same buffer (cross-buffer only)
+function M.jumplist_cross_buffer(direction)
+    local jumplist, current_idx = unpack(vim.fn.getjumplist())
+    local current_buf = vim.api.nvim_get_current_buf()
+    local step = direction == "prev" and -1 or 1
+    local target_idx = current_idx + step -- getjumplist current_idx is 0-based
+
+    while target_idx >= 0 and target_idx < #jumplist do
+        local entry = jumplist[target_idx + 1] -- lua is 1-based
+        if entry.bufnr ~= current_buf then
+            feedjump(math.abs(target_idx - current_idx), direction)
+            return
+        end
+        target_idx = target_idx + step
+    end
+    vim.notify("No cross-buffer jump entry found", vim.log.levels.INFO)
+end
+
+-- Jump through jumplist, staying within contiguous same-buffer segment.
+-- A "segment" is broken by any entry from a different buffer.
+function M.jumplist_same_buffer(direction)
+    local jumplist, current_idx = unpack(vim.fn.getjumplist())
+    local current_buf = vim.api.nvim_get_current_buf()
+    local step = direction == "prev" and -1 or 1
+    local target_idx = current_idx + step
+
+    if target_idx < 0 or target_idx >= #jumplist then
+        vim.notify("No same-buffer jump entry found", vim.log.levels.INFO)
+        return
+    end
+
+    if jumplist[target_idx + 1].bufnr ~= current_buf then
+        vim.notify("Blocked by a different buffer entry", vim.log.levels.INFO)
+        return
+    end
+
+    feedjump(1, direction)
+end
+
 function M.close_all_hidden_buffers()
     local listed_buffers = vim.fn.getbufinfo({ buflisted = 1 })
     local visible_buffers = {}
@@ -445,5 +490,7 @@ SplitTabModifyTabname = M.split_tab_modify_tabname
 MoveTabModifyTabname = M.move_tab_modify_tabname
 OpenFloatWindow = M.open_float_window
 Close_all_hidden_buffers = M.close_all_hidden_buffers
+JumplistCrossBuffer = M.jumplist_cross_buffer
+JumplistSameBuffer = M.jumplist_same_buffer
 
 return M
