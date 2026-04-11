@@ -20,9 +20,7 @@ vim.api.nvim_create_autocmd("WinEnter", {
             -- buffer-local gq 키맵을 설정하면 Focus 종료 후에도 남아서 gq가 오동작함
             local is_focus = pcall(require, "focus") and require("focus.views.focus").is_open() and require("focus.views.focus").win == win
             -- 플로팅 윈도우에만 적용할 키맵 설정 (focus.nvim 윈도우 제외)
-            if vim.bo.filetype ~= "VoltWindow" and not is_focus then
-                vim.keymap.set({ "n", "v" }, "gq", "<cmd>quit<CR>", { buffer = true, silent = true })
-            end
+            if vim.bo.filetype ~= "VoltWindow" and not is_focus then vim.keymap.set({ "n", "v" }, "gq", "<cmd>quit<CR>", { buffer = true, silent = true }) end
         else
             -- 플로팅 윈도우가 아닌 윈도우에 진입할 때, buffer-local gq 키맵이 남아있으면 제거
             pcall(vim.keymap.del, { "n", "v" }, "gq", { buffer = true })
@@ -252,6 +250,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     callback = function()
         pcall(vim.keymap.del, "i", "<C-G>s")
         pcall(vim.keymap.del, "i", "<C-G>S")
+        vim.cmd("clearjumps") -- neovim 시작 시 jumplist 초기화
     end,
 })
 
