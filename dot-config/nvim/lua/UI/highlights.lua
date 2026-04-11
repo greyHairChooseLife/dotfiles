@@ -408,6 +408,10 @@ vim.cmd([[
   highlight DebugBreakPointRejectedText guifg=#9932cc guibg=NONE
   highlight DebugStoppedText guifg=#32CD32 guibg=NONE
   highlight DebugStoppedLine guifg=NONE guibg=#000000
+
+  " MEMO:: Atone(undotree)
+  highlight AtoneCurrentNode guifg=#32CD32 gui=NONE
+
 ]])
 
 --
