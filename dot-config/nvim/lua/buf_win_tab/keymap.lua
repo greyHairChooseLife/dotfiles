@@ -95,12 +95,12 @@ map("n", "<A-S-Up>", "<cmd>horizontal resize +8<CR>", {})
 -- New / Rename / Swap Position
 map("n", "<A-t>", NewTabWithPrompt)
 map("n", "<A-r>", RenameCurrentTab)
-map("n", "<A-S-p>", MoveTabRight)
-map("n", "<A-S-o>", MoveTabLeft)
+map("n", "<A-}>", MoveTabRight)
+map("n", "<A-{>", MoveTabLeft)
 
 -- Navigaion
-map("n", "<A-p>", "<cmd>tabnext<CR>")
-map("n", "<A-o>", "gT")
+map("n", "<A-]>", "<cmd>tabnext<CR>")
+map("n", "<A-[>", "gT")
 map("n", "<A-1>", "1gt")
 map("n", "<A-2>", "2gt")
 map("n", "<A-3>", "3gt")
