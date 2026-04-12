@@ -23,12 +23,32 @@ return {
         nested = false,
         on = {
             -- Called when plugin initially attaches to a buffer.
-            attach = function() end,
+            attach = function()
+                -- view.lua의 패딩(10)을 늘려서 큰 점프 후 재파싱 최소화
+                local ok, View = pcall(require, "render-markdown.request.view")
+                if ok and not View._patched then
+                    local orig_new = View.new
+                    View.new = function(buf)
+                        local self = orig_new(buf)
+                        -- 패딩을 200줄로 확장 (원본: 10)
+                        local env = require("render-markdown.lib.env")
+                        local interval = require("render-markdown.lib.interval")
+                        local ranges = {}
+                        for _, win in ipairs(env.buf.wins(buf)) do
+                            ranges[#ranges + 1] = env.range(buf, win, 200)
+                        end
+                        self.ranges = interval.coalesce(ranges)
+                        return self
+                    end
+                    View._patched = true
+                end
+            end,
             -- Called after plugin renders a buffer.
             render = function() end,
             -- Called after plugin clears a buffer.
             clear = function() end,
         },
+        completions = { lsp = { enabled = false } },
         acknowledge_conflicts = false,
         anti_conceal = {
             -- This enables hiding any added text on the line the cursor is on
