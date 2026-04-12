@@ -87,9 +87,18 @@ return {
             local missing = vim.tbl_filter(function(lang) return not installed_set[lang] end, ensure_installed)
             if #missing > 0 then ts.install(missing) end
 
+            -- exclude auto parser installing
+            local excluded_filetypes = { "oil", "env" }
+
             vim.api.nvim_create_autocmd("FileType", {
                 callback = function(ev)
                     if vim.bo[ev.buf].buftype ~= "" then return end
+
+                    local ft = vim.bo[ev.buf].filetype
+                    for _, ex in ipairs(excluded_filetypes) do
+                        if ft == ex then return end
+                    end
+
                     -- auto_install: 목록 외 파서도 파일 열 때 자동 설치
                     local lang = vim.treesitter.language.get_lang(vim.bo[ev.buf].filetype)
                     if lang and not vim.list_contains(ts.get_installed(), lang) then ts.install({ lang }) end
