@@ -11,6 +11,10 @@ cwd=$(echo "$input" | jq -r '.workspace.current_dir')
 transcript_path=$(echo "$input" | jq -r '.transcript_path // ""')
 ctx_used=$(echo "$input" | jq -r '.context_window.used_percentage // ""')
 ctx_remaining=$(echo "$input" | jq -r '.context_window.remaining_percentage // ""')
+rate_5h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // ""')
+rate_5h_reset=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // ""')
+rate_7d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // ""')
+rate_7d_reset=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // ""')
 
 # ── ANSI Colors ──
 C_RESET="\033[0m"
@@ -30,10 +34,6 @@ GIT_SYM_STAGED="+"     # staged files
 GIT_SYM_MODIFIED="!"   # modified (unstaged) files
 GIT_SYM_UNTRACKED="?"  # untracked files
 GIT_SYM_CONFLICT="~"   # conflicted files
-
-# ── Usage API Cache ──
-USAGE_CACHE="$HOME/.claude/.statusline-usage-cache.json"
-USAGE_CACHE_TTL=180
 
 PATH_TRUNCATE_LEFT=40
 
@@ -72,39 +72,6 @@ get_ctx_color() {
     fi
 }
 
-# ── Helper: usage quota bar (10 chars) ──
-quota_bar() {
-    local percent=${1:-0}
-    local width=10
-    local filled=$(((percent * width) / 100))
-    local empty=$((width - filled))
-    local color
-    if [ "$percent" -ge 90 ] 2> /dev/null; then
-        color="$C_RED"
-    elif [ "$percent" -ge 75 ] 2> /dev/null; then
-        color="$C_MAGENTA"
-    else
-        color="$C_BLUE"
-    fi
-    local bar=""
-    for ((i = 0; i < filled; i++)); do bar+="█"; done
-    local ebar=""
-    for ((i = 0; i < empty; i++)); do ebar+="░"; done
-    echo "${color}${bar}${C_DIM}${ebar}${C_RESET}"
-}
-
-# ── Helper: usage percent color ──
-get_usage_pct_color() {
-    local percent=${1:-0}
-    if [ "$percent" -ge 90 ] 2> /dev/null; then
-        echo "$C_RED"
-    elif [ "$percent" -ge 75 ] 2> /dev/null; then
-        echo "$C_MAGENTA"
-    else
-        echo "$C_BLUE"
-    fi
-}
-
 # ── Get plan name from credentials ──
 get_plan_name() {
     local sub_type=""
@@ -130,83 +97,21 @@ get_plan_name() {
     esac
 }
 
-# ── Refresh usage cache in background ──
-refresh_usage_cache() {
-    local token=""
-    if [ "$KERNEL_TYPE" = "Darwin" ]; then
-        local creds
-        creds=$(/usr/bin/security find-generic-password -s "Claude Code-credentials" -a "$USER" -w 2> /dev/null)
-        if [ -n "$creds" ]; then
-            token=$(echo "$creds" | jq -r '.claudeAiOauth.accessToken // ""' 2> /dev/null)
-        fi
-    else
-        local creds_file="$HOME/.claude/.credentials.json"
-        if [ -f "$creds_file" ]; then
-            token=$(jq -r '.claudeAiOauth.accessToken // ""' "$creds_file" 2> /dev/null)
-        fi
-    fi
-    [ -z "$token" ] && return
-
-    # Get current Claude Code version
-    local cc_version
-    cc_version=$(claude --version 2> /dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-    [ -z "$cc_version" ] && cc_version="2.1.74"
-
-    local response
-    response=$(curl -s --max-time 5 \
-        -H "Authorization: Bearer $token" \
-        -H "Content-Type: application/json" \
-        -H "anthropic-beta: oauth-2025-04-20" \
-        -H "User-Agent: claude-code/${cc_version}" \
-        "https://api.anthropic.com/api/oauth/usage" 2> /dev/null)
-    [ -z "$response" ] && return
-
-    # Check for API error (e.g., token expired, rate limited)
-    local api_error
-    api_error=$(echo "$response" | jq -r '.error.type // ""' 2> /dev/null)
-    if [ -n "$api_error" ]; then
-        # Write a stub cache so we don't hammer the API on every call
-        local now parsed_at
-        now=$(date +%s)
-        parsed_at=$(date "+%Y-%m-%d %H:%M:%S")
-        cat > "$USAGE_CACHE" << EOCACHE
-{"five_hour":null,"seven_day":null,"five_reset":"null","seven_reset":"null","timestamp":$now,"parsed_at":"$parsed_at"}
-EOCACHE
-        return
-    fi
-
-    local five_hour seven_day five_reset seven_reset
-    five_hour=$(echo "$response" | jq -r '.five_hour.utilization // "null"' 2> /dev/null)
-    seven_day=$(echo "$response" | jq -r '.seven_day.utilization // "null"' 2> /dev/null)
-    five_reset=$(echo "$response" | jq -r '.five_hour.resets_at // "null"' 2> /dev/null)
-    seven_reset=$(echo "$response" | jq -r '.seven_day.resets_at // "null"' 2> /dev/null)
-    local now parsed_at
+# ── Helper: format epoch reset time as relative duration ──
+format_epoch_reset() {
+    local reset_epoch="$1"
+    [ -z "$reset_epoch" ] || [ "$reset_epoch" = "null" ] && return
+    local now diff_s
     now=$(date +%s)
-    parsed_at=$(date "+%Y-%m-%d %H:%M:%S")
-
-    cat > "$USAGE_CACHE" << EOCACHE
-{"five_hour":$five_hour,"seven_day":$seven_day,"five_reset":"$five_reset","seven_reset":"$seven_reset","timestamp":$now,"parsed_at":"$parsed_at"}
-EOCACHE
-}
-
-# ── Read usage from cache, trigger background refresh if stale ──
-get_usage_data() {
-    local now
-    now=$(date +%s)
-    if [ -f "$USAGE_CACHE" ]; then
-        local cache_ts
-        cache_ts=$(jq -r '.timestamp // 0' "$USAGE_CACHE" 2> /dev/null)
-        local age=$((now - cache_ts))
-        if [ "$age" -ge "$USAGE_CACHE_TTL" ]; then
-            refresh_usage_cache &
-        fi
-        cat "$USAGE_CACHE"
+    diff_s=$((reset_epoch - now))
+    [ "$diff_s" -le 0 ] && return
+    local diff_m=$(((diff_s + 59) / 60))
+    if [ "$diff_m" -lt 60 ]; then
+        echo "${diff_m}m"
     else
-        # First run: synchronous fetch (one-time cost)
-        refresh_usage_cache
-        if [ -f "$USAGE_CACHE" ]; then
-            cat "$USAGE_CACHE"
-        fi
+        local h=$((diff_m / 60))
+        local m=$((diff_m % 60))
+        [ "$m" -gt 0 ] && echo "${h}h ${m}m" || echo "${h}h"
     fi
 }
 
@@ -256,23 +161,6 @@ format_reset_time() {
             echo "${h}h"
         fi
     fi
-}
-
-# ── Format 7d reset as "Mon 11:00, 2h left" ──
-format_seven_reset() {
-    local reset_str="$1"
-    [ "$reset_str" = "null" ] || [ -z "$reset_str" ] && return
-    local now reset_epoch diff_s
-    now=$(date +%s)
-    reset_epoch=$(parse_iso_to_epoch "$reset_str")
-    [ -z "$reset_epoch" ] && return
-    diff_s=$((reset_epoch - now))
-    [ "$diff_s" -le 0 ] && return
-    local day_time
-    day_time=$(date -d "@${reset_epoch}" "+%a %H:%M" 2>/dev/null \
-        || date -r "$reset_epoch" "+%a %H:%M" 2>/dev/null)
-    local h=$(( diff_s / 3600 ))
-    echo "${day_time}, ${h}h left"
 }
 
 # ── Calculate session duration from transcript ──
@@ -401,21 +289,6 @@ if [ -n "$mem_info" ]; then
     mem_mb="${mem_info##*:}"
 fi
 
-# Usage API data
-usage_json=$(get_usage_data)
-five_hour=""
-five_reset_display=""
-seven_day=""
-seven_reset_display=""
-if [ -n "$usage_json" ]; then
-    five_hour=$(echo "$usage_json" | jq -r '.five_hour // ""' 2> /dev/null)
-    five_reset_raw=$(echo "$usage_json" | jq -r '.five_reset // "null"' 2> /dev/null)
-    five_reset_display=$(format_reset_time "$five_reset_raw")
-    seven_day=$(echo "$usage_json" | jq -r '.seven_day // ""' 2> /dev/null)
-    seven_reset_raw=$(echo "$usage_json" | jq -r '.seven_reset // "null"' 2> /dev/null)
-    seven_reset_display=$(format_seven_reset "$seven_reset_raw")
-fi
-
 # Session duration
 session_dur=$(get_session_duration)
 
@@ -464,31 +337,40 @@ fi
 line2=""
 line2_parts=()
 
-# 5-hour usage + 7-day usage combined: <5h>% (<remain>) | <7d>% (<remain>)
-# 5-hour usage
-if [ -n "$five_hour" ] && [ "$five_hour" != "null" ] && [ "$five_hour" != "" ]; then
-    five_int=$(printf "%.0f" "$five_hour" 2> /dev/null)
-    qcolor="$C_PATH"
-    five_display="${qcolor}${five_int}%${C_RESET}"
-    if [ -n "$five_reset_display" ]; then
-        five_display+=" ${C_GRAY}(${five_reset_display})${C_RESET}"
+# 5-hour rate limit
+if [ -n "$rate_5h" ] && [ "$rate_5h" != "null" ]; then
+    five_int=$(printf "%.0f" "$rate_5h" 2> /dev/null)
+    if [ "$five_int" -ge 90 ] 2> /dev/null; then
+        rcolor="$C_RED"
+    elif [ "$five_int" -ge 75 ] 2> /dev/null; then
+        rcolor="$C_YELLOW"
+    else
+        rcolor="$C_PATH"
     fi
+    five_display="5h ${rcolor}${five_int}%${C_RESET}"
+    five_reset_str=$(format_epoch_reset "$rate_5h_reset")
+    [ -n "$five_reset_str" ] && five_display+=" ${C_GRAY}(${five_reset_str})${C_RESET}"
     line2_parts+=("$five_display")
 else
-    line2_parts+=("${C_GRAY}?${C_RESET}")
+    line2_parts+=("${C_GRAY}5h -${C_RESET}")
 fi
 
-# 7-day usage
-if [ -n "$seven_day" ] && [ "$seven_day" != "null" ] && [ "$seven_day" != "" ]; then
-    seven_int=$(printf "%.0f" "$seven_day" 2> /dev/null)
-    scolor="$C_PATH"
-    seven_display="${scolor}${seven_int}%${C_RESET}"
-    if [ -n "$seven_reset_display" ]; then
-        seven_display+=" ${C_GRAY}(${seven_reset_display})${C_RESET}"
+# 7-day rate limit
+if [ -n "$rate_7d" ] && [ "$rate_7d" != "null" ]; then
+    seven_int=$(printf "%.0f" "$rate_7d" 2> /dev/null)
+    if [ "$seven_int" -ge 90 ] 2> /dev/null; then
+        rcolor="$C_RED"
+    elif [ "$seven_int" -ge 75 ] 2> /dev/null; then
+        rcolor="$C_YELLOW"
+    else
+        rcolor="$C_PATH"
     fi
+    seven_display="7d ${rcolor}${seven_int}%${C_RESET}"
+    seven_reset_str=$(format_epoch_reset "$rate_7d_reset")
+    [ -n "$seven_reset_str" ] && seven_display+=" ${C_GRAY}(${seven_reset_str})${C_RESET}"
     line2_parts+=("$seven_display")
 else
-    line2_parts+=("${C_GRAY}?${C_RESET}")
+    line2_parts+=("${C_GRAY}7d -${C_RESET}")
 fi
 
 # Context bar + remaining % (always show; default to 0% used / 100% remaining if no messages yet)
