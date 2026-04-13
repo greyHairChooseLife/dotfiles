@@ -59,8 +59,8 @@ bindkey '^[^L' _clear_screen_and_scrollback_widget  # Alt+Ctrl+L
 bindkey '^O' _edit_and_return_command_widget  # 커스텀 커맨드
 bindkey '^[^O' _a_widget  # 커스텀 커맨드
 
-bindkey '^K' _fzf_find_file_unified_widget
-bindkey '^[^K' _smart_grep_widget
+# bindkey '^K' _fzf_find_file_unified_widget
+# bindkey '^[^K' _smart_grep_widget
 # bindkey '^J' _fzf_find_dir_widget  # C-j는 전통적으로 \n에 해당한다
 
 # History navigation
