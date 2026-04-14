@@ -92,3 +92,6 @@ alias volume='pulsemixer'
 
 # taskwarrior
 alias tw='taskwarrior-tui'
+
+# custom script @~/dotfiles/scripts/bin
+alias cw='create_action_worktree_tmux_window.sh'
