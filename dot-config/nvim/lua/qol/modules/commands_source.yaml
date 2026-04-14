@@ -1,0 +1,75 @@
+commands:
+    # config
+    - desc: "Edit command source"
+      cmd: "edit ~/dotfiles/dot-config/nvim/lua/qol/modules/commands_source.yaml"
+      cat: "config"
+
+    # editor
+    - desc: "Delete empty lines"
+      cmd: "g/^$/d"
+      cat: "editor"
+
+    - desc: "Remove trailing whitespace"
+      cmd: "%s/\\s\\+$//e"
+      cat: "editor"
+
+    - desc: "Convert tabs to spaces"
+      cmd: "%s/\\t/  /g"
+      cat: "editor"
+
+    - desc: "Toggle line numbers"
+      cmd: "set nu!"
+      cat: "editor"
+
+    - desc: "Toggle relative line numbers"
+      cmd: "set rnu!"
+      cat: "editor"
+
+    - desc: "Keep only lines containing pattern"
+      cmd: "v/pattern/d"
+      cat: "editor"
+
+    - desc: "Print lines NOT containing pattern"
+      cmd: "v/pattern/p"
+      cat: "editor"
+
+    - desc: "Yank lines containing pattern and Save it to 'A' register"
+      cmd: "g/pattern/y A"
+      cat: "editor"
+
+    - desc: "Yank lines NOT containing pattern and Save it to 'A' register"
+      cmd: "v/pattern/y A"
+      cat: "editor"
+
+    - desc: "Delete blank lines (keep non-empty)"
+      cmd: "v/\\S/d"
+      cat: "editor"
+
+    - desc: "Keep only non-commented lines"
+      cmd: "v/^\\s*#/p"
+      cat: "editor"
+
+    - desc: "Print lines containing pattern"
+      cmd: "g/pattern/p"
+      cat: "editor"
+
+    - desc: "Sort lines"
+      cmd: "sort"
+      cat: "editor"
+
+    - desc: "Sort lines (unique)"
+      cmd: "sort u"
+      cat: "editor"
+
+    - desc: "Sort lines (numeric)"
+      cmd: "sort n"
+      cat: "editor"
+
+    - desc: "Reverse line order"
+      cmd: "g/^/m0"
+      cat: "editor"
+
+    # shell
+    - desc: "Read shell command into buffer"
+      cmd: ".!ls -la"
+      cat: "shell"
