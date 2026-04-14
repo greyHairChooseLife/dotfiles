@@ -6,25 +6,31 @@ PANE_CMD=$(tmux display-message -p -t "$TMUX_PANE" '#{pane_current_command}')
 [[ "$PANE_CMD" == "claude" ]] && CC=1 || CC=0
 
 echo "0" > /tmp/rg-fzf-hidden-state
+echo "0" > /tmp/rg-fzf-glob-mode-state
+echo "" > /tmp/rg-fzf-glob-state
 
 cleanup() {
-    rm -f /tmp/rg-fzf-hidden-state
+    rm -f /tmp/rg-fzf-hidden-state /tmp/rg-fzf-glob-mode-state /tmp/rg-fzf-glob-state
 }
 trap cleanup EXIT
 
-selected=$(rg --line-number --no-heading --color=always "" \
+selected=$(bash "$HOME/dotfiles/scripts/bin/rg_search.sh" \
     | fzf --ansi --multi \
         --prompt "Search> " \
-        --header '<Tab>: select, <Alt+h>: toggle hidden/ignored, <Enter>: confirm' \
+        --header '<Tab>: select, <Alt+h>: hidden/ignored, <Alt+g>: glob filter, <Enter>: confirm' \
         --delimiter ':' \
         --preview 'bat --color=always --plain --highlight-line {2} {1}' \
         --preview-window 'right:60%:+{2}-5' \
-        --bind "alt-h:transform:
-            HIDDEN=\$(cat /tmp/rg-fzf-hidden-state);
-            if [[ \$HIDDEN -eq 0 ]]; then
-                echo 'reload(rg --line-number --no-heading --color=always --hidden -u \"\")+change-prompt((+hidden) Search> )+execute-silent(echo 1 > /tmp/rg-fzf-hidden-state)';
+        --bind "alt-h:transform:bash $HOME/dotfiles/scripts/bin/rg_reload.sh toggle-hidden" \
+        --bind "alt-g:change-prompt(glob> )+clear-query+execute-silent(echo 1 > /tmp/rg-fzf-glob-mode-state)" \
+        --bind "enter:transform:
+            GLOB_MODE=\$(cat /tmp/rg-fzf-glob-mode-state);
+            if [[ \$GLOB_MODE -eq 1 ]]; then
+                echo 0 > /tmp/rg-fzf-glob-mode-state;
+                echo \"\$FZF_QUERY\" > /tmp/rg-fzf-glob-state;
+                bash $HOME/dotfiles/scripts/bin/rg_reload.sh;
             else
-                echo 'reload(rg --line-number --no-heading --color=always \"\")+change-prompt(Search> )+execute-silent(echo 0 > /tmp/rg-fzf-hidden-state)';
+                echo accept;
             fi")
 
 [[ -z "$selected" ]] && exit 0
