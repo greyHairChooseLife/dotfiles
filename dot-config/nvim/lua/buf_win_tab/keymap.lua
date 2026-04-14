@@ -116,6 +116,7 @@ map("n", "<A-8>", "8gt")
 map("n", "<A-9>", "9gt")
 -- Etc
 map({ "n", "v" }, "<A-Enter>t", TabOnlyAndCloseHiddenBuffers)
+map({ "n", "v" }, "<A-Enter><A-t>", TabOnlyAndCloseHiddenBuffers)
 
 local wk_map = require("utils").wk_map
 -- MEMO:: Split Buffer

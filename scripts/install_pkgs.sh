@@ -166,6 +166,7 @@ PACMAN_PKGS=(
     pulsemixer
     taskwarrior-tui
     ttyd
+    cronie
 )
 
 AUR_PKGS=(
