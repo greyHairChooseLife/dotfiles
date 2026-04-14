@@ -17,8 +17,9 @@ trap cleanup EXIT
 selected=$(fd --type file --max-depth $initial_depth | sort \
     | fzf --multi \
         --prompt "Files (--depth=${initial_depth}) & ${curr_dir}/" \
-        --header '<Tab>: select, <Alt+h>: toggle hidden, <Alt+1~3>: depth, <Enter>: confirm' \
+        --header '<Tab>: select, <Alt+h>: toggle hidden, <Alt+1~3>: depth, <Ctrl+f>: open in nvim, <Enter>: confirm' \
         --preview 'bat --color=always --plain {}' \
+        --bind "ctrl-f:execute(nvim -O {+})" \
         --bind "alt-h:transform:
             HIDDEN=\$(cat /tmp/cc-fzf-hidden-state);
             DEPTH=\$(cat /tmp/cc-fzf-depth-state);
@@ -42,7 +43,6 @@ selected=$(fd --type file --max-depth $initial_depth | sort \
 
 [[ -z "$selected" ]] && exit 0
 
-# Build "@path1 @path2 ..." string
 refs=$(echo "$selected" | sed 's/^/@/' | tr '\n' ' ')
 
 tmux send-keys -t "$TARGET_PANE" "$refs"
