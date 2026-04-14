@@ -43,9 +43,7 @@ local log_actions = {
     open_picker_files_from_last_commit = function(picker)
         local select = picker:current().commit
         picker.layout:hide()
-        vim.schedule(function()
-            M.files_from_last_commit(select, picker)
-        end)
+        vim.schedule(function() M.files_from_last_commit(select, picker) end)
     end,
     view_in_diffview = function(picker)
         local select = picker:current().commit
@@ -273,25 +271,24 @@ M.recent_global = function()
 end
 
 -- MEMO: ETC
-M.command_history = function()
-    local config = {}
-    snp.command_history(config)
-end
 M.files_from_last_commit = function(commit_hash, log_picker)
     commit_hash = commit_hash or "HEAD"
     local git_root = SN.git.get_root()
 
     local finder = function(opts, ctx)
-        return require("snacks.picker.source.proc").proc(vim.tbl_extend("force", opts, {
-            cmd = "git",
-            args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", commit_hash, "-r" },
-            cwd = git_root,
-            transform = function(item)
-                item.file = item.text
-                item.cwd = git_root
-                item.commit = commit_hash
-            end,
-        }), ctx)
+        return require("snacks.picker.source.proc").proc(
+            vim.tbl_extend("force", opts, {
+                cmd = "git",
+                args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", commit_hash, "-r" },
+                cwd = git_root,
+                transform = function(item)
+                    item.file = item.text
+                    item.cwd = git_root
+                    item.commit = commit_hash
+                end,
+            }),
+            ctx
+        )
     end
 
     snp.pick({

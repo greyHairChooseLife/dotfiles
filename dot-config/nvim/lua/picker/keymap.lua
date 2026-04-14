@@ -46,7 +46,7 @@ map("n", ",.S", function() default.lsp_workspace_symbols() end)
 
 -- Etc
 map("n", ",.,.", function() default.pick({ layout = "select" }) end)
-map("n", ",.C", my_picker_src.command_history)
+map("n", ",.C", function() default.command_history({ layout = "select" }) end)
 map("n", ",.r", function() default.registers({ layout = "select" }) end)
 map("n", ",.q", function() default.qflist({ layout = "right" }) end)
 local marks_filter = function(item) return item.label:match("^[a-zA-Z]$") and item or false end
