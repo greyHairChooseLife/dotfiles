@@ -252,9 +252,11 @@ smart_grep_hidden() {
         --bind "enter:become(nvim {1} +{2})"
 }
 
-alias jj='fzf_find_dir'
-alias ff='fzf_find_file_unified'
 alias j='fzf_find_dir'
-alias f='fzf_find_file_unified'
+alias jj='fzf_find_dir'
+# alias f='fzf_find_file_unified'
+# alias ff='fzf_find_file_unified'
+alias f='~/dotfiles/scripts/bin/utils/find_file.sh'
+alias ff='~/dotfiles/scripts/bin/utils/find_file.sh | xargs nvim -O'
 alias ffg='smart_grep'
 alias ffg.='smart_grep_hidden'
