@@ -167,6 +167,7 @@ PACMAN_PKGS=(
     taskwarrior-tui
     ttyd
     cronie
+    mpv
 )
 
 AUR_PKGS=(
