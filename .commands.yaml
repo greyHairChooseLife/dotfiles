@@ -799,3 +799,15 @@ encryption:
     - desc: "SSH 공개키 지문 확인"
       cmd: |
         ssh-keygen -lf ~/.ssh/id_rsa.pub
+
+cron:
+    - desc: "View crontab list"
+      cmd: crontab -l
+    - desc: "Edit crontab"
+      cmd: crontab -e
+    - desc: "Backup crontab"
+      cmd: crontab -l > crontab.bak
+    - desc: "Restore crontab"
+      cmd: crontab crontab.bak
+    - desc: "Remove crontab (복구 불가)"
+      cmd: crontab -ir
