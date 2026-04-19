@@ -112,6 +112,7 @@ return {
                     -- Disable hover in favor of Pyright
                     client.server_capabilities.hoverProvider = false
                 end
+                if client.name == "cssmodules_ls" then client.server_capabilities.hoverProvider = false end
             end,
             desc = "LSP: Disable hover capability from Ruff",
         })

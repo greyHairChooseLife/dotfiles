@@ -94,8 +94,8 @@ scheduled:
     - desc: "scheduled | 마감 1주 전부터 시작 예정 (due 설정 필요)"
       cmd: task <id> modify scheduled:due-1w
     # --- 절대 날짜 ---
-    - desc: "scheduled | 특정 날짜부터 시작 예정 (YYYY-MM-DD)"
-      cmd: task <id> modify scheduled:2026-04-25
+    - desc: "scheduled | 특정 날짜부터 시작 예정 (YYYY-MM-DDTHH:MM)"
+      cmd: task <id> modify scheduled:2026-04-25T15:00
     # --- 제거 ---
     - desc: "scheduled | 시작 예정일 제거"
       cmd: "task <id> modify scheduled:"
