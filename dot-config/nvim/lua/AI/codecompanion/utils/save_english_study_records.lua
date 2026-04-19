@@ -49,10 +49,11 @@ function M.setup()
                 if content:match(phrase) then return nil end
             end
 
-            local notes_dir = vim.fn.expand("/tmp/english_study_src")
-            if vim.fn.isdirectory(notes_dir) == 0 then vim.fn.mkdir(notes_dir, "p") end
-
-            local filename = notes_dir .. "/records.md"
+            -- local notes_dir = vim.fn.expand("/tmp/english_study_src")
+            -- if vim.fn.isdirectory(notes_dir) == 0 then vim.fn.mkdir(notes_dir, "p") end
+            --
+            -- local filename = notes_dir .. "/records.md"
+            local filename = vim.fn.expand("~") .. "/english-study-notes.md"
 
             local file = io.open(filename, "a")
             if file then
