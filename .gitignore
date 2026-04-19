@@ -3,7 +3,7 @@ dot-config/vi-mongo/history.txt
 dot-config/claws/chat/*
 
 # c.c
-.claude/
+.claude/*
 !.claude/commands/
 !.claude/skills/
 !.claude/CLAUDE.md

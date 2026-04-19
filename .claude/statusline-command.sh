@@ -97,7 +97,7 @@ get_plan_name() {
     esac
 }
 
-# ── Helper: format epoch reset time as relative duration ──
+# ── Helper: format epoch reset time as relative duration + reset point ──
 format_epoch_reset() {
     local reset_epoch="$1"
     [ -z "$reset_epoch" ] || [ "$reset_epoch" = "null" ] && return
@@ -106,13 +106,19 @@ format_epoch_reset() {
     diff_s=$((reset_epoch - now))
     [ "$diff_s" -le 0 ] && return
     local diff_m=$(((diff_s + 59) / 60))
+    local duration
     if [ "$diff_m" -lt 60 ]; then
-        echo "${diff_m}m"
-    else
+        duration="${diff_m}m"
+    elif [ "$diff_m" -lt 1440 ]; then
         local h=$((diff_m / 60))
         local m=$((diff_m % 60))
-        [ "$m" -gt 0 ] && echo "${h}h ${m}m" || echo "${h}h"
+        [ "$m" -gt 0 ] && duration="${h}h ${m}m" || duration="${h}h"
+    else
+        local d=$((diff_m / 1440))
+        local h=$(((diff_m % 1440) / 60))
+        [ "$h" -gt 0 ] && duration="${d}d ${h}h" || duration="${d}d"
     fi
+    echo "${duration}"
 }
 
 # ── Helper: parse ISO8601 timestamp to epoch (supports GNU date & macOS /bin/date) ──
@@ -139,28 +145,37 @@ parse_iso_to_epoch() {
     [ -n "$epoch" ] && echo "$epoch"
 }
 
-# ── Format reset time as relative duration ──
+# ── Format reset time as relative duration + reset point ──
 format_reset_time() {
     local reset_str="$1"
     [ "$reset_str" = "null" ] || [ -z "$reset_str" ] && return
     local now reset_epoch diff_s
     now=$(date +%s)
-    reset_epoch=$(parse_iso_to_epoch "$reset_str")
+    # Handle both epoch numbers and ISO strings
+    if [[ "$reset_str" =~ ^[0-9]+$ ]]; then
+        reset_epoch="$reset_str"
+    else
+        reset_epoch=$(parse_iso_to_epoch "$reset_str")
+    fi
     [ -z "$reset_epoch" ] && return
     diff_s=$((reset_epoch - now))
     [ "$diff_s" -le 0 ] && return
     local diff_m=$(((diff_s + 59) / 60))
+    local duration
     if [ "$diff_m" -lt 60 ]; then
-        echo "${diff_m}m"
-    else
+        duration="${diff_m}m"
+    elif [ "$diff_m" -lt 1440 ]; then
         local h=$((diff_m / 60))
         local m=$((diff_m % 60))
-        if [ "$m" -gt 0 ]; then
-            echo "${h}h ${m}m"
-        else
-            echo "${h}h"
-        fi
+        [ "$m" -gt 0 ] && duration="${h}h ${m}m" || duration="${h}h"
+    else
+        local d=$((diff_m / 1440))
+        local h=$(((diff_m % 1440) / 60))
+        [ "$h" -gt 0 ] && duration="${d}d ${h}h" || duration="${d}d"
     fi
+    local reset_point
+    reset_point=$(date -d "@${reset_epoch}" "+%a %H:%M" 2>/dev/null)
+    [ -n "$reset_point" ] && echo "${duration} | ${reset_point}" || echo "${duration}"
 }
 
 # ── Calculate session duration from transcript ──
@@ -268,8 +283,8 @@ git_untracked=0
 git_conflict=0
 if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
     git_branch=$(git -C "$cwd" symbolic-ref --short HEAD 2> /dev/null \
-                                                                     || git -C "$cwd" describe --tags --exact-match 2> /dev/null \
-                                                                         || git -C "$cwd" rev-parse --short HEAD 2> /dev/null)
+            || git -C "$cwd" describe --tags --exact-match 2> /dev/null \
+        || git -C "$cwd" rev-parse --short HEAD 2> /dev/null)
     git_stash=$(git -C "$cwd" stash list 2> /dev/null | wc -l | tr -d ' ')
     git_staged=$(git -C "$cwd" diff --cached --name-only 2> /dev/null | wc -l | tr -d ' ')
     git_modified=$(git -C "$cwd" diff --name-only 2> /dev/null | wc -l | tr -d ' ')
@@ -366,7 +381,7 @@ if [ -n "$rate_7d" ] && [ "$rate_7d" != "null" ]; then
         rcolor="$C_PATH"
     fi
     seven_display="7d ${rcolor}${seven_int}%${C_RESET}"
-    seven_reset_str=$(format_epoch_reset "$rate_7d_reset")
+    seven_reset_str=$(format_reset_time "$rate_7d_reset")
     [ -n "$seven_reset_str" ] && seven_display+=" ${C_GRAY}(${seven_reset_str})${C_RESET}"
     line2_parts+=("$seven_display")
 else

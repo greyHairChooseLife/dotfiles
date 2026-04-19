@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ENV_FILE="/home/sy/.local/state/zsh.sub/api-key.sh"
+source "$ENV_FILE"
 SOURCE="$HOME/english-study-notes.md"
 OUTPUT_DIR="$HOME/Documents/english_study_note"
 OUTPUT="$OUTPUT_DIR/$(date +%Y-%m-%d).md"
