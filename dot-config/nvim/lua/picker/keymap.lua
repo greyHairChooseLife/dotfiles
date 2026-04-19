@@ -30,8 +30,8 @@ map("n", ",.O", my_picker_src.recent_global)
 
 -- Grep
 map("n", ",.w", my_picker_src.grep)
-map("n", ",.W", my_picker_src.grep_current_buffers)
 map("v", ",.w", my_picker_src.grep_visual)
+map("n", ",.W", my_picker_src.grep_current_buffers)
 map("v", ",.W", my_picker_src.grep_current_buffers_visual)
 -- map({ "n", "x" }, ",.c", my_picker_src.grep_word)
 map("n", ",.z", my_picker_src.grep_current_buffer)

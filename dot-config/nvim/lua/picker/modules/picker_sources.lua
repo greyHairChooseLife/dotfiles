@@ -5,45 +5,93 @@ local snp = require("snacks").picker
 local M = {}
 
 -- MEMO: CUSTOM PICKER EXAMPLE
-local function pick_cmd_result(picker_opts)
+-- local function pick_cmd_result(picker_opts)
+--     local git_root = SN.git.get_root()
+--     local finder = function(opts, ctx)
+--         return require("snacks.picker.source.proc").proc({
+--             opts,
+--             {
+--                 cmd = picker_opts.cmd,
+--                 args = picker_opts.args,
+--                 transform = function(item)
+--                     item.cwd = picker_opts.cwd or git_root
+--                     item.file = item.text
+--                 end,
+--             },
+--         }, ctx)
+--     end
+--
+--     snp.pick({
+--         source = picker_opts.name,
+--         finder = finder,
+--         preview = picker_opts.preview,
+--         title = picker_opts.title,
+--     })
+-- end
+--
+-- M.example = function()
+--     pick_cmd_result({
+--         cmd = "git",
+--         args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", "HEAD", "-r" },
+--         name = "git_show",
+--         title = "Git Last Commit",
+--         preview = "git_show",
+--     })
+-- end
+
+-- MEMO: GIT
+local files_from_last_commit = function(commit_hash, log_picker)
+    commit_hash = commit_hash or "HEAD"
     local git_root = SN.git.get_root()
+
     local finder = function(opts, ctx)
-        return require("snacks.picker.source.proc").proc({
-            opts,
-            {
-                cmd = picker_opts.cmd,
-                args = picker_opts.args,
+        return require("snacks.picker.source.proc").proc(
+            vim.tbl_extend("force", opts, {
+                cmd = "git",
+                args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", commit_hash, "-r" },
+                cwd = git_root,
                 transform = function(item)
-                    item.cwd = picker_opts.cwd or git_root
                     item.file = item.text
+                    item.cwd = git_root
+                    item.commit = commit_hash
                 end,
-            },
-        }, ctx)
+            }),
+            ctx
+        )
     end
 
     snp.pick({
-        source = picker_opts.name,
+        source = "git_commit_files",
         finder = finder,
-        preview = picker_opts.preview,
-        title = picker_opts.title,
-    })
-end
-
-M.example = function()
-    pick_cmd_result({
-        cmd = "git",
-        args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", "HEAD", "-r" },
-        name = "git_show",
-        title = "Git Last Commit",
         preview = "git_show",
+        title = "Git Commit Files: " .. commit_hash,
+        layout = { fullscreen = true },
+        actions = {
+            quit_and_resume_log = function(picker)
+                picker:close()
+                if log_picker then
+                    vim.schedule(function()
+                        log_picker.layout:unhide()
+                        log_picker:focus()
+                    end)
+                end
+            end,
+        },
+        win = {
+            input = {
+                keys = {
+                    ["gq"] = { "quit_and_resume_log", mode = { "n", "i" } },
+                    ["<Esc>"] = { "quit_and_resume_log", mode = { "n", "i" } },
+                },
+            },
+        },
     })
 end
--- MEMO: GIT
 local log_actions = {
     open_picker_files_from_last_commit = function(picker)
         local select = picker:current().commit
         picker.layout:hide()
-        vim.schedule(function() M.files_from_last_commit(select, picker) end)
+        vim.schedule(function() files_from_last_commit(select, picker) end)
     end,
     view_in_diffview = function(picker)
         local select = picker:current().commit
@@ -57,88 +105,40 @@ local log_actions = {
         vim.defer_fn(function() vim.cmd("Git rebase -i " .. args) end, 1)
     end,
 }
-M.git_log = function()
-    local config = {
-        auto_close = false,
-        actions = log_actions,
-        layout = { fullscreen = true },
-        win = {
-            input = {
-                keys = {
-                    ["<c-o>"] = { "open_picker_files_from_last_commit", mode = { "n", "i" } },
-                    ["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
-                    ["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
-                    ["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
-                },
+local log_config = {
+    auto_close = false,
+    actions = log_actions,
+    layout = { fullscreen = true },
+    win = {
+        input = {
+            keys = {
+                ["<c-o>"] = { "open_picker_files_from_last_commit", mode = { "n", "i" } },
+                ["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
+                ["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
+                ["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
             },
         },
-    }
-    snp.git_log(config)
-end
-M.git_log_line = function()
-    -- vim.cmd("normal! <Esc>")
-    local config = {
-        auto_close = false,
-        actions = log_actions,
-        layout = { fullscreen = true },
-        win = {
-            input = {
-                keys = {
-                    ["<c-o>"] = { "open_picker_files_from_last_commit", mode = { "n", "i" } },
-                    ["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
-                    ["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
-                    ["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
-                },
-            },
-        },
-    }
-    snp.git_log_line(config)
-end
-M.git_log_file = function()
-    local config = {
-        auto_close = false,
-        actions = log_actions,
-        layout = { fullscreen = true },
-        win = {
-            input = {
-                keys = {
-                    ["<c-o>"] = { "open_picker_files_from_last_commit", mode = { "n", "i" } },
-                    ["<c-t>"] = { "view_in_diffview", mode = { "n", "i" } },
-                    ["<c-r>i"] = { "rebase_interactively", mode = { "n", "i" } },
-                    ["<c-r><c-i>"] = { "rebase_interactively", mode = { "n", "i" } },
-                },
-            },
-        },
-    }
-    snp.git_log_file(config)
-end
-M.git_diff = function()
-    local config = {
-        layout = { fullscreen = true },
-        -- preview = "diff",
-    }
-    snp.git_diff(config)
-    -- builtin.git_status({
-    -- 	previewer = diff_delta,
-    -- 	layout_config = wide_layout_config,
-    -- })
-end
-local stash_actions = {
-    stash_pop = function(picker)
-        local select = picker:current().stash
-        vim.cmd("Git stash pop " .. select)
-        picker:close()
-    end,
-    stash_drop = function(picker)
-        local select = picker:current().stash
-        vim.cmd("Git stash drop " .. select)
-        picker:close()
-        M.git_stash()
-    end,
+    },
 }
+M.git_log = function() snp.git_log(log_config) end
+M.git_log_line = function() snp.git_log_line(log_config) end
+M.git_log_file = function() snp.git_log_file(log_config) end
+M.git_diff = function() snp.git_diff({ layout = { fullscreen = true } }) end
 M.git_stash = function()
     local config = {
-        actions = stash_actions,
+        actions = {
+            stash_pop = function(picker)
+                local select = picker:current().stash
+                vim.cmd("Git stash pop " .. select)
+                picker:close()
+            end,
+            stash_drop = function(picker)
+                local select = picker:current().stash
+                vim.cmd("Git stash drop " .. select)
+                picker:close()
+                M.git_stash()
+            end,
+        },
         win = {
             input = {
                 keys = {
@@ -149,34 +149,17 @@ M.git_stash = function()
         },
     }
     snp.git_stash(config)
-    -- builtin.git_stash({
-    -- 	previewer = stash_delta,
-    -- 	layout_config = wide_layout_config,
-    -- })
 end
-M.git_status = function()
-    local config = {}
-    snp.git_status(config)
-end
+M.git_status = function() snp.git_status() end
 M.git_branches = function()
-    local config = {
-        all = true,
-        layout = { fullscreen = true },
-    }
+    local config = { all = true, layout = { fullscreen = true } }
     snp.git_branches(config)
 end
 
 -- MEMO: FIND
-M.files = function()
-    local config = {}
-    snp.files(config)
-end
+M.files = function() snp.files() end
 M.files_visual = function()
-    local search_text = g_utils.get_visual_text()
-    local config = {
-        on_show = function() vim.api.nvim_put({ search_text .. " " }, "c", true, true) end,
-    }
-    snp.files(config)
+    snp.files({ on_show = function() vim.api.nvim_put({ g_utils.get_visual_text() .. " " }, "c", true, true) end })
 end
 M.buffers = function()
     g_utils.close_empty_unnamed_buffers()
@@ -257,67 +240,10 @@ M.buffers_term_only = function()
     }
     snp.buffers(config)
 end
-M.recent = function()
-    local config = {
-        filter = { cwd = true },
-    }
-    snp.recent(config)
-end
-M.recent_global = function()
-    local config = {
-        filter = { cwd = false },
-    }
-    snp.recent(config)
-end
+M.recent = function() snp.recent({ filter = { cwd = true } }) end
+M.recent_global = function() snp.recent({ filter = { cwd = false } }) end
 
 -- MEMO: ETC
-M.files_from_last_commit = function(commit_hash, log_picker)
-    commit_hash = commit_hash or "HEAD"
-    local git_root = SN.git.get_root()
-
-    local finder = function(opts, ctx)
-        return require("snacks.picker.source.proc").proc(
-            vim.tbl_extend("force", opts, {
-                cmd = "git",
-                args = { "diff-tree", "--no-commit-id", "--name-only", "--diff-filter=d", commit_hash, "-r" },
-                cwd = git_root,
-                transform = function(item)
-                    item.file = item.text
-                    item.cwd = git_root
-                    item.commit = commit_hash
-                end,
-            }),
-            ctx
-        )
-    end
-
-    snp.pick({
-        source = "git_commit_files",
-        finder = finder,
-        preview = "git_show",
-        title = "Git Commit Files: " .. commit_hash,
-        layout = { fullscreen = true },
-        actions = {
-            quit_and_resume_log = function(picker)
-                picker:close()
-                if log_picker then
-                    vim.schedule(function()
-                        log_picker.layout:unhide()
-                        log_picker:focus()
-                    end)
-                end
-            end,
-        },
-        win = {
-            input = {
-                keys = {
-                    ["gq"] = { "quit_and_resume_log", mode = { "n", "i" } },
-                    ["<Esc>"] = { "quit_and_resume_log", mode = { "n", "i" } },
-                },
-            },
-        },
-    })
-end
 M.qflist = function()
     local config = {
         actions = {
@@ -339,42 +265,21 @@ M.qflist = function()
 end
 
 -- MEMO: GREP
-M.grep = function()
-    local config = {}
-    snp.grep(config)
-end
-M.grep_current_buffer = function()
-    local config = {}
-    snp.lines(config)
-end
-M.grep_current_buffer_visual = function()
-    local search_text = g_utils.get_visual_text()
-    local config = {
-        on_show = function() vim.api.nvim_put({ search_text .. " " }, "c", true, true) end,
-    }
-    snp.lines(config)
-end
-M.grep_current_buffers = function()
-    local config = { need_search = true }
-    snp.grep_buffers(config)
-end
+M.grep = function() snp.grep(config) end
 M.grep_visual = function()
-    local search_text = g_utils.get_visual_text()
-    local config = {
-        on_show = function() vim.api.nvim_put({ search_text .. " " }, "c", true, true) end,
-    }
+    local config = { on_show = function() vim.api.nvim_put({ g_utils.get_visual_text() .. " " }, "c", true, true) end }
     snp.grep(config)
 end
+M.grep_current_buffer = function() snp.lines() end
+M.grep_current_buffer_visual = function()
+    local config = { on_show = function() vim.api.nvim_put({ g_utils.get_visual_text() .. " " }, "c", true, true) end }
+    snp.lines(config)
+end
+M.grep_current_buffers = function() snp.grep_buffers({ need_search = true }) end
 M.grep_current_buffers_visual = function()
-    local search_text = g_utils.get_visual_text()
-    local config = {
-        on_show = function() vim.api.nvim_put({ search_text .. " " }, "c", true, true) end,
-    }
+    local config = { on_show = function() vim.api.nvim_put({ g_utils.get_visual_text() .. " " }, "c", true, true) end }
     snp.grep_buffers(config)
 end
-M.grep_word = function()
-    local config = {}
-    snp.grep_word(config)
-end
+M.grep_word = function() snp.grep_word() end
 
 return M
