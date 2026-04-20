@@ -98,14 +98,14 @@ fi
 
 mkdir -p "$OUTPUT_DIR"
 
-RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
+RESPONSE=$(jq -n \
+    --arg system "$PROMPT" \
+    --arg user "$MESSAGES" \
+    '{model: "gpt-4o-mini", messages: [{role: "system", content: $system}, {role: "user", content: $user}]}' \
+  | curl -s https://api.openai.com/v1/chat/completions \
     -H "Authorization: Bearer $OPENAI_API_KEY" \
     -H "Content-Type: application/json" \
-    -d "$(jq -n \
-        --arg system "$PROMPT" \
-        --arg user "$MESSAGES" \
-        '{model: "gpt-4o-mini", messages: [{role: "system", content: $system}, {role: "user", content: $user}]}'
-    )")
+    -d @-)
 
 echo "$RESPONSE" | jq -r '.choices[0].message.content' > "$OUTPUT"
 echo "Study note saved to $OUTPUT"
