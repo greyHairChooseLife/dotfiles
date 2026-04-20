@@ -4,6 +4,7 @@ a:
     - desc: "update this file"
       cmd: |
         vi $COMMANDER_YAML
+      note: "opens the commander YAML in vim; $COMMANDER_YAML is set in commander.zsh"
 
 taskwarrior:
     - desc: "delete all deleted tasks"
