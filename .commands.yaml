@@ -79,9 +79,10 @@ git_github:
     - desc: "Change commit author"
       cmd: |
         git commit --amend --author="Name <email>" --no-edit
-    - desc: "Download a specific revision as zip"
+    - desc: "Download a specific git revision as zip"
       cmd: |
         curl -L https://github.com/<user>/<repo>/archive/[commit|branch|tag].zip -o output.zip
+      note: "from github"
 
 gh_gist:
     - desc: "View a gist (interactive)"
@@ -174,6 +175,10 @@ misc:
       cmd: |
         xinput list
       note: "Then disable: xinput disable <ID> / enable: xinput enable <ID>"
+    - desc: "Download youtube video using yt-dlp"
+      cmd: |
+        echo "링크1 링크2 링크3" | xargs -t -d" " -P4 -I{} yt-dlp -f bestvideo+bestaudio --merge-output-format mkv "{}"
+      note: "extension of `.mkv` for best quality\ruse `cat` instead of echo for many links"
 
 hardware:
     - desc: "autorandr: save current display layout"

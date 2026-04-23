@@ -73,3 +73,8 @@ commands:
     - desc: "Read shell command into buffer"
       cmd: ".!ls -la"
       cat: "shell"
+
+    # etc
+    - desc: "Check if Treesitter syntax highlighting is installed for current buffer"
+      cmd: "lua vim.notify(vim.treesitter.get_parser(0):lang())"
+      cat: "treesitter"
