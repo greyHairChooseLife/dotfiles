@@ -1,6 +1,7 @@
 [user]
 	email = greyhairchooselife@gmail.com
 	name = sangyeon kim
+	signingkey = greyhairchooselife@gmail.com
 
 [core]
 	editor = nvim
@@ -70,6 +71,7 @@
 
 [commit]
 	verbose = false
+	gpgsign = true
     ; template = /home/etr/.gitmessage
 
 [merge]
