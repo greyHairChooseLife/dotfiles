@@ -19,7 +19,7 @@ MODEL_PATH="$HOME/whisper"
 
 # --- 취소 ---
 if [ "$1" = "cancel" ]; then
-    pkill -x "rec" 2>/dev/null
+    pkill -INT -x "rec" 2>/dev/null
     pkill -f "openai_uploader.py" 2>/dev/null
     pkill -f "transcribe.py" 2>/dev/null
 
@@ -29,7 +29,7 @@ if [ "$1" = "cancel" ]; then
     if [ -f "$NOTIFY_ID_FILE" ]; then
         LAST_ID=$(cat "$NOTIFY_ID_FILE")
         notify-send -r "$LAST_ID" -h string:bgcolor:#f1502f -h string:fgcolor:#333342 -t 1500 "Vocal" "Recording cancelled"
-      else
+    else
         # ID 없어도 강제로 닫기
         dunstctl close-all
     fi
@@ -40,7 +40,8 @@ fi
 # --- 녹음 중단(완료) ---
 if pgrep -x "rec" > /dev/null; then
     # 1. 녹음 중단
-    pkill -x "rec"
+    # `pkill`은 기본적으로 SIGTERM을 보내는데, SoX의 `rec`은 SIGINT(Ctrl+C)를 받아야 파일을 정상적으로 flush하고 종료함. SIGTERM으로 죽이면 마지막 버퍼가 날아감.
+    pkill -INT -x "rec"
 
     # rec 프로세스가 완전히 종료될 때까지 대기 (파일 저장 보장)
     while pgrep -x "rec" > /dev/null; do sleep 0.1; done
@@ -67,14 +68,14 @@ if pgrep -x "rec" > /dev/null; then
         echo -n "$RESULT" | xclip -selection clipboard
 
         # 클립보드 반영을 위해 아주 짧은 대기 후 붙여넣기 실행
-        sleep 0.2
-        xdotool key --clearmodifiers ctrl+shift+v
+        # sleep 0.2
+        # xdotool key --clearmodifiers ctrl+shift+v
 
         # 완료 알림 (기존 알림 덮어쓰기)
         if [ -n "$LAST_ID" ]; then
-            notify-send -r "$LAST_ID" -t 2000 "Vocal" "Transcription complete"
+            notify-send -r "$LAST_ID" -t 2000 "Vocal" "Copied to clipboard"
         else
-            notify-send "Vocal" "Transcription complete"
+            notify-send "Vocal" "Copied to clipboard"
         fi
     else
         if [ -n "$LAST_ID" ]; then
