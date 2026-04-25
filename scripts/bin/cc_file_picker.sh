@@ -5,6 +5,8 @@ TARGET_PANE="$1"
 
 pane_pid=$(tmux display-message -t "$TARGET_PANE" -p '#{pane_pid}')
 pane_cwd=$(readlink -f /proc/$pane_pid/cwd 2>/dev/null || tmux display-message -t "$TARGET_PANE" -p '#{pane_current_path}')
+pane_cmd=$(tmux display-message -t "$TARGET_PANE" -p '#{pane_current_command}')
+[[ "$pane_cmd" == "claude" ]] && CC=1 || CC=0
 curr_dir=${pane_cwd/$HOME/\~}
 initial_depth=1
 
@@ -50,6 +52,10 @@ selected=$(fd --type file --max-depth $initial_depth --base-directory "$pane_cwd
 
 [[ -z "$selected" ]] && exit 0
 
-refs=$(echo "$selected" | sed 's/^/@/' | tr '\n' ' ')
+if [[ "$CC" -eq 1 ]]; then
+    refs=$(echo "$selected" | sed 's/^/@/' | tr '\n' ' ')
+else
+    refs=$(echo "$selected" | tr '\n' ' ')
+fi
 
-tmux send-keys -t "$TARGET_PANE" "$refs"
+tmux send-keys -t "$TARGET_PANE" "${refs% }"
