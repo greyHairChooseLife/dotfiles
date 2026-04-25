@@ -3,43 +3,50 @@
 
 TARGET_PANE="$1"
 
-curr_dir=${PWD/$HOME/\~}
+pane_pid=$(tmux display-message -t "$TARGET_PANE" -p '#{pane_pid}')
+pane_cwd=$(readlink -f /proc/$pane_pid/cwd 2>/dev/null || tmux display-message -t "$TARGET_PANE" -p '#{pane_current_path}')
+curr_dir=${pane_cwd/$HOME/\~}
 initial_depth=1
 
 echo "0" > /tmp/cc-fzf-hidden-state
 echo "$initial_depth" > /tmp/cc-fzf-depth-state
+echo "$pane_cwd" > /tmp/cc-fzf-cwd-state
 
 cleanup() {
-    rm -f /tmp/cc-fzf-hidden-state /tmp/cc-fzf-depth-state
+    rm -f /tmp/cc-fzf-hidden-state /tmp/cc-fzf-depth-state /tmp/cc-fzf-cwd-state
 }
 trap cleanup EXIT
 
-selected=$(fd --type file --max-depth $initial_depth | sort \
+selected=$(fd --type file --max-depth $initial_depth --base-directory "$pane_cwd" | sort \
     | fzf --multi \
         --prompt "Files (--depth=${initial_depth}) & ${curr_dir}/" \
         --header '<Tab>: select, <Alt+h>: toggle hidden, <Alt+1~3>: depth, <Ctrl+f>: open in nvim, <Enter>: confirm' \
-        --preview 'bat --color=always --plain {}' \
-        --bind "ctrl-f:execute(nvim -O {+})" \
+        --preview "bat --color=always --plain $pane_cwd/{}" \
+        --bind "ctrl-f:execute(nvim -O $pane_cwd/{+})" \
         --bind "alt-h:transform:
             HIDDEN=\$(cat /tmp/cc-fzf-hidden-state);
             DEPTH=\$(cat /tmp/cc-fzf-depth-state);
+            CWD=\$(cat /tmp/cc-fzf-cwd-state);
             if [[ \$HIDDEN -eq 0 ]]; then
-                echo 'reload(fd --type file --hidden -I --max-depth '\$DEPTH' | sort)+change-prompt((+hidden) Files (--depth='\$DEPTH') & ${curr_dir}/)+execute-silent(echo 1 > /tmp/cc-fzf-hidden-state)';
+                echo 'reload(fd --type file --hidden -I --max-depth '\$DEPTH' --base-directory '\$CWD' | sort)+change-prompt((+hidden) Files (--depth='\$DEPTH') & ${curr_dir}/)+execute-silent(echo 1 > /tmp/cc-fzf-hidden-state)';
             else
-                echo 'reload(fd --type file --max-depth '\$DEPTH' | sort)+change-prompt(Files (--depth='\$DEPTH') & ${curr_dir}/)+execute-silent(echo 0 > /tmp/cc-fzf-hidden-state)';
+                echo 'reload(fd --type file --max-depth '\$DEPTH' --base-directory '\$CWD' | sort)+change-prompt(Files (--depth='\$DEPTH') & ${curr_dir}/)+execute-silent(echo 0 > /tmp/cc-fzf-hidden-state)';
             fi" \
         --bind "alt-1:transform:
             HIDDEN=\$(cat /tmp/cc-fzf-hidden-state);
+            CWD=\$(cat /tmp/cc-fzf-cwd-state);
             HIDDEN_FLAG=''; PROMPT=''; [[ \$HIDDEN -eq 1 ]] && HIDDEN_FLAG='--hidden -I' && PROMPT='(+hidden) ';
-            echo 'reload(fd --type file '\$HIDDEN_FLAG' --max-depth 1 | sort)+change-prompt('\$PROMPT'Files (--depth=1) & ${curr_dir}/)+execute-silent(echo 1 > /tmp/cc-fzf-depth-state)'" \
+            echo 'reload(fd --type file '\$HIDDEN_FLAG' --max-depth 1 --base-directory '\$CWD' | sort)+change-prompt('\$PROMPT'Files (--depth=1) & ${curr_dir}/)+execute-silent(echo 1 > /tmp/cc-fzf-depth-state)'" \
         --bind "alt-2:transform:
             HIDDEN=\$(cat /tmp/cc-fzf-hidden-state);
+            CWD=\$(cat /tmp/cc-fzf-cwd-state);
             HIDDEN_FLAG=''; PROMPT=''; [[ \$HIDDEN -eq 1 ]] && HIDDEN_FLAG='--hidden -I' && PROMPT='(+hidden) ';
-            echo 'reload(fd --type file '\$HIDDEN_FLAG' --max-depth 2 | sort)+change-prompt('\$PROMPT'Files (--depth=2) & ${curr_dir}/)+execute-silent(echo 2 > /tmp/cc-fzf-depth-state)'" \
+            echo 'reload(fd --type file '\$HIDDEN_FLAG' --max-depth 2 --base-directory '\$CWD' | sort)+change-prompt('\$PROMPT'Files (--depth=2) & ${curr_dir}/)+execute-silent(echo 2 > /tmp/cc-fzf-depth-state)'" \
         --bind "alt-3:transform:
             HIDDEN=\$(cat /tmp/cc-fzf-hidden-state);
+            CWD=\$(cat /tmp/cc-fzf-cwd-state);
             HIDDEN_FLAG=''; PROMPT=''; [[ \$HIDDEN -eq 1 ]] && HIDDEN_FLAG='--hidden -I' && PROMPT='(+hidden) ';
-            echo 'reload(fd --type file '\$HIDDEN_FLAG' | sort)+change-prompt('\$PROMPT'Files (--depth=end) & ${curr_dir}/)+execute-silent(echo 999 > /tmp/cc-fzf-depth-state)'")
+            echo 'reload(fd --type file '\$HIDDEN_FLAG' --base-directory '\$CWD' | sort)+change-prompt('\$PROMPT'Files (--depth=end) & ${curr_dir}/)+execute-silent(echo 999 > /tmp/cc-fzf-depth-state)'")
 
 [[ -z "$selected" ]] && exit 0
 
