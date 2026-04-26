@@ -37,28 +37,28 @@ selected=$(fd --type file $hidden_flag --max-depth $initial_depth | sort \
         | fzf --multi \
         --prompt "${hidden_prompt}Files (--depth=${initial_depth}) & ${curr_dir}/" \
         --header '<Alt+h>: toggle hidden, <Alt+1~3>: depth lvl, <Enter>: editor' \
-        --bind "ctrl-f:execute(nvim -O {+})" \
-    --bind "alt-h:transform:
-				HIDDEN=\$(cat /tmp/fzf-hidden-state);
-				DEPTH=\$(cat /tmp/fzf-depth-state);
-				if [[ \$HIDDEN -eq 0 ]]; then
-					echo 'reload(fd --type file --hidden -I --max-depth '\$DEPTH' | sort)+change-prompt((+hidden) Files (--depth='\$DEPTH') & ${curr_dir}/)+execute-silent(echo 1 > /tmp/fzf-hidden-state)';
-				else
-					echo 'reload(fd --type file --max-depth '\$DEPTH' | sort)+change-prompt(Files (--depth='\$DEPTH') & ${curr_dir}/)+execute-silent(echo 0 > /tmp/fzf-hidden-state)';
-				fi" \
-            --bind "alt-1:transform:
-    HIDDEN=\$(cat /tmp/fzf-hidden-state);
-    HIDDEN_FLAG=''; [[ \$HIDDEN -eq 1 ]] && HIDDEN_FLAG='--hidden -I' && PROMPT='(+hidden) ';
-    echo 'reload(fd --type file '\$HIDDEN_FLAG' --max-depth 1 | sort)+change-prompt('\$PROMPT'Files (--depth=1) & ${curr_dir}/)+execute-silent(echo 1 > /tmp/fzf-depth-state)';" \
-            --bind "alt-2:transform:
-    HIDDEN=\$(cat /tmp/fzf-hidden-state);
-    HIDDEN_FLAG=''; [[ \$HIDDEN -eq 1 ]] && HIDDEN_FLAG='--hidden -I' && PROMPT='(+hidden) ';
-    echo 'reload(fd --type file '\$HIDDEN_FLAG' --max-depth 2 | sort)+change-prompt('\$PROMPT'Files (--depth=2) & ${curr_dir}/)+execute-silent(echo 2 > /tmp/fzf-depth-state)';" \
-            --bind "alt-3:transform:
-    HIDDEN=\$(cat /tmp/fzf-hidden-state);
-    HIDDEN_FLAG=''; [[ \$HIDDEN -eq 1 ]] && HIDDEN_FLAG='--hidden -I' && PROMPT='(+hidden) ';
-    echo 'reload(fd --type file '\$HIDDEN_FLAG' | sort)+change-prompt('\$PROMPT'Files (--depth=end) & ${curr_dir}/)+execute-silent(echo 999 > /tmp/fzf-depth-state)';" \
-    --preview '[[ {} =~ (".jpg"|".JPG"|".jpeg"|".png"|".PNG"|".svg")$ ]] && ueberzugpp cmd -s $SOCKET -i fzfpreview -a add -x $FZF_PREVIEW_LEFT -y $FZF_PREVIEW_TOP --max-width $FZF_PREVIEW_COLUMNS --max-height $FZF_PREVIEW_LINES -f {} || (ueberzugpp cmd -s $SOCKET -a remove -i fzfpreview && [[ $FZF_PROMPT =~ Files ]] && bat --color=always --plain {} || tree -C {})')
+        --bind "alt-f:execute(nvim -O {+})" \
+        --bind "alt-h:transform:
+                HIDDEN=\$(cat /tmp/fzf-hidden-state);
+                DEPTH=\$(cat /tmp/fzf-depth-state);
+                if [[ \$HIDDEN -eq 0 ]]; then
+                  echo 'reload(fd --type file --hidden -I --max-depth '\$DEPTH' | sort)+change-prompt((+hidden) Files (--depth='\$DEPTH') & ${curr_dir}/)+execute-silent(echo 1 > /tmp/fzf-hidden-state)';
+                else
+                  echo 'reload(fd --type file --max-depth '\$DEPTH' | sort)+change-prompt(Files (--depth='\$DEPTH') & ${curr_dir}/)+execute-silent(echo 0 > /tmp/fzf-hidden-state)';
+                fi" \
+        --bind "alt-1:transform:
+                HIDDEN=\$(cat /tmp/fzf-hidden-state);
+                HIDDEN_FLAG=''; [[ \$HIDDEN -eq 1 ]] && HIDDEN_FLAG='--hidden -I' && PROMPT='(+hidden) ';
+                echo 'reload(fd --type file '\$HIDDEN_FLAG' --max-depth 1 | sort)+change-prompt('\$PROMPT'Files (--depth=1) & ${curr_dir}/)+execute-silent(echo 1 > /tmp/fzf-depth-state)';" \
+        --bind "alt-2:transform:
+                HIDDEN=\$(cat /tmp/fzf-hidden-state);
+                HIDDEN_FLAG=''; [[ \$HIDDEN -eq 1 ]] && HIDDEN_FLAG='--hidden -I' && PROMPT='(+hidden) ';
+                echo 'reload(fd --type file '\$HIDDEN_FLAG' --max-depth 2 | sort)+change-prompt('\$PROMPT'Files (--depth=2) & ${curr_dir}/)+execute-silent(echo 2 > /tmp/fzf-depth-state)';" \
+        --bind "alt-3:transform:
+                HIDDEN=\$(cat /tmp/fzf-hidden-state);
+                HIDDEN_FLAG=''; [[ \$HIDDEN -eq 1 ]] && HIDDEN_FLAG='--hidden -I' && PROMPT='(+hidden) ';
+                echo 'reload(fd --type file '\$HIDDEN_FLAG' | sort)+change-prompt('\$PROMPT'Files (--depth=end) & ${curr_dir}/)+execute-silent(echo 999 > /tmp/fzf-depth-state)';" \
+        --preview '[[ {} =~ (".jpg"|".JPG"|".jpeg"|".png"|".PNG"|".svg")$ ]] && ueberzugpp cmd -s $SOCKET -i fzfpreview -a add -x $FZF_PREVIEW_LEFT -y $FZF_PREVIEW_TOP --max-width $FZF_PREVIEW_COLUMNS --max-height $FZF_PREVIEW_LINES -f {} || (ueberzugpp cmd -s $SOCKET -a remove -i fzfpreview && [[ $FZF_PROMPT =~ Files ]] && bat --color=always --plain {} || tree -C {})')
 
 rm -f /tmp/fzf-hidden-state /tmp/fzf-depth-state
 ueberzugpp cmd -s "$SOCKET" -a exit 2>/dev/null

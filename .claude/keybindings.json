@@ -49,7 +49,7 @@
                 "ctrl+n": "select:next",
                 "ctrl+k": "select:previous",
                 "ctrl+j": "select:next",
-                "enter": "select:accept",
+                "enter": "settings:close",
                 "space": "select:accept",
                 "/": "settings:search",
                 "r": "settings:retry"

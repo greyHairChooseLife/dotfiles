@@ -681,3 +681,8 @@ cron:
       note: "Restore: crontab crontab.bak"
     - desc: "Remove crontab (irreversible)"
       cmd: crontab -ir
+
+media:
+    - desc: "play mp3 music within current dir"
+      cmd: mpv ./*.mp3 --no-vid
+      note: "use --shuffle"

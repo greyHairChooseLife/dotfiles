@@ -17,7 +17,7 @@ trap cleanup EXIT
 selected=$(fzf --ansi --multi \
         --disabled \
         --prompt "Search> " \
-        --header '<Tab>: select, <Alt+h>: hidden/ignored, <Alt+g>: glob, <Ctrl+f>: open in nvim, <Enter>: confirm' \
+        --header '<Tab>: select, <Alt+h>: hidden/ignored, <Alt+g>: glob, <Alt+f>: open in nvim, <Enter>: confirm' \
         --delimiter ':' \
         --preview 'bat --color=always --plain --highlight-line {2} {1}' \
         --preview-window 'right:60%:+{2}-5' \
@@ -26,20 +26,20 @@ selected=$(fzf --ansi --multi \
         --bind "alt-h:transform:bash $HOME/dotfiles/scripts/bin/rg_reload.sh toggle-hidden" \
         --bind "alt-g:change-prompt(glob> )+clear-query+execute-silent(echo 1 > /tmp/rg-fzf-glob-mode-state)" \
         --bind "enter:transform:
-            GLOB_MODE=\$(cat /tmp/rg-fzf-glob-mode-state);
-            if [[ \$GLOB_MODE -eq 1 ]]; then
-                echo 0 > /tmp/rg-fzf-glob-mode-state;
-                echo \"\$FZF_QUERY\" > /tmp/rg-fzf-glob-state;
-                bash $HOME/dotfiles/scripts/bin/rg_reload.sh;
-            else
-                echo accept;
-            fi" \
+                GLOB_MODE=\$(cat /tmp/rg-fzf-glob-mode-state);
+                if [[ \$GLOB_MODE -eq 1 ]]; then
+                    echo 0 > /tmp/rg-fzf-glob-mode-state;
+                    echo \"\$FZF_QUERY\" > /tmp/rg-fzf-glob-state;
+                    bash $HOME/dotfiles/scripts/bin/rg_reload.sh;
+                else
+                    echo accept;
+                fi" \
+        --bind "alt-f:execute(awk -F: 'NR==1{printf \"nvim -O +%s %s\", \$2, \$1} NR>1{printf \" %s\", \$1}' {+f} > /tmp/rg-nvim-cmd.sh && bash /tmp/rg-nvim-cmd.sh)")
         # TODO: open each file at its exact line number in nvim vertical split.
         # nvim -O does not support per-file +line args (e.g. nvim -O +62 a.lua +8 b.lua is invalid).
         # Attempted: building "nvim -O +line1 file1 +line2 file2" — nvim ignores all but the last +cmd.
         # Possible fix: use a lua script passed via --cmd or -c that iterates buffers and calls :buffer +line.
         # For now, only the first selected file opens at the correct line; others open at top.
-        --bind "ctrl-f:execute(awk -F: 'NR==1{printf \"nvim -O +%s %s\", \$2, \$1} NR>1{printf \" %s\", \$1}' {+f} > /tmp/rg-nvim-cmd.sh && bash /tmp/rg-nvim-cmd.sh)")
 
 [[ -z "$selected" ]] && exit 0
 
