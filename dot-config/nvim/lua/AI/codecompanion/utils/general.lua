@@ -313,7 +313,7 @@ M.add_tab_buffers_reference = function()
 
     -- 결과 알림
     if #added_buffers > 0 then
-        local added_msg = "Added: " .. table.concat(added_buffers, ", ")
+        local added_msg = "Added to Context:\r\n" .. table.concat(added_buffers, "\r\n")
         chat.ui:set_virtual_text(added_msg)
         vim.notify(added_msg, 2, { render = "minimal" })
     end
