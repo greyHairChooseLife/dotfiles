@@ -18,7 +18,30 @@ return {
             emmylua_ls = { settings = { Lua = { diagnostics = { globals = { "vim" } } } } },
             html = {},
             superhtml = {},
-            ts_ls = {},
+            -- ts_ls = {},
+            tsgo = {},
+            vtsls = {
+                typescript = {
+                    inlayHints = {
+                        parameterNames = { enabled = "all" },
+                        parameterTypes = { enabled = true },
+                        variableTypes = { enabled = true },
+                        propertyDeclarationTypes = { enabled = true },
+                        functionLikeReturnTypes = { enabled = true },
+                        enumMemberValues = { enabled = true },
+                    },
+                },
+                javascript = {
+                    inlayHints = {
+                        parameterNames = { enabled = "all" },
+                        parameterTypes = { enabled = true },
+                        variableTypes = { enabled = true },
+                        propertyDeclarationTypes = { enabled = true },
+                        functionLikeReturnTypes = { enabled = true },
+                        enumMemberValues = { enabled = true },
+                    },
+                },
+            },
             ruff = { init_options = { settings = { showSyntaxErrors = false } } },
             pylsp = {
                 settings = {
@@ -113,6 +136,39 @@ return {
                     client.server_capabilities.hoverProvider = false
                 end
                 if client.name == "cssmodules_ls" then client.server_capabilities.hoverProvider = false end
+                if client.name == "tsgo-tmp" then
+                    local caps = client.server_capabilities
+
+                    -- UX / interaction
+                    caps.hoverProvider = false
+                    caps.completionProvider = false
+                    caps.definitionProvider = false
+                    caps.declarationProvider = false
+                    caps.implementationProvider = false
+                    caps.referencesProvider = false
+                    caps.renameProvider = false
+                    caps.codeActionProvider = false
+                    caps.signatureHelpProvider = false
+                    caps.documentHighlightProvider = false
+
+                    -- symbols / navegation
+                    caps.documentSymbolProvider = false
+                    caps.workspaceSymbolProvider = false
+
+                    -- format / tokens
+                    caps.documentFormattingProvider = false
+                    caps.documentRangeFormattingProvider = false
+                    caps.semanticTokensProvider = nil
+
+                    -- other
+                    caps.typeDefinitionProvider = false
+                    caps.callHierarchyProvider = false
+                    caps.selectionRangeProvider = false
+                    caps.inlayHintProvider = false
+
+                    -- diagnostics: no touch
+                    -- textDocument/publishDiagnostics don't depend on capabilities
+                end
             end,
             desc = "LSP: Disable hover capability from Ruff",
         })
