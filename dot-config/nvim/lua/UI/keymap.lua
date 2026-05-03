@@ -64,10 +64,11 @@ wk_map({
 
 map({ "n", "v" }, "w", function()
     local line = vim.fn.line(".")
+    local count = vim.v.count1
     if vim.fn.foldclosed(line) ~= -1 then
         vim.cmd("normal! zv0w")
     else
-        vim.cmd("normal! w")
+        vim.cmd("normal! " .. count .. "w")
     end
 end, { noremap = true, silent = true })
 

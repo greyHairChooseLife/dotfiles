@@ -299,6 +299,10 @@ docker:
         docker inspect --format='{{json .State.Health}}' <container-name> | jq
 
 networking:
+    - desc: "SSH escape sequence: force disconnect (<Enter~.>)"
+      cmd: |
+        \r\n~.
+      note: "Terminates ssh session instantly when network is unresponsive. With the input of <Enter + `~` + command>, the ssh client  does not send it to server but process within the client. And <~.> means to close socket file and exit the process."
     - desc: "SSH to my dev server"
       cmd: |
         ssh -i ~/.ssh/dev-server.pem ubuntu@52.79.120.81

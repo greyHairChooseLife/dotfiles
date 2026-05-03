@@ -66,3 +66,15 @@ bindkey '^[^O' _a_widget  # 커스텀 커맨드
 # History navigation
 bindkey '^P' up-history
 bindkey '^N' down-history
+
+fzf-fg() {
+    local job tmpfile
+    tmpfile=$(mktemp)
+    jobs > "$tmpfile"
+    cat "$tmpfile" >&2  # 디버그: 실제 내용 확인
+    job=$(fzf-tmux -p < "$tmpfile" | sed -E 's/\[(.+)\].*/\1/')
+    rm -f "$tmpfile"
+    [[ -n "$job" ]] && fg %$job
+}
+zle -N fzf-fg
+bindkey '^[z' fzf-fg

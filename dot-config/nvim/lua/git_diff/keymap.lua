@@ -23,8 +23,8 @@ local wk_map = require("utils").wk_map
 wk_map({
     ["<leader>g"] = {
         group = "󰊢  Git",
-        order = { "c" },
-        ["c"] = {
+        order = { "C" },
+        ["C"] = {
             function()
                 local git_dir = vim.fn.finddir(".git", vim.fn.getcwd() .. ";")
                 local in_conflict = git_dir ~= ""

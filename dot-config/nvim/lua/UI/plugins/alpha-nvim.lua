@@ -70,6 +70,7 @@ return {
             end),
             -- dashboard.button("n", "New", ":ene <BAR> startinsert <CR>"),
             dashboard.button("n", "New", ":ene<CR>"),
+            dashboard.button("d", "Stage", ":DiffviewOpen --imply-local<CR>"),
             dashboard.button("f", "File", function() picker.files() end),
             dashboard.button("w", "Word grep", function() picker.grep() end),
             dashboard.button("o", "old", function() picker.recent() end),
