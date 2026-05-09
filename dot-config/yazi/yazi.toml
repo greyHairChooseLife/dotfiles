@@ -3,6 +3,10 @@ ratio = [1, 2, 4]
 
 [opener]
 zathura = [{ run = 'zathura "$@"', block = false, for = "unix" }]
+mpv_audio = [{ run = 'mpv "$@" --no-vid', block = true, for = "unix" }]
 
 [open]
-prepend_rules = [{ mime = "application/pdf", use = "zathura" }]
+prepend_rules = [
+  { mime = "application/pdf", use = "zathura" },
+  { mime = "audio/mpeg", use = "mpv_audio" },
+]
