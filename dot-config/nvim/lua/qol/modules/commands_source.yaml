@@ -5,7 +5,7 @@ commands:
       cat: "config"
 
     # editor
-    - desc: "Delete empty lines"
+    - desc: "Remove empty lines (only empty) "
       cmd: "g/^$/d"
       cat: "editor"
 
@@ -41,7 +41,7 @@ commands:
       cmd: "v/pattern/y A"
       cat: "editor"
 
-    - desc: "Delete blank lines (keep non-empty)"
+    - desc: "Remove empty lines (empty OR whitespace-only)"
       cmd: "v/\\S/d"
       cat: "editor"
 
