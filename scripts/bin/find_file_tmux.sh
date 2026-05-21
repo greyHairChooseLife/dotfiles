@@ -3,7 +3,10 @@
 
 TARGET_PANE="$1"
 
-selected=$(bash "$(dirname "$0")/utils/find_file.sh")
+pane_pid=$(tmux display-message -p -t "$TARGET_PANE" '#{pane_pid}')
+pane_cwd=$(readlink -f /proc/$pane_pid/cwd 2>/dev/null || tmux display-message -p -t "$TARGET_PANE" '#{pane_current_path}')
+
+selected=$(cd "$pane_cwd" && bash "$(dirname "$0")/utils/find_file.sh")
 
 [[ -z "$selected" ]] && exit 0
 
