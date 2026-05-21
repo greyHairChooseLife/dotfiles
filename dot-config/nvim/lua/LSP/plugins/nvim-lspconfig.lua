@@ -65,6 +65,12 @@ return {
             },
             biome = {},
             basedpyright = {
+                on_init = function(client)
+                    local venv = client.root_dir and (client.root_dir .. "/.venv/bin/python")
+                    if venv and vim.fn.executable(venv) == 1 then
+                        client.config.settings.basedpyright.pythonPath = venv
+                    end
+                end,
                 settings = {
                     basedpyright = {
                         analysis = {
