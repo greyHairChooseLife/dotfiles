@@ -2,15 +2,18 @@
 # Search with ripgrep + fzf and send result to tmux pane
 # @file:line refs inside Claude Code, file:line otherwise
 
-PANE_CMD=$(tmux display-message -p -t "$TMUX_PANE" '#{pane_current_command}')
+TARGET_PANE="${1:-$TMUX_PANE}"
+
+PANE_CMD=$(tmux display-message -p -t "$TARGET_PANE" '#{pane_current_command}')
 [[ "$PANE_CMD" == "claude" ]] && CC=1 || CC=0
 
 echo "0" > /tmp/rg-fzf-hidden-state
 echo "0" > /tmp/rg-fzf-glob-mode-state
 echo "" > /tmp/rg-fzf-glob-state
+tmux display-message -p -t "$TARGET_PANE" '#{pane_current_path}' | tr -d '\n' > /tmp/rg-fzf-cwd
 
 cleanup() {
-    rm -f /tmp/rg-fzf-hidden-state /tmp/rg-fzf-glob-mode-state /tmp/rg-fzf-glob-state
+    rm -f /tmp/rg-fzf-hidden-state /tmp/rg-fzf-glob-mode-state /tmp/rg-fzf-glob-state /tmp/rg-fzf-cwd
 }
 trap cleanup EXIT
 
@@ -19,7 +22,7 @@ selected=$(fzf --ansi --multi \
         --prompt "Search> " \
         --header '<Tab>: select, <Alt+h>: hidden/ignored, <Alt+g>: glob, <Alt+f>: open in nvim, <Enter>: confirm' \
         --delimiter ':' \
-        --preview 'bat --color=always --plain --highlight-line {2} {1}' \
+        --preview "bash $HOME/dotfiles/scripts/bin/rg_preview.sh {1} {2}" \
         --preview-window 'right:60%:+{2}-5' \
         --bind "start:reload(bash $HOME/dotfiles/scripts/bin/rg_search.sh)" \
         --bind "change:reload(bash $HOME/dotfiles/scripts/bin/rg_search.sh {q} || true)" \
@@ -34,7 +37,7 @@ selected=$(fzf --ansi --multi \
                 else
                     echo accept;
                 fi" \
-        --bind "alt-f:execute(awk -F: 'NR==1{printf \"nvim -O +%s %s\", \$2, \$1} NR>1{printf \" %s\", \$1}' {+f} > /tmp/rg-nvim-cmd.sh && bash /tmp/rg-nvim-cmd.sh)")
+        --bind "alt-f:execute(CWD=\$(cat /tmp/rg-fzf-cwd); awk -F: -v cwd=\"\$CWD\" 'NR==1{printf \"nvim -O +%s %s/%s\", \$2, cwd, \$1} NR>1{printf \" %s/%s\", cwd, \$1}' {+f} > /tmp/rg-nvim-cmd.sh && bash /tmp/rg-nvim-cmd.sh)")
         # TODO: open each file at its exact line number in nvim vertical split.
         # nvim -O does not support per-file +line args (e.g. nvim -O +62 a.lua +8 b.lua is invalid).
         # Attempted: building "nvim -O +line1 file1 +line2 file2" — nvim ignores all but the last +cmd.
@@ -51,4 +54,4 @@ else
     refs=$(echo "$entries" | tr '\n' ' ')
 fi
 
-tmux send-keys -t "$TMUX_PANE" "${refs% }"
+tmux send-keys -t "$TARGET_PANE" "${refs% }"

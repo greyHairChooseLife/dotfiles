@@ -9,6 +9,7 @@ GLOB=$(cat /tmp/rg-fzf-glob-state 2>/dev/null || echo "")
 args=("--line-number" "--no-heading" "--color=always")
 [[ "$HIDDEN" -eq 1 ]] && args+=("--hidden" "-u")
 [[ -n "$GLOB" ]] && args+=("--glob" "$GLOB")
+CWD=$(cat /tmp/rg-fzf-cwd 2>/dev/null || echo ".")
 args+=("$QUERY")
 
-rg "${args[@]}" || true
+cd "$CWD" && rg "${args[@]}" || true
