@@ -70,7 +70,7 @@ alias time='/usr/bin/time -f $"========== time report ==========\n실행시간: 
 alias dbg='gdb --quiet'
 alias gdb='gdb --quiet'
 alias mk='make -s'
-alias xx='xargs'
+alias xx='xargs '       # 이렇게 하면 alias를 뒤따르는 명령으로 사용가능 e.g. `fzf | xx my-alias`
 alias fzf='fzf --ansi'
 
 # Media conversion
