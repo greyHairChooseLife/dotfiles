@@ -3,7 +3,7 @@ return {
     cmd = "Treewalker",
     opts = {
         highlight = false,
-        jumplist = false,
+        jumplist = true,
     },
     init = function()
         vim.keymap.set({ "n", "v" }, "<C-k>", "<cmd>Treewalker Up<cr>", { silent = true })
