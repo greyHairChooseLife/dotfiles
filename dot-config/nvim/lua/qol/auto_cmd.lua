@@ -58,7 +58,7 @@ vim.api.nvim_create_autocmd("TabNew", {
         -- tabname이 커스텀 되는 것도 시간이 걸리기 떄문에, 약간의 딜레이를 줘야한다.
         vim.defer_fn(function()
             local tabname = utils.get_current_tabname()
-            if tabname == " Commit" or tabname == " File" then vim.cmd("IBLDisable") end
+            if tabname == " History" or tabname == " Working-Tree" then vim.cmd("IBLDisable") end
         end, 50)
     end,
 })
@@ -67,14 +67,14 @@ vim.api.nvim_create_autocmd("TabEnter", {
     callback = function()
         require("nvim-tree.api").tree.reload() -- open된 buffer를 찾는 부분이 업데이트가 늦다. 탭 옮길때 갱신하면 잘 됨.
         local tabname = utils.get_current_tabname()
-        if tabname == " Commit" or tabname == " File" then vim.cmd("IBLDisable") end
+        if tabname == " History" or tabname == " Working-Tree" then vim.cmd("IBLDisable") end
     end,
 })
 
 vim.api.nvim_create_autocmd("TabLeave", {
     callback = function()
         local tabname = utils.get_current_tabname()
-        if tabname == " Commit" or tabname == " File" then vim.cmd("IBLEnable") end
+        if tabname == " History" or tabname == " Working-Tree" then vim.cmd("IBLEnable") end
     end,
 })
 

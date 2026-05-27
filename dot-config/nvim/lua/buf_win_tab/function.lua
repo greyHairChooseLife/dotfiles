@@ -195,7 +195,7 @@ end
 function M.gtq()
     if require("nvim-tree.api").tree.is_visible() then vim.cmd("NvimTreeClose") end
 
-    local special_tabs = { " Commit", " File", "GV", "Diff" }
+    local special_tabs = { " History", " Working-Tree", "GV", "Diff" }
     local tabname = utils.get_current_tabname()
     if vim.tbl_contains(special_tabs, tabname) then return vim.cmd("tabclose!") end
 
