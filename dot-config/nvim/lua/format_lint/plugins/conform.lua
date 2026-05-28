@@ -69,7 +69,7 @@ return {
             end,
         })
 
-        vim.g.disable_format_on_save = false
+        vim.g.disable_format_on_save = true
 
         vim.api.nvim_create_user_command("FormatOnSaveToggle", function()
             vim.g.disable_format_on_save = not vim.g.disable_format_on_save
