@@ -179,6 +179,10 @@ misc:
       cmd: |
         echo "링크1 링크2 링크3" | xargs -t -d" " -P4 -I{} yt-dlp -f bestvideo+bestaudio --merge-output-format mkv "{}"
       note: "extension of `.mkv` for best quality\ruse `cat` instead of echo for many links"
+    - desc: "Iterate files and do command for each"
+      cmd: |
+        for f in *.pdf; do mv "$f" "$f.bak"; done
+      note: "to ignore directory for file in *; do test -f \"$file\" && mv \"$file\" \"$file.bak\"; done"
 
 hardware:
     - desc: "autorandr: save current display layout"
