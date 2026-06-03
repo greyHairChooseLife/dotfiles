@@ -45,6 +45,10 @@ commands:
       cmd: "v/\\S/d"
       cat: "editor"
 
+    - desc: "Remove excluding words"
+      cmd: "%v/originalText.*/d"
+      cat: "editor"
+
     - desc: "Keep only non-commented lines"
       cmd: "v/^\\s*#/p"
       cat: "editor"
