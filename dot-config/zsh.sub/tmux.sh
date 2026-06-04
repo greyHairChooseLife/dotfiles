@@ -4,10 +4,29 @@ export TMUX_RESURRECT_DIR="$HOME/.local/state/tmux-resurrects/"
 export TMUXP_CONFIGDIR="$HOME/.config/tmuxp"
 
 alias t='tmux'
-alias tt='tmux attach \
-  \; choose-tree -swZ -F "#{?pane_format,#[fg=green] #{pane_current_command} #[fg=brightblack]#{pane_current_path},#{?window_format,#[fg=#0000ff]  #[fg=#c1cdc1]#{?#{window_active},#[bg=#181d5f],} #{=|7|...;p10:window_name} #{?window_flags,#[fg=brightblack#,bg=default] 󰇘 #[fg=#0000ff]#{?#{window_last_flag},󰽒, }#{?#{window_zoomed_flag}, , },},#{?session_grouped, (group #{session_group}: #{session_group_list}),}#{?session_attached,#[fg=violet] ,''}#{?#{==:#{@copied_client_session},#{session_name}}, #[fg=brightblack]󰇘 #[fg=brightred]󰋜 now,}}}" \
-  || tmux new-session'
 
+tt() {
+    local title="$1"
+    if [ -n "$title" ]; then
+        if tmux has-session -t "$title" 2>/dev/null; then
+            if [ -n "$TMUX" ]; then
+                tmux switch-client -t "$title"
+            else
+                tmux attach -t "$title"
+            fi
+        else
+            if [ -n "$TMUX" ]; then
+                tmux new-session -d -s "$title" && tmux switch-client -t "$title"
+            else
+                tmux new-session -s "$title"
+            fi
+        fi
+    else
+        tmux attach \
+            \; choose-tree -swZ -F "#{?pane_format,#[fg=green] #{pane_current_command} #[fg=brightblack]#{pane_current_path},#{?window_format,#[fg=#0000ff]  #[fg=#c1cdc1]#{?#{window_active},#[bg=#181d5f],} #{=|7|...;p10:window_name} #{?window_flags,#[fg=brightblack#,bg=default] 󰇘 #[fg=#0000ff]#{?#{window_last_flag},󰽒, }#{?#{window_zoomed_flag}, , },},#{?session_grouped, (group #{session_group}: #{session_group_list}),}#{?session_attached,#[fg=violet] ,''}#{?#{==:#{@copied_client_session},#{session_name}}, #[fg=brightblack]󰇘 #[fg=brightred]󰋜 now,}}}" \
+            || tmux new-session
+    fi
+}
 
 tp() {
     local entries=()
@@ -62,11 +81,6 @@ tp() {
     esac
 }
 
-# 외않되
-# set_pane_title() {
-#     printf '\033]2;%s\033\\' "$1"
-# }
-
 tm.1_title() {
     local name="${1:-$(ps -o comm= -p "$PPID")}"
     # [ -n "$TMUX" ] && tmux set -p @mytitle "$name"
@@ -87,13 +101,3 @@ alias 1='tm.1_title'
 alias 2='tm.2_toggle_border'
 # select tmux window and copy its layout
 alias tlayout='zsh ${HOME}/dotfiles/dot-config/zsh.sub/scripts/tmux/cp_layout_fzf.sh'
-
-# tmux new session with title
-tn() {
-    local title="${1:-anon}"
-    if [ -n "$TMUX" ]; then
-        tmux new-session -d -s "$title" && tmux switch-client -t "$title"
-    else
-        tmux new-session -s "$title"
-    fi
-}
