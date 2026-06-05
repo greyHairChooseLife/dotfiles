@@ -109,3 +109,27 @@ review() {
     )
 }
 
+
+# CPU/메모리 제한 걸린 sub-shell 진입 (cgroups v2 via systemd)
+# cpu% 는 "전체 논리 코어(nproc) 대비" 비율. 기본값 50% / 2G.
+# exit 으로 빠져나옴. 내부에서는 $CAPSHELL 환경변수가 설정되어 프롬프트에 표시됨.
+capshell() {
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+        cat <<'EOF'
+capshell [<cpu%>] [<mem>]   - CPU/메모리 제한 걸린 shell 진입
+
+  capshell           50% (전체 코어의 절반) / 2G   (기본값)
+  capshell 100       전체 코어 다 사용 / 2G
+  capshell 25 4G     전체 코어의 1/4 / 4G
+  exit               제한 shell 빠져나옴
+
+cpu% 는 전체 논리 코어(nproc) 대비 비율. 내부에서 $CAPSHELL 로 식별 가능.
+EOF
+        return 0
+    fi
+    local pct="${1:-50}" mem="${2:-2G}"
+    pct="${pct%\%}"                       # 끝의 % 제거 (50 / 50% 둘 다 허용)
+    local quota=$(( pct * $(nproc) ))     # 전체 코어 대비 % -> systemd quota
+    systemd-run --user --scope -p CPUQuota="${quota}%" -p MemoryMax="${mem}" \
+        env CAPSHELL="core:${pct}% / mem:${mem}" "$SHELL"
+}

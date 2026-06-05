@@ -13,6 +13,12 @@ PURE_GIT_UP_ARROW="󰠽"
 PURE_PROMPT_SYMBOL=""
 PURE_PROMPT_VICMD_SYMBOL=" >"
 
+# capshell(제한 shell) 안이면 RPROMPT 에 표시
+# CAPSHELL 의 % 는 prompt escape 라서 %% 로 이스케이프 (안 하면 %/ 가 cwd 로 확장됨)
+if [[ -n "$CAPSHELL" ]]; then
+    RPROMPT="%F{yellow}󰍛 ${CAPSHELL//\%/%%}%f"
+fi
+
 # 2. Completion 시스템
 autoload -Uz compinit
 if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
