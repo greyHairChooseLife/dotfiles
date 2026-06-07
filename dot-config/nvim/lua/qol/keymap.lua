@@ -269,13 +269,7 @@ vim.keymap.set("n", "qp", QF_prev)
 -- MEMO:: Etc
 wk_map({
     [","] = {
-        order = { "r", "R", "C" },
-        ["r"] = { ReloadLayout, desc = "reload layout", mode = "n" },
-        ["R"] = {
-            function() ReloadLayout(true) end,
-            desc = "reload layout force",
-            mode = "n",
-        },
+        order = { "C" },
         ["C"] = {
             function()
                 local word = vim.fn.expand("<cword>")
@@ -283,6 +277,18 @@ wk_map({
                 vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true), "n", false)
             end,
             desc = "change",
+            mode = "n",
+        },
+    },
+})
+
+wk_map({
+    [",l"] = {
+        order = { "r", "R", "C" },
+        ["r"] = { ReloadLayout, desc = "reload layout", mode = "n" },
+        ["R"] = {
+            function() ReloadLayout(true) end,
+            desc = "reload layout force",
             mode = "n",
         },
     },
