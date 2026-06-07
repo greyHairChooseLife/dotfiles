@@ -18,7 +18,9 @@ alias gsc='git switch'
 alias gs='git status'
 alias gl='git log'
 # alias gd='git --no-pager diff | delta --diff-so-fancy'
-function gd() { git --no-pager diff "$@" | delta --diff-so-fancy }
+# function gd() { git --no-pager diff "$@" | delta --diff-so-fancy }
+alias gd='git --no-pager diff'
+alias gdv='vi -c "lua require(\"snacks\").picker.git_diff({ layout = { fullscreen = true } })"'
 
 alias vd="git-root > /dev/null && nvim -c 'DiffviewOpen --imply-local'"
 alias vh="git-root > /dev/null && nvim -c 'DiffviewFileHistory'"
