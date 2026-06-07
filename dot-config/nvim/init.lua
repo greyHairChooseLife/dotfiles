@@ -43,8 +43,8 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     spec = specs, -- 워크플로우별 플러그인 병합
     defaults = { lazy = true }, -- 기본적으로 모든 플러그인을 지연 로드
+    concurrency = 10, -- restrict concurrent http request to repo(github)
     git = { log = { "-50" } }, -- (L)og에서 몇개나 보여줄지
-
     diff = { cmd = "diffview.nvim" },
     change_detection = { enabled = false }, -- 구성 파일 변경을 자동으로 확인하고 UI를 다시 로드
     performance = {
