@@ -40,7 +40,8 @@ map("v", ",.z", my_picker_src.grep_current_buffer_visual)
 -- Diagnostics
 map("n", ",.d", function() default.diagnostics_buffer({ layout = "ivy_split" }) end)
 map("n", ",.D", function() default.diagnostics({ layout = "ivy_split" }) end)
-map("n", ",.s", function() default.lsp_symbols({ layout = "lsp_select" }) end)
+-- map("n", ",.s", function() default.lsp_symbols({ layout = "lsp_select" }) end)
+map("n", ",.s", function() require("aerial").snacks_picker({ layout = { preset = "dropdown", preview = false, }, }) end)
 map("n", ",.l", function() default.treesitter({ layout = "lsp_select" }) end)
 map("n", ",.S", function() default.lsp_workspace_symbols() end)
 
