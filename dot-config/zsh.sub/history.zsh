@@ -54,6 +54,8 @@ per_process_history() {
             --with-nth=1 \
             --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today) | <Alt+d>: delete' \
             --prompt 'history -PID- > ' \
+            --preview 'printf %s {2}' \
+            --preview-window 'down,3,hidden,wrap' \
             --bind 'enter:clear-selection+accept' \
             --bind 'ctrl-e:execute(printf "%s" {2} | xclip -selection clipboard)+abort' \
             --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \
@@ -93,6 +95,8 @@ global_history() {
             --with-nth=1 \
             --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today) | <Alt+d>: delete' \
             --prompt 'history -Global- > ' \
+            --preview 'printf %s {2}' \
+            --preview-window 'down,3,hidden,wrap' \
             --bind 'enter:clear-selection+accept' \
             --bind 'ctrl-e:execute(printf "%s" {2} | xclip -selection clipboard)+abort' \
             --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \

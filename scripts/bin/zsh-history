@@ -51,23 +51,29 @@ _hist_format() {
     }'
 }
 
+# Dedup by command keeping the NEWEST occurrence. A single awk pass keeps, per
+# command, the latest timestamp+pwd in a hash (no full sort); then one sort by
+# timestamp for display. Stored line is  timestamp<TAB>pwd<TAB>command.
+# $nopath=1 replaces the path column with "...".
+_dedup_newest() {
+    local nopath="$1"
+    awk -F'\t' -v nopath="$nopath" '
+        NF>=3 && $1 >= ts[$3] { ts[$3]=$1; pw[$3]=$2 }
+        END { for (c in ts) print c"\t"ts[c]"\t"(nopath=="1" ? "..." : pw[c]) }
+    ' | sort -t$'\t' -k2,2
+}
+
 list_process() {
     local pid="$1" nopath="$2"
-    local pathexpr='$2'
-    [ "$nopath" = "1" ] && pathexpr='"..."'
     cat "$HISTDIR/pid_$pid" 2>/dev/null \
-        | awk -F'\t' "{ if (!seen[\$3]++) print \$3\"\t\"\$1\"\t\"$pathexpr }" \
-        | sort -t$'\t' -k2,2 \
+        | _dedup_newest "$nopath" \
         | _hist_format
 }
 
 list_global() {
     local nopath="$1"
-    local pathexpr='$2'
-    [ "$nopath" = "1" ] && pathexpr='"..."'
     cat "$HISTDIR"/pid_* 2>/dev/null \
-        | awk -F'\t' "NF>=3 { if (!seen[\$3]++) print \$3\"\t\"\$1\"\t\"$pathexpr }" \
-        | sort -t$'\t' -k2,2 \
+        | _dedup_newest "$nopath" \
         | _hist_format
 }
 
