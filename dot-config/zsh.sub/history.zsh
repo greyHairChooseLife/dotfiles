@@ -96,12 +96,12 @@ per_process_history() {
             --tac \
             --delimiter '\t' \
             --with-nth=1 \
-            --header '<Alt+1>: filter by Date(today)   <Alt+2>: filter by '${PWD}' ' \
+            --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today)' \
             --prompt 'history -PID- > ' \
             --bind 'ctrl-e:execute(printf "%s" {2} | xclip -selection clipboard)+abort' \
             --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \
-            --bind "alt-1:put(${today})" \
-            --bind "alt-2:put(${pwd_escaped})" \
+            --bind "alt-1:put(${pwd_escaped})" \
+            --bind "alt-2:put(${today})" \
             --bind "alt-3:reload(get_full_field_list_per_process ${pid})" \
             --bind "alt-4:reload(get_full_field_list_per_process_no_path ${pid})" \
             --bind "alt-d:execute(delete_history_entry ${pid} {})+reload(get_full_field_list_per_process ${pid})" \
@@ -144,12 +144,12 @@ global_history() {
             --tac \
             --delimiter '\t' \
             --with-nth=1 \
-            --header '<Alt+1>: filter by Date(today)   <Alt+2>: filter by '${PWD}' ' \
+            --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today)' \
             --prompt 'history -Global- > ' \
             --bind 'ctrl-e:execute(printf "%s" {2} | xclip -selection clipboard)+abort' \
             --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \
-            --bind "alt-1:put(${today})" \
-            --bind "alt-2:put(${pwd_escaped})" \
+            --bind "alt-1:put(${pwd_escaped})" \
+            --bind "alt-2:put(${today})" \
             --bind "alt-3:reload(get_full_field_list_global)" \
             --bind "alt-4:reload(get_full_field_list_global_no_path)" \
             --bind "alt-d:execute(delete_history_entry_global {})+reload(get_full_field_list_global)" \
