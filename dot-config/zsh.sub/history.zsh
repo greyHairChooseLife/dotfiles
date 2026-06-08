@@ -45,8 +45,9 @@ per_process_history() {
 
     local selected
     selected=$(
-        zsh-history list-process ${pid} \
+        COLUMNS=$COLUMNS zsh-history list-process ${pid} \
             | fzf \
+            --ansi \
             --multi \
             --tac \
             --delimiter '\t' \
@@ -83,8 +84,9 @@ global_history() {
 
     local selected
     selected=$(
-        zsh-history list-global \
+        COLUMNS=$COLUMNS zsh-history list-global \
             | fzf \
+            --ansi \
             --multi \
             --tac \
             --delimiter '\t' \

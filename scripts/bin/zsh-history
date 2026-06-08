@@ -9,17 +9,45 @@ set -u
 
 HISTDIR="$HOME/.zsh_history_dir"
 
-# Format: pad the display column to the right edge, keep raw command as field 2.
-# Input to this awk:  command<TAB>timestamp<TAB>pwd
+# Build the fzf display line. Input to this awk:  command<TAB>timestamp<TAB>pwd
+# Output:  <display>\t<raw command>
+#   - display field 1 is shown by fzf (--with-nth=1, --ansi)
+#   - field 2 is the raw command, used for copy / run / delete (no ANSI)
+# The command column is a FIXED width so the path/time columns line up on every
+# row; commands longer than the column are truncated with an ellipsis (the raw
+# command in field 2 is untouched). path and time are dimmed (ANSI 90).
 _hist_format() {
-    local cols=${COLUMNS:-}
-    [ -z "$cols" ] && cols=$(tput cols 2>/dev/null) || true
-    [ -z "$cols" ] && cols=80
-    awk -F'\t' -v cols="$cols" '{
-        cmd=$1; meta=$3"  "$2
-        pad=cols-length(cmd)-length(meta)
-        if(pad<4) pad=4
-        printf "%s%*s%s\t%s\n", cmd, pad, "", meta, cmd
+    # Width source priority: COLUMNS (exported by the zle wrapper for the initial
+    # list) -> FZF_COLUMNS (set by fzf inside reload subshells) -> tput -> 80.
+    # tput is unreliable here because stdout is a pipe, so it is only a last resort.
+    local cols
+    for cols in "${COLUMNS:-}" "${FZF_COLUMNS:-}" "$(tput cols 2>/dev/null)" 80; do
+        [ -n "$cols" ] && [ "$cols" != "0" ] && break
+    done
+    awk -F'\t' -v cols="$cols" '
+    BEGIN {
+        dim  = "\033[90m"; rst = "\033[0m"
+        gap   = 2                      # spaces between columns
+        timew = 19                     # YYYY-MM-DD HH:MM:SS
+        # path gets a slice of the remaining width; command fills the rest so the
+        # whole terminal width is used. time is right-aligned at the far edge.
+        avail = cols - timew - gap*2
+        if (avail < 30) avail = 30
+        pathw = int(avail * 0.30)
+        if (pathw < 12) pathw = 12
+        cmdw  = avail - pathw
+        if (cmdw < 10) cmdw = 10
+    }
+    function fit(s, w,   r) {
+        if (length(s) > w) return substr(s, 1, w - 1) "…"
+        r = s
+        while (length(r) < w) r = r " "
+        return r
+    }
+    {
+        raw = $1; time = $2; path = $3
+        # plain padding first (so ANSI codes do not skew widths), then color
+        printf "%s  %s%s  %s%s\t%s\n", fit(raw, cmdw), dim, fit(path, pathw), time, rst, raw
     }'
 }
 
