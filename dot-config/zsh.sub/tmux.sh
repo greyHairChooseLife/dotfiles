@@ -28,6 +28,8 @@ tt() {
     fi
 }
 
+alias ttt='tt $(basename $(pwd))'
+
 tp() {
     local entries=()
     local files
