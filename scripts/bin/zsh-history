@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+# Standalone helper for zsh per-process / global history (used by fzf binds).
+# Functions can't be exported to zsh subshells, so the logic lives here on $PATH.
+#
+# Stored line format: timestamp<TAB>pwd<TAB>command
+# Output line format (for fzf): display<TAB>command   (column 2 = raw command)
+
+set -u
+
+HISTDIR="$HOME/.zsh_history_dir"
+
+# Format: pad the display column to the right edge, keep raw command as field 2.
+# Input to this awk:  command<TAB>timestamp<TAB>pwd
+_hist_format() {
+    local cols=${COLUMNS:-}
+    [ -z "$cols" ] && cols=$(tput cols 2>/dev/null) || true
+    [ -z "$cols" ] && cols=80
+    awk -F'\t' -v cols="$cols" '{
+        cmd=$1; meta=$3"  "$2
+        pad=cols-length(cmd)-length(meta)
+        if(pad<4) pad=4
+        printf "%s%*s%s\t%s\n", cmd, pad, "", meta, cmd
+    }'
+}
+
+list_process() {
+    local pid="$1" nopath="$2"
+    local pathexpr='$2'
+    [ "$nopath" = "1" ] && pathexpr='"..."'
+    cat "$HISTDIR/pid_$pid" 2>/dev/null \
+        | awk -F'\t' "{ if (!seen[\$3]++) print \$3\"\t\"\$1\"\t\"$pathexpr }" \
+        | sort -t$'\t' -k2,2 \
+        | _hist_format
+}
+
+list_global() {
+    local nopath="$1"
+    local pathexpr='$2'
+    [ "$nopath" = "1" ] && pathexpr='"..."'
+    cat "$HISTDIR"/pid_* 2>/dev/null \
+        | awk -F'\t' "NF>=3 { if (!seen[\$3]++) print \$3\"\t\"\$1\"\t\"$pathexpr }" \
+        | sort -t$'\t' -k2,2 \
+        | _hist_format
+}
+
+# Remove every line whose command field (field 3) exactly equals one of the
+# given entries, in a single awk pass. Entries are passed to awk via a NUL-joined
+# env var so any character (spaces, tabs-in-cmd are impossible since field is
+# tab-delimited, quotes, $) is handled literally.
+# Note: grep/awk-filter can empty a file; never gate `mv` on exit status.
+_strip_entries() {
+    local file="$1"; shift
+    [ -e "$file" ] || return 0
+    local tmpfile
+    tmpfile=$(mktemp)
+    # Join entries with newline into ZH_DEL for awk to read as a set.
+    local joined="" e
+    for e in "$@"; do joined+="$e"$'\n'; done
+    ZH_DEL="$joined" awk -F'\t' '
+        BEGIN { n=split(ENVIRON["ZH_DEL"], a, "\n"); for(i=1;i<=n;i++) if(a[i]!="") del[a[i]]=1 }
+        !($3 in del)
+    ' "$file" > "$tmpfile"
+    mv "$tmpfile" "$file"
+}
+
+delete_process() {
+    local pid="$1"; shift
+    _strip_entries "$HISTDIR/pid_$pid" "$@"
+}
+
+delete_global() {
+    # Find files containing ANY of the entries as a whole command field, then
+    # strip all entries from each in one pass. rg over all files is ~0.01s;
+    # rewriting all (3000+) files unconditionally would be ~11s. Anchoring as
+    # \t<entry>$ matches the whole command field so 'ls' won't match 'ls -la'.
+    [ "$#" -gt 0 ] || return 0
+    local e esc alt=""
+    for e in "$@"; do
+        esc=$(printf '%s' "$e" | sed 's/[][\\.^$*+?(){}|/]/\\&/g')
+        [ -n "$alt" ] && alt+="|"
+        alt+="$esc"
+    done
+    rg -l --no-config -- "\t($alt)\$" "$HISTDIR" -g 'pid_[0-9]*' 2>/dev/null | while IFS= read -r file; do
+        _strip_entries "$file" "$@"
+    done
+}
+
+cmd="${1:-}"
+shift || true
+case "$cmd" in
+    list-process)
+        nopath=0; [ "${1:-}" = "--no-path" ] && { nopath=1; shift; }
+        list_process "${1:-$$}" "$nopath"
+        ;;
+    list-global)
+        nopath=0; [ "${1:-}" = "--no-path" ] && { nopath=1; shift; }
+        list_global "$nopath"
+        ;;
+    delete-process)
+        pid="$1"; shift
+        delete_process "$pid" "$@"
+        ;;
+    delete-global)
+        delete_global "$@"
+        ;;
+    *)
+        echo "usage: zsh-history {list-process [--no-path] [pid]|list-global [--no-path]|delete-process <pid> <entry>...|delete-global <entry>...}" >&2
+        exit 2
+        ;;
+esac

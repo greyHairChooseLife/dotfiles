@@ -33,57 +33,11 @@ save_successful_history() {
     return $exit_code
 }
 
-delete_history_entry() {
-    local pid="$1"
-    local entry="$2"
-    local histfile="$HOME/.zsh_history_dir/pid_$pid"
-    local tmpfile
-    tmpfile=$(mktemp)
-    grep -F -v -- "$entry" "$histfile" > "$tmpfile" && mv "$tmpfile" "$histfile"
-    rm -f "$tmpfile"
-}
-delete_history_entry_global() {
-    local entry="$1"
-    local histdir="$HOME/.zsh_history_dir"
-    local tmpfile
-    for file in "$histdir"/pid_*; do
-        [ -e "$file" ] || continue
-        if grep -F -q -- "$entry" "$file"; then
-            tmpfile=$(mktemp)
-            grep -F -v -- "$entry" "$file" > "$tmpfile" && mv "$tmpfile" "$file"
-            rm -f "$tmpfile"
-            return 0
-        fi
-    done
-    return 1
-}
-
 # Use precmd hook for zsh
 precmd_functions+=(save_successful_history)
 
-_hist_format() {
-    local cols=${COLUMNS:-$(tput cols)}
-    awk -F'\t' -v cols="$cols" '{
-        cmd=$1; meta=$3"  "$2
-        pad=cols-length(cmd)-length(meta)
-        if(pad<4) pad=4
-        printf "%s%*s%s\t%s\n", cmd, pad, "", meta, cmd
-    }'
-}
-get_full_field_list_per_process() {
-    local pid="${1:-$$}"
-    cat ~/.zsh_history_dir/pid_"$pid" 2> /dev/null \
-        | awk -F'\t' '{ if (!seen[$3]++) print $3"\t"$1"\t"$2 }' \
-        | sort -t$'\t' -k2,2 \
-        | _hist_format
-}
-get_full_field_list_per_process_no_path() {
-    local pid="${1:-$$}"
-    cat ~/.zsh_history_dir/pid_"$pid" 2> /dev/null \
-        | awk -F'\t' '{ if (!seen[$3]++) print $3"\t"$1"\t..." }' \
-        | sort -t$'\t' -k2,2 \
-        | _hist_format
-}
+# List/delete logic lives in the `zsh-history` script on $PATH so it is also
+# available inside fzf's execute()/reload() subshells (zsh can't export functions).
 per_process_history() {
     local pid="${1:-$$}"
     local pwd_escaped=$(printf ' %s ' "'${PWD}")
@@ -91,20 +45,22 @@ per_process_history() {
 
     local selected
     selected=$(
-        get_full_field_list_per_process ${pid} \
+        zsh-history list-process ${pid} \
             | fzf \
+            --multi \
             --tac \
             --delimiter '\t' \
             --with-nth=1 \
-            --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today)' \
+            --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today) | <Alt+d>: delete' \
             --prompt 'history -PID- > ' \
+            --bind 'enter:clear-selection+accept' \
             --bind 'ctrl-e:execute(printf "%s" {2} | xclip -selection clipboard)+abort' \
             --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \
             --bind "alt-1:put(${pwd_escaped})" \
             --bind "alt-2:put(${today})" \
-            --bind "alt-3:reload(get_full_field_list_per_process ${pid})" \
-            --bind "alt-4:reload(get_full_field_list_per_process_no_path ${pid})" \
-            --bind "alt-d:execute(delete_history_entry ${pid} {})+reload(get_full_field_list_per_process ${pid})" \
+            --bind "alt-3:reload(zsh-history list-process ${pid})" \
+            --bind "alt-4:reload(zsh-history list-process --no-path ${pid})" \
+            --bind "alt-d:execute-silent(zsh-history delete-process ${pid} {+2})+clear-selection+reload(zsh-history list-process ${pid})" \
             | awk -F'\t' '{print $2}'
     )
     if [[ -n "$selected" ]]; then
@@ -121,38 +77,28 @@ per_process_history() {
 zle -N per_process_history
 
 # Global history function
-get_full_field_list_global() {
-    cat ~/.zsh_history_dir/pid_* 2> /dev/null \
-        | awk -F'\t' 'NF>=3 { if (!seen[$3]++) print $3"\t"$1"\t"$2 }' \
-        | sort -t$'\t' -k2,2 \
-        | _hist_format
-}
-get_full_field_list_global_no_path() {
-    cat ~/.zsh_history_dir/pid_* 2> /dev/null \
-        | awk -F'\t' 'NF>=3 { if (!seen[$3]++) print $3"\t"$1"\t..." }' \
-        | sort -t$'\t' -k2,2 \
-        | _hist_format
-}
 global_history() {
     local pwd_escaped=$(printf ' %s ' "'${PWD}")
     local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
 
     local selected
     selected=$(
-        get_full_field_list_global \
+        zsh-history list-global \
             | fzf \
+            --multi \
             --tac \
             --delimiter '\t' \
             --with-nth=1 \
-            --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today)' \
+            --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today) | <Alt+d>: delete' \
             --prompt 'history -Global- > ' \
+            --bind 'enter:clear-selection+accept' \
             --bind 'ctrl-e:execute(printf "%s" {2} | xclip -selection clipboard)+abort' \
             --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \
             --bind "alt-1:put(${pwd_escaped})" \
             --bind "alt-2:put(${today})" \
-            --bind "alt-3:reload(get_full_field_list_global)" \
-            --bind "alt-4:reload(get_full_field_list_global_no_path)" \
-            --bind "alt-d:execute(delete_history_entry_global {})+reload(get_full_field_list_global)" \
+            --bind "alt-3:reload(zsh-history list-global)" \
+            --bind "alt-4:reload(zsh-history list-global --no-path)" \
+            --bind "alt-d:execute-silent(zsh-history delete-global {+2})+clear-selection+reload(zsh-history list-global)" \
             | awk -F'\t' '{print $2}'
     )
     if [[ -n "$selected" ]]; then
