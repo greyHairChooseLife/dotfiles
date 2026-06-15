@@ -115,7 +115,7 @@ wts() {
     elif [[ "$first" == "-"  ]]; then
         wt switch -
     else
-        wt switch -c "$@"
+        wt switch --create "$@"
     fi
     # cd "$prev" # back to original worktree
 }
