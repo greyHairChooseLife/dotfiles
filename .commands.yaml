@@ -18,7 +18,10 @@ git_github:
     - desc: "List repositories for a specific user or organization"
       cmd: |
         gh repo list <username/org>
-    - desc: "Clone a repo from one of your organizations (interactive)"
+    - desc: "Clone a repo (interactive)"
+      cmd: |
+        repo=$(gh repo list | fzf | awk '{print $1}') && gh repo clone "$repo"
+    - desc: "Clone a repo from one of organizations (interactive)"
       cmd: |
         org=$(gh org list | fzf) && repo=$(gh repo list "$org" | fzf | awk '{print $1}') && gh repo clone "$repo"
     - desc: "Clone repository using a specific branch"
