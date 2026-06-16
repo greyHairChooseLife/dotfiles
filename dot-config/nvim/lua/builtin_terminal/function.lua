@@ -86,18 +86,23 @@ local function get_c_compile_info()
         vim.notify("Please save the file before compiling.", vim.log.levels.WARN)
         return nil
     end
-    local relpath = vim.fn.expand("%")
+    local abspath = vim.fn.expand("%:p")
     local filename = vim.fn.expand("%:t")
     local ext = filename:match("^.+(%..+)$")
-    if ext ~= ".c" then
-        vim.notify("Only .c files are supported", vim.log.levels.ERROR)
+    local compiler
+    if ext == ".c" then
+        compiler = "gcc"
+    elseif ext == ".cpp" or ext == ".cc" or ext == ".cxx" then
+        compiler = "g++"
+    else
+        vim.notify("Only .c/.cpp files are supported", vim.log.levels.ERROR)
         return nil
     end
-    -- Replace .c with .out in the relative path
-    local outpath = relpath:gsub("%.c$", ".out")
-    local compile_cmd = string.format("gcc %s -g -O0 -o %s", relpath, outpath)
+    -- Replace the source extension with .out in the absolute path
+    local outpath = abspath:gsub("%" .. ext .. "$", ".out")
+    local compile_cmd = string.format("%s %s -g -O0 -o %s", compiler, abspath, outpath)
     return {
-        filepath = relpath,
+        filepath = abspath,
         filename = filename,
         compile_cmd = compile_cmd,
         exe_path = outpath,
