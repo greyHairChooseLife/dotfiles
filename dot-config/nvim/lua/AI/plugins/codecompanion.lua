@@ -149,14 +149,22 @@ return {
                         show_defaults = false,
                         show_model_choices = true,
                     },
-                    copilot = function()
-                        return require("codecompanion.adapters").extend("copilot", {
-                            -- github copilot premium request calculation
-                            -- https://docs.github.com/en/copilot/about-github-copilot/github-copilot-features#user-content-fnref-2
-                            schema = { model = { default = "gemini-3-flash-preview" } },
+                    -- copilot = function() return require("codecompanion.adapters").extend("copilot", {}) end,
+                    -- anthropic = function() return require("codecompanion.adapters").extend("anthropic", {}) end,
+                    -- openai = function() return require("codecompanion.adapters").extend("openai", {}) end,
+                    opencode = function()
+                        return require("codecompanion.adapters").extend("openai_compatible", {
+                            name = "sy",
+                            formatted_name = "sy",
+                            env = {
+                                url = "https://opencode.ai/zen/go",
+                                api_key = "OPENCODE_GO_API_KEY",
+                                chat_url = "/v1/chat/completions",
+                                models_endpoint = "/v1/models",
+                            },
+                            schema = { model = { default = "deepseek-v4-flash" } },
                         })
                     end,
-                    anthropic = function() return require("codecompanion.adapters").extend("anthropic", {}) end,
                 },
             },
             strategies = {
@@ -197,15 +205,12 @@ return {
                         ["symbols"] = { opts = { provider = "snacks" } },
                     },
                     -- variables = {},
-                    adapter = {
-                        name = "copilot",
-                        model = "gpt-4.1",
-                    },
+                    adapter = "opencode",
                 },
                 inline = {
                     adapter = {
-                        name = "copilot",
-                        model = "gpt-4.1",
+                        name = "opencode",
+                        model = "deepseek-v4-flash",
                     },
                     keymaps = {
                         accept_change = { modes = { n = "ca" } },
