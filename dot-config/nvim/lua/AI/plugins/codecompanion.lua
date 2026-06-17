@@ -154,8 +154,6 @@ return {
                     -- openai = function() return require("codecompanion.adapters").extend("openai", {}) end,
                     opencode = function()
                         return require("codecompanion.adapters").extend("openai_compatible", {
-                            name = "sy",
-                            formatted_name = "sy",
                             env = {
                                 url = "https://opencode.ai/zen/go",
                                 api_key = "OPENCODE_GO_API_KEY",

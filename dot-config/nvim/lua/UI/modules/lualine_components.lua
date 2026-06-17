@@ -296,12 +296,12 @@ local function codecompanion_adapter_name()
 
     local win_len = vim.api.nvim_win_get_width(0)
     local spinner_len = 24
-    local adapter_name = chat.adapter.formatted_name
-    local model_name = chat.settings.model
+    local adapter_name = (chat.adapter and chat.adapter.formatted_name) or ""
+    local model_name = chat.settings.model or ""
 
     local padding_len = win_len - #adapter_name - #model_name - spinner_len - 15
 
-    return "(" .. adapter_name .. ")" .. string.rep(" ", padding_len)
+    return "(" .. adapter_name .. ")" .. string.rep(" ", math.max(0, padding_len))
 end
 
 M.my_codecompanion = {

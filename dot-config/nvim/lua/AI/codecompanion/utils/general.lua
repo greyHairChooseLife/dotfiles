@@ -353,11 +353,11 @@ M.codecompanion_breadcrumbs = function()
 
     -- DEPRECATED:: 2025-05-26 업데이트 이후 해당 key 사라짐
     -- local reasoning_effort = chat.settings and chat.settings.reasoning_effort or " no"
-    local max_tokens = chat.settings.max_tokens
+    local max_tokens = chat.settings and chat.settings.max_tokens
     local used_tokens = chat.ui.tokens or 0
     local percentage_usage = "0"
 
-    if used_tokens ~= nil then percentage_usage = string.format("%.1f", (used_tokens / max_tokens) * 100) end
+    if max_tokens and max_tokens > 0 then percentage_usage = string.format("%.1f", (used_tokens / max_tokens) * 100) end
 
     -- DEPRECATED:: 2025-05-26 업데이트 이후 관련 key 사라짐
     -- local result = " " .. reasoning_effort .. "    󰰤  " .. percentage_usage .. "󱉸 (" .. used_tokens .. ")"
