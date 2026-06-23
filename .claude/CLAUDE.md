@@ -1,17 +1,3 @@
-# Language Settings
-
-Always respond in Korean, regardless of the language used in the question.
-
-## Exception
-
-Respond in the requested language only when explicitly asked.
-
-Examples:
-- "Please answer in English" → respond in English
-- "日本語で答えて" → respond in Japanese
-- No specific request → respond in Korean
-
-
 # Response Style
 
 ## Format
@@ -95,8 +81,3 @@ For multi-step tasks, state a brief plan:
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
-
-# Plan Documents
-
-Save plans to `docs/plans/active/YYYY-MM-DD-<feature-name>.md`. Move completed plans to `docs/plans/done/`.
