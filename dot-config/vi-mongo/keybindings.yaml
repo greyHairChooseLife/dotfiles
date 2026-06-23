@@ -1,12 +1,6 @@
-# runes: literal characters, case-sensitive (e.g. [a], [A])
-# keys:  named/combo keys (e.g. [Enter], [Escape], [Tab], [Space])
-#        Ctrl+<letter>: case-insensitive in config, but no Ctrl+Shift — in config Ctrl+L is the same as Ctrl+l
-#        Alt+<char>:    case-sensitive, both upper and lower work (e.g. Alt+a, Alt+A)
-
 global:
     closeApp:
         keys: [Ctrl+c]
-        runes: [q]
         description: Close application
     toggleFullScreenHelp:
         runes: ['?']
@@ -20,21 +14,37 @@ global:
     toggleHeader:
         runes: [t]
         description: Expand/collapse header
+navigation:
+    moveUp:
+        keys: [Up]
+        runes: [k]
+        description: Move up
+    moveDown:
+        keys: [Down]
+        runes: [j]
+        description: Move down
+    moveLeft:
+        keys: [Left]
+        runes: [h]
+        description: Move left
+    moveRight:
+        keys: [Right]
+        runes: [l]
+        description: Move right
 help:
     close:
         keys: [Esc]
         description: Close help
-welcome:
-    moveFocusUp:
-        keys: [Backtab]
-        description: Move focus up
-    moveFocusDown:
-        keys: [Tab]
-        description: Move focus down
+    search:
+        runes: [/]
+        description: Search keybindings
+    editKey:
+        runes: [e]
+        description: Edit keybinding
 connection:
     connectionForm:
         saveConnection:
-            keys: [Ctrl+s]
+            keys: [Ctrl+s, Enter]
             description: Save connection
         focusList:
             keys: [Ctrl+h, Ctrl+Left]
@@ -45,6 +55,7 @@ connection:
             description: Move focus to form
         deleteConnection:
             keys: [Ctrl+d]
+            runes: [D]
             description: Delete selected connection
         editConnection:
             runes: [E]
@@ -63,7 +74,7 @@ main:
         keys: [Ctrl+n]
         description: Hide databases
     showAIQuery:
-        keys: [Alt+a]
+        keys: [Ctrl+a]
         description: Show AI prompt
     showServerInfo:
         keys: [Ctrl+s]
@@ -86,6 +97,7 @@ databases:
         description: Add collection
     deleteCollection:
         keys: [Ctrl+d]
+        runes: [D]
         description: Delete collection
     renameCollection:
         runes: [R]
@@ -104,16 +116,16 @@ content:
     peekDocument:
         keys: [Enter]
         runes: [o]
-        description: Peek
+        description: Quick peek
     fullPagePeek:
         runes: [O]
-        description: Full peek
+        description: Full page peek
     addDocument:
         runes: [A]
         description: Add new
     editDocument:
-        runes: [E]
-        description: Full Edit
+        runes: [s]
+        description: Edit
     inlineEdit:
         runes: [e]
         description: Inline edit
@@ -125,6 +137,7 @@ content:
         description: Duplicate no confirm
     deleteDocument:
         keys: [Ctrl+d]
+        runes: [d]
         description: Delete
     deleteDocumentNoConfirm:
         keys: [Alt+d]
@@ -133,14 +146,15 @@ content:
         runes: [c]
         description: Copy highlighted
     copyDocument:
-        runes: [C]
+        runes: ["Y"]
         description: Copy document
     refresh:
         keys: [Ctrl+r]
+        runes: [R]
         description: Refresh
     toggleQueryBar:
         runes: [/]
-        description: Query bar
+        description: Toggle query bar
     nextDocument:
         runes: [']']
         description: Next document
@@ -148,20 +162,20 @@ content:
         runes: ['[']
         description: Previous document
     nextPage:
-        runes: [n]
+        runes: ["n"]
         description: Next page
     previousPage:
-        runes: [b]
+        runes: [p]
         description: Previous page
     toggleSortBar:
-        runes: [s]
-        description: Sort bar
+        runes: [x]
+        description: Toggle sort bar
     sortByColumn:
         runes: [S]
-        description: Sort by column
+        description: Sort by current column
     hideColumn:
         runes: [H]
-        description: Hide column
+        description: Hide current column
     resetHiddenColumns:
         keys: [Ctrl+r]
         description: Reset hidden columns
@@ -182,44 +196,55 @@ peeker:
         runes: [G]
         description: Move to bottom
     copyHighlight:
-        runes: [c]
+        runes: ["y"]
         description: Copy highlighted
     copyValue:
-        runes: [C]
+        runes: ["Y"]
         description: Copy only value
     toggleFullScreen:
         runes: [F]
         description: Toggle full screen
     exit:
-        runes: [p, P]
+        runes: [q]
         description: Exit
 queryBar:
     showHistory:
         keys: [Ctrl+y]
         description: Show history
     clearInput:
-        keys: [Ctrl+u]
+        keys: [Ctrl+d]
         description: Clear input
     paste:
         keys: [Ctrl+v]
         description: Paste from clipboard
+    nextMarker:
+        keys: [Ctrl+l]
+        description: Next marker
 sortBar:
     clearInput:
-        keys: [Ctrl+u]
+        keys: [Ctrl+d]
         description: Clear input
     paste:
         keys: [Ctrl+v]
         description: Paste from clipboard
 index:
-    exitModal:
-        keys: [Esc]
-        description: Exit modal
     addIndex:
         runes: [A]
         description: Add index
     deleteIndex:
         keys: [Ctrl+d]
+        runes: [D]
         description: Delete index
+indexAddForm:
+    exitForm:
+        keys: [Esc]
+        description: Exit form
+    addColumn:
+        keys: [Ctrl+a]
+        description: Add column
+    createIndex:
+        keys: [Ctrl+s]
+        description: Create index
 aiQuery:
     exitAIQuery:
         keys: [Esc]
@@ -232,7 +257,7 @@ history:
         runes: [C]
         description: Clear history
     acceptEntry:
-        keys: [Enter, Space]
+        keys: [Enter]
         description: Accept entry
     closeHistory:
         keys: [Esc, Ctrl+y]
@@ -263,6 +288,9 @@ aggregation:
         focusResults:
             keys: [Ctrl+j]
             description: Focus results
+        editPipelineInEditor:
+            keys: [Ctrl+e]
+            description: Edit full pipeline in external editor
     results:
         focusStages:
             keys: [Ctrl+j]

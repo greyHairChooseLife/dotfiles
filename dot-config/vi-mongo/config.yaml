@@ -1,4 +1,4 @@
-version: v0.1.30
+version: v0.2.1
 log:
     path: /tmp/vi-mongo.log
     level: info
@@ -6,9 +6,11 @@ log:
 editor:
     command: /usr/bin/nvim
     env: EDITOR
+ui:
+    databasePanelWidth: 30
 showConnectionPage: true
 showWelcomePage: false
-currentConnection: academic_society-dev
+currentConnection: academic_society-prod
 connections:
     - url: mongodb://localhost:27017
       host: localhost
@@ -28,7 +30,7 @@ connections:
       name: academic_society-dev
       timeout: 5
       options: {}
-    - url: mongodb://admin:admin@localhost:27018/academic_society?authSource=admin
+    - url: mongodb://admin:admin0207@localhost:27018/academic_society?authSource=admin
       host: localhost
       port: 27018
       database: academic_society
@@ -39,4 +41,4 @@ connections:
       options: {}
 styles:
     betterSymbols: true
-    currentStyle: default.yaml
+    currentStyle: dark-blue.yaml

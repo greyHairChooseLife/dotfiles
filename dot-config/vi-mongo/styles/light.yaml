@@ -46,6 +46,7 @@ content:
   cellTextColor: "#2A2A3F"
   activeRowColor: "#0184BC"
   selectedRowColor: "#0184BC"
+  multiSelectedRowColor: "#4A6B9C"
 docPeeker:
   keyColor: "#FF9580"
   valueColor: "#2A2A3F"
@@ -68,6 +69,10 @@ help:
   headerColor: "#0184BC"
   keyColor: "#FF9580"
   descriptionColor: "#2A2A3F"
+  scrollBarThumbColor: "#0184BC"
+  scrollBarTrackColor: "#C0C0C0"
+  selectedTextColor: "#FFFFFF"
+  selectedBackgroundColor: "#0184BC"
 others:
   buttonsTextColor: "#2A2A3F"
   buttonsBackgroundColor: "#0184BC"
