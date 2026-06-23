@@ -156,7 +156,7 @@ return {
                         return require("codecompanion.adapters").extend("openai_compatible", {
                             env = {
                                 url = "https://opencode.ai/zen/go",
-                                api_key = "OPENCODE_GO_API_KEY",
+                                api_key = "OPENCODE_API_KEY",
                                 chat_url = "/v1/chat/completions",
                                 models_endpoint = "/v1/models",
                             },
