@@ -41,7 +41,14 @@ alias ccc='clear_screen_and_scrollback && clear_only_screen'
 alias e='exit'
 
 # Editor & file manager
-alias vi='nvim'
+# Use `nvim -` to read piped stdin; plain `nvim` otherwise
+vi() {
+    if [[ -p /dev/stdin ]]; then
+        nvim - "$@"
+    else
+        nvim "$@"
+    fi
+}
 alias suvi='sudoedit'
 alias x='xdg-open'
 alias ee='nohup pcmanfm $PWD > /dev/null 2>&1 &'
@@ -95,3 +102,6 @@ alias tw='taskwarrior-tui'
 
 # custom script @~/dotfiles/scripts/bin
 alias cw='create_action_worktree_tmux_window.sh'
+
+# run multi-line commands in the clipboard
+alias R='xclip -selection clipboard -o | bash'

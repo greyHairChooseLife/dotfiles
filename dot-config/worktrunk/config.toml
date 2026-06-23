@@ -1,3 +1,4 @@
+skip-commit-generation-prompt = true
 [post-start]
 copy = "wt step copy-ignored"
 
@@ -9,3 +10,5 @@ rebase = true  # Rebase onto target before merge (--no-rebase to skip)
 remove = true  # Remove worktree after merge (--no-remove to keep)
 verify = true  # Run project hooks (--no-verify to skip)
 ff = false     # Create a merge commit even when fast-forward is possible (--no-ff)
+
+[projects]
