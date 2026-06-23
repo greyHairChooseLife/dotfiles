@@ -168,6 +168,12 @@ PACMAN_PKGS=(
     ttyd
     cronie
     mpv
+    bind
+    resvg
+    sops
+    libnotify
+    openbsd-netcat
+    fkill
 )
 
 AUR_PKGS=(
@@ -175,7 +181,6 @@ AUR_PKGS=(
     claude-code
     claude-code-acp
     eternalterminal
-    i3-scrot
     i3exit
     kime-git
     lazyactions-bin
@@ -204,6 +209,8 @@ AUR_PKGS=(
     aws-session-manager-plugin
     tree-sitter-cli-github-bin
     worktrunk-bin
+    vivify-bin
+    pi
 )
 
 echo "Installing pacman packages..."
