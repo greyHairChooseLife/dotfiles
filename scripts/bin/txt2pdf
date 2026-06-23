@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+    echo "Usage: txt2pdf [TEXT] [-o output.pdf]" >&2
+    echo "       echo 'text' | txt2pdf [-o output.pdf]" >&2
+    exit 1
+}
+
+output="output.pdf"
+text=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -o) output="$2"; shift 2 ;;
+        -h|--help) usage ;;
+        *) text="$1"; shift ;;
+    esac
+done
+
+if [[ -z "$text" && ! -t 0 ]]; then
+    text=$(cat)
+fi
+
+[[ -z "$text" ]] && usage
+
+ps_file=$(mktemp /tmp/txt2pdf.XXXXXX.ps)
+trap 'rm -f "$ps_file"' EXIT
+
+{
+    echo "%!PS-Adobe-3.0"
+    echo "%%Pages: 1"
+    echo "%%EndComments"
+    echo "%%Page: 1 1"
+    echo "/Courier findfont"
+    echo "12 scalefont"
+    echo "setfont"
+
+    x=72
+    y=720
+    line_height=16
+    max_width=80
+
+    while IFS= read -r line; do
+        # wrap long lines
+        while [[ ${#line} -gt $max_width ]]; do
+            chunk="${line:0:$max_width}"
+            line="${line:$max_width}"
+            escaped="${chunk//\\/\\\\}"
+            escaped="${escaped//(/\\(}"
+            escaped="${escaped//)/\\)}"
+            echo "$x $y moveto ($escaped) show"
+            y=$((y - line_height))
+            if [[ $y -lt 72 ]]; then
+                echo "showpage"
+                echo "%%Page: 1 1"
+                y=720
+            fi
+        done
+        escaped="${line//\\/\\\\}"
+        escaped="${escaped//(/\\(}"
+        escaped="${escaped//)/\\)}"
+        echo "$x $y moveto ($escaped) show"
+        y=$((y - line_height))
+        if [[ $y -lt 72 ]]; then
+            echo "showpage"
+            echo "%%Page: 1 1"
+            y=720
+        fi
+    done <<< "$text"
+
+    echo "showpage"
+    echo "%%EOF"
+} > "$ps_file"
+
+ps2pdf "$ps_file" "$output"
+echo "$output" >&2
