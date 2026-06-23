@@ -41,7 +41,7 @@ bindings = [
   # { key = "[", mods = "Control", chars = "\u001b[" },
   { key = "[", mods = "Control", chars = "\u001b[27;5;91~" },
   { key = "i", mods = "Control", chars = "\u001b[105;5u" },
-  { key = "Return", mods = "Shift", chars = "\u001b\r" },     # Shift + Return => linebreak for claude_code
+  { key = "Return", mods = "Shift", chars = "\u001b[13;2u" },     # Shift + Return (CSI u) => linebreak for claude_code
 ]
 
 [cursor]
