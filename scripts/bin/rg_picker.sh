@@ -5,7 +5,7 @@
 TARGET_PANE="${1:-$TMUX_PANE}"
 
 PANE_CMD=$(tmux display-message -p -t "$TARGET_PANE" '#{pane_current_command}')
-[[ "$PANE_CMD" == "claude" ]] && CC=1 || CC=0
+[[ "$PANE_CMD" == "claude" || "$PANE_CMD" == "pi" ]] && CC=1 || CC=0
 
 echo "0" > /tmp/rg-fzf-hidden-state
 echo "0" > /tmp/rg-fzf-glob-mode-state
