@@ -6,7 +6,7 @@ TARGET_PANE="$1"
 pane_pid=$(tmux display-message -t "$TARGET_PANE" -p '#{pane_pid}')
 pane_cwd=$(readlink -f /proc/$pane_pid/cwd 2>/dev/null || tmux display-message -t "$TARGET_PANE" -p '#{pane_current_path}')
 pane_cmd=$(tmux display-message -t "$TARGET_PANE" -p '#{pane_current_command}')
-[[ "$pane_cmd" == "claude" ]] && CC=1 || CC=0
+[[ "$pane_cmd" =~ ^(claude|pi)$ ]] && CC=1 || CC=0
 curr_dir=${pane_cwd/$HOME/\~}
 initial_depth=1
 
