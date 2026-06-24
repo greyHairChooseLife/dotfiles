@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+"""
+krd - Korean-English Dictionary CLI powered by Naver Dictionary
+
+Usage:
+  krd <word>            Look up word (auto-detects Korean/English)
+  krd -h                Show help
+"""
+import json
+import re
+import sys
+import html
+import urllib.request
+import urllib.parse
+
+API_URL = "https://en.dict.naver.com/api3/enko/search"
+UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+
+def has_korean(text):
+    return bool(re.search(r'[\uac00-\ud7a3\u3131-\u3163]', text))
+
+def clean(s):
+    return html.unescape(re.sub(r'<[^>]+>', '', s)) if s else ''
+
+def lookup(word):
+    url = f"{API_URL}?{urllib.parse.urlencode({'query': word, 'lang': 'en'})}"
+    req = urllib.request.Request(url, headers={'User-Agent': UA, 'Referer': 'https://en.dict.naver.com/'})
+    try:
+        data = json.loads(urllib.request.urlopen(req, timeout=5).read())
+    except Exception as e:
+        return None, f"API error: {e}"
+
+    srm = data.get('searchResultMap', {}).get('searchResultListMap', {})
+    is_ko = has_korean(word)
+
+    def parse_entries(section):
+        out = []
+        for e in (srm.get(section, {}).get('items') or [])[:6]:
+            hw = clean(e.get('expEntry', ''))
+            if not hw:
+                continue
+            pos_list = []
+            for mc in e.get('meansCollector', []):
+                pos = mc.get('partOfSpeech', '') or mc.get('partOfSpeech2', '')
+                means = []
+                for m in mc.get('means', []):
+                    v = clean(m.get('value', ''))
+                    if v:
+                        means.append({'def': v, 'eg': clean(m.get('exampleOri', '')), 'eg_tr': clean(m.get('exampleTrans', ''))})
+                if means:
+                    pos_list.append({'pos': pos, 'means': means})
+            if pos_list:
+                out.append({'hw': hw, 'pos_list': pos_list})
+        return out
+
+    word_entries = parse_entries('WORD')
+    meaning_entries = parse_entries('MEANING')
+
+    primary = ('KOR→ENG', word_entries) if is_ko else ('ENG→KOR', word_entries)
+
+    examples = []
+    for ex in (srm.get('EXAMPLE', {}).get('items') or [])[:4]:
+        o, t = ex.get('expExample1', ''), ex.get('expExample2', '')
+        if o and t:
+            examples.append((clean(o), clean(t)))
+
+    return {'label': primary[0], 'entries': primary[1], 'examples': examples, 'query': word}, None
+
+
+W = lambda s: f"\033[38;2;150;150;150m{s}\033[0m"
+D = lambda s: f"\033[2m{s}\033[0m"
+C = lambda s: f"\033[36m{s}\033[0m"
+
+def fmt(result):
+    lines = []
+    if result['entries']:
+        lines.append(f"{C('──')} {W(result['label'])} {C('─' * 40)}")
+        for e in result['entries'][:4]:
+            lines.append(f"  {e['hw']}")
+            for pos in e['pos_list']:
+                pl = f" [{pos['pos']}]" if pos['pos'] else ""
+                for m in pos['means']:
+                    lines.append(f"    {D('·')} {W(m['def'])}{D(pl)}")
+                    if m['eg']:
+                        lines.append(f"      {D('ex)')} {W(m['eg'])}")
+                        if m['eg_tr']:
+                            lines.append(f"      {D('→')} {W(m['eg_tr'])}")
+    if result['examples']:
+        lines.append(f"\n{D('──')} {W('Examples')} {D('─' * 42)}")
+        eng_first = not has_korean(result['query'])
+        for o, t in result['examples']:
+            a, b = (o, t) if eng_first else (t, o)
+            lines.append(f"  {a}")
+            lines.append(f"  {W(b)}")
+    if not result['entries']:
+        lines.append(D("  (no results found)"))
+    return '\n'.join(lines)
+
+
+def main():
+    args = sys.argv[1:]
+    if not args or '-h' in args or '--help' in args:
+        print(__doc__.strip())
+        return
+    word = ' '.join(args)
+    result, err = lookup(word)
+    if err:
+        print(err, file=sys.stderr)
+        sys.exit(1)
+    print(fmt(result))
+
+
+if __name__ == '__main__':
+    main()
