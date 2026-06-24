@@ -1,0 +1,36 @@
+{
+  "lastChangelogVersion": "0.80.2",
+  "theme": "ember-glow",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-pro",
+  "defaultThinkingLevel": "high",
+  "enabledModels": [
+    "opencode-go/deepseek-v4-flash",
+    "opencode-go/deepseek-v4-pro"
+  ],
+  "compaction": {
+    "enabled": false
+  },
+  "images": {
+    "blockImages": false
+  },
+  "editorPaddingX": 1,
+  "hideThinkingBlock": true,
+  "quietStartup": true,
+  "llm-wiki": {
+    "notices": false
+  },
+  "packages": [
+    "npm:pi-web-access",
+    "npm:@ff-labs/pi-fff",
+    "npm:@juicesharp/rpiv-btw",
+    "npm:@juicesharp/rpiv-advisor",
+    "npm:@gotgenes/pi-permission-system",
+    {
+      "source": "npm:@zosmaai/pi-llm-wiki",
+      "extensions": [
+        "+extensions/llm-wiki/index.ts"
+      ]
+    }
+  ]
+}

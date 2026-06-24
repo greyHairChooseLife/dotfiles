@@ -1,0 +1,125 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gotgenes/pi-permission-system/main/schemas/permissions.schema.json",
+
+  "permissionReviewLog": true,
+
+  "permission": {
+    "*": "ask",
+
+    "path": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow"
+    },
+
+    "read": "allow",
+    "fffind": "allow",
+    "ffgrep": "allow",
+    "write": "ask",
+    "edit": "ask",
+
+    "fetch_content": "allow",
+    "web_search": "allow",
+    "code_search": "allow",
+    "get_search_content": "allow",
+
+    "bash": {
+      "*": "ask",
+      "cd *": "allow",
+      "ls *": "allow",
+      "cat *": "allow",
+      "rg *": "allow",
+      "grep *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "wc *": "allow",
+      "file *": "allow",
+      "sort *": "allow",
+      "du *": "allow",
+      "diff *": "allow",
+      "which *": "allow",
+      "echo *": "allow",
+      "pwd": "allow",
+      "jq *": "allow",
+      "tree *": "allow",
+      "ps *": "allow",
+      "df *": "allow",
+      "uname *": "allow",
+      "whoami": "allow",
+      "id *": "allow",
+      "hostname *": "allow",
+      "date *": "allow",
+      "cal *": "allow",
+      "env": "allow",
+      "printenv *": "allow",
+      "bat *": "allow",
+      "zcat *": "allow",
+      "zgrep *": "allow",
+      "zless *": "allow",
+      "zdiff *": "allow",
+
+      "sed *": "allow",
+      "sed * -i*": "ask",
+
+      "awk *": "allow",
+      "awk * -i inplace*": "ask",
+
+      "find *": "allow",
+      "find * -exec *": "ask",
+      "find * -execdir *": "ask",
+      "find * -ok *": "ask",
+      "find * -delete": "ask",
+      "mkdir *": "ask",
+      "cp *": "ask",
+      "mv *": "ask",
+      "rm *": "ask",
+      "touch *": "ask",
+      "chmod *": "ask",
+      "chown *": "ask",
+      "sudo *": "ask",
+
+      "curl *": "ask",
+      "wget *": "ask",
+      "npm *": "ask",
+      "pnpm *": "ask",
+      "yarn *": "ask",
+      "bun *": "ask",
+
+      "docker ps *": "allow",
+      "docker images *": "allow",
+      "docker inspect *": "allow",
+      "docker logs *": "allow",
+      "docker version": "allow",
+      "docker info": "allow",
+      "docker *": "ask",
+
+      "git *": "ask",
+      "git status": "allow",
+      "git diff": "allow",
+      "git log": "allow",
+      "git show": "allow",
+      "git branch": "allow",
+      "git config *": "allow",
+      "git stash list": "allow",
+      "git stash show *": "allow",
+      "git tag": "allow",
+      "git remote -v": "allow",
+      "git fetch *": "allow",
+      "git checkout -b *": "allow"
+    },
+
+    "mcp": { "*": "ask" },
+
+    "skill": { "*": "allow" },
+
+    "external_directory": {
+      "*": "ask",
+      "/tmp/*": "allow",
+      "/home/sy/dotfiles/*": "allow",
+      "/home/sy/Documents/zk/*": "allow",
+      "/home/sy/.pi/*": "allow",
+      "/usr/lib/node_modules/pi/*": "allow"
+    }
+  }
+}
