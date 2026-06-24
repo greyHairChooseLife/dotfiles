@@ -37,7 +37,7 @@ selected=$(fzf --ansi --multi \
                 else
                     echo accept;
                 fi" \
-        --bind "alt-f:execute(CWD=\$(cat /tmp/rg-fzf-cwd); awk -F: -v cwd=\"\$CWD\" 'NR==1{printf \"nvim -O +%s %s/%s\", \$2, cwd, \$1} NR>1{printf \" %s/%s\", cwd, \$1}' {+f} > /tmp/rg-nvim-cmd.sh && bash /tmp/rg-nvim-cmd.sh)")
+        --bind "ctrl-r:execute(CWD=\$(cat /tmp/rg-fzf-cwd); awk -F: -v cwd=\"\$CWD\" 'NR==1{printf \"nvim -O +%s %s/%s\", \$2, cwd, \$1} NR>1{printf \" %s/%s\", cwd, \$1}' {+f} > /tmp/rg-nvim-cmd.sh && bash /tmp/rg-nvim-cmd.sh)")
         # TODO: open each file at its exact line number in nvim vertical split.
         # nvim -O does not support per-file +line args (e.g. nvim -O +62 a.lua +8 b.lua is invalid).
         # Attempted: building "nvim -O +line1 file1 +line2 file2" — nvim ignores all but the last +cmd.

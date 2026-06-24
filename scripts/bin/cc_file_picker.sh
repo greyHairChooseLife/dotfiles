@@ -25,7 +25,7 @@ selected=$(fd --type file --max-depth $initial_depth --base-directory "$pane_cwd
         --header '<Tab>: select, <Alt+h>: toggle hidden, <Alt+1~3>: depth, <Alt+f>: open in nvim, <Enter>: confirm' \
         --preview "bat --color=always --plain $pane_cwd/{}" \
         --preview-window 'hidden' \
-        --bind "alt-f:execute(nvim -O $pane_cwd/{+})" \
+        --bind "ctrl-r:execute(nvim -O $pane_cwd/{+})" \
         --bind "alt-h:transform:
             HIDDEN=\$(cat /tmp/cc-fzf-hidden-state);
             DEPTH=\$(cat /tmp/cc-fzf-depth-state);

@@ -8,12 +8,10 @@ fi
 
 export FZF_DEFAULT_OPTS="
   --multi
-  --bind 'ctrl-r:clear-query'
   --bind 'ctrl-g:jump'
-  --bind 'ctrl-h:last'
-  --bind 'ctrl-l:first'
-  --bind 'ctrl-b:half-page-up'
-  --bind 'ctrl-f:half-page-down'
+  --bind 'ctrl-n:half-page-down'
+  --bind 'ctrl-p:half-page-up'
+  --bind 'alt-a:toggle-all'
   --bind 'alt-k:preview-half-page-up'
   --bind 'alt-j:preview-half-page-down'
   --bind 'alt-p:change-preview-window(right,70%|down,40%,border-horizontal|up,90%,border-horizontal|hidden|right)'
