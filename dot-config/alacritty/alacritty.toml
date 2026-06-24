@@ -41,7 +41,7 @@ bindings = [
   # { key = "[", mods = "Control", chars = "\u001b[" },
   { key = "[", mods = "Control", chars = "\u001b[27;5;91~" },
   { key = "i", mods = "Control", chars = "\u001b[105;5u" },
-  { key = "Return", mods = "Shift", chars = "\u001b[13;2u" },     # Shift + Return (CSI u) => linebreak for claude_code
+  { key = "Return", mods = "Shift", chars = "\u001b[13;2u" }, # Shift + Return (CSI u) => linebreak for claude_code
 ]
 
 [cursor]
@@ -55,6 +55,7 @@ search.focused_match = { background = "#0000FF" }
 # Colors which should be used to draw the terminal cursor. If these are unset,
 # the cursor color will be the inverse of the cell color.
 cursor = { text = "#000000", cursor = "#ffffff" }
+# primary = { foreground = "#c0bdaf" }
 
 [terminal.shell]
 program = "/bin/zsh"

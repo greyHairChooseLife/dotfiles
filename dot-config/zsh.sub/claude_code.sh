@@ -2,7 +2,7 @@ export ASKED=~/Documents/claude_code/
 
 alias cld='claude'
 alias cldr='claude --resume'
-alias ai='cd ${ASKED} && claude'
+# alias ai='cd ${ASKED} && claude'
 
 ask() {
     if [ $# -eq 0 ]; then

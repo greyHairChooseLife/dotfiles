@@ -105,3 +105,5 @@ alias cw='create_action_worktree_tmux_window.sh'
 
 # run multi-line commands in the clipboard
 alias R='xclip -selection clipboard -o | bash'
+
+alias ai='pi'

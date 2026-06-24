@@ -59,10 +59,3 @@ chatGPT_services() {
 
     exit
 }
-
-usage() {
-    # browser --app="https://claude.ai/settings/usage"
-    browser --app="https://papago.naver.com/?sk=ko&tk=en&hn=1" # papago ko -> en
-    browser --app="https://papago.naver.com/?sk=en&tk=ko&hn=1" # papago en -> ko
-    exit
-}
