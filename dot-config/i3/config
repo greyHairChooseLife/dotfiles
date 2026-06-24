@@ -70,6 +70,9 @@ bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
 # bindsym XF86MonBrightnessUp exec "xbacklight -inc 10; notify-send 'brightness up'"
 # bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness down'"
 
+# Power button: toggle built-in / BT keyboard
+bindsym XF86PowerOff exec ~/.local/bin/toggle-btkb.sh
+
 # Start Applications
 bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
 ##bindsym $mod+F2 exec palemoon google-chrome-stable

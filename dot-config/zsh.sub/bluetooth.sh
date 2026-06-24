@@ -9,14 +9,14 @@ btkb() {
 
     local DEVICE_NAME="AT Translated Set 2 keyboard" # 내장 키보드 이름
 
-    if [ "$1" == "on" ]; then
+    if [ "$1" = "on" ]; then
         echo "Bluetooth 키보드를 사용합니다."
         xinput disable "$DEVICE_NAME"
         setxkbmap -option
         echo "  - 내장 키보드       : off"
         echo "  - ctrl/capsLck swap : off"
 
-    elif [ "$1" == "off" ]; then
+    elif [ "$1" = "off" ]; then
         echo "내장 키보드를 사용합니다."
         xinput enable "$DEVICE_NAME"
 
