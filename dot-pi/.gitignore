@@ -10,6 +10,7 @@
 !/agent/themes/ember-glow.json
 !/agent/extensions/
 /agent/extensions/*
+!/agent/extensions/codeblock-theme.ts
 !/agent/extensions/pi-permission-system/
 /agent/extensions/pi-permission-system/*
 !/agent/extensions/pi-permission-system/config.json

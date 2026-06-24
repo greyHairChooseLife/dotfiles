@@ -23,6 +23,8 @@
     "web_search": "allow",
     "code_search": "allow",
     "get_search_content": "allow",
+    "wiki_observe": "allow",
+    "wiki_retro": "allow",
 
     "bash": {
       "*": "ask",
