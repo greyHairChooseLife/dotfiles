@@ -38,8 +38,8 @@
 		"thinkingText": "muted",
 
 		"selectedBg": "bgLight",
-		"userMessageBg": "bgDark",
-		"userMessageText": "fg",
+		"userMessageBg": "fg",
+		"userMessageText": "bgDark",
 		"customMessageBg": "#282035",
 		"customMessageText": "fg",
 		"customMessageLabel": "purple",
@@ -62,7 +62,7 @@
 		"mdQuote": "muted",
 		"mdQuoteBorder": "#3a3a4a",
 		"mdHr": "#3a3a4a",
-		"mdListBullet": "#87CEFA",
+		"mdListBullet": "purple",
 
 		"toolDiffAdded": "#32CD32",
 		"toolDiffRemoved": "red",
