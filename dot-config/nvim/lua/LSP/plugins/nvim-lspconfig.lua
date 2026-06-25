@@ -15,7 +15,19 @@ return {
     },
     config = function()
         local servers = {
-            emmylua_ls = { settings = { Lua = { diagnostics = { globals = { "vim" } } } } },
+            -- emmylua_ls = { settings = { Lua = { diagnostics = { globals = { "vim" } } } } },
+            lua_ls = {
+                settings = {
+                    Lua = {
+                        runtime = { version = "LuaJIT" },
+                        workspace = {
+                            checkThirdParty = false,
+                            library = vim.api.nvim_get_runtime_file("", true),
+                        },
+                        completion = { callSnippet = "Replace" },
+                    },
+                },
+            },
             html = {},
             superhtml = {},
             -- ts_ls = {},
@@ -67,9 +79,7 @@ return {
             basedpyright = {
                 on_init = function(client)
                     local venv = client.root_dir and (client.root_dir .. "/.venv/bin/python")
-                    if venv and vim.fn.executable(venv) == 1 then
-                        client.config.settings.basedpyright.pythonPath = venv
-                    end
+                    if venv and vim.fn.executable(venv) == 1 then client.config.settings.basedpyright.pythonPath = venv end
                 end,
                 settings = {
                     basedpyright = {
@@ -104,7 +114,7 @@ return {
             docker_compose_language_service = {}, -- doesn't work at all
             yamlls = {},
             dockerls = {},
-            bashls = {},
+            bashls = { filetypes = { "sh", "zsh" } },
             clangd = {},
             terraformls = {},
             -- markdown_oxide = {},
@@ -180,74 +190,3 @@ return {
         })
     end,
 }
-
--- return {
---   "neovim/nvim-lspconfig",
---   config = function()
---     local nvim_lsp = require("lspconfig")
---
---     vim.api.nvim_command("inoremap <C-n> <C-x><C-o>")
---
---     -- Set up lspconfig.
---     local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
---
---     local servers = {
---       "bashls",
---       "cssls",
---       "dockerls",
---       "eslint",
---       "gopls",
---       "html",
---       "intelephense",
---       "jsonls",
---       "lua_ls",
---       "pyright",
---       "rust_analyzer",
---       "sqlls",
---       "svelte",
---       "tailwindcss",
---       "terraformls",
---       "ts_ls",
---       "vimls",
---       "yamlls",
---     }
---
---     for _, lsp in ipairs(servers) do
---       if nvim_lsp[lsp] ~= nil then
---         if nvim_lsp[lsp].setup ~= nil then
---           nvim_lsp[lsp].setup({
---             capabilities = capabilities,
---           })
---         else
---           vim.notify("LSP server " .. lsp .. " does not have a setup function", vim.log.levels.ERROR)
---         end
---       end
---     end
---
---     local eslint_linter = require("config.linters.eslint")
---     local shellcheck_linter = require("config.linters.shellcheck")
---
---     nvim_lsp.diagnosticls.setup({
---       filetypes = {
---         "javascript",
---         "javascript.jsx",
---         "sh",
---         "typescript",
---       },
---       init_options = {
---         filetypes = {
---           ["javascript.jsx"] = "eslint",
---           javascript = "eslint",
---           javascriptreact = "eslint",
---           sh = "shellcheck",
---           typescript = "eslint",
---           typescriptreact = "eslint",
---         },
---         linters = {
---           eslint = eslint_linter,
---           shellcheck = shellcheck_linter,
---         },
---       },
---     })
---   end,
--- }
