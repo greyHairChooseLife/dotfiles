@@ -19,6 +19,7 @@
 -   Use `-` for bullet points
 -   When generating Markdown files, use 4 spaces between the list marker and text (`-   item`, `1.  item`), and 4 spaces for nested list indentation.
 -   Break down complex ideas into digestible chunks
+-   Don't use linebreak syntax (`---`)
 
 
 # Coding Guidelines

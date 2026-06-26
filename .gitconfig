@@ -28,7 +28,7 @@
 [color "diff"]
 	commit = blue bold
 	frag = magenta bold italic
-  meta = black red
+  meta = magenta "#24283b" italic
   old = red
 	new = cyan
 
