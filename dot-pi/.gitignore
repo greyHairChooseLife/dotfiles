@@ -13,6 +13,7 @@
 /agent/extensions/*
 !/agent/extensions/codeblock-theme.ts
 !/agent/extensions/turn-navigator.ts
+!/agent/extensions/copy-session.ts
 !/agent/extensions/pi-permission-system/
 /agent/extensions/pi-permission-system/*
 !/agent/extensions/pi-permission-system/config.json
