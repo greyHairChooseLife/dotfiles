@@ -3,6 +3,7 @@
 !/web-search.json
 !/agent/
 /agent/*
+!/agent/AGENTS.md
 !/agent/settings.json
 !/agent/keybindings.json
 !/agent/themes/
