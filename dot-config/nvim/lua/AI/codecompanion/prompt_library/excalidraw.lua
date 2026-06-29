@@ -38,8 +38,8 @@ return {
         ignore_system_prompt = true,
         stop_context_insertion = true,
         adapter = {
-            name = "copilot",
-            model = "gemini-3-pro-preview",
+            -- name = "copilot",
+            -- model = "gemini-3-pro-preview",
         },
     },
     prompts = {

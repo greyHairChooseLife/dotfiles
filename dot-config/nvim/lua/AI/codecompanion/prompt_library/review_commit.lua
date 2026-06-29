@@ -47,10 +47,10 @@ return {
             -- name = "anthropic",
             -- model = "claude-3-7-sonnet-20250219", -- think
             -- model = "claude-3-5-sonnet-20241022", -- thinkless
-            name = "copilot",
+            -- name = "copilot",
             -- MEMO:: github copilot is not unlimited anymore
             -- model = "claude-3.7-sonnet",
-            model = "gpt-4.1",
+            -- model = "gpt-4.1",
         },
     },
     prompts = {

@@ -42,8 +42,8 @@ return {
         ignore_system_prompt = true,
         stop_context_insertion = true,
         adapter = {
-            name = "copilot",
-            model = "gpt-4.1",
+            -- name = "copilot",
+            -- model = "gpt-4.1",
         },
     },
     prompts = {
