@@ -626,6 +626,38 @@ M.copy_path = function(mode)
     vim.notify("Copied " .. mode .. ".\r\n" .. path, vim.log.levels.INFO)
 end
 
+--- Copy visual selection as file:line reference (relative to git root).
+--- Output format: path/to/file:start-end, or path/to/file:line for single line.
+---@return nil
+M.copy_visual_reference = function()
+    local abs_path = vim.fn.expand("%:p")
+    if abs_path == "" then
+        vim.notify("No file name to reference.", vim.log.levels.WARN)
+        return
+    end
+
+    local git_root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+    local rel_path
+    if git_root and abs_path:sub(1, #git_root) == git_root then
+        rel_path = abs_path:sub(#git_root + 2) -- skip trailing /
+    else
+        rel_path = vim.fn.expand("%:.")
+    end
+
+    local start_line, end_line = M.get_visual_line()
+
+    local result
+    if start_line == end_line then
+        result = string.format("%s:%d", rel_path, start_line)
+    else
+        result = string.format("%s:%d-%d", rel_path, start_line, end_line)
+    end
+
+    vim.fn.setreg("+", result)
+    vim.notify("Copied: " .. result, vim.log.levels.INFO)
+    vim.api.nvim_input("<Esc>")
+end
+
 --- Copy paths of all buffers shown in the current tab's windows.
 ---@param mode  "directory" | "absolute" | "relative" | "filename"
 ---@return nil

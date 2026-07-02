@@ -143,22 +143,22 @@ return {
       -- stylua: ignore start
       textobj("af", "@function.outer",    "textobjects", "Around function")
       textobj("if", "@function.inner",    "textobjects", "Inside function")
-      textobj("ac", "@class.outer",       "textobjects", "Around class")
-      textobj("ic", "@class.inner",       "textobjects", "Inside class")
+      -- textobj("ac", "@class.outer",       "textobjects", "Around class")
+      -- textobj("ic", "@class.inner",       "textobjects", "Inside class")
       textobj("aa", "@parameter.outer",   "textobjects", "Around argument")
       textobj("ia", "@parameter.inner",   "textobjects", "Inside argument")
-      textobj("ao", "@loop.outer",        "textobjects", "Around loop")
-      textobj("io", "@loop.inner",        "textobjects", "Inside loop")
-      textobj("ai", "@conditional.outer", "textobjects", "Around conditional")
-      textobj("ii", "@conditional.inner", "textobjects", "Inside conditional")
+      textobj("ai", "@loop.outer",        "textobjects", "Around loop") -- iterator
+      textobj("ii", "@loop.inner",        "textobjects", "Inside loop")
+      textobj("ac", "@conditional.outer", "textobjects", "Around conditional") -- conditional
+      textobj("ic", "@conditional.inner", "textobjects", "Inside conditional")
       textobj("ar", "@return.outer",      "textobjects", "Around return")
       textobj("ir", "@return.inner",      "textobjects", "Inside return")
       textobj("as", "@local.scope",       "locals",      "Around scope")
             -- stylua: ignore end
 
             -- ── Swap ────────────────────────────────────────────────────────────
-            map("n", "<leader>a", function() swap.swap_next("@parameter.inner") end, { desc = "Swap next parameter" })
-            map("n", "<leader>A", function() swap.swap_previous("@parameter.inner") end, { desc = "Swap prev parameter" })
+            map("n", "]a", function() swap.swap_next("@parameter.inner") end, { desc = "Swap next parameter" })
+            map("n", "[a", function() swap.swap_previous("@parameter.inner") end, { desc = "Swap prev parameter" })
 
       -- ── Movement ────────────────────────────────────────────────────────
       -- stylua: ignore start
@@ -166,14 +166,14 @@ return {
       jump("]F", move.goto_next_end,       "@function.outer",    "Next function end")
       jump("[f", move.goto_previous_start, "@function.outer",    "Prev function start")
       jump("[F", move.goto_previous_end,   "@function.outer",    "Prev function end")
-      jump("]c", move.goto_next_start,     "@class.outer",       "Next class start")
-      jump("]C", move.goto_next_end,       "@class.outer",       "Next class end")
-      jump("[c", move.goto_previous_start, "@class.outer",       "Prev class start")
-      jump("[C", move.goto_previous_end,   "@class.outer",       "Prev class end")
-      jump("]o", move.goto_next_start,     "@loop.outer",        "Next loop")
-      jump("[o", move.goto_previous_start, "@loop.outer",        "Prev loop")
-      jump("]i", move.goto_next_start,     "@conditional.outer", "Next conditional")
-      jump("[i", move.goto_previous_start, "@conditional.outer", "Prev conditional")
+      -- jump("]c", move.goto_next_start,     "@class.outer",       "Next class start")
+      -- jump("]C", move.goto_next_end,       "@class.outer",       "Next class end")
+      -- jump("[c", move.goto_previous_start, "@class.outer",       "Prev class start")
+      -- jump("[C", move.goto_previous_end,   "@class.outer",       "Prev class end")
+      jump("]i", move.goto_next_start,     "@loop.outer",        "Next loop")
+      jump("[i", move.goto_previous_start, "@loop.outer",        "Prev loop")
+      jump("]c", move.goto_next_start,     "@conditional.outer", "Next conditional")
+      jump("[c", move.goto_previous_start, "@conditional.outer", "Prev conditional")
             -- stylua: ignore end
         end,
     },
