@@ -121,7 +121,8 @@
       "/home/sy/dotfiles/*": "allow",
       "/home/sy/Documents/zk/*": "allow",
       "/home/sy/.pi/*": "allow",
-      "/usr/lib/node_modules/pi/*": "allow"
+      "/usr/lib/node_modules/pi/*": "allow",
+      "/home/sy/.agents/skills/*": "allow"
     }
   }
 }

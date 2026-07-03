@@ -20,10 +20,14 @@ alias gl='git log'
 # alias gd='git --no-pager diff | delta --diff-so-fancy'
 # function gd() { git --no-pager diff "$@" | delta --diff-so-fancy }
 gd() {
-    if ! git rev-parse --git-dir > /dev/null 2>&1; then
-        echo "Not in a git repository."
-        return 1
+    local original_path=$(pwd)
+    local repo_root=$(git-root)
+
+    if [ $? -ne 0 ] || [ -z $repo_root ]; then
+      return 1
     fi
+
+    cd "$repo_root" || return 1
 
     if [ -z "$(git diff --name-only)" ] && [ -z "$(git diff --cached --name-only)" ] && [ -z "$(git ls-files --others --exclude-standard)" ]; then
         echo "No changes."
@@ -34,23 +38,26 @@ gd() {
     files=$(
         git diff --name-only \
             | fzf -m \
-                --bind 'alt-1:reload(git diff --name-only)+change-preview(git diff --color=always {} | bat -p --color=always -l diff)+change-prompt(unstaged> )' \
-                --bind 'alt-2:reload(git diff --cached --name-only)+change-preview(git diff --cached --color=always {} | bat -p --color=always -l diff)+change-prompt(staged> )' \
-                --bind 'alt-3:reload(git ls-files --others --exclude-standard)+change-preview(bat -p --color=always {})+change-prompt(untracked> )' \
-                --bind 'alt-4:reload({ git diff HEAD --name-only; git ls-files --others --exclude-standard; })+change-preview(git diff HEAD --color=always {} 2>/dev/null || bat -p --color=always {})+change-prompt(all> )' \
-                --bind "ctrl-f:execute(nvim -O {+})" \
-                --bind "enter:accept" \
-                --prompt 'unstaged> ' \
-                --preview 'git diff --color=always {} | bat -p --color=always -l diff' \
-                --header '<A-1/2/3/4>: unstaged / staged / untracked / all  |  <C-f>: open selected nvim'
+            --bind 'alt-1:reload(git diff --name-only)+change-preview(git diff --color=always {} | bat -p --color=always -l diff)+change-prompt(1-unstaged> )' \
+            --bind 'alt-2:reload(git diff --cached --name-only)+change-preview(git diff --cached --color=always {} | bat -p --color=always -l diff)+change-prompt(2-staged> )' \
+            --bind 'alt-3:reload(git ls-files --others --exclude-standard)+change-preview(bat -p --color=always {})+change-prompt(3-untracked> )' \
+            --bind 'alt-4:reload({ git diff HEAD --name-only; git ls-files --others --exclude-standard; })+change-preview(git diff HEAD --color=always {} 2>/dev/null || bat -p --color=always {})+change-prompt(4-all> )' \
+            --bind "enter:execute(nvim -O {+})" \
+            --bind "ctrl-f:execute(nvim -c 'G' -c 'only')" \
+            --bind "ctrl-c:abort" \
+            --prompt 'unstaged> ' \
+            --preview 'git diff --color=always {} | bat -p --color=always -l diff' \
+            --header '<C-f>: Fugitive,  <Enter>: nvim,  <A-1/2/3/4>: unstaged-staged-untracked-all'
     )
 
-    [[ -n "$files" ]] && nvim -O "${(@f)files}"
+    # [[ -n "$files" ]] && nvim -O "${(@f)files}"
+    cd $original_path
 }
+
 alias gdv='vi -c "lua require(\"snacks\").picker.git_diff({ layout = { fullscreen = true } })"'
 
-alias vd="git-root > /dev/null && nvim -c 'DiffviewOpen --imply-local'"
-alias vh="git-root > /dev/null && nvim -c 'DiffviewFileHistory'"
+alias vid="git-root > /dev/null && nvim -c 'DiffviewOpen --imply-local' -c 'tabonly'"
+alias vih="git-root > /dev/null && nvim -c 'DiffviewFileHistory' -c 'tabonly'"
 
 alias gst='git stash'
 alias gls='git log --oneline --simplify-by-decoration --all'
