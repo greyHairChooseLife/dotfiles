@@ -174,6 +174,8 @@ PACMAN_PKGS=(
     libnotify
     openbsd-netcat
     fkill
+    googleworkspace-cli
+    ast-grep
 )
 
 AUR_PKGS=(
@@ -211,6 +213,7 @@ AUR_PKGS=(
     worktrunk-bin
     vivify-bin
     pi
+    google-cloud-cli
 )
 
 echo "Installing pacman packages..."
