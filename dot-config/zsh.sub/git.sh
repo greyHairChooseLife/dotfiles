@@ -19,7 +19,34 @@ alias gs='git status'
 alias gl='git log'
 # alias gd='git --no-pager diff | delta --diff-so-fancy'
 # function gd() { git --no-pager diff "$@" | delta --diff-so-fancy }
-alias gd='git --no-pager diff'
+gd() {
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Not in a git repository."
+        return 1
+    fi
+
+    if [ -z "$(git diff --name-only)" ] && [ -z "$(git diff --cached --name-only)" ] && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+        echo "No changes."
+        return 0
+    fi
+
+    local files
+    files=$(
+        git diff --name-only \
+            | fzf -m \
+                --bind 'alt-1:reload(git diff --name-only)+change-preview(git diff --color=always {} | bat -p --color=always -l diff)+change-prompt(unstaged> )' \
+                --bind 'alt-2:reload(git diff --cached --name-only)+change-preview(git diff --cached --color=always {} | bat -p --color=always -l diff)+change-prompt(staged> )' \
+                --bind 'alt-3:reload(git ls-files --others --exclude-standard)+change-preview(bat -p --color=always {})+change-prompt(untracked> )' \
+                --bind 'alt-4:reload({ git diff HEAD --name-only; git ls-files --others --exclude-standard; })+change-preview(git diff HEAD --color=always {} 2>/dev/null || bat -p --color=always {})+change-prompt(all> )' \
+                --bind "ctrl-f:execute(nvim -O {+})" \
+                --bind "enter:accept" \
+                --prompt 'unstaged> ' \
+                --preview 'git diff --color=always {} | bat -p --color=always -l diff' \
+                --header '<A-1/2/3/4>: unstaged / staged / untracked / all  |  <C-f>: open selected nvim'
+    )
+
+    [[ -n "$files" ]] && nvim -O "${(@f)files}"
+}
 alias gdv='vi -c "lua require(\"snacks\").picker.git_diff({ layout = { fullscreen = true } })"'
 
 alias vd="git-root > /dev/null && nvim -c 'DiffviewOpen --imply-local'"
