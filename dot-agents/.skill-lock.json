@@ -1,0 +1,38 @@
+{
+  "version": 3,
+  "skills": {
+    "grill-with-docs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
+      "skillFolderHash": "3c4ac970c404e8d32c24f2725bfe679e455a925b",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-05-18T10:38:31.751Z",
+      "updatedAt": "2026-05-18T10:38:31.751Z"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "skillFolderHash": "2a1ad17028306ebe45f0e49703fa28b9b2e7f499",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-05-18T10:38:31.759Z",
+      "updatedAt": "2026-05-18T10:38:31.759Z"
+    },
+    "caveman": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/caveman/SKILL.md",
+      "skillFolderHash": "17972a1bdbf5909b9dbdc435ad348f0bf45f8664",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-05-18T10:38:31.760Z",
+      "updatedAt": "2026-05-18T10:38:31.760Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  }
+}
