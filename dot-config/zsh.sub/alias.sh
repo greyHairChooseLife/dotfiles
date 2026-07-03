@@ -110,3 +110,4 @@ alias ai='pi'
 alias aie='pi --no-session'
 
 alias sg='ast-grep'
+alias sgs='sg_search.sh'
