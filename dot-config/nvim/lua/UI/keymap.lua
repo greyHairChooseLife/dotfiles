@@ -109,3 +109,5 @@ end, { noremap = true, silent = true })
 
 map({ "n", "v" }, "zN", "<cmd>normal! zj<CR>", { noremap = true, silent = true })
 map({ "n", "v" }, "zP", "<cmd>normal! zk<CR>", { noremap = true, silent = true })
+
+map({ "n" }, "<leader><Space>", "<cmd>Alpha<CR>", { noremap = true, silent = true })

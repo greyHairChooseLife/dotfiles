@@ -108,7 +108,9 @@
       "git tag": "allow",
       "git remote -v": "allow",
       "git fetch *": "allow",
-      "git checkout -b *": "allow"
+      "git checkout -b *": "allow",
+
+      "task *": "allow"
     },
 
     "mcp": { "*": "ask" },

@@ -51,16 +51,8 @@ return {
             table.insert(lines, "")
             return lines
         end
-        dashboard.section.header.val = header()
 
-        -- MEMO:: footer
-        -- local function footer()
-        -- 	return {
-        -- 		"1. 미루지 않기",
-        -- 		"2. 어려운 쪽을 선택하기",
-        -- 	}
-        -- end
-        -- dashboard.section.footer.val = footer()
+        dashboard.section.header.val = header()
 
         -- Set menu
         dashboard.section.buttons.val = {
@@ -72,27 +64,25 @@ return {
                 vim.cmd("NvimTreeOpen")
                 vim.cmd("only")
             end),
-            -- dashboard.button("n", "New", ":ene <BAR> startinsert <CR>"),
+
             dashboard.button("n", "New", ":ene<CR>"),
-            dashboard.button("f", "File", function() picker.files() end),
-            dashboard.button("w", "Word grep", function() picker.grep() end),
+            -- dashboard.button("f", "File", function() picker.files() end),
+            -- dashboard.button("w", "Word grep", function() picker.grep() end),
             dashboard.button("o", "old", function() picker.recent() end),
             dashboard.button("O", "Old (global)", function() picker.recent_global() end),
+
             dashboard.button("_", "                             ________   AI _____", ""),
             dashboard.button("cc", "Copilot", function()
                 local cdc_func = require("AI.codecompanion.utils.general")
                 cdc_func.create_new()
                 vim.cmd("only")
             end),
-            dashboard.button("cp", "c.c: Prompts", ":cd ~/.claude | e CLAUDE.md<CR>"),
-            dashboard.button("cs", "c.c: Skills", ":cd ~/.claude | e skills<CR>"),
+            dashboard.button("aP", "AI Prompt", ":cd ~/.pi/agent | e AGENTS.md<CR>"),
+            dashboard.button("ap", "AI Permission", ":cd ~/.pi/agent | e extensions/pi-permission-system/config.json<CR>"),
 
-            -- DEPRECATED:: 2026-03-04
-            -- dashboard.button("_", "                              _______   doc _____", ""),
-            -- dashboard.button("1", "dev", ":cd ~/Documents/dev-wiki | :VimwikiIndex<CR>"),
-            -- dashboard.button("2", "job", ":cd ~/Documents/job-wiki | :2VimwikiIndex<CR>"),
-            -- dashboard.button("d", "all", ":cd ~/Documents | vi .<CR>"),
-            --
+            -- dashboard.button("cp", "c.c: Prompts", ":cd ~/.claude | e CLAUDE.md<CR>"),
+            -- dashboard.button("cs", "c.c: Skills", ":cd ~/.claude | e skills<CR>"),
+
             dashboard.button("_", "                              ______  configs ___", ""),
             dashboard.button("lz", "lazy plugins", ":Lazy<CR>"),
             dashboard.button("i3", "i3", ":cd ~/.config/i3 | e config<CR>"),
@@ -101,9 +91,11 @@ return {
             dashboard.button("tw", "taskwarrior", ":cd ~/Documents/zk | e .task<CR>"),
             dashboard.button("vi", "vi", ":cd ~/.config | e nvim<CR>"),
             dashboard.button("ba", "bash", ":cd ~/.config | e zsh.sub/<CR>"),
-            dashboard.button("sn", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
-            dashboard.button("a", "my commands", ":cd ~/dotfiles | e .commands.yaml<CR>"),
-            dashboard.button("sc", "my scripts", ":cd ~/dotfiles | e scripts/bin<CR>"),
+
+            -- dashboard.button("sn", "Snippet C", ":e ~/dotfiles/dot-config/nvim/lua/completion/modules/snippets.lua<CR>"),
+            -- dashboard.button("a", "my commands", ":cd ~/dotfiles | e .commands.yaml<CR>"),
+            -- dashboard.button("sc", "my scripts", ":cd ~/dotfiles | e scripts/bin<CR>"),
+
             dashboard.button("_", "                              ______  sessions __", ""),
             dashboard.button("sv", "Session View", function()
                 vim.cmd("AutoSession search")
