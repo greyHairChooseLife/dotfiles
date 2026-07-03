@@ -14,7 +14,7 @@ export FZF_DEFAULT_OPTS="
   --bind 'alt-a:toggle-all'
   --bind 'alt-k:preview-half-page-up'
   --bind 'alt-j:preview-half-page-down'
-  --bind 'alt-p:change-preview-window(right,70%|down,40%,border-horizontal|up,90%,border-horizontal|hidden|right)'
+  --bind 'alt-p:change-preview-window(right,70%|up,90%,border-horizontal|down,40%,border-horizontal|hidden|right)'
   --bind 'tab:toggle-up'
   --bind 'shift-tab:toggle-down'
   --bind 'ctrl-e:execute(printf "%s" {} | $_fzf_copy_cmd)+abort'

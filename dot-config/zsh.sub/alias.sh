@@ -107,3 +107,6 @@ alias cw='create_action_worktree_tmux_window.sh'
 alias R='xclip -selection clipboard -o | bash'
 
 alias ai='pi'
+alias aie='pi --no-session'
+
+alias agr='ast-grep'
