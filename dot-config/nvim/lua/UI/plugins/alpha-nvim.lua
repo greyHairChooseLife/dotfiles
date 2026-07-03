@@ -64,13 +64,16 @@ return {
 
         -- Set menu
         dashboard.section.buttons.val = {
+            dashboard.button("_", "                             ________   git ____", ""),
+            dashboard.button("d", "Stage", ":DiffviewOpen --imply-local<CR> :tabonly<CR>"),
+            dashboard.button("h", "History", ":DiffviewFileHistory<CR> | :tabonly<CR>"),
+
             dashboard.button(".", "                             ________   dir ____", function()
                 vim.cmd("NvimTreeOpen")
                 vim.cmd("only")
             end),
             -- dashboard.button("n", "New", ":ene <BAR> startinsert <CR>"),
             dashboard.button("n", "New", ":ene<CR>"),
-            dashboard.button("d", "Stage", ":DiffviewOpen --imply-local<CR>"),
             dashboard.button("f", "File", function() picker.files() end),
             dashboard.button("w", "Word grep", function() picker.grep() end),
             dashboard.button("o", "old", function() picker.recent() end),

@@ -42,12 +42,12 @@ gd() {
             --bind 'alt-2:reload(git diff --cached --name-only)+change-preview(git diff --cached --color=always {} | bat -p --color=always -l diff)+change-prompt(2-staged> )' \
             --bind 'alt-3:reload(git ls-files --others --exclude-standard)+change-preview(bat -p --color=always {})+change-prompt(3-untracked> )' \
             --bind 'alt-4:reload({ git diff HEAD --name-only; git ls-files --others --exclude-standard; })+change-preview(git diff HEAD --color=always {} 2>/dev/null || bat -p --color=always {})+change-prompt(4-all> )' \
-            --bind "enter:execute(nvim -O {+})" \
-            --bind "ctrl-f:execute(nvim -c 'G' -c 'only')" \
+            --bind "ctrl-f:execute(nvim -O {+})" \
+            --bind "enter:execute(nvim -c 'G' -c 'only')" \
             --bind "ctrl-c:abort" \
             --prompt 'unstaged> ' \
             --preview 'git diff --color=always {} | bat -p --color=always -l diff' \
-            --header '<C-f>: Fugitive,  <Enter>: nvim,  <A-1/2/3/4>: unstaged-staged-untracked-all'
+            --header '<Enter>: Fugitive | <Ctrl-f>: peek | <A-1/2/3/4>: unstaged|staged|untracked|all'
     )
 
     # [[ -n "$files" ]] && nvim -O "${(@f)files}"
@@ -56,8 +56,10 @@ gd() {
 
 alias gdv='vi -c "lua require(\"snacks\").picker.git_diff({ layout = { fullscreen = true } })"'
 
-alias vid="git-root > /dev/null && nvim -c 'DiffviewOpen --imply-local' -c 'tabonly'"
-alias vih="git-root > /dev/null && nvim -c 'DiffviewFileHistory' -c 'tabonly'"
+# DEPRECATED:: 2026-07-03
+# These are included in alph-nvim
+# alias vid="git-root > /dev/null && nvim -c 'DiffviewOpen --imply-local' -c 'tabonly'"
+# alias vih="git-root > /dev/null && nvim -c 'DiffviewFileHistory' -c 'tabonly'"
 
 alias gst='git stash'
 alias gls='git log --oneline --simplify-by-decoration --all'

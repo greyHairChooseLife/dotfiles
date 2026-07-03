@@ -109,4 +109,4 @@ alias R='xclip -selection clipboard -o | bash'
 alias ai='pi'
 alias aie='pi --no-session'
 
-alias agr='ast-grep'
+alias sg='ast-grep'

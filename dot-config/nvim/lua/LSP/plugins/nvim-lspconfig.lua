@@ -115,7 +115,7 @@ return {
             yamlls = {},
             dockerls = {},
             bashls = { filetypes = { "sh", "zsh" } },
-            clangd = {},
+            clangd = { cmd = { "docker", "exec", "-i", "voice-craft-bot-lsp", "clangd" }, },
             terraformls = {},
             -- markdown_oxide = {},
             -- marksman = {},
