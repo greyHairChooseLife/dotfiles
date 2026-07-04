@@ -59,6 +59,10 @@ return {
             dashboard.button("_", "                             ________   git ____", ""),
             dashboard.button("d", "Stage", ":DiffviewOpen --imply-local<CR> :tabonly<CR>"),
             dashboard.button("h", "History", ":DiffviewFileHistory<CR> | :tabonly<CR>"),
+            dashboard.button("l", "History - Picker", function()
+                local my_picker_src = require("picker.modules.picker_sources")
+                my_picker_src.git_log()
+            end),
 
             dashboard.button(".", "                             ________   dir ____", function()
                 vim.cmd("NvimTreeOpen")
@@ -84,7 +88,7 @@ return {
             -- dashboard.button("cs", "c.c: Skills", ":cd ~/.claude | e skills<CR>"),
 
             dashboard.button("_", "                              ______  configs ___", ""),
-            dashboard.button("lz", "lazy plugins", ":Lazy<CR>"),
+            dashboard.button(" L", "lazy plugins", ":Lazy<CR>"),
             dashboard.button("i3", "i3", ":cd ~/.config/i3 | e config<CR>"),
             dashboard.button("te", "term", ":cd ~/.config/alacritty | e alacritty.toml<CR>"),
             dashboard.button("tm", "tmux", ":cd ~/.config/tmux | e tmux.conf<CR>"),
