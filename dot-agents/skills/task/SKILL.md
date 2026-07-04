@@ -10,7 +10,7 @@ description: Task management via TaskWarrior CLI. Use when the user asks to view
 - **TaskWarrior CLI** (`task`) — core task management
 - **taskwarrior-tui** — terminal UI (interactive, human-only — you never open it)
 - **Hooks** — auto-run on add/modify (documented below, you don't invoke them)
-- **Zettelkasten** — each task gets a linked markdown note in `~/Documents/zk/`
+- **Zettelkasten** — each task gets a linked markdown note in `~/Documents/zk/inbox/` with a structured task format (Context, Progress, Reference)
 
 ### Hooks (transparent, just know their effects)
 
@@ -98,21 +98,53 @@ task <id> delete rc.confirmation=no       # Mark deleted (with no prompt)
 
 ## Task Notes (zk)
 
-Every task has a linked zk note. Use the helper script:
+Every task has a linked zk note in `~/Documents/zk/inbox/`. Notes follow a structured format maintained by the agent's `tw-note.sh` script — not by zk templates.
 
-```bash
-$HOME/.agents/skills/task/scripts/tw-note.sh <uuid-or-id>                # Read the note
-$HOME/.agents/skills/task/scripts/tw-note.sh <uuid-or-id> --edit "text"   # Append to the note (creates if needed)
+### Note Structure
+
+```markdown
+---
+title: "task description"
+type: taskwarrior
+task-uuid: <uuid>
+---
+
+# title
+
+## Context
+<!-- Task 생성 이유, 목적, 기대 결과 -->
+
+## Progress
+<!-- timestamped 작업 로그 -->
+
+## Reference
+<!-- 관련 링크, 문서, 참고자료 -->
 ```
 
-When the user says "record X about task Y" or "write a note for task Y", use `--edit`.
+**Metadata lives in TaskWarrior** — only `title`, `type`, and `task-uuid` are in frontmatter. All task metadata (status, priority, due, project, tags, time tracking) is queried from TW via `task <id> info`.
+
+### Helper Script
+
+```bash
+/home/sy/.agents/skills/task/scripts/tw-note.sh <uuid-or-id>                # Read the note
+/home/sy/.agents/skills/task/scripts/tw-note.sh <uuid-or-id> --edit "text"   # Create with context (first use) or append progress (subsequent)
+```
+
+`--edit` behavior by note state:
+
+| State | `--edit` does |
+|-------|--------------|
+| No note exists | Creates note in `inbox/` via zn-api, populates `## Context` with the text, adds "Created" entry under `## Progress` |
+| Note exists | Appends timestamped entry (`- YYYY-MM-DD HH:MM: text`) under `## Progress` |
+
+When the user says "record X about task Y" or "write a note for task Y", use `--edit`. The timestamp prefix is added automatically — do not include it in the text.
 
 ### Note rename/move workflow
 
-When you need to rename a task note (change type prefix, title, or move it), do NOT use `mv` directly. The permission system requires proper handling. Manual steps:
+When you need to rename a task note (change type prefix, title, or move it), do NOT use `mv` directly. Manual steps:
 
-1.  Edit frontmatter: change `type`, `title`, `tags`, `description` as needed
-2.  Rename the file: update the type prefix in filename (e.g., `fleeting_` → `reference_`)
+1.  Edit frontmatter: change `type`, `title` as needed
+2.  Rename the file: update the type prefix in filename (e.g., `taskwarrior_` → `reference_`)
 3.  Update the task's `zk` UDA: `task <id> modify zk:<new-absolute-path>`
 4.  Optionally mark complete: `task <id> done` (separate step, see Quirks)
 
@@ -159,12 +191,13 @@ task 5 done
 
 ### "Record progress on task 5"
 ```bash
-$HOME/.agents/skills/task/scripts/tw-note.sh 5 --edit "- $(date -I): made progress on X"
+/home/sy/.agents/skills/task/scripts/tw-note.sh 5 --edit "made progress on X"
 ```
+The timestamp is added automatically. Do not include it in the text.
 
 ### "What notes do I have on task 5?"
 ```bash
-$HOME/.agents/skills/task/scripts/tw-note.sh 5
+/home/sy/.agents/skills/task/scripts/tw-note.sh 5
 ```
 
 ---
@@ -173,35 +206,58 @@ $HOME/.agents/skills/task/scripts/tw-note.sh 5
 
 When the user asks to **create a task** (add/insert), run this small interview to clarify context before executing. Do NOT ask all questions — pick only the ones whose answers are not already implied by the user's request.
 
-### Interview Questions (pick relevant ones)
+### How It Works
 
-| Question | Purpose |
-|----------|---------|
-| What's the task? | Description (required) |
-| What's the purpose or context? | Written into the task note via `--edit` |
-| How important is this? | Priority: H / M / L / none |
-| What project does this belong to? | Project name (check known list) |
-| Is there a deadline? | Due date |
-| Any tags, dependencies, or related tasks? | Tags, depends, annotations |
+Agent picks **1–2 most relevant fields** missing from the user's request and presents them as a one-shot prompt. The user replies with `key=value` pairs in a single line. Fields already specified by the user are never re-asked.
+
+### Field Reference
+
+| Key | Field | Format | When to ask |
+|-----|-------|--------|------------|
+| b | Project | `1=inbox, 2=job, 3=side-project, 4=study, 5=business, 6=note-taking, 7=zksystem, 8=미래지식융합학회, 9=<name>` | Suggest based on task nature (see table below) |
+| c | Context | free text | Almost always — becomes `## Context`. Skip only if description fully explains the goal |
+| d | Due | `1=today, 2=tomorrow, 3=eow, 4=none, 5=YYYY-MM-DD` | Only when the task sounds deadline-sensitive |
+| a | Priority | `1=H, 2=M, 3=L, 4=none` | Only when urgency is unclear or user explicitly wants to set it |
+| e | Tags | comma-separated | Rare — when user mentions categories or labels naturally |
+
+### Suggested Defaults
+
+| Task nature | Project | Priority |
+|-------------|---------|----------|
+| research, reading, learning | study | M |
+| bug fix, feature, coding | side-project | M |
+| work, job-related | job | M |
+| chore, quick note, admin | inbox | L |
+| zk/wiki/system work | zksystem | M |
 
 ### Rules
 
-1.  **Don't ask what's already known.** If the user says "add a high-priority task to clean up inbox", you already have priority and description — skip those questions.
-2.  **Always ask about purpose** — this goes directly into the task note via `tw-note.sh --edit`. If the user's request is brief and ambiguous, ask "what's the purpose or context?" before executing.
-3.  **Note creation is non-optional** — every task gets a zk note with the clarified purpose, written via `--edit`. For brief tasks, write a short note anyway (1-2 lines).
-4.  After the interview, execute in one batch: `task add ...` + `$HOME/.agents/skills/task/scripts/tw-note.sh <id> --edit "purpose/context"`
+1.  **Never re-ask what the user already said.** If they said "high-priority bug fix", don't ask about priority.
+2.  **Pick at most 2 fields.** Typically just `c` (context). Occasionally `b` + `c` when project isn't obvious.
+3.  **Suggest a default** based on task nature. User accepts by typing just the letter (`c`) or reply with the key=value shorthand.
+4.  **Context (`c`) is the only near-universal field.** Ask it unless the description already spells out the complete goal. Even a brief task gets a short context (1–2 lines).
+5.  After user replies (or confirms defaults), execute in one batch: `task add ...` + `tw-note.sh <id> --edit "context text"`.
 
-### Example Flow
+### Example Flows
 
 > **User**: add a task to research claude code pricing
-> **Agent**: What project? (default: inbox) Any deadline?
-> **User**: project:job, no deadline
-> **Agent**: *executes `task add "research claude code pricing" project:job` + writes purpose note*
-> 
+> **Agent**: b=study? c: <purpose>?
+> **User**: b2, c: compare Codex vs GPT-4.1 pricing for the task skill
+> **Agent**: *executes `task add "research claude code pricing" project:job` + writes note with Context*
+
 > **User**: add high-priority task to fix login bug
-> **Agent**: What project? Any context on what's broken?
-> **User**: side-project, the OAuth token refresh is broken
-> **Agent**: *executes with priority:H + writes note with context about OAuth token refresh*
+> **Agent**: OAuth broken? project: side-project, c: <context>?
+> **User**: side-project, c: OAuth token refresh returns 401 after 1h
+> **Agent**: *executes with priority:H + project:side-project + writes note*
+
+> **User**: task: clean up inbox
+> **Agent**: c: <what exactly to clean up>?
+> **User**: c: archive completed tasks older than 2 weeks
+> **Agent**: *executes + writes note*
+
+> **User**: add task to review PR #42 by end of week
+> **Agent**: c: <context>? d=eow?
+> **User**: y
 
 ### For Modify / Done / Delete
 
