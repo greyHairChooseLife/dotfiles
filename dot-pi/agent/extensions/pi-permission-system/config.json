@@ -110,7 +110,9 @@
       "git fetch *": "allow",
       "git checkout -b *": "allow",
 
-      "task *": "allow"
+      "task *": "allow",
+
+      "man *": "allow"
     },
 
     "mcp": { "*": "ask" },
