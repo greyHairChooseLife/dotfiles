@@ -314,5 +314,46 @@ vim.keymap.set("n", "gx", function()
     vim.ui.open(url, { cmd = { "brave", "--new-window" } })
 end, { desc = "Open URL in new Brave window" })
 
+-- Open path with yazi in a new Alacritty window
+local function open_with_yazi(path)
+    vim.fn.jobstart({ "alacritty", "-e", "yazi", path }, { detach = true })
+end
+
+-- Override gf: open dirs, images, and PDFs with yazi; otherwise fall back to built-in gf
+vim.keymap.set("n", "gf", function()
+    local file = vim.fn.expand("<cfile>")
+    if file == "" then return end
+
+    -- Resolve path (try as-is first, then relative to buffer dir)
+    local full_path = vim.fn.fnamemodify(file, ":p")
+    local stat = vim.uv.fs_stat(full_path)
+
+    if not stat then
+        local buf_dir = vim.fn.expand("%:p:h")
+        if buf_dir ~= "" then
+            local buf_path = buf_dir .. "/" .. file
+            stat = vim.uv.fs_stat(buf_path)
+            if stat then full_path = vim.fn.fnamemodify(buf_path, ":p") end
+        end
+    end
+
+    if stat then
+        if stat.type == "directory" then
+            open_with_yazi(full_path)
+            return
+        end
+
+        local ext = full_path:match("%.([^%.]+)$")
+        local image_exts = { "png", "jpg", "jpeg", "gif", "bmp", "webp", "svg" }
+        if ext and (vim.tbl_contains(image_exts, ext:lower()) or ext:lower() == "pdf") then
+            open_with_yazi(full_path)
+            return
+        end
+    end
+
+    -- Fallback to built-in gf (:normal! bypasses mappings, preserves count)
+    vim.cmd("normal! " .. vim.v.count1 .. "gf")
+end, { desc = "Open file/dir under cursor; dirs/images/pdfs open with yazi" })
+
 -- MEMO:: Undo tree
 wk_map({ ["<Space>"] = { ["U"] = { "<cmd>Atone<CR>", desc = "Undotree", mode = "n" } } })
