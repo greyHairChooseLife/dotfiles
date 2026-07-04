@@ -19,8 +19,7 @@ fi
 
 
 # 알림 전송 (같은 ID로 업데이트)
-notify-send --icon=" " \
-           --replace-id=$VOLUME_NOTIFY_ID \
+notify-send --replace-id=$VOLUME_NOTIFY_ID \
            --expire-time=1000 \
            --transient \
            --app-name "pactl(음량)" \

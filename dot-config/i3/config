@@ -43,8 +43,9 @@ bindsym $mod+Return exec alacritty
 # kill focused window
 bindsym $mod+q kill
 
-# start program launcher
-bindsym $mod+d exec --no-startup-id dmenu_recency
+# dunst 알림 제어
+bindsym $mod+d exec dunstctl close           # 알림 하나 닫기
+bindsym $mod+Shift+d exec dunstctl history-pop # 마지막 알림 복원
 
 # launch categorized menu
 bindsym $mod+z exec --no-startup-id morc_menu
@@ -94,7 +95,6 @@ bindsym $mod+i exec --no-startup-id zsh ~/dotfiles/dot-config/zsh.sub/vocal/voca
 bindsym $mod+Shift+i exec --no-startup-id zsh ~/dotfiles/dot-config/zsh.sub/vocal/vocal.sh cancel
 # bindsym $mod+t exec --no-startup-id pkill picom
 bindsym $mod+Ctrl+t exec --no-startup-id picom -b
-bindsym $mod+Shift+d --release exec "killall dunst; exec notify-send 'restart dunst'"
 bindsym $mod+Shift+p exec --no-startup-id flameshot gui
 # bindsym $mod+Shift+p exec --no-startup-id flameshot gui --path ~/Pictures/Screenshots
 # bindsym $mod+Shift+p exec --no-startup-id flameshot gui --clipboard

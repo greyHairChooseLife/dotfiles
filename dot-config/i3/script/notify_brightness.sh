@@ -16,8 +16,7 @@ current_brightness=$(brightnessctl g)
 brightness_percent=$(( current_brightness * 100 / max_brightness ))
 
 # 알림 전송 (같은 ID로 업데이트)
-notify-send --icon=" " \
-           --replace-id=$BRIGHTNESS_NOTIFY_ID \
+notify-send --replace-id=$BRIGHTNESS_NOTIFY_ID \
            --expire-time=1000 \
            --transient \
            --app-name "brightnessctl" \
