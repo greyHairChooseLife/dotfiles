@@ -94,6 +94,7 @@ keymap = [
   { on = "<C-s>", run = "escape --search", desc = "Cancel the ongoing search" },
   { on = "z", run = "plugin fzf", desc = "Jump to a file/directory via fzf" },
   { on = "Z", run = "plugin zoxide", desc = "Jump to a directory via zoxide" },
+  { on = "M", run = "plugin mount", desc = "Mount/unmount selected device" },
 
   # Linemode
   { on = [
