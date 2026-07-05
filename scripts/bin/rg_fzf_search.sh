@@ -1,20 +1,18 @@
 #!/bin/bash
-# sg_search.sh — ast-grep search with fzf preview + nvim open
+# rg_fzf_search.sh — ripgrep search with fzf preview + nvim open
 #
-# Passes arguments through to `ast-grep`, adds --json, pipes results
-# through jq + fzf + bat, and opens selection in nvim at matched line.
+# Passes arguments through to `rg`, pipes results through fzf + bat,
+# and opens selection in nvim at matched line.
 #
 # Usage:
-#   sg_search.sh -p '<pattern>' -l <lang> [paths...]   # inline pattern
-#   sg_search.sh -r <rule.yml> [paths...]               # rule file
-#   sg_search.sh -k <kind> -l <lang>                    # kind-based
+#   rg_fzf_search.sh <pattern> [rg flags] [paths...]
 #
 # Examples:
-#   sg_search.sh -p 'def $NAME($$): $$$BODY' -l python
-#   sg_search.sh -p 'console.log($$$ARGS)' -l typescript
-#   sg_search.sh -r ~/script.yml src/
+#   rg_fzf_search.sh foo src/
+#   rg_fzf_search.sh -i 'error.*timeout'
+#   rg_fzf_search.sh --hidden 'TODO' ~/project
 #
-# Dependencies: ast-grep, jq, fzf, bat
+# Dependencies: rg, fzf, bat
 #
 # Controls:
 #   Enter      open selected file(s) in horizontal splits
@@ -42,7 +40,7 @@ if [ "${1:-}" = "--peek" ]; then
         fi
     done
 
-    SCRIPT=$(mktemp /tmp/sg-p-XXXX.vim)
+    SCRIPT=$(mktemp /tmp/rgs-p-XXXX.vim)
     for i in "${!FILES[@]}"; do
         if [ "$i" -eq 0 ]; then
             printf "e %s\n%s\n" "${FILES[$i]}" "${LINES[$i]}"
@@ -64,39 +62,31 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-# Append --json if not already present
-HAS_JSON=false
-for arg in "$@"; do
-    [ "$arg" = "--json" ] && HAS_JSON=true && break
-done
+# Run rg with color=always for fzf preview; capture raw output
+RAW=$(rg --color=always --line-number "$@" 2>/dev/null || true)
 
-if $HAS_JSON; then
-    RAW=$(ast-grep "$@" 2>/dev/null)
-else
-    RAW=$(ast-grep "$@" --json 2>/dev/null)
-fi
-
-DATA=$(echo "$RAW" \
-    | jq -r '.[] | "\(.file):\(.range.start.line + 1):\u001b[36m\(.text | split("\n")[0])\u001b[0m"' 2>/dev/null)
-
-if [ -z "$DATA" ]; then
+if [ -z "$RAW" ]; then
     echo "No matches found" >&2
     exit 0
 fi
+
+# Format: file:line:content (ansi-colored)
+# jq-friendly parsing: pipe through awk to produce file:line:colored-content
+DATA=$(echo "$RAW" \
+    | awk -F: '{ match($0, /^[^:]+:[0-9]+:/); file_line = substr($0, RSTART, RLENGTH); rest = substr($0, RLENGTH+1); printf "%s\u001b[36m%s\u001b[0m\n", file_line, rest }')
 
 SELECTED=$(echo "$DATA" \
     | fzf --ansi --multi \
         --delimiter ':' \
         --preview 'bat --style=numbers --color=always --highlight-line {2} {1}' \
         --preview-window 'right:60%:+{2}-5' \
-        --bind "ctrl-f:execute(sg_search.sh --peek {+1} -- {+2})" \
+        --bind "ctrl-f:execute(rg_fzf_search.sh --peek {+1} -- {+2})" \
         --header 'Enter: open in nvim (vsplits) | Ctrl-f: peek')
 
 [ -z "$SELECTED" ] && exit 0
 
 # Build vimscript to open each file at its exact line in vsplits
-# nvim's +line on command line applies only to the last file, so -S is used
-SCRIPT=$(mktemp /tmp/sg-XXXXXX.vim)
+SCRIPT=$(mktemp /tmp/rgs-XXXXXX.vim)
 trap 'rm -f "$SCRIPT"' EXIT
 
 echo "$SELECTED" | awk -F: '

@@ -21,7 +21,6 @@ ping() {
 
 # Search
 alias rg='rg --ignore-case'
-alias gr='rg --ignore-case'
 
 # Navigation
 alias .='cd $HOME/dotfiles'
@@ -124,4 +123,5 @@ pi() {
 }
 
 alias sg='ast-grep'
-alias sgs='sg_search.sh'
+alias sgs='sg_fzf_search.sh'
+alias rgs='rg_fzf_search.sh'
