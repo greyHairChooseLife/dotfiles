@@ -90,31 +90,11 @@ _update_readme_with_english_study_note() {
     fi
 }
 
-alias zcld='cd $ZK_NOTEBOOK_DIR && claude'
-alias zcd='cd $ZK_NOTEBOOK_DIR'
+alias z='cd $ZK_NOTEBOOK_DIR'
 zn() { nvim -c "Zn" }
 zf() { nvim -c "Zf" }
 zo() { nvim -c "Zo" }
 zw() { nvim -c "Zw" }
-
-z() {
-    local choice=$(cat <<EOF | fzf-tmux -p 30%
-create New note
-Find note
-latest (Old)
-Word grep
-EOF
-    )
-
-    case "$choice" in
-        create*) zn ;;
-        Find*) zf ;;
-        latest*) zo ;;
-        Word*) zw ;;
-    esac
-}
-
-
 
 # File Path: lua/note_taking/keymap.lua, 173
 zn-api() {
