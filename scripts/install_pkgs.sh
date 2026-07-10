@@ -177,6 +177,7 @@ PACMAN_PKGS=(
     googleworkspace-cli
     ast-grep
     udisks2
+    zk
 )
 
 AUR_PKGS=(
