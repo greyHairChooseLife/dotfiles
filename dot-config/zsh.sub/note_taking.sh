@@ -95,16 +95,3 @@ zn() { nvim -c "Zn" }
 zf() { nvim -c "Zf" }
 zo() { nvim -c "Zo" }
 zw() { nvim -c "Zw" }
-
-# File Path: lua/note_taking/keymap.lua, 173
-zn-api() {
-    local area="${1:-personal}"
-    local type="${2:-fleeting}"
-    local location="${3:-inbox}"
-    local title="${4:-untitled}"
-    local tmp_file=$(mktemp)
-    nvim --headless \
-        -c "ZnAPI {\"area\":\"$area\",\"note_type\":\"$type\",\"location\":\"$location\",\"title\":\"$title\",\"out_file\":\"$tmp_file\"}"
-    cat "$tmp_file"
-    rm -f "$tmp_file"
-}

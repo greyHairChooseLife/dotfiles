@@ -17,13 +17,13 @@ only covers what is specific to THIS environment or easy to get wrong.
   - `on-add`: sets `zk` + `resources` UDAs; defaults `project` to `inbox`. Recurring tasks copy from parent.
   - `on-modify`: accumulates `timespent` on start/stop; on done/delete tags the zk note `taskwarrior-completed`/`taskwarrior-deleted`.
 - **Custom UDAs:**
-  - `zk` — path to the linked note (a directory until first opened, then the `.md` file).
-  - `resources` — attached-files dir (`~/.tasks-resources/<uuid>/`).
+  - `zk` — path to the linked note (`~/Documents/zk/inbox/taskwarrior_*.md`).
+  - `resources` — attached-files dir (`~/Documents/zk/resource/task-static/<uuid>/`).
   - `timespent` — accumulated `HH:MM:SS`, auto-tracked.
-  - `para` — `proj` (완료조건 O, finishes) or `area` (지속, ongoing). Sets a note's graduation home on completion; used by zk-triage. `proj` not `project` — TW reserves `project`.
-- **Projects** (free-form; unknown ones are created on use; default `inbox`):
-  `business, inbox, job, note-taking, side-project, study, zksystem, 미래지식융합학회`
-  Note: TW `project` is a broad bucket ≈ PARA area; the `para` UDA is the real project/area axis.
+  - `para` — 3-state: `proj` (완료조건 O, finishes) / `area` (지속, ongoing) / **empty** (유보 — proj/area 아직 미정). A *hint* zk-triage reads when a finished task's note graduates; not a classification axis. Mutable — may flip proj↔area or be cleared as the task evolves. `proj` not `project` — TW reserves `project`.
+- **Projects** — free-form; unknown ones are created on use; default `inbox`.
+  TW `project` is a broad bucket ≈ PARA area. The `para` UDA is NOT a classification
+  axis — it's only a graduation hint for the note (see UDAs above).
 
 ## Quirks (these bite)
 
@@ -38,33 +38,42 @@ only covers what is specific to THIS environment or easy to get wrong.
 
 ## Task notes (zk)
 
-Every task has a linked note in `~/Documents/zk/inbox/`, maintained by `tw-note.sh`
-(not zk templates). Structure: frontmatter (`title`, `type: taskwarrior`,
-`task-uuid` only) + `## Context` / `## Progress` / `## Reference`.
+Every task has a linked note in `~/Documents/zk/inbox/`, created via `zk new
+--template taskwarrior.md`. Structure: frontmatter (`title`, `type: taskwarrior`,
+`task-uuid`, `created`, `updated`) + `## Context` / `## Done when`.
 **All task metadata lives in TaskWarrior**, not the note — query it via `task <id> info`.
+
+### Progress logging
+
+Short progress entries go to TW annotations (`task <id> annotate`), NOT the note.
+The `## Context` section accumulates long-form context/decisions/insights only.
+When using `--annotate`, reference the note if details live there:
+`task <id> annotate "phase1 done, detail in note ## Context"`.
+
+### Attached files
+
+Place files in `~/Documents/zk/resource/task-static/<uuid>/`.
+Reference from Context with wiki links: `![[../resource/task-static/<uuid>/file]]`.
 
 ### Helper script
 
 ```bash
 SCRIPTS=/home/sy/.agents/skills/task/scripts
-$SCRIPTS/tw-note.sh <uuid|id>                 # Read the note
-$SCRIPTS/tw-note.sh <uuid|id> --create "text"  # Create a NEW note, text → ## Context
-$SCRIPTS/tw-note.sh <uuid|id> --edit "text"    # Append a progress entry to an EXISTING note
+$SCRIPTS/tw-note.sh <uuid|id>                    # Read the note
+$SCRIPTS/tw-note.sh <uuid|id> --create "text"     # Create a NEW note, text → ## Context
+$SCRIPTS/tw-note.sh <uuid|id> --annotate "text"   # Add a TW annotation (progress)
 ```
 
-`--create` and `--edit` are separate on purpose: `--create` errors if a note
-exists (no overwrite), `--edit` errors if none exists (no accidental create). So a
-stale id fails loudly instead of writing to the wrong task. **Prefer uuid over id**
-(see Quirks). Timestamp prefix is added automatically — don't include it.
+`--create` errors if a note exists (no overwrite), so a stale id fails loudly.
+**Prefer uuid over id** (see Quirks).
 
 - New task → `--create` (right after `task add`).
-- "record/note progress on task Y" → `--edit`.
+- "record progress on task Y" → `--annotate` (TW annotation, not the note).
 
 ### Rename/move a note
 
-Don't `mv` directly. Edit frontmatter (`type`/`title`) → rename file (update type
-prefix, e.g. `taskwarrior_`→`reference_`) → `task <id> modify zk:<new-abs-path>` →
-optionally `task <id> done` (separate). Mirrors nvim's `zn m`.
+Don't `mv` directly. Edit frontmatter → rename file → `task <id> modify zk:<new-abs-path>`.
+Note graduation (taskwarrior→reference etc.) is handled by `zk-triage`, not `task` skill.
 
 ## Search
 
@@ -73,17 +82,23 @@ TW filters. Add `all` to include completed/deleted; scope with `project:X`.
 
 ## Creating a task (interview)
 
-When the user asks to add a task, don't interrogate — infer what you can, ask only
-what's missing.
+When the user asks to add a task, infer what you can, ask only what's missing.
+5 things to capture — some inferrable, some not:
 
-- **Exit criterion:** if a 1-line context is derivable AND the project is inferable
-  from the task's nature, execute immediately. Otherwise ask at most 2 fields
-  (usually just context) via `AskUserQuestion`, then execute.
-- **Context is near-universal** — even a brief task gets a 1–2 line `## Context`.
-  Skip only if the description already spells out the goal.
+| Item | Destination | Infer? |
+|------|------------|--------|
+| **what** (description) | TW `description` | from user's request |
+| **why** (context) | note `## Context` | usually inferrable, 1-2 lines |
+| **when** (due/schedule) | TW `due` | ask if ambiguous, else skip |
+| **reference** (links/files) | note `## Context` | ask if implied, else skip |
+| **완료조건** (completion criteria) | note `## Done when` checkbox | always ask — minimum 1 |
+
+- **Context** — near-universal. Even a brief task gets 1-2 lines. Skip only if the
+  description already spells out the goal.
 - **Project/priority by nature:** learning/reading → `study` M · coding/bug/feature
   → `side-project` M · work → `job` M · chore/admin → `inbox` L · zk/system → `zksystem` M.
-  Set `para:proj` (finishes) or `para:area` (ongoing).
+- **`para` — always ask, never auto-set.** Present all three: `proj` / `area` / **empty** (유보).
+  Offer a recommendation but let the user decide.
 - Execute in one batch: `task add ...` + `tw-note.sh <id> --create "context"`.
 
 For modify/done/delete: skip the interview, just execute.
