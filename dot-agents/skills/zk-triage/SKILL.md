@@ -26,9 +26,13 @@ Every inbox note resolves to exactly one destination. Decide by asking, in order
     → **leave in inbox.** Work in progress lives in the waiting room. Do not move.
 2.  **Is it raw fleeting with no lasting value?** → **delete.** git is the safety net.
     Do not hoard "아쉬우니까". If unsure whether it has value, treat as reference (step 4).
-3.  **Does it carry knowledge tied to a finished task or a subject?** → **graduate:**
-    -   the task is `para:proj` (완료조건 O, done) → `project/<name>/`
-    -   the task is `para:area`, or it's subject-knowledge not tied to one task → `area/<name>/`
+3.  **Does it carry knowledge tied to a finished task or a subject?** → **graduate.**
+    Use `para` as a *hint* to propose the destination — you consume it, never set it:
+    -   `para:proj` → propose `project/<name>/`
+    -   `para:area`, or subject-knowledge not tied to one task → propose `area/<name>/`
+    -   `para` **empty** (유보) → it's just unset, not an error. Propose by the note's
+        own content: has a finish/deliverable → project, ongoing subject → area.
+    Every case still goes through propose→approve — para only shapes the suggestion.
 4.  **Is it a reference — useful later, not something to act on?** → `resource/`.
     (reference is a note's *output character*, set via frontmatter `type: reference`;
     it is NOT a task's para value.)
@@ -51,27 +55,52 @@ task <uuid> info        # status (pending/completed/deleted), para, project
 ```
 
 - pending/active → live, step 1.
-- completed → graduate by its `para` (step 3).
+- completed → graduate (step 3). `para` hints the destination; if empty, propose by
+  content. Either way the user confirms — triage reads `para`, never writes it.
 - deleted → the note is usually deletable too (step 2), unless it holds standalone value.
 
 Notes with no `task-uuid` are pure fleeting → steps 2/4/5.
+
+## UDA sync: keep `zk` pointing at reality
+
+Every task-note has a `zk` UDA on its TaskWarrior task storing the note's
+absolute path. After triage changes the note's location (or deletes it), the
+`zk` UDA on the linked task **must** be updated to match — otherwise `tw-note.sh
+<uuid>` and the `on-modify` hook break, pointing at a stale or missing file.
+
+| Triage outcome | UDA action |
+|----------------|------------|
+| Graduate (move to project/area/resource) | `task <uuid> modify zk:<new-abs-path>` |
+| Delete note (task still exists) | `task <uuid> modify zk:` (clear the UDA) |
+| Delete note (task already deleted) | Nothing — task is gone, UDA is gone |
+| Promote to task | `on-add` hook auto-sets `zk`; ensure note path matches (see execute step) |
+| Keep in inbox | No change needed |
+
+Always use **uuid** (never numeric id) for modify — ids are reassigned.
 
 ## Procedure: propose → approve → execute
 
 1.  **Sweep.** List every file in `inbox/`. For each, gather: has task-uuid?
     task status + para? frontmatter type? age?
-2.  **Propose.** Present ONE table: each note → proposed destination → one-line reason.
-    Group by action (delete / graduate→project / graduate→area / →resource /
-    promote-to-task / keep). Call out anything ambiguous explicitly — do not hide a
-    guess as a decision.
+2.  **Propose.** Present ONE table: each note → proposed destination → one-line reason
+    → **UDA action** (update path / clear / none). Group by action (delete /
+    graduate→project / graduate→area / →resource / promote-to-task / keep). Call out
+    anything ambiguous explicitly — do not hide a guess as a decision.
 3.  **Exit criterion — do not execute until the user approves.** The user may edit
     the plan. Deletions especially need an explicit yes. If the user goes silent on
     an item, default to **keep in inbox**, never to delete.
-4.  **Execute** the approved batch:
-    -   move: use the note rename/move workflow in the task skill (edit frontmatter
-        if type changes, move file, update any `zk` UDA that points at it).
-    -   delete: `rm` (git holds history).
-    -   promote: `task add ...` + link the new task-note.
+4.  **Execute** the approved batch (UDA sync is mandatory for every item, not just moves):
+    -   **graduate (move):** edit frontmatter if type changes → `mv` file to
+        destination → `task <uuid> modify zk:<new-abs-path>`. Use the task skill's
+        rename/move workflow. UDA must point at the new path.
+    -   **delete:** `rm` (git holds history). If the note had a `task-uuid` and the
+        task still exists, clear the UDA: `task <uuid> modify zk:`. If the task is
+        already deleted, nothing to do.
+    -   **promote:** `task add ...` (hook auto-creates `zk` pointing at
+        `~/Documents/zk/inbox/<id>.md`) → move the existing fleeting note's content
+        into the new task-note (or update `zk` to point at the existing note and
+        delete the empty template). Edit frontmatter: set `type: taskwarrior`,
+        add `task-uuid`. Leave in inbox — it is now a live task-note (step 1).
 5.  **Log.** If this run came from the weekly triage task, append a progress line to
     that task's note (`tw-note.sh <uuid> --edit "triaged N notes: ..."`) — the log
     becomes training data for later automation.
@@ -83,3 +112,5 @@ Notes with no `task-uuid` are pure fleeting → steps 2/4/5.
 - It does not touch `resource/` reflection journals or reflect-event output.
 - It does not retroactively reorganize `project/`, `area/`, or `archive/` — only
   routes OUT of inbox. Restructuring live dirs is a separate task.
+- It does not set or change a task's `para` — para is owned by the task skill. Triage
+  only reads it as a routing hint. To fix a wrong para, use the task skill.
