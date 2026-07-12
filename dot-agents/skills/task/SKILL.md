@@ -15,7 +15,7 @@ only covers what is specific to THIS environment or easy to get wrong.
 
 - **Hooks** (auto-run, you never invoke them):
   - `on-add`: sets `zk` + `resources` UDAs; defaults `project` to `inbox`. Recurring tasks copy from parent.
-  - `on-modify`: accumulates `timespent` on start/stop; on done/delete tags the zk note `taskwarrior-completed`/`taskwarrior-deleted`.
+  - `on-modify`: accumulates `timespent` on start/stop; on done/delete updates `updated` in the zk note frontmatter.
 - **Custom UDAs:**
   - `zk` — path to the linked note (`~/Documents/zk/inbox/taskwarrior_*.md`).
   - `resources` — attached-files dir (`~/Documents/zk/resource/task-static/<uuid>/`).
@@ -107,3 +107,17 @@ When the user asks to add a task, infer what you can, ask only what's missing.
 - Execute in one batch: `task add ...` + `tw-note.sh <id> --create "context"`.
 
 For modify/done/delete: skip the interview, just execute.
+
+## Large tasks → subtasks
+
+When the Done when checklist has 3+ independently completable items,
+present your diagnosis first, then get confirmation:
+
+1.  "N independent items detected — recommended: Split (they don't block
+    each other)" or "Sequential (B depends on A)"
+2.  Ask: "Split / Sequential / No?"
+3.  Never split without explicit confirmation.
+
+-   **Sequential**: use TW `depends:<prev-uuid>`. Keep original as final step.
+-   **Split**: delete original, create N tasks under same project, each
+    inheriting the original Context.
