@@ -54,6 +54,11 @@ When using `--annotate`, reference the note if details live there:
 
 Place files in `~/Documents/zk/resource/task-static/<uuid>/`.
 Reference from Context with wiki links: `![[../resource/task-static/<uuid>/file]]`.
+`tw-note.sh --create` auto-creates the directory and sets the TW `resources` UDA.
+
+**Lifecycle:**
+- **task done** → resources stay (part of zk notebook, git preserves).
+- **task delete** → agent checks Context for linked files, presents a disposal proposal (keep/move/delete), user confirms before deleting the task.
 
 ### Helper script
 

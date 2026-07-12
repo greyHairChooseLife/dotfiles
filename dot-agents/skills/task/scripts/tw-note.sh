@@ -126,7 +126,11 @@ if [[ -z "$NOTE_PATH" || ! -f "$NOTE_PATH" ]]; then
     die "Failed to create note via zk new"
 fi
 
-# --- Update task's zk UDA to point to the created file ---
-task "$UUID" modify "zk:$NOTE_PATH" >/dev/null 2>&1 || true
+# --- Create resource directory ---
+RES_DIR="$NOTEBOOK_DIR/resource/task-static/$UUID"
+mkdir -p "$RES_DIR"
+
+# --- Update task UDAs ---
+task "$UUID" modify "zk:$NOTE_PATH" "resources:$RES_DIR" >/dev/null 2>&1 || true
 
 echo "Created note: $NOTE_PATH"
