@@ -23,8 +23,8 @@
     "web_search": "allow",
     "code_search": "allow",
     "get_search_content": "allow",
-    "wiki_observe": "allow",
-    "wiki_retro": "allow",
+
+    "ask_user_question": "allow",
 
     "bash": {
       "*": "ask",
@@ -111,6 +111,9 @@
       // "git checkout -b *": "allow",
 
       "task *": "allow",
+      "task done *": "ask",
+      "task delete *": "ask",
+      // "/home/sy/.agents/skills/task/scripts/*": "allow",
 
       "man *": "allow"
     },
@@ -122,11 +125,13 @@
     "external_directory": {
       "*": "ask",
       "/tmp/*": "allow",
-      "/home/sy/dotfiles/*": "allow",
-      "/home/sy/Documents/zk/*": "allow",
-      "/home/sy/.pi/*": "allow",
       "/usr/lib/node_modules/pi/*": "allow",
-      "/home/sy/.agents/skills/*": "allow"
+      "/home/sy/dotfiles/*": "allow",
+      "/home/sy/.local/*": "allow",
+      "/home/sy/.config/*": "allow",
+      "/home/sy/.pi/*": "allow",
+      "/home/sy/.agents/*": "allow",
+      "/home/sy/Documents/zk/*": "allow"
     }
   }
 }

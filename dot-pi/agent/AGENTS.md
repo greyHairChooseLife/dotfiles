@@ -1,3 +1,11 @@
+# Find or create assigned task
+
+You must find and start related active task in taskwarrior.
+
+-   If nothing clearly matches, ask: "No matching task found. Create one?"
+-   If something matched and not active, ask to start.
+-   Trivial/reactive queries without a specific purpose do not need a task.
+
 # Response Style
 
 ## Format
@@ -81,14 +89,3 @@ For multi-step tasks, state a brief plan:
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
-
-## 5. Bash Tool Behavior
-
-**The bash tool always executes commands from the project root (CWD shown above).**
-
--   Each bash call spawns a **fresh shell** in the project root. State does not carry over between calls.
--   **Do not \`cd\`** as a separate step — it has no effect on subsequent bash calls.
--   If you need to work in a subdirectory, chain commands in a single call: \`cd subdir && command\`.
--   All file paths in any tool (read, write, edit, grep, find, ls) are resolved relative to the project root.
--   Use absolute paths or paths relative to the project root, not paths relative to an assumed cwd.

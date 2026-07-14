@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.80.3",
+  "lastChangelogVersion": "0.80.6",
   "theme": "ember-glow",
   "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-flash",
+  "defaultModel": "deepseek-v4-pro",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "opencode-go/deepseek-v4-flash",
@@ -25,29 +25,7 @@
     "npm:@ff-labs/pi-fff",
     "npm:@juicesharp/rpiv-btw",
     "npm:@juicesharp/rpiv-advisor",
-    "npm:@gotgenes/pi-permission-system",
-    {
-      "source": "npm:@zosmaai/pi-llm-wiki",
-      "extensions": [
-        "-extensions/llm-wiki/index.ts"
-      ],
-      "skills": [
-        "-skills/llm-wiki/SKILL.md"
-      ],
-      "prompts": [
-        "-prompts/wiki-digest.md",
-        "-prompts/wiki-discover.md",
-        "-prompts/wiki-ingest.md",
-        "-prompts/wiki-init.md",
-        "-prompts/wiki-lint.md",
-        "-prompts/wiki-query.md",
-        "-prompts/wiki-record.md",
-        "-prompts/wiki-req.md",
-        "-prompts/wiki-retro.md",
-        "-prompts/wiki-run.md",
-        "-prompts/wiki-skills.md",
-        "-prompts/wiki-status.md"
-      ]
-    }
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@gotgenes/pi-permission-system"
   ]
 }
