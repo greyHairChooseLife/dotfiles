@@ -1,0 +1,14 @@
+{
+  "name": "pi-taskwarrior",
+  "version": "0.1.0",
+  "description": "pi extension: TaskWarrior CRUD tools",
+  "type": "module",
+  "keywords": ["pi-package", "pi-extension", "taskwarrior"],
+  "pi": {
+    "extensions": ["./src/index.ts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@sinclair/typebox": "*"
+  }
+}

@@ -10,7 +10,7 @@ ui:
     databasePanelWidth: 30
 showConnectionPage: true
 showWelcomePage: false
-currentConnection: academic_society-prod
+currentConnection: academic_society-dev
 connections:
     - url: mongodb://localhost:27017
       host: localhost
@@ -21,7 +21,7 @@ connections:
       name: kiosk-demo
       timeout: 5
       options: {}
-    - url: mongodb://admin:admin@localhost:27017/academic_society?authSource=admin
+    - url: mongodb://dev:dev@localhost:27017/academic_society?authSource=admin
       host: localhost
       port: 27017
       database: academic_society

@@ -20,10 +20,26 @@ Mostly flat at root level.
 
 Use `zk cli` tool above all else.
 
--   Created via `zk new --template <type>.md`.
+-   Create via `zk new --template <type>.md --print-path`.
+    -   No TTY available — `--print-path` skips the editor, just creates the
+        file and prints its path.
+    -   Then `read` the created file to get the filename, `edit` to fill content.
 -   Templates live in `~/Documents/zk/.zk/templates/`
 
-Or use Read/Edit/Write tools directly on the note path.
+### Template variables
+
+| Template | Has `{{content}}` | Best for |
+|----------|-------------------|----------|
+| `reference.md` | Yes | Learning/concept notes with Overview and Reference sections |
+| `taskwarrior.md` | Yes | Task notes with Context, Done when, Log |
+| `default.md` | No | Blank slate — no body structure, use with `write` |
+| `journal.md` | No | Freeform journal entries |
+| `blueprint.md` | No | Architecture decisions with Context/Decision/Consequences |
+
+Only templates with `{{content}}` reserve a body slot — but content is always
+filled via `edit` after creation, not through stdin.
+
+Or use `read`/`edit`/`write` tools directly on the note path.
 
 ### Writing rules
 

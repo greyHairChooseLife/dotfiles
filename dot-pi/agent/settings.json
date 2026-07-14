@@ -15,7 +15,7 @@
     "blockImages": false
   },
   "editorPaddingX": 1,
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "quietStartup": true,
   "llm-wiki": {
     "notices": false
@@ -27,5 +27,12 @@
     "npm:@juicesharp/rpiv-advisor",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@gotgenes/pi-permission-system"
+  ],
+  "extensions": [
+    "/home/sy/.agents/extensions/pi-taskwarrior/src/index.ts",
+    "/home/sy/.agents/extensions/codeblock-theme.ts",
+    "/home/sy/.agents/extensions/copy-session.ts",
+    "/home/sy/.agents/extensions/turn-navigator.ts"
   ]
 }
+
