@@ -6,21 +6,13 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Text } from "@earendil-works/pi-tui";
 import { Type } from "@sinclair/typebox";
 import {
+  expandTilde,
   formatTaskSummary,
   parseTaskExport,
   type Task,
 } from "../tw";
 import { UuidSchema } from "../types";
 import { readFile } from "node:fs/promises";
-import { homedir } from "node:os";
-import { resolve } from "node:path";
-
-function expandTilde(filepath: string): string {
-  if (filepath.startsWith("~/") || filepath === "~") {
-    return resolve(homedir(), filepath.slice(filepath[1] === "/" ? 2 : 1));
-  }
-  return filepath;
-}
 
 export function registerTaskShow(pi: ExtensionAPI) {
   pi.registerTool({

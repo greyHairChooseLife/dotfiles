@@ -4,7 +4,7 @@
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { TaskDeleteSchema } from "../types";
-import { buildDeleteArgs, buildStopArgs } from "../tw";
+import { buildDeleteArgs } from "../tw";
 
 export function registerTaskDelete(pi: ExtensionAPI) {
   pi.registerTool({
@@ -16,16 +16,13 @@ export function registerTaskDelete(pi: ExtensionAPI) {
     promptGuidelines: [
       "Use task_delete to remove a task. Always use UUID from task_list.",
       "This is IRREVERSIBLE — the task and its linked zk note are removed.",
-      "If the task is active, it is stopped automatically before deletion.",
+      "No need to stop first — delete auto-stops if the task is active.",
+      "Before deleting, consider using task_check to mark any remaining Done when items.",
       "Consider using task_done if you only want to archive the task.",
     ],
     parameters: TaskDeleteSchema,
 
     async execute(_toolCallId, params, signal) {
-      // Stop if active — delete on active task fails
-      await pi.exec("task", buildStopArgs(params.uuid), { signal });
-      // Ignore stop errors — task might not be active
-
       const result = await pi.exec("task", buildDeleteArgs(params.uuid), {
         signal,
       });

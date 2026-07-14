@@ -48,6 +48,9 @@ export const TaskListSchema = Type.Object({
   search: Type.Optional(
     Type.String({ description: "Search term matched against description (case-insensitive)" }),
   ),
+  due: Type.Optional(
+    Type.String({ description: "Filter by due date (e.g. 'today', 'tomorrow', '2026-07-20', 'before:2026-07-31', 'after:today'). Passes the value directly as `due:` filter." }),
+  ),
   tags: TagsSchema,
   limit: Type.Optional(
     Type.Number({ description: "Max tasks to return (default: all matching)" }),

@@ -1,8 +1,8 @@
 /**
  * pi-taskwarrior — pi extension providing TaskWarrior CRUD tools.
  *
- * Registers 7 tools: task_add, task_list, task_modify, task_start,
- * task_stop, task_done, task_delete.
+ * Registers 9 tools: task_add, task_list, task_show, task_check,
+ * task_modify, task_start, task_stop, task_done, task_delete.
  *
  * All tools operate on UUIDs, never integer IDs. TaskWarrior hooks
  * (on-add, on-modify) fire transparently when `task` CLI is called.
@@ -10,6 +10,7 @@
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerTaskAdd } from "./tools/task-add";
+import { registerTaskCheck } from "./tools/task-check";
 import { registerTaskDelete } from "./tools/task-delete";
 import { registerTaskDone } from "./tools/task-done";
 import { registerTaskList } from "./tools/task-list";
@@ -37,5 +38,6 @@ export default function (pi: ExtensionAPI) {
   registerTaskStart(pi);
   registerTaskStop(pi);
   registerTaskDone(pi);
+  registerTaskCheck(pi);
   registerTaskDelete(pi);
 }

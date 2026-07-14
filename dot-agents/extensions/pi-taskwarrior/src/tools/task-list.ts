@@ -20,9 +20,10 @@ export function registerTaskList(pi: ExtensionAPI) {
     promptSnippet: "List or search TaskWarrior tasks",
     promptGuidelines: [
       "Use task_list to find task UUIDs before modifying, completing, or deleting.",
-      "Filter by project, status, tags, or search term. Combine filters.",
+      "Filter by project, status, due, tags, or search term. Combine filters.",
       "Defaults to pending tasks. Pass status:completed or status:waiting to see others.",
       "Use search to find tasks by keyword in descriptions.",
+      "Use due to filter by date (e.g. 'today', 'tomorrow', 'before:2026-07-31').",
     ],
     parameters: TaskListSchema,
 
@@ -31,6 +32,7 @@ export function registerTaskList(pi: ExtensionAPI) {
         status: params.status,
         project: params.project,
         search: params.search,
+        due: params.due,
         tags: params.tags,
         limit: params.limit,
       });

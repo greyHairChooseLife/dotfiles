@@ -26,6 +26,7 @@ export interface TaskListOptions {
   status?: string;
   project?: string;
   search?: string;
+  due?: string;
   tags?: string[];
   limit?: number;
 }
@@ -115,6 +116,9 @@ export function buildListArgs(opts: TaskListOptions): string[] {
   }
   if (opts.search) {
     args.push(`/${opts.search}/`);
+  }
+  if (opts.due) {
+    args.push(`due:${opts.due}`);
   }
   if (opts.tags) {
     for (const tag of opts.tags) {
@@ -231,6 +235,24 @@ function parseTagList(val: unknown): string[] {
   if (!val) return [];
   if (Array.isArray(val)) return val.map(String);
   return [String(val)];
+}
+
+// ---------------------------------------------------------------------------
+// Path helpers
+// ---------------------------------------------------------------------------
+
+import { homedir } from "node:os";
+import { resolve } from "node:path";
+
+/** Expand ~/ to the user's home directory. */
+export function expandTilde(filepath: string): string {
+  if (filepath.startsWith("~/")) {
+    return resolve(homedir(), filepath.slice(2));
+  }
+  if (filepath === "~") {
+    return homedir();
+  }
+  return filepath;
 }
 
 // ---------------------------------------------------------------------------

@@ -15,7 +15,9 @@ export function registerTaskDone(pi: ExtensionAPI) {
     promptSnippet: "Mark a task as done",
     promptGuidelines: [
       "Use task_done to complete a task. Always use UUID from task_list.",
+      "No need to stop first — marking a task done auto-stops it if active.",
       "This is irreversible — the task moves to completed status.",
+      "Use task_show to see the Done when checklist, then task_check to mark items the agent completed BEFORE calling task_done.",
       "Hooks automatically sync the linked zk note frontmatter.",
     ],
     parameters: TaskDoneSchema,
