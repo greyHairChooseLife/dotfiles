@@ -1,6 +1,6 @@
 ---
 name: task-manage
-description: Manage existing TaskWarrior tasks — search, modify, complete, delete, and log progress. Use when the user asks to view task lists, change task attributes, mark tasks done, delete tasks, or record progress on a task. SKIP for creating new tasks.
+description: Manage existing TaskWarrior tasks — search, modify, complete, delete, and log progress. Use when the user asks to view task lists, change task attributes, mark tasks done, delete tasks, or record progress on a task note. SKIP for creating new tasks.
 ---
 # Task Manage
 
@@ -16,7 +16,7 @@ this skill handles the CLI commands and progress logging to the linked zk note.
 
 ## Log progress
 
-Progress entries go to the note's `## Log` section. To log progress, read the note from
+Progress entries go to the note's `## Log` section. To log progress, read the task note from
 `zknote` UDA, append to `## Log`:
 
 **Format**: `-   YYYY-MM-DD HH:MM — message`
