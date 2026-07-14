@@ -235,6 +235,9 @@ rules = [
   # Documents
   { mime = "application/{pdf,doc,rtf}", fg = "cyan" },
 
+  # shell
+  { url = "*.{sh,zsh}", fg = "green" },
+
   # Empty files
   # { mime = "inode/empty", fg = "red" },
 
@@ -245,10 +248,7 @@ rules = [
   # Dummy files
   # { name = "*", is = "dummy", bg = "red" },
   # { name = "*/", is = "dummy", bg = "red" },
-
-  # Fallback
-  # { name = "*", fg = "white" },
-  # { name = "*/", fg = "blue" },
+  { url = "*/", fg = "blue" },
 ]
 
 # : }}}
@@ -259,20 +259,20 @@ rules = [
 [icon]
 globs = []
 dirs = [
-  { name = ".config", text = "" },
-  { name = ".git", text = "" },
-  { name = ".github", text = "" },
-  { name = ".npm", text = "" },
-  { name = "Desktop", text = "" },
-  { name = "Development", text = "" },
-  { name = "Documents", text = "" },
-  { name = "Downloads", text = "" },
-  { name = "Library", text = "" },
-  { name = "Movies", text = "" },
-  { name = "Music", text = "" },
-  { name = "Pictures", text = "" },
-  { name = "Public", text = "" },
-  { name = "Videos", text = "" },
+  # { name = ".config", text = "" },
+  # { name = ".git", text = "" },
+  # { name = ".github", text = "" },
+  # { name = ".npm", text = "" },
+  # { name = "Desktop", text = "" },
+  # { name = "Development", text = "" },
+  # { name = "Documents", text = "" },
+  # { name = "Downloads", text = "" },
+  # { name = "Library", text = "" },
+  # { name = "Movies", text = "" },
+  # { name = "Music", text = "" },
+  # { name = "Pictures", text = "" },
+  # { name = "Public", text = "" },
+  # { name = "Videos", text = "" },
 ]
 files = [
   { name = ".babelrc", text = "", fg = "#cbcb41" },
@@ -816,7 +816,7 @@ exts = [
   { name = "scala", text = "", fg = "#cc3e44" },
   { name = "scm", text = "󰘧", fg = "#eeeeee" },
   { name = "scss", text = "", fg = "#f55385" },
-  { name = "sh", text = "", fg = "#4d5a5e" },
+  { name = "sh", text = "", fg = "green" },
   { name = "sha1", text = "󰕥", fg = "#8c86af" },
   { name = "sha224", text = "󰕥", fg = "#8c86af" },
   { name = "sha256", text = "󰕥", fg = "#8c86af" },
@@ -934,7 +934,7 @@ exts = [
   { name = "yml", text = "", fg = "#6d8086" },
   { name = "zig", text = "", fg = "#f69a1b" },
   { name = "zip", text = "", fg = "#eca517" },
-  { name = "zsh", text = "", fg = "#89e051" },
+  { name = "zsh", text = "", fg = "green" },
   { name = "zst", text = "", fg = "#eca517" },
   { name = "🔥", text = "", fg = "#ff4c1f" },
 ]
@@ -950,7 +950,7 @@ conds = [
   { if = "dummy", text = "" },
 
   # Fallback
-  { if = "dir", text = "" },
+  { if = "dir", text = "", fg = "blue" },
   { if = "exec", text = "" },
   { if = "!dir", text = "" },
 ]
