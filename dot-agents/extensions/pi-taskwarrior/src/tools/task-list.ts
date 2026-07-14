@@ -3,6 +3,7 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
 import { TaskListSchema } from "../types";
 import {
   buildListArgs,
@@ -59,6 +60,25 @@ export function registerTaskList(pi: ExtensionAPI) {
           shownCount: limited.length,
         },
       };
+    },
+
+    renderResult(result, { expanded }, theme, context) {
+      const text = (context.lastComponent as Text | undefined) ?? new Text("", 0, 0);
+      const output = result.content?.find((c: { type: string }) => c.type === "text")?.text as string ?? "";
+      if (!output) {
+        text.setText(theme.fg("muted", "No output"));
+        return text;
+      }
+
+      const lines = output.split("\n");
+      const maxLines = expanded ? lines.length : 5;
+      const display = lines.slice(0, maxLines).join("\n");
+      let content = `\n${display}`;
+      if (!expanded && lines.length > maxLines) {
+        content += theme.fg("muted", `\n... (${lines.length - maxLines} more lines)`);
+      }
+      text.setText(content);
+      return text;
     },
   });
 }

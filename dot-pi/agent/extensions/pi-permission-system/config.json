@@ -26,6 +26,15 @@
 
     "ask_user_question": "allow",
 
+    "task_add": "allow",
+    "task_list": "allow",
+    "task_show": "allow",
+    "task_modify": "allow",
+    "task_start": "allow",
+    "task_stop": "allow",
+    "task_done": "ask",
+    "task_delete": "ask",
+
     "bash": {
       "*": "ask",
       "cd *": "allow",
