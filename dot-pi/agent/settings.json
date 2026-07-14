@@ -15,7 +15,7 @@
     "blockImages": false
   },
   "editorPaddingX": 1,
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "quietStartup": true,
   "llm-wiki": {
     "notices": false
@@ -30,9 +30,8 @@
   ],
   "extensions": [
     "/home/sy/.agents/extensions/pi-taskwarrior/src/index.ts",
-    "/home/sy/.agents/extensions/codeblock-theme.ts",
-    "/home/sy/.agents/extensions/copy-session.ts",
-    "/home/sy/.agents/extensions/turn-navigator.ts"
+    "/home/sy/.agents/extensions/ui/codeblock-theme.ts",
+    "/home/sy/.agents/extensions/misc/copy-session.ts",
+    "/home/sy/.agents/extensions/misc/turn-navigator.ts"
   ]
 }
-

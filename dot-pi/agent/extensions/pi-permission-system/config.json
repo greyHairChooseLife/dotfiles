@@ -32,6 +32,7 @@
     "task_modify": "allow",
     "task_start": "allow",
     "task_stop": "allow",
+    "task_check": "allow",
     "task_done": "ask",
     "task_delete": "ask",
 

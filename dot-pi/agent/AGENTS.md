@@ -1,6 +1,6 @@
 # Find or create assigned task
 
-You must find and start related active task in taskwarrior.
+You must find the active task or start a task in taskwarrior, which convers user request.
 
 -   If nothing clearly matches, ask: "No matching task found. Create one?"
 -   If something matched and not active, ask to start.
