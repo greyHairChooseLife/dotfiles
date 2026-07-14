@@ -1,18 +1,14 @@
 ---
-name: reflect-event
-description: Interview the user about one significant event to digest it into a reflection section in this week's journal. Use right after something notable happens (a conflict, a hard decision, a strong emotion) and the user wants to process it, not just log it. Mentions "reflect on this", "help me process", "reflect-event".
+name: journal-interview
+description: Interview the user about one significant event to digest it into a reflection section in this week's journal. Use right after something notable happens (a conflict, a hard decision, a strong emotion) and the user wants to process it, not just log it. Mentions "reflect on this", "help me process".
 ---
 
-# reflect-event
+# journal-interview
 
 Interview the user about ONE significant event and turn it into a reflection
 section appended to this week's journal file.
 
 This is not logging — it is digestion. The goal is a lesson and a next action, not a transcript.
-
-If you lose the thread of why this session exists — why dig, why not force it,
-why one file per week — read the manual:
-`~/Documents/zk/resource/reflection-system_manual.md`.
 
 Interview in English (the user processes reflection in English). Keep the note's
 section headers as-is (`### 사실` etc.).
@@ -50,7 +46,7 @@ Do not interrogate every answer. If a stage is already clear, move on.
 ## Output: append into this week's file
 
 There is NO separate note file. Append the reflection as one section into this
-week's file: `~/Documents/zk/inbox/journal-YYMMDD-HHMMSS.md`.
+week's file: `~/Documents/zk/journal-YYMMDD-HHMMSS.md`.
 
 - If this week's file doesn't exist, tell the user to create it by hand first.
 - Structure the conversation into these sections — do NOT dump the raw dialogue.
