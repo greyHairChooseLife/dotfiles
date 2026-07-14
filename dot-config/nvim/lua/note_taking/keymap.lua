@@ -5,7 +5,7 @@ local wk_map = require("utils").wk_map
 -- MEMO:: zk
 local function zk_new_note(is_visual)
     local notebook = vim.env.ZK_NOTEBOOK_DIR or (vim.env.HOME .. "/Documents/zk")
-    local types = { "fleeting", "master", "troubleshoot", "reference", "study", "cheatsheet", "plan", "index", "journal", "meeting" }
+    local types = { "fleeting", "master", "troubleshoot", "reference", "study", "cheatsheet", "plan", "index", "journal", "meeting", "reflection" }
     local para_roots = { "inbox", "project", "area", "resource", "archive" }
     local has_subdirs = { project = true, area = true, archive = true }
 
@@ -379,7 +379,7 @@ wk_map({
                     return
                 end
 
-                local types = { "fleeting", "master", "troubleshoot", "reference", "study", "cheatsheet", "plan", "index", "journal", "meeting" }
+                local types = { "fleeting", "master", "troubleshoot", "reference", "study", "cheatsheet", "plan", "index", "journal", "meeting", "reflection" }
 
                 -- 현재 frontmatter에서 type 읽기
                 local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)

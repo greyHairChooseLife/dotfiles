@@ -20,7 +20,7 @@ trap cleanup EXIT
 selected=$(fzf --ansi --multi \
         --disabled \
         --prompt "Search> " \
-        --header '<Ctrl+f>: open in nvim, <Alt+h>: hidden/ignored, <Alt+g>: glob' \
+        --header '<Ctrl+f>: peek, <Alt+h>: hidden/ignored, <Alt+g>: glob' \
         --delimiter ':' \
         --preview "bash $HOME/dotfiles/scripts/bin/rg_preview.sh {1} {2}" \
         --preview-window 'right:60%:+{2}-5' \

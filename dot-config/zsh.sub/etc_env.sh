@@ -4,5 +4,8 @@ export MANPAGER='nvim +Man!'
 export MANWIDTH=999
 export LANG=en_US.UTF-8 # 이게 ssh servet-clinet간에 다르면 한글 랜더링 오류가 난다.
 export GTK_THEME=Adwaita:dark # for global theme
+export GTK_IM_MODULE=kime
+export QT_IM_MODULE=kime
+export XMODIFIERS=@im=kime
 
 export ZK_NOTEBOOK_DIR="$HOME/Documents/zk"

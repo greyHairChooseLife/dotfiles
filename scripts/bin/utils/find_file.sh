@@ -36,7 +36,7 @@ echo "$initial_depth" > /tmp/fzf-depth-state
 selected=$(fd --type file $hidden_flag --max-depth $initial_depth | sort \
         | fzf --multi \
         --prompt "${hidden_prompt}Files (--depth=${initial_depth}) & ${curr_dir}/" \
-        --header '<Ctrl+f>: open in nvim, <Alt+h>: toggle hidden, <Alt+1~3>: depth' \
+        --header '<Ctrl+f>: peek, <Alt+h>: toggle hidden, <Alt+1~3>: depth' \
         --bind "ctrl-f:execute(nvim -O {+})" \
         --bind "alt-h:transform:
                 HIDDEN=\$(cat /tmp/fzf-hidden-state);

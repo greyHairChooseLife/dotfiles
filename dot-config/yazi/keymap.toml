@@ -92,8 +92,8 @@ keymap = [
   { on = "s", run = "search --via=fd", desc = "Search files by name via fd" },
   { on = "S", run = "search --via=rg", desc = "Search files by content via ripgrep" },
   { on = "<C-s>", run = "escape --search", desc = "Cancel the ongoing search" },
-  { on = "z", run = "plugin fzf", desc = "Jump to a file/directory via fzf" },
-  { on = "Z", run = "plugin zoxide", desc = "Jump to a directory via zoxide" },
+  { on = "z", run = "plugin fzf-cwd", desc = "Jump to a file/directory via fzf (current directory only)" },
+  { on = "Z", run = "plugin fzf", desc = "Jump to a file/directory via fzf" },
   { on = "M", run = "plugin mount", desc = "Mount/unmount selected device" },
 
   # Linemode
@@ -222,30 +222,12 @@ keymap = [
   ], run = "sort random --reverse=no", desc = "Sort randomly" },
 
   # Goto
-  { on = [
-    "g",
-    "h",
-  ], run = "cd ~", desc = "Go home" },
-  { on = [
-    "g",
-    "c",
-  ], run = "cd ~/.config", desc = "Go ~/.config" },
-  { on = [
-    "g",
-    "d",
-  ], run = "cd ~/Downloads", desc = "Go ~/Downloads" },
-  { on = [
-    "g",
-    "p",
-  ], run = "cd ~/Pictures", desc = "Go ~/Downloads" },
-  { on = [
-    "g",
-    "<Space>",
-  ], run = "cd --interactive", desc = "Jump interactively" },
-  { on = [
-    "g",
-    "f",
-  ], run = "follow", desc = "Follow hovered symlink" },
+  { on = [ "g", "h", ], run = "cd ~", desc = "Go home" },
+  { on = [ "g", "t", ], run = "cd /tmp", desc = "Go /tmp" },
+  { on = [ "g", "d", ], run = "cd ~/Downloads", desc = "Go ~/Downloads" },
+  { on = [ "g", "p", ], run = "cd ~/Pictures", desc = "Go ~/Pictures" },
+  { on = [ "g", "<Space>", ], run = "cd --interactive", desc = "Jump interactively" },
+  { on = [ "g", "f", ], run = "follow", desc = "Follow hovered symlink" },
 
   # Tabs
   { on = "t", run = "tab_create --current", desc = "Create a new tab with CWD" },

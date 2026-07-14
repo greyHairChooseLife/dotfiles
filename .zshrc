@@ -41,7 +41,8 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # 6. 서브 설정 파일
 () {
-    local sub_dirs=("$HOME/.config/zsh.sub" "$HOME/.local/state/zsh.sub")
+    # local sub_dirs=("$HOME/.config/zsh.sub" "$HOME/.local/state/zsh.sub")
+    local sub_dirs=("$HOME/.config/zsh.sub")
     local dir file
     for dir in $sub_dirs; do
         [[ -d $dir ]] || continue

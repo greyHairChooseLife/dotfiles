@@ -81,8 +81,9 @@ return {
                 cdc_func.create_new()
                 vim.cmd("only")
             end),
-            dashboard.button("aP", "AI Prompt", ":cd ~/.pi/agent | e AGENTS.md<CR>"),
-            dashboard.button("ap", "AI Permission", ":cd ~/.pi/agent | e extensions/pi-permission-system/config.json<CR>"),
+            dashboard.button("ap", "AI Prompt", ":cd ~/.pi/agent | e AGENTS.md<CR>"),
+            dashboard.button("as", "AI Skills", ":cd ~/.agents/skills | e ./<CR>"),
+            dashboard.button("aP", "AI Permission", ":cd ~/.pi/agent | e extensions/pi-permission-system/config.json<CR>"),
 
             -- dashboard.button("cp", "c.c: Prompts", ":cd ~/.claude | e CLAUDE.md<CR>"),
             -- dashboard.button("cs", "c.c: Skills", ":cd ~/.claude | e skills<CR>"),
