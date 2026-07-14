@@ -54,8 +54,8 @@
 		"mdLinkUrl": "dim",
 		"mdCode": "green",
 		"mdCodeBlock": "fg",
-		"mdCodeBlockBorder": "#000000",
 
+		"mdCodeBlockBorder": "#32CD32",
     "mdCodeBlockBg": "#000000",
     "mdCodeBlockLang": "#32CD32",
 
