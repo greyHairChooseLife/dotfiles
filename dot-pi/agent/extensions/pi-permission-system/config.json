@@ -37,6 +37,7 @@
       "tail *": "allow",
       "wc *": "allow",
       "file *": "allow",
+      "stat *": "allow",
       "sort *": "allow",
       "du *": "allow",
       "diff *": "allow",
