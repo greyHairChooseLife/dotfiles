@@ -57,6 +57,20 @@ export function sanitizeProject(name: string): string {
   return name.replace(/-/g, "_");
 }
 
+/** Convert status string to TW virtual tag filter. */
+function statusToVirtualTag(status: string): string {
+  const upper = status.toUpperCase();
+  // Map common status values. Unknown values are passed as +UPPER directly.
+  const known: Record<string, string> = {
+    PENDING: "+PENDING",
+    COMPLETED: "+COMPLETED",
+    DELETED: "+DELETED",
+    WAITING: "+WAITING",
+    RECURRING: "+RECURRING",
+  };
+  return known[upper] ?? `+${upper}`;
+}
+
 // ---------------------------------------------------------------------------
 // Command builders
 // ---------------------------------------------------------------------------
@@ -90,11 +104,12 @@ export function buildAddArgs(description: string, opts: TaskAddOptions): string[
 }
 
 export function buildListArgs(opts: TaskListOptions): string[] {
-  const args: string[] = ["export"];
+  const args: string[] = [];
 
-  // Default to pending tasks unless explicitly overridden
+  // Default to pending tasks unless explicitly overridden.
+  // Use virtual tags (+PENDING) instead of status: filter.
   const status = opts.status || "pending";
-  args.push(`status:${status}`);
+  args.push(statusToVirtualTag(status));
   if (opts.project) {
     args.push(`project:${sanitizeProject(opts.project)}`);
   }
@@ -107,7 +122,8 @@ export function buildListArgs(opts: TaskListOptions): string[] {
     }
   }
 
-  args.push(`rc.verbose:nothing`);
+  // Filters go BEFORE the export command
+  args.push("export");
 
   return args;
 }

@@ -11,6 +11,15 @@ import {
 } from "../tw";
 import { UuidSchema } from "../types";
 import { readFile } from "node:fs/promises";
+import { homedir } from "node:os";
+import { resolve } from "node:path";
+
+function expandTilde(filepath: string): string {
+  if (filepath.startsWith("~/") || filepath === "~") {
+    return resolve(homedir(), filepath.slice(filepath[1] === "/" ? 2 : 1));
+  }
+  return filepath;
+}
 
 export function registerTaskShow(pi: ExtensionAPI) {
   pi.registerTool({
@@ -85,7 +94,8 @@ export function registerTaskShow(pi: ExtensionAPI) {
         sections.push(`## ZK Note: \`${zknote}\``);
 
         try {
-          const noteContent = await readFile(zknote, "utf-8");
+          const notePath = expandTilde(zknote);
+          const noteContent = await readFile(notePath, "utf-8");
           sections.push("");
           sections.push(noteContent);
         } catch {
