@@ -78,8 +78,11 @@ export default async function () {
           inBlock = false;
           out.push(buildCloseFence(padX, contentW));
         } else if (inBlock) {
-          // Code content line — already padded to full width by origRender
-          out.push(BG + line + RESET_BG);
+          // Code content line — keep 1-char margins outside the background
+          const left = line.slice(0, padX);
+          const middle = line.slice(padX, line.length - padX);
+          const right = line.slice(line.length - padX);
+          out.push(left + BG + middle + RESET_BG + right);
         } else {
           out.push(line);
         }
@@ -98,15 +101,13 @@ export default async function () {
     const badgeLen = lang.length;
     const gap = Math.max(0, contentW - 3 - badgeLen);
 
-    const content = FG_HIDE + "```" + RESET_FG + " ".repeat(gap) + badge;
-    const line = " ".repeat(padX) + content + " ".repeat(padX);
-    return BG + line + RESET_BG;
+    const inner = FG_HIDE + "```" + RESET_FG + " ".repeat(gap) + badge;
+    return " ".repeat(padX) + BG + inner + RESET_BG + " ".repeat(padX);
   }
 
   function buildCloseFence(padX: number, contentW: number): string {
     const gap = Math.max(0, contentW - 3);
-    const content = FG_HIDE + "```" + RESET_FG + " ".repeat(gap);
-    const line = " ".repeat(padX) + content + " ".repeat(padX);
-    return BG + line + RESET_BG;
+    const inner = FG_HIDE + "```" + RESET_FG + " ".repeat(gap);
+    return " ".repeat(padX) + BG + inner + RESET_BG + " ".repeat(padX);
   }
 }
