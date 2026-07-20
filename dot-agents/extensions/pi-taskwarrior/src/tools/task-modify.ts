@@ -25,7 +25,7 @@ export function registerTaskModify(pi: ExtensionAPI) {
       "Modify a TaskWarrior task's attributes (description, project, priority, due, scheduled, tags). Automatically handles active tasks by stopping before modifying and restarting after.",
     promptSnippet: "Modify a TaskWarrior task",
     promptGuidelines: [
-      "Use task_modify to change task attributes. Always use UUID from task_list.",
+      "Use task_modify to change task attributes. Always pass a UUID, never an integer ID.",
       "To add/remove tags without replacing all: use +tag/-tag directly in the tag list (TW merges).",
       "To clear a date field (due, scheduled), pass an empty string.",
       "Cannot change task status — use task_done or task_delete for that.",

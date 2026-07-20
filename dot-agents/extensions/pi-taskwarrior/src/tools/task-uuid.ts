@@ -19,7 +19,7 @@ export function registerTaskUuid(pi: ExtensionAPI) {
     promptSnippet: "Resolve integer TaskWarrior ID to UUID",
     promptGuidelines: [
       "When the user says 'task N' (e.g. 'task 37'), N is the integer TaskWarrior ID. Use task_uuid to get the UUID first.",
-      "Always use UUID from task_list for all subsequent operations — never pass integer IDs to other task tools.",
+      "Always pass UUIDs, never integer IDs, to all other task tools.",
     ],
     parameters: Type.Object({
       id: Type.String({

@@ -23,7 +23,7 @@ export function registerTaskShow(pi: ExtensionAPI) {
     promptSnippet: "Show task details and linked zk note",
     promptGuidelines: [
       "Use task_show to inspect a single task in full detail, including its linked zk note.",
-      "Always use UUID from task_list. Returns all UDAs and the note content if one exists.",
+      "Always pass a UUID, never an integer ID. Returns all UDAs and the note content if one exists.",
       "Use this before making decisions about a task — the note often contains context and completion criteria.",
     ],
     parameters: Type.Object({

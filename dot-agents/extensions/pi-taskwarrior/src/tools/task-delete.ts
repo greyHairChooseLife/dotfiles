@@ -14,7 +14,7 @@ export function registerTaskDelete(pi: ExtensionAPI) {
       "Permanently delete a TaskWarrior task. Hooks handle zk note cleanup automatically. This is irreversible.",
     promptSnippet: "Delete a task permanently",
     promptGuidelines: [
-      "Use task_delete to remove a task. Always use UUID from task_list.",
+      "Use task_delete to remove a task. Always pass a UUID, never an integer ID.",
       "This is IRREVERSIBLE — the task and its linked zk note are removed.",
       "No need to stop first — delete auto-stops if the task is active.",
       "Before deleting, consider using task_check to mark any remaining Done when items.",

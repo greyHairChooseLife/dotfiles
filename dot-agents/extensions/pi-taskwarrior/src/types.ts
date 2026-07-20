@@ -19,7 +19,7 @@ export const TagsSchema = Type.Optional(
 );
 
 export const UuidSchema = Type.String({
-  description: "Task UUID (returned by task_list or task_add tools)",
+  description: "Task UUID (never integer ID). Obtained from task_list, task_add, or task_uuid.",
 });
 
 // --- Tool-specific schemas ---

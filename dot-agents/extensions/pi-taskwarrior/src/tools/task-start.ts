@@ -14,7 +14,7 @@ export function registerTaskStart(pi: ExtensionAPI) {
       "Start tracking time on a TaskWarrior task. Only one task can be active at a time — if another task is active, stop it first with task_stop.",
     promptSnippet: "Start tracking time on a task",
     promptGuidelines: [
-      "Use task_start to begin working on a task. Always use UUID from task_list.",
+      "Use task_start to begin working on a task. Always pass a UUID, never an integer ID.",
       "If another task is currently active, task_start will fail — use task_stop first.",
       "Use task_list to check which task (if any) is currently active.",
     ],

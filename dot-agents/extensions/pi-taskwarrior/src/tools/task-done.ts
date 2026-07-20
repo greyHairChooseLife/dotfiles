@@ -14,7 +14,7 @@ export function registerTaskDone(pi: ExtensionAPI) {
       "Mark a TaskWarrior task as completed. Hooks handle zk note frontmatter sync automatically.",
     promptSnippet: "Mark a task as done",
     promptGuidelines: [
-      "Use task_done to complete a task. Always use UUID from task_list.",
+      "Use task_done to complete a task. Always pass a UUID, never an integer ID.",
       "No need to stop first — marking a task done auto-stops it if active.",
       "This is irreversible — the task moves to completed status.",
       "Use task_show to see the Done when checklist, then task_check to mark items the agent completed BEFORE calling task_done.",

@@ -14,7 +14,7 @@ export function registerTaskStop(pi: ExtensionAPI) {
       "Stop tracking time on a TaskWarrior task. Only has effect if the task is currently active.",
     promptSnippet: "Stop tracking time on a task",
     promptGuidelines: [
-      "Use task_stop to stop working on a task. Always use UUID from task_list.",
+      "Use task_stop to stop working on a task. Always pass a UUID, never an integer ID.",
       "This is safe to call on non-active tasks — it just returns the current state.",
       "Use task_list to check which task is currently active.",
     ],
