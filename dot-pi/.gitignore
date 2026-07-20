@@ -4,6 +4,7 @@
 !/agent/
 /agent/*
 !/agent/AGENTS.md
+!/agent/APPEND_SYSTEM.md
 !/agent/settings.json
 !/agent/keybindings.json
 !/agent/themes/
