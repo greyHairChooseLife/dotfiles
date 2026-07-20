@@ -20,6 +20,7 @@ export function registerTaskList(pi: ExtensionAPI) {
     promptSnippet: "List or search TaskWarrior tasks",
     promptGuidelines: [
       "Use task_list to find task UUIDs before modifying, completing, or deleting.",
+      "When the user says 'task N' (e.g. 'task 37'), N is the integer TaskWarrior ID. Use task_uuid to resolve it to a UUID.",
       "Filter by project, status, due, tags, or search term. Combine filters.",
       "Defaults to pending tasks. Pass status:completed or status:waiting to see others.",
       "Use search to find tasks by keyword in descriptions.",

@@ -6,6 +6,7 @@ pi extension providing TaskWarrior CRUD tools. All tools use UUIDs, never intege
 
 | Tool | Description |
 |------|-------------|
+| `task_uuid` | Resolve integer TaskWarrior ID to UUID (when user says 'task 37'). |
 | `task_add` | Create a new task. Hooks auto-create linked zk note. |
 | `task_list` | List/search tasks with filters (project, status, tags, search). |
 | `task_show` | Show full task details including UDAs and linked zk note content. |
@@ -33,7 +34,7 @@ pi -e ~/.agents/extensions/pi-taskwarrior/src/index.ts
 
 ## Design
 
-- **UUID-only**: all tools accept and return UUIDs (TaskWarrior IDs are unstable)
+- **UUID-only**: all tools accept and return UUIDs (TaskWarrior IDs are unstable). Use `task_uuid` to resolve integer IDs from the user.
 - **Hooks transparent**: `on-add`, `on-modify`, `on-done` hooks fire automatically when `task` CLI is called
 - **Project sanitization**: dashes in project names are auto-converted to underscores
 - **Active task safety**: `task_modify` auto-stops then restarts active tasks

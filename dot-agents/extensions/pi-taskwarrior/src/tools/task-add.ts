@@ -26,7 +26,7 @@ export function registerTaskAdd(pi: ExtensionAPI) {
     promptGuidelines: [
       "Use task_add to create tasks. Prefer this over raw `task add` bash calls.",
       "Project names must use underscores, not dashes (dashes are auto-sanitized).",
-      "Use task_list to find existing task UUIDs for the depends field.",
+      "Use task_list to find existing task UUIDs for the depends field. If the user refers to a dependency by integer ID, use task_uuid to resolve it first.",
       "Due and scheduled dates accept natural language like 'tomorrow', 'friday', or ISO dates.",
     ],
     parameters: TaskAddSchema,

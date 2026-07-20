@@ -18,6 +18,7 @@ import { registerTaskModify } from "./tools/task-modify";
 import { registerTaskShow } from "./tools/task-show";
 import { registerTaskStart } from "./tools/task-start";
 import { registerTaskStop } from "./tools/task-stop";
+import { registerTaskUuid } from "./tools/task-uuid";
 
 export default function (pi: ExtensionAPI) {
   // Verify taskwarrior is available at startup
@@ -37,6 +38,7 @@ export default function (pi: ExtensionAPI) {
   registerTaskModify(pi);
   registerTaskStart(pi);
   registerTaskStop(pi);
+  registerTaskUuid(pi);
   registerTaskDone(pi);
   registerTaskCheck(pi);
   registerTaskDelete(pi);
