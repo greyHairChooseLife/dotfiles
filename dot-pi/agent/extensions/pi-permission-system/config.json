@@ -26,6 +26,7 @@
 
     "ask_user_question": "allow",
 
+    "task_uuid": "allow",
     "task_add": "allow",
     "task_list": "allow",
     "task_show": "allow",

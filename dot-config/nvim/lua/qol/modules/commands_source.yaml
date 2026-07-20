@@ -5,7 +5,11 @@ commands:
       cat: "config"
 
     # editor
-    - desc: "Remove empty lines (only empty) "
+    - desc: "Remove linebreaks"
+      cmd: "g/^---$/d"
+      cat: "editor"
+
+    - desc: "Remove empty lines (only empty)"
       cmd: "g/^$/d"
       cat: "editor"
 

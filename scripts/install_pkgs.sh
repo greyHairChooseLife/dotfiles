@@ -178,6 +178,7 @@ PACMAN_PKGS=(
     ast-grep
     udisks2
     zk
+    age
 )
 
 AUR_PKGS=(
