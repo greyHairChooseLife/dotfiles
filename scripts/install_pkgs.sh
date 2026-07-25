@@ -183,9 +183,6 @@ PACMAN_PKGS=(
 
 AUR_PKGS=(
     brave-bin
-    claude-code
-    claude-code-acp
-    eternalterminal
     i3exit
     kime-git
     lazyactions-bin
