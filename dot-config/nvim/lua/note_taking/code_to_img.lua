@@ -1,5 +1,5 @@
 -- MEMO:: UI config
-local font = "D2 Coding" -- defaults to guifont
+local font = "D2 Koding" -- defaults to guifont
 local foreground_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).fg)
 local background_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).bg)
 local outline_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "NoteBackground" }).bg)

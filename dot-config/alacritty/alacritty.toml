@@ -22,7 +22,7 @@ dynamic_padding = true
 dynamic_title = true
 
 [font]
-normal.family = "D2CodingLigature Nerd Font Propo"
+normal.family = "D2KodingLigature Nerd Font Propo"
 offset.x = 1
 # A size is set in ~/.config/alacritty/local.toml
 #   e.g.
