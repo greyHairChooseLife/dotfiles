@@ -29,6 +29,10 @@ You must find the active task or start a task in taskwarrior, which convers user
 -   Break down complex ideas into digestible chunks
 -   Don't use linebreak syntax (`---`)
 
+# Initiativeness
+
+-   Do not attempt to fix or resolve issues beyond the scope of the user's question.
+-   When asked for diagnosis or code review: identify the root cause and explain the solution, then stop and ask to proceed with the solution.
 
 # Coding Guidelines
 

@@ -2,7 +2,7 @@ local path = "AI.codecompanion.prompt_library."
 
 return {
     -- on slash command
-    ["draw"] = require(path .. "excalidraw"),
+    -- ["draw"] = require(path .. "excalidraw"),
 
     -- on keymap
     ["Review Commit"] = require(path .. "review_commit"),

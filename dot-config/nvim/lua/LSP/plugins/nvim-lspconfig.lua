@@ -31,7 +31,8 @@ return {
             html = {},
             superhtml = {},
             -- ts_ls = {},
-            tsgo = {},
+            -- tsgo = {},
+            tsc = {},
             vtsls = {
                 typescript = {
                     inlayHints = {

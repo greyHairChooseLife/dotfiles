@@ -1,7 +1,7 @@
 [global]
 monitor = 1   # 0번이 첫번째다.
 frame_width = 2
-font = D2CodingLigature Nerd Font Propo 12
+font = D2KodingLigature Nerd Font Propo 12
 alignment = right
 word_wrap = yes
 stack_duplicates = false

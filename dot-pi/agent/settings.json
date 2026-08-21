@@ -1,13 +1,16 @@
 {
-  "lastChangelogVersion": "0.81.1",
+  "lastChangelogVersion": "0.84.2",
   "theme": "ember-glow",
   "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-pro",
+  "defaultModel": "mimo-v2.5",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "opencode-go/deepseek-v4-flash",
     "opencode-go/deepseek-v4-pro",
-    "opencode-go/minimax-m3"
+    "opencode-go/minimax-m3",
+    "opencode-go/grok-4.5",
+    "opencode-go/mimo-v2.5",
+    "opencode-go/mimo-v2.5-pro"
   ],
   "compaction": {
     "enabled": false

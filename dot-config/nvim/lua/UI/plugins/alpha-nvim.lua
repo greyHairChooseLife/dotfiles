@@ -85,9 +85,6 @@ return {
             dashboard.button("as", "AI Skills", ":cd ~/.agents/skills | e ./<CR>"),
             dashboard.button("aP", "AI Permission", ":cd ~/.pi/agent | e extensions/pi-permission-system/config.json<CR>"),
 
-            -- dashboard.button("cp", "c.c: Prompts", ":cd ~/.claude | e CLAUDE.md<CR>"),
-            -- dashboard.button("cs", "c.c: Skills", ":cd ~/.claude | e skills<CR>"),
-
             dashboard.button("_", "                              ______  configs ___", ""),
             dashboard.button(" L", "lazy plugins", ":Lazy<CR>"),
             dashboard.button("i3", "i3", ":cd ~/.config/i3 | e config<CR>"),

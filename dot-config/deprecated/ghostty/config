@@ -1,9 +1,9 @@
 # theme = tokyonight-storm
 theme = iceberg-dark
-font-family = "D2Coding"
-font-family-bold = "D2CodingLigature Nerd Font Propo"
-font-family-italic = "D2CodingLigature Nerd Font Propo"
-font-family-bold-italic = "D2CodingLigature Nerd Font Propo"
+font-family = "D2Koding"
+font-family-bold = "D2KodingLigature Nerd Font Propo"
+font-family-italic = "D2KodingLigature Nerd Font Propo"
+font-family-bold-italic = "D2KodingLigature Nerd Font Propo"
 font-synthetic-style = false
 
 adjust-cell-width = 20%

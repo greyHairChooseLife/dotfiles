@@ -148,6 +148,9 @@ content:
     copyDocument:
         runes: ["Y"]
         description: Copy document
+    exportJSON:
+        runes: [X]
+        description: Export JSON
     refresh:
         keys: [Ctrl+r]
         runes: [R]
