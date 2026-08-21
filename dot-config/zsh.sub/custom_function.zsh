@@ -135,10 +135,3 @@ EOF
 }
 
 
-# jobs 명령어 목록을 fzf로 필터링하여 선택한 작업을 fg로 전환
-function J() {
-    local job
-    job=$(jobs -l | fzf --height=40% --prompt="job > " \
-        --bind 'enter:become(echo {1})')
-    [[ -n "$job" ]] && fg %$job 2>/dev/null || true
-}

@@ -19,23 +19,20 @@ ping() {
     fi
 }
 
-# Search
-alias rg='rg --ignore-case'
-
 # Navigation
 alias .='cd $HOME/dotfiles'
 alias ..='cd ..'
 alias ...='cd ../..'
 
 # Clipboard
-alias m='pwd | xclip -selection clipboard'
+alias m="pwd | tr -d '\n' | xclip -selection clipboard"
 alias mm='cd "$(xclip -selection clipboard -o)"'
-alias C='xclip -selection clipboard'
-alias V='xclip -selection clipboard -o'
+alias c='xclip -selection clipboard'
+alias v='xclip -selection clipboard -o'
 
 # Terminal
 alias clear='clear_only_screen'
-alias c='clear_only_screen'
+alias C='clear_only_screen'
 alias ccc='clear_screen_and_scrollback && clear_only_screen'
 alias e='exit'
 
@@ -73,15 +70,10 @@ alias ssz='sysz'
 alias time='/usr/bin/time -f $"========== time report ==========\n실행시간: %E\nCPU: %P\n메모리: %M KB\n========== end =========="'
 
 # Development tools
-alias dbg='gdb --quiet'
 alias gdb='gdb --quiet'
 alias mk='make -s'
 alias xx='xargs '       # 이렇게 하면 alias를 뒤따르는 명령으로 사용가능 e.g. `fzf | xx my-alias`
 alias fzf='fzf --ansi'
-
-# Media conversion
-alias youtube-mp3='youtube-dl --extract-audio --audio-format mp3'
-alias make-mp3='ffmpeg -i'
 
 # Third-party tools
 alias aws-tui='claws'     # github.com/clawscli/claws
@@ -122,6 +114,19 @@ pi() {
     fi
 }
 
+# Search
 alias sg='ast-grep'
 alias sgs='sg_fzf_search.sh'
+alias rg='rg --ignore-case'
 alias rgs='rg_fzf_search.sh'
+alias grep='grep --color'
+
+d2h() { printf "%x\n" "$1"; }
+h2d() { printf "%d\n" "0x$1"; }
+alias d2b='python3 -c "import sys; print(bin(int(sys.argv[1]))[2:])"'
+alias h2b='python3 -c "import sys; print(bin(int(sys.argv[1], 16))[2:])"'
+alias b2d='python3 -c "import sys; print(int(sys.argv[1], 2))"'
+alias b2h='python3 -c "import sys; print(hex(int(sys.argv[1], 2))[2:])"'
+
+# alias enable_touchpad='xinput enable 7'
+# alias disable_touchpad='xinput disable 7'

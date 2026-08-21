@@ -56,11 +56,6 @@ gd() {
 
 alias gdv='vi -c "lua require(\"snacks\").picker.git_diff({ layout = { fullscreen = true } })"'
 
-# DEPRECATED:: 2026-07-03
-# These are included in alph-nvim
-# alias vid="git-root > /dev/null && nvim -c 'DiffviewOpen --imply-local' -c 'tabonly'"
-# alias vih="git-root > /dev/null && nvim -c 'DiffviewFileHistory' -c 'tabonly'"
-
 alias gst='git stash'
 alias gls='git log --oneline --simplify-by-decoration --all'
 alias glo='git log --oneline'
@@ -71,9 +66,6 @@ alias glgo='git log --oneline --graph'
 alias glga='git log --graph --all --pretty=medium'
 alias glgao='git log --oneline --graph --all'
 alias glgoa='glgao'
-alias glgF='glg HEAD..' # check fetched
-alias glgP='glg origin/HEAD..' # check to be pushed
-alias glMM='git log --pretty=format:"COMMIT : %h%nTITLE  : %s%nMESSAGE: %b%n%cd==================================== %ae%n%n" --date=short'
 
 git-root() {
     git rev-parse --show-toplevel 2> /dev/null || {
@@ -155,17 +147,3 @@ wts() {
     fi
     # cd "$prev" # back to original worktree
 }
-
-# DEPRECATED:: 2025-12-09
-# function gf() {
-#     fetch_cmd=$(git fetch --dry-run --all 2>&1 \
-    #                 | tac \
-    #                 | fzf \
-    #                 | awk '/new branch/ {split($NF,a,"/"); remote=a[1]; branch=a[2]; print "git fetch " remote " " branch ":refs/remotes/" remote "/" branch}')
-#
-#     if [[ -z $fetch_cmd ]]; then
-#         exit 0
-#     fi
-#
-#     eval $fetch_cmd
-# }
