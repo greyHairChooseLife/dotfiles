@@ -50,17 +50,18 @@ return {
                     -- https://www.youtube.com/watch?v=upeAH74q0q4&t=61s
                     -- https://github.com/ProgrammingRainbow/NvChad-2.5?tab=readme-ov-file#conform
                     -- https://clang.llvm.org/docs/ClangFormatStyleOptions.html
-                    prepend_args = { "--style=file", "--fallback-style=Chromium" },
-                    -- prepend_args = {
-                    --     "-style={ \
-                    --       IndentWidth: 4, \
-                    --       TabWidth: 4, \
-                    --       UseTab: Never, \
-                    --       AccessModifierOffset: 0, \
-                    --       IndentAccessModifiers: true, \
-                    --       PackConstructorInitializers: Never \
-                    --     }",
-                    -- },
+                    -- prepend_args = { "--style=file", "--fallback-style=Chromium" },
+                    prepend_args = {
+                        "-style={ \
+                          IndentWidth: 4, \
+                          TabWidth: 4, \
+                          UseTab: Never, \
+                          BreakBeforeBraces: Allman, \
+                          AccessModifierOffset: 0, \
+                          IndentAccessModifiers: true, \
+                          PackConstructorInitializers: Never \
+                        }",
+                    },
                 }, -- },
             },
             format_on_save = function(_bufnr)
