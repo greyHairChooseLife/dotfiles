@@ -6,8 +6,8 @@ max_height = 2000
 ratio = [1, 2, 4]
 
 [opener]
-zathura = [{ run = 'zathura "$@"', block = false, for = "unix" }]
-mpv_audio = [{ run = 'mpv "$@" --no-vid', block = true, for = "unix" }]
+zathura = [{ run = 'zathura %s', block = false, orphan = true, for = "unix" }]
+mpv_audio = [{ run = 'mpv --no-vid %s', block = true, for = "unix" }]
 
 [open]
 prepend_rules = [
