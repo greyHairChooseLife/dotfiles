@@ -134,6 +134,9 @@ return {
                     -- anthropic = function() return require("codecompanion.adapters").extend("anthropic", {}) end,
                     -- openai = function() return require("codecompanion.adapters").extend("openai", {}) end,
                     opencode = function()
+                        -- OpenCode Go requires a stable session header per conversation
+                        -- See: https://opencode.ai/docs/go/#where-can-i-use-it
+                        local session_id = vim.fn.sha256(tostring(vim.loop.hrtime()))
                         return require("codecompanion.adapters").extend("openai_compatible", {
                             env = {
                                 url = "https://opencode.ai/zen/go",
@@ -141,7 +144,13 @@ return {
                                 chat_url = "/v1/chat/completions",
                                 models_endpoint = "/v1/models",
                             },
-                            schema = { model = { default = "deepseek-v4-flash" } },
+                            headers = {
+                                ["Content-Type"] = "application/json",
+                                Authorization = "Bearer ${api_key}",
+                                ["x-opencode-session"] = session_id,
+                                ["User-Agent"] = "codecompanion-nvim/1.0",
+                            },
+                            schema = { model = { default = "glm-5.3-flash" } },
                         })
                     end,
                 },
@@ -189,7 +198,7 @@ return {
                 inline = {
                     adapter = {
                         name = "opencode",
-                        model = "deepseek-v4-flash",
+                        model = "glm-5.3-flash",
                     },
                     keymaps = {
                         accept_change = { modes = { n = "ca" } },
