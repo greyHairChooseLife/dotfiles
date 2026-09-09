@@ -19,23 +19,11 @@ end
 # - `myvar`가 변경될 때마다 GDB가 자동으로 멈춥니다.
 
 
-define watchfile
-    shell while read var; do echo "watch $var"; done < $arg0 > .gdb_watchcmds
-    source .gdb_watchcmds
-    shell rm .gdb_watchcmds
-end
-document watchfile
-    watchall <파일명> : 지정한 파일의 각 줄에 대해 watchpoint를 자동으로 설정합니다.
-end
-
-define contextwatchfile
-    shell while read var; do echo "contextwatch execute $var"; done < $arg0 > .gdb_watchcmds
-    source .gdb_watchcmds
-    shell rm .gdb_watchcmds
-end
-document contextwatchfile
-    contextwatchfile <파일명> : 지정한 파일의 각 줄에 watchpoint를 걸고 contextwatch를 활성화합니다.
-end
+#   wa / cw are Python commands (watch_cmd.py) with optional -f <path>:
+#   wa <expr>       watchpoint on expression
+#   wa -f <path>    watchpoint per line of file
+#   cw <expr>       contextwatch expression (live display)
+#   cw -f <path>    contextwatch per line of file
 
 define sizedHexDump
     if $argc == 1
@@ -48,10 +36,6 @@ document sizedHexDump
     sizedHexDump <variable> [size] : Dump [size] bytes of the memory of the specified variable using hexdump (address and sizeof).
 end
 
-alias wa = watch
-alias wa_file = watchfile
-alias cw = contextwatch
-alias cw_file = contextwatchfile
 alias cw_ex = contextwatch execute
 alias cw_del = contextunwatch
 alias hx = hexdump

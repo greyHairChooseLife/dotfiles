@@ -1,10 +1,7 @@
 source /usr/share/pwndbg/gdbinit.py
 
-set context-clear-screen on
 set disassembly-flavor att
 set show-tips off
-set context-code-lines 20
-
 set chain-arrow-left 
 set chain-arrow-right 
 
@@ -17,12 +14,16 @@ set logging file dbg.log
 set logging enabled on
 set debuginfod enabled on
 set history save off
-set context-sections regs disasm code ghidra stack backtrace expressions threads heap_tracker args
+
+set context-sections regs disasm code stack backtrace expressions threads heap_tracker args
+set context-clear-screen on
+set context-code-lines 20
 
 # pwndbg: 스택이 위에서 아래로 자라게 표시 외?않?되?
 # set context-stack-lines-reverse on
 
 source /home/sy/dotfiles/scripts/gdb/layout.py
 source /home/sy/dotfiles/scripts/gdb/utils.gdb
+source /home/sy/dotfiles/scripts/gdb/watch_cmd.py
 source /home/sy/dotfiles/scripts/gdb/disasline_auto.py
 
