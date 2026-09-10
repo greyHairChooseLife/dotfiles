@@ -1,16 +1,15 @@
 {
-  "lastChangelogVersion": "0.84.2",
+  "lastChangelogVersion": "0.85.1",
   "theme": "ember-glow",
   "defaultProvider": "opencode-go",
-  "defaultModel": "mimo-v2.5",
-  "defaultThinkingLevel": "high",
+  "defaultModel": "glm-5.3-flash",
+  "defaultThinkingLevel": "off",
   "enabledModels": [
+    "opencode-go/deepseek-v4-flash-vision-exp",
     "opencode-go/deepseek-v4-flash",
     "opencode-go/deepseek-v4-pro",
-    "opencode-go/minimax-m3",
-    "opencode-go/grok-4.5",
-    "opencode-go/mimo-v2.5",
-    "opencode-go/mimo-v2.5-pro"
+    "opencode-go/qwen3.8-flash",
+    "opencode-go/glm-5.3-flash"
   ],
   "compaction": {
     "enabled": false
@@ -21,16 +20,13 @@
   "editorPaddingX": 1,
   "hideThinkingBlock": true,
   "quietStartup": true,
-  "llm-wiki": {
-    "notices": false
-  },
   "packages": [
     "npm:pi-web-access",
     "npm:@ff-labs/pi-fff",
     "npm:@juicesharp/rpiv-btw",
-    "npm:@juicesharp/rpiv-advisor",
     "npm:@juicesharp/rpiv-ask-user-question",
-    "npm:@gotgenes/pi-permission-system"
+    "npm:@gotgenes/pi-permission-system",
+    "npm:pi-chrome"
   ],
   "extensions": [
     "/home/sy/.agents/extensions/pi-taskwarrior/src/index.ts",

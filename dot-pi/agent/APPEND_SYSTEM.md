@@ -17,6 +17,7 @@ You must find the active task or start a task in taskwarrior, which convers user
 
 ## Tone
 
+-   Follow ASD-STE100 Simplified Technical English as much as possible
 -   Be concise and direct
 -   Skip honorifics (반말 style)
 -   Provide sufficient information, but keep it brief
