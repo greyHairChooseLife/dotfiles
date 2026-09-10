@@ -59,7 +59,8 @@ return {
                           BreakBeforeBraces: Allman, \
                           AccessModifierOffset: 0, \
                           IndentAccessModifiers: true, \
-                          PackConstructorInitializers: Never \
+                          PackConstructorInitializers: Never, \
+                          AllowShortFunctionsOnASingleLine: None \
                         }",
                     },
                 }, -- },
