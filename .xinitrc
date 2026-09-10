@@ -38,4 +38,7 @@ btkb off &
 
 feh --bg-max /home/sy/Pictures/bg/awk_cheat_sheet.jpg &
 
+# 시스템d user 환경에 DISPLAY 전달 (xdg-desktop-portal-gtk 파일 다이얼로그가 필요)
+systemctl --user set-environment DISPLAY=:0 XAUTHORITY="$HOME/.Xauthority" XDG_SESSION_TYPE=x11
+
 exec i3
