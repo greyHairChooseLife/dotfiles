@@ -9,17 +9,9 @@ return {
         --   If not available, we use `mini` as the fallback
         {
             "rcarriga/nvim-notify",
-            config = function()
-                require("notify").setup({
-                    -- 필수 필드 추가
-                    merge_duplicates = true, -- 또는 false
-                    -- 여기에 nvim-notify 설정 추가
-                    -- background_colour = "#fff332",
-                    timeout = 200,
-                    -- max_width = 80,
-                    -- 더 많은 설정 옵션은 공식 문서 참조
-                })
-            end,
+            ---@type notify.Config
+            ---@diagnostic disable-next-line: missing-fields
+            opts = { timeout = 200 },
         },
     },
     opts = {
