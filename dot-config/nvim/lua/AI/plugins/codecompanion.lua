@@ -150,7 +150,10 @@ return {
                                 ["x-opencode-session"] = session_id,
                                 ["User-Agent"] = "codecompanion-nvim/1.0",
                             },
-                            schema = { model = { default = "glm-5.3-flash" } },
+                            schema = {
+                                model = { default = "glm-5.3-flash" },
+                                reasoning_effort = { default = "high" },
+                            },
                         })
                     end,
                 },
