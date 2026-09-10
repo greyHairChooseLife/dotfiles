@@ -110,6 +110,14 @@ function M.register_recording()
     end
 end
 
+function M.jump_pending()
+    if vim.g.jump_pending then
+        return "`mark"
+    else
+        return ""
+    end
+end
+
 function M.fill_color(color)
     return {
         {

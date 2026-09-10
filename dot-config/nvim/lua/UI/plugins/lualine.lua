@@ -143,6 +143,14 @@ return {
                             fg = colors.search,
                         },
                     },
+                    {
+                        lualine_components.jump_pending,
+                        padding = { left = 1, right = 1 },
+                        color = {
+                            bg = colors.real_blue,
+                            fg = colors.orange,
+                        },
+                    },
                 },
                 lualine_x = {
                     {
