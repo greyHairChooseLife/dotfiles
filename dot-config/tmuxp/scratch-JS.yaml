@@ -1,0 +1,20 @@
+session_name: scratch-JS
+start_directory: /tmp
+suppress_history: false
+
+windows:
+    # --- scratch JS ---
+    - window_name: scratch
+      focus: true
+      layout: even-horizontal
+      panes:
+        - shell_command:
+            - tm.1_title 'main.js'
+            - mkdir -p /tmp/scratch-JS
+            - 'printf ''%s\n'' ''const i = -42;'' ''const u = 42;'' ''const f = 3.14;'' ''const d = 2.718281828;'' ''const c = "A";'' ''const s = "hello";'' ''const arr = [1, 2, 3];'' ''const mat = [[1, 2, 3], [4, 5, 6]];'' '''' ''console.log("int:", i);'' ''console.log("int bin:", (i >>> 0).toString(2));'' ''console.log("unsigned:", u);'' ''console.log("float:", f);'' ''console.log("double:", d);'' ''console.log("sci:", d.toExponential(6));'' ''console.log("char:", c);'' ''console.log("str:", s);'' ''console.log("arr:", arr.join(" "));'' ''for (const row of mat) console.log("row:", row.join(" "));'' '''' ''const p = new Array(3);'' ''p[0] = 7; p[1] = 8; p[2] = 9;'' ''console.log("heap:", p.join(" "));'' > /tmp/scratch-JS/main.js'
+            - vi /tmp/scratch-JS/main.js
+          focus: true
+
+        - shell_command:
+            - tm.1_title 'node'
+            - mkdir -p /tmp/scratch-JS && cd /tmp/scratch-JS && watch 'node main.js'

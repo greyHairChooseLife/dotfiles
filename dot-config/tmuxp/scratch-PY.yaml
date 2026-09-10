@@ -1,0 +1,20 @@
+session_name: scratch-PY
+start_directory: /tmp
+suppress_history: false
+
+windows:
+    # --- scratch PY ---
+    - window_name: scratch
+      focus: true
+      layout: even-horizontal
+      panes:
+        - shell_command:
+            - tm.1_title 'main.py'
+            - mkdir -p /tmp/scratch-PY
+            - 'printf ''%s\n'' ''i = -42'' ''u = 42'' ''f = 3.14'' ''d = 2.718281828'' ''c = "A"'' ''s = "hello"'' ''arr = [1, 2, 3]'' ''mat = [[1, 2, 3], [4, 5, 6]]'' '''' ''print("int:", i)'' ''print("int bin:", bin(i & 0xFFFFFFFF))'' ''print("unsigned:", u)'' ''print("float:", f)'' ''print("double:", d)'' ''print("sci:", f"{d:.6e}")'' ''print("char:", c)'' ''print("str:", s)'' ''print("arr:", " ".join(map(str, arr)))'' ''for row in mat:'' ''    print("row:", " ".join(map(str, row)))'' '''' ''p = [7, 8, 9]'' ''print("heap:", " ".join(map(str, p)))'' > /tmp/scratch-PY/main.py'
+            - vi /tmp/scratch-PY/main.py
+          focus: true
+
+        - shell_command:
+            - tm.1_title 'py'
+            - mkdir -p /tmp/scratch-PY && cd /tmp/scratch-PY && watch 'python3 main.py'

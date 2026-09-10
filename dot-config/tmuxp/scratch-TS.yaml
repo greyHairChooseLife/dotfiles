@@ -1,0 +1,20 @@
+session_name: scratch-TS
+start_directory: /tmp
+suppress_history: false
+
+windows:
+    # --- scratch TS ---
+    - window_name: scratch
+      focus: true
+      layout: even-horizontal
+      panes:
+        - shell_command:
+            - tm.1_title 'main.ts'
+            - mkdir -p /tmp/scratch-TS
+            - 'printf ''%s\n'' ''const i: number = -42;'' ''const u: number = 42;'' ''const f: number = 3.14;'' ''const d: number = 2.718281828;'' ''const c: string = "A";'' ''const s: string = "hello";'' ''const arr: number[] = [1, 2, 3];'' ''const mat: number[][] = [[1, 2, 3], [4, 5, 6]];'' '''' ''console.log("int:", i);'' ''console.log("int bin:", (i >>> 0).toString(2));'' ''console.log("unsigned:", u);'' ''console.log("float:", f);'' ''console.log("double:", d);'' ''console.log("sci:", d.toExponential(6));'' ''console.log("char:", c);'' ''console.log("str:", s);'' ''console.log("arr:", arr.join(" "));'' ''for (const row of mat) console.log("row:", row.join(" "));'' '''' ''const p: number[] = [7, 8, 9];'' ''console.log("heap:", p.join(" "));'' > /tmp/scratch-TS/main.ts'
+            - vi /tmp/scratch-TS/main.ts
+          focus: true
+
+        - shell_command:
+            - tm.1_title 'node'
+            - mkdir -p /tmp/scratch-TS && cd /tmp/scratch-TS && watch 'node main.ts'
