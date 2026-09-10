@@ -13,8 +13,7 @@ map("i", "<A-l>", function()
     require("copilot.suggestion").next()
 end, opt)
 
--- MEMO:: STT & TTS
-map("n", ",v", "<cmd>Vocal<CR>", opt)
+-- MEMO:: TTS
 map("v", ",v", "<cmd>TTS<CR>", opt)
 
 -- MEMO:: CodeCompanion

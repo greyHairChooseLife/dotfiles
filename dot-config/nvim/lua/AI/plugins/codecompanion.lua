@@ -9,42 +9,28 @@ return {
         "nvim-lua/plenary.nvim",
         "nvim-treesitter/nvim-treesitter",
         -- "j-hui/fidget.nvim",
-        {
-            "echasnovski/mini.diff",
-            config = function()
-                local diff = require("mini.diff")
-                diff.setup({
-                    -- Disable column style
-                    view = { style = "number" },
-                    -- Disabled by default
-                    source = diff.gen_source.none(),
-                    -- Disable all default mappings
-                    mappings = {
-                        apply = "",
-                        reset = "",
-                        textobject = "",
-                        goto_first = "",
-                        goto_prev = "",
-                        goto_next = "",
-                        goto_last = "",
-                    },
-                })
-            end,
-        },
-        {
-            "HakonHarnes/img-clip.nvim",
-            event = "VeryLazy",
-            enabled = false,
-            opts = {
-                filetypes = {
-                    codecompanion = {
-                        prompt_for_file_name = false,
-                        template = "[Image]($FILE_PATH)",
-                        use_absolute_path = true,
-                    },
-                },
-            },
-        },
+        -- {
+        --     "echasnovski/mini.diff",
+        --     config = function()
+        --         local diff = require("mini.diff")
+        --         diff.setup({
+        --             -- Disable column style
+        --             view = { style = "number" },
+        --             -- Disabled by default
+        --             source = diff.gen_source.none(),
+        --             -- Disable all default mappings
+        --             mappings = {
+        --                 apply = "",
+        --                 reset = "",
+        --                 textobject = "",
+        --                 goto_first = "",
+        --                 goto_prev = "",
+        --                 goto_next = "",
+        --                 goto_last = "",
+        --             },
+        --         })
+        --     end,
+        -- },
         -- EXTENSIONS
         "ravitemer/codecompanion-history.nvim",
         -- "ravitemer/mcphub.nvim",
@@ -72,8 +58,8 @@ return {
                     show_tools_processing = true, -- Show the loading message when tools are being executed?
 
                     icons = {
-                        buffer_sync_all = " ", -- was: buffer_pin
-                        buffer_sync_diff = "󰴅 ", -- was: buffer_watch
+                        sync_all = " ", -- was: buffer_pin
+                        sync_diff = "󰴅 ", -- was: buffer_watch
                         chat_fold = " ",
                         tool_success = " ",
                         tool_failure = " ",
@@ -175,8 +161,8 @@ return {
                         close = { modes = { n = "<C-c>", i = "<C-c>" } },
                         send = { modes = { i = { "<C-s>", "<A-Enter>" } } },
                         stop = { modes = { n = "<Esc><Esc><Esc>" } },
-                        buffer_sync_all = { modes = { n = "grp" } }, -- was: pin
-                        buffer_sync_diff = { modes = { n = "grw" } }, -- was: watch
+                        sync_all = { modes = { n = "grp" } }, -- was: pin
+                        sync_diff = { modes = { n = "grw" } }, -- was: watch
                         goto_file_under_cursor = { modes = { n = "gO" } },
                         clear = { modes = { n = "gX" } },
                         previous_header = { modes = { n = "<C-p>" } },

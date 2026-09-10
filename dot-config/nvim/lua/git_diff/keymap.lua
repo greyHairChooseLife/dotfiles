@@ -46,18 +46,6 @@ wk_map({
     },
 })
 wk_map({
-    -- git log
-    ["<leader>gl"] = {
-        group = "Log",
-        order = { "<Space>", "a", "r", "f", "G" },
-        ["<Space>"] = { "<cmd>GV<CR>", desc = "(default)", mode = "n" },
-        ["a"] = { "<cmd>GV --all<CR>", desc = "all", mode = "n" },
-        ["r"] = { "<cmd>GV reflog<CR>", desc = "reflog", mode = "n" },
-        ["f"] = { "<cmd>GV!<CR>", desc = "current File", mode = "n" },
-        ["G"] = { function() require("gitgraph").draw({}, { all = true, max_count = 5000 }) end, desc = "Graph Draw", mode = "n" },
-    },
-})
-wk_map({
     -- diffview open (file tree style)
     ["<leader>gd"] = {
         group = "󰕜  Diff (file tree style)",

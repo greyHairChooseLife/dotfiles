@@ -79,18 +79,5 @@ return {
                 snp.todo_comments()
             end,
         },
-        {
-            ",..T",
-            function()
-                local snp = require("snacks").picker
-                local file_path = vim.fn.expand("%:t") -- 파일명
-                snp.todo_comments({
-                    on_show = function(picker)
-                        picker.input:set("'" .. file_path .. " ")
-                        vim.notify(vim.inspect(picker))
-                    end,
-                })
-            end,
-        },
     },
 }

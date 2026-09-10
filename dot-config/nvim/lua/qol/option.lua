@@ -20,12 +20,25 @@ opt.number = false -- just leap & status-line
 opt.relativenumber = false -- just leap & status-line
 opt.signcolumn = "yes:2"
 opt.foldcolumn = "0"
-opt.foldmethod = "expr"
-opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+-- opt.foldmethod = "expr"
+opt.foldmethod = "indent"
+-- opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 opt.foldlevel = 99
 opt.foldlevelstart = 99
 opt.foldnestmax = 4
-require("UI.foldtext")
+-- require("UI.foldtext")
+--
+-- -- workaround: neovim#32759 vim.treesitter.foldexpr()가 폴드 시작줄을
+-- -- 편집하면 그 폴드를 임의로 닫는 버그. 편집 직후 커서가 있는 폴드가
+-- -- 닫혀 있으면 zv로 다시 연다.
+-- local fold_workaround = vim.api.nvim_create_augroup("FoldEditWorkaround", { clear = true })
+-- local function reopen_fold_at_cursor()
+--     if vim.fn.foldclosed(vim.fn.line(".")) ~= -1 then vim.cmd("normal! zv") end
+-- end
+-- vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+--     group = fold_workaround,
+--     callback = function() vim.schedule(reopen_fold_at_cursor) end,
+-- })
 opt.fillchars = {
     vert = "┃", -- 수직 창 구분선
     fold = " ", -- 접힌 텍스트 표시

@@ -262,25 +262,6 @@ vim.cmd([[
   highlight OilSignColumn guibg=#1A1601
 
 
-  " MEMO:: Telescope
-  highlight TelescopeSelectionCaret guifg=#FF4500 guibg=#000080
-  highlight TelescopeSelection guibg=#000080
-  highlight TelescopeMultiSelection guibg=#000060  "bookmark한 것들
-  highlight TelescopeMatching guifg=#FF4500
-  " highlight TelescopePreviewMessageFillchar guibg=#FF4500 "preview에서 빈칸 채우기, 솔직히 뭔 용도인지 모르곘다.
-  highlight TelescopePreviewLine guibg=#181d5f
-  highlight TelescopePreviewTitle guifg=#000000 guibg=#000000
-  highlight TelescopePreviewBorder guifg=#181818 guibg=#000000
-  highlight TelescopePreviewNormal guifg=NONE guibg=#181818
-  highlight TelescopeResultsBorder guifg=#000000 guibg=#000000
-  highlight TelescopeResultsTitle guifg=#000000 guibg=#000000
-  highlight TelescopeResultsNormal guifg=#E0E0E0 guibg=#000000
-  highlight TelescopeResultsComment guifg=#FF4500 "버퍼의 a, h, # 등 부가 정보
-  highlight TelescopePromptNormal guibg=#181d5f
-  highlight TelescopePromptBorder guifg=#181d5f
-  highlight TelescopePromptTitle guibg=#181d5f
-
-
   " MEMO:: Aerial
   highlight AerialGuide1 guifg=#FF4500
   highlight AerialGuide2 guifg=#E0E0E0
