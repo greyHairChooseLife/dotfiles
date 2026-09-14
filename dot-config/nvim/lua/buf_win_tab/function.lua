@@ -55,16 +55,31 @@ function M.nav_buff_except_current_tab(direction)
     until not is_visible_elsewhere
 end
 
-function M.buffer_next_drop_last()
+---@param force boolean? discard the dropped buffer even if modified
+function M.buffer_next_drop_last(force)
     local last_buf = vim.api.nvim_get_current_buf()
+
+    if not force and vim.api.nvim_buf_is_valid(last_buf) and vim.api.nvim_get_option_value("modified", { buf = last_buf }) then
+        vim.notify("Unsaved changes: use g<S-Tab> to discard, ge/gE to save", vim.log.levels.WARN, { render = "minimal" })
+        return
+    end
 
     M.nav_buff_except_current_tab("next")
 
     if vim.api.nvim_buf_is_valid(last_buf) then
         if last_buf == vim.api.nvim_get_current_buf() then
-            vim.fn.feedkeys("gq")
+            if not force then
+                vim.fn.feedkeys("gq")
+            elseif not vim.api.nvim_get_option_value("modified", { buf = last_buf }) then
+                M.gq(last_buf)
+            end
+            -- force + modified + nowhere else to go: keep the buffer, nothing to drop
         else
-            vim.cmd("bd " .. last_buf)
+            if force then
+                vim.api.nvim_buf_delete(last_buf, { force = true })
+            else
+                vim.cmd("bd " .. last_buf)
+            end
         end
     end
 end
@@ -144,6 +159,10 @@ function M.gq(bufnr, winid)
 
     if not vim.api.nvim_buf_is_valid(bufnr) then return vim.notify(bufnr .. " is not valid bufnr.", vim.log.levels.ERROR) end
 
+    if vim.api.nvim_get_option_value("modified", { buf = bufnr }) then
+        return vim.notify("Unsaved changes: use gQ to discard, ge/gE to save", vim.log.levels.WARN, { render = "minimal" })
+    end
+
     local excluded_filetypes = { "help", "gitcommit", "NvimTree", "codecompanion" }
     local excluded_buftypes = { "nofile" }
 
@@ -180,10 +199,25 @@ function M.ge()
     vim.notify("Saved and closed buffer", vim.log.levels.INFO)
 end
 
+-- gQ: discard the current buffer unconditionally, even if modified.
+-- No save, no prompt. Last listed buffer quits nvim.
 function M.gQ()
-    local bufnr = vim.fn.bufnr("%")
-    vim.cmd("q")
-    if vim.api.nvim_buf_is_valid(bufnr) then vim.api.nvim_buf_delete(bufnr, { force = true }) end
+    local buf = vim.fn.bufnr("%")
+    if not vim.api.nvim_buf_is_valid(buf) then return vim.notify(buf .. " is not valid bufnr.", vim.log.levels.ERROR) end
+
+    local name = vim.fn.bufname(buf)
+    local display = name == "" and "[No Name]" or vim.fn.fnamemodify(name, ":t")
+
+    local listed = vim.fn.getbufinfo({ buflisted = 1 })
+    local other_listed = vim.tbl_filter(function(b) return b.bufnr ~= buf end, listed)
+
+    if #other_listed == 0 then
+        vim.cmd("q!")
+        return
+    end
+
+    vim.api.nvim_buf_delete(buf, { force = true })
+    vim.notify("Discarded buffer: " .. display, vim.log.levels.WARN, { render = "minimal" })
 end
 
 function M.gE()
@@ -475,6 +509,7 @@ end
 NavBuffAfterCleaning = M.nav_buff_after_cleaning
 NavBuffAfterCleaningExceptCurrentTabShowing = M.nav_buff_except_current_tab
 BufferNextDropLast = M.buffer_next_drop_last
+BufferNextDropLastForce = function() M.buffer_next_drop_last(true) end
 CloseOtherBuffersInCurrentTab = M.close_other_buffers_in_tab
 TabOnlyAndCloseHiddenBuffers = M.tab_only_close_hidden
 ManageBuffer_ge = M.ge

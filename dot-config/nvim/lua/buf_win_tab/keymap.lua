@@ -12,6 +12,8 @@ map("n", "<S-Tab>", function()
     NavBuffAfterCleaningExceptCurrentTabShowing("prev")
 end, opt)
 map("n", "g<Tab>", BufferNextDropLast)
+-- g<S-Tab>: same as g<Tab>, but force-discards the dropped buffer even if modified
+map("n", "g<S-Tab>", BufferNextDropLastForce)
 -- <C-i>와 <Tab>은 터미널에서 동일한 키코드(0x09)이므로,
 -- alacritty에서 <C-i>를 CSI u 시퀀스(\x1b[105;5u)로 보내도록 설정한다.
 -- 이렇게 하면 neovim이 <Tab>과 <C-i>를 구분하여:
@@ -27,6 +29,7 @@ map("n", "<C-A-i>", function() JumplistCrossBuffer("next") end, opt)
 map({ "n", "i" }, "<leader>Q", "<cmd>qa!<CR>")
 map("n", "qq", "<cmd>q<CR>") -- 버퍼를 남겨둘 필요가 있는 경우가 오히려 더 적다. 희안하게 !를 붙이면 hidden이 아니라 active상태다.
 map("n", "gq", ManageBuffer_gq)
+-- gQ: force discard current buffer, even if modified. No prompt.
 map("n", "gQ", ManageBuffer_gQ)
 map("n", "gtq", ManageBuffer_gtq)
 map("n", "gtQ", ManageBuffer_gtQ)
