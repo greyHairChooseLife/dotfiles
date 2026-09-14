@@ -1,6 +1,7 @@
 return {
     "greyhairchooselife/ansi.nvim",
     lazy = false,
+    cmd = "AnsiToggle",
     config = function()
         require("ansi").setup({
             auto_enable = false, -- Auto-enable for configured filetypes

@@ -42,7 +42,7 @@ return {
     end,
     config = function()
         require("codecompanion").setup({
-            rules = { default = { files = { "~/.pi/agent/AGENTS.md" } } },
+            rules = { default = { files = { "~/.pi/agent/APPEND_SYSTEM.md" } } },
             display = {
                 chat = {
                     intro_message = "",
