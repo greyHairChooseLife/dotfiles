@@ -110,6 +110,14 @@ function M.close_other_buffers_in_tab()
     vim.cmd("only")
 end
 
+local function confirm_discard_modified(buf)
+    local name = vim.api.nvim_buf_get_name(buf)
+    name = name == "" and ("[No Name %d]"):format(buf) or vim.fn.fnamemodify(name, ":~:.")
+
+    local choice = vim.fn.confirm(("Discard changes in modified buffer?\n%s"):format(name), "&Keep\n&Discard", 1, "Warning")
+    return choice == 2
+end
+
 function M.tab_only_close_hidden()
     local open_buffers = {}
     for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
@@ -117,15 +125,23 @@ function M.tab_only_close_hidden()
         open_buffers[buf] = true
     end
 
+    local kept = 0
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if not open_buffers[buf] and vim.api.nvim_buf_is_loaded(buf) then
-            local filetype = vim.bo[buf].filetype
-            if filetype ~= "VoltWindow" then vim.api.nvim_buf_delete(buf, { force = true }) end
+            if not vim.bo[buf].modified or confirm_discard_modified(buf) then
+                vim.api.nvim_buf_delete(buf, { force = true })
+            else
+                kept = kept + 1
+            end
         end
     end
 
-    vim.cmd("silent tabonly")
-    vim.notify("Tab only, wiped invisible buffers", vim.log.levels.INFO)
+    -- [!] keeps buffers that stayed modified in other tabs, as hidden instead of unloading them
+    vim.cmd("silent tabonly!")
+
+    local msg = "Tab only, wiped invisible buffers"
+    if kept > 0 then msg = msg .. (" (kept %d modified)"):format(kept) end
+    vim.notify(msg, vim.log.levels.INFO)
 end
 
 local function close_if_last_with_nvimtree()
