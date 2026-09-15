@@ -111,7 +111,6 @@ function M.close_other_buffers_in_tab()
 end
 
 function M.tab_only_close_hidden()
-    vim.cmd("TTimerlyClose")
     local open_buffers = {}
     for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
         local buf = vim.api.nvim_win_get_buf(win)

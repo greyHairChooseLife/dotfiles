@@ -48,8 +48,6 @@ map("v", "'", HilightSearch)
 map("n", "vv", "viw") -- easy visual block for word
 map("v", "v", "<Esc>")
 
-map({ "n", "v", "i", "c" }, "<leader>t", "<cmd>TTimerlyToggle<cr>")
-
 map({ "n", "v" }, "Z", "<Cmd>Focus<CR>")
 map("v", ",<Space>", ":FocusHere<CR>", opt)
 map("n", ",<Space>", "<cmd>FocusClear<CR>", opt)
