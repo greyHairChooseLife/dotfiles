@@ -84,6 +84,99 @@ function M.buffer_next_drop_last(force)
     end
 end
 
+---@param buf integer
+---@return string[]
+local function diff_vs_disk(buf)
+    local path = vim.api.nvim_buf_get_name(buf)
+    local disk = {}
+    if path ~= "" and vim.fn.filereadable(path) == 1 then disk = vim.fn.readfile(path) end
+
+    local current = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    local function as_text(lines) return #lines == 0 and "" or table.concat(lines, "\n") .. "\n" end
+    local diff = vim.text.diff(as_text(disk), as_text(current), { result_type = "unified", ctxlen = 3 })
+    if diff == "" then return { "(no textual difference)" } end
+    return vim.split(diff, "\n", { plain = true })
+end
+
+---@param title string
+---@param lines string[]
+---@return fun() close
+local function open_diff_float(title, lines)
+    local scratch = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_lines(scratch, 0, -1, false, lines)
+    vim.bo[scratch].filetype = "diff"
+
+    local width = math.min(vim.o.columns - 8, 110)
+    -- noice draws its confirm popup at views.confirm.position.row = 3, so keep the preview below it
+    local row = 10
+    local height = math.min(#lines, math.max(3, vim.o.lines - row - 3))
+    local win = vim.api.nvim_open_win(scratch, false, {
+        relative = "editor",
+        row = row,
+        col = math.max(0, math.floor((vim.o.columns - width) / 2)),
+        width = width,
+        height = height,
+        style = "minimal",
+        border = "single",
+        title = " " .. title .. " ",
+        title_pos = "left",
+    })
+
+    return function()
+        if vim.api.nvim_win_is_valid(win) then vim.api.nvim_win_close(win, true) end
+        if vim.api.nvim_buf_is_valid(scratch) then vim.api.nvim_buf_delete(scratch, { force = true }) end
+    end
+end
+
+--- Shows the pending changes and asks what to do with a modified buffer.
+---@param buf integer
+---@return "keep"|"write"|"discard"
+local function review_modified(buf)
+    local path = vim.api.nvim_buf_get_name(buf)
+    local name = path == "" and ("[No Name %d]"):format(buf) or vim.fn.fnamemodify(path, ":~:.")
+    local close_diff = open_diff_float("diff: " .. name, diff_vs_disk(buf))
+
+    local choices = { "&Keep" }
+    if path ~= "" then choices[#choices + 1] = "&Write" end
+    choices[#choices + 1] = "&Discard"
+
+    local choice = vim.fn.confirm(("Discard changes in modified buffer?\n%s"):format(name), table.concat(choices, "\n"), 1, "Warning")
+    close_diff()
+
+    if choice == 0 or choice == 1 then return "keep" end
+    return choices[choice] == "&Write" and "write" or "discard"
+end
+
+--- Asks about a modified buffer, then wipes it unless the user keeps it or the write fails.
+---@param buf integer
+---@return "wiped"|"written"|"kept"
+local function wipe_buffer(buf)
+    local action = "discard"
+    if vim.bo[buf].modified then action = review_modified(buf) end
+
+    if action == "keep" then return "kept" end
+
+    if action == "write" then
+        local ok, err = pcall(vim.api.nvim_buf_call, buf, function() vim.cmd("write") end)
+        if not ok then
+            vim.notify("Write failed, buffer kept: " .. tostring(err), vim.log.levels.ERROR)
+            return "kept"
+        end
+    end
+
+    vim.api.nvim_buf_delete(buf, { force = true })
+    return action == "write" and "written" or "wiped"
+end
+
+---@param counts table<string, integer>
+---@return string
+local function summary(counts)
+    local notes = {}
+    if counts.written > 0 then notes[#notes + 1] = ("wrote %d"):format(counts.written) end
+    if counts.kept > 0 then notes[#notes + 1] = ("kept %d modified"):format(counts.kept) end
+    return #notes > 0 and (" (" .. table.concat(notes, ", ") .. ")") or ""
+end
+
 function M.close_other_buffers_in_tab()
     local current_buf_id = vim.api.nvim_get_current_buf()
     local current_win_id = vim.api.nvim_get_current_win()
@@ -91,6 +184,7 @@ function M.close_other_buffers_in_tab()
     local window_ids = vim.api.nvim_tabpage_list_wins(current_tab_id)
 
     local excluded_buftypes = { "nofile" }
+    local written, kept = 0, 0
 
     for _, win_id in ipairs(window_ids) do
         if not vim.api.nvim_win_is_valid(win_id) then goto continue end
@@ -98,7 +192,9 @@ function M.close_other_buffers_in_tab()
         local buf_id = vim.api.nvim_win_get_buf(win_id)
         if win_id ~= current_win_id and buf_id ~= current_buf_id then
             if utils.is_buffer_shown_only_in_current_tab(buf_id) and not vim.tbl_contains(excluded_buftypes, vim.bo[buf_id].buftype) then
-                vim.api.nvim_buf_delete(buf_id, { force = true })
+                local result = wipe_buffer(buf_id)
+                if result == "written" then written = written + 1 end
+                if result == "kept" then kept = kept + 1 end
             else
                 M.gq(nil, win_id)
             end
@@ -107,15 +203,9 @@ function M.close_other_buffers_in_tab()
         ::continue::
     end
 
-    vim.cmd("only")
-end
-
-local function confirm_discard_modified(buf)
-    local name = vim.api.nvim_buf_get_name(buf)
-    name = name == "" and ("[No Name %d]"):format(buf) or vim.fn.fnamemodify(name, ":~:.")
-
-    local choice = vim.fn.confirm(("Discard changes in modified buffer?\n%s"):format(name), "&Keep\n&Discard", 1, "Warning")
-    return choice == 2
+    -- [!] hides buffers that stayed modified instead of failing the close with E37
+    vim.cmd(kept > 0 and "only!" or "only")
+    vim.notify("Wiped other buffers in this tab" .. summary({ written = written, kept = kept }), vim.log.levels.INFO)
 end
 
 function M.tab_only_close_hidden()
@@ -125,23 +215,18 @@ function M.tab_only_close_hidden()
         open_buffers[buf] = true
     end
 
-    local kept = 0
+    local written, kept = 0, 0
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if not open_buffers[buf] and vim.api.nvim_buf_is_loaded(buf) then
-            if not vim.bo[buf].modified or confirm_discard_modified(buf) then
-                vim.api.nvim_buf_delete(buf, { force = true })
-            else
-                kept = kept + 1
-            end
+            local result = wipe_buffer(buf)
+            if result == "written" then written = written + 1 end
+            if result == "kept" then kept = kept + 1 end
         end
     end
 
     -- [!] keeps buffers that stayed modified in other tabs, as hidden instead of unloading them
     vim.cmd("silent tabonly!")
-
-    local msg = "Tab only, wiped invisible buffers"
-    if kept > 0 then msg = msg .. (" (kept %d modified)"):format(kept) end
-    vim.notify(msg, vim.log.levels.INFO)
+    vim.notify("Tab only, wiped invisible buffers" .. summary({ written = written, kept = kept }), vim.log.levels.INFO)
 end
 
 local function close_if_last_with_nvimtree()
@@ -539,10 +624,17 @@ function M.close_all_hidden_buffers()
         visible_buffers[buf] = true
     end
 
+    local written, kept = 0, 0
     for _, bufinfo in ipairs(listed_buffers) do
         local buf = bufinfo.bufnr
-        if not visible_buffers[buf] then vim.api.nvim_buf_delete(buf, {}) end
+        if not visible_buffers[buf] then
+            local result = wipe_buffer(buf)
+            if result == "written" then written = written + 1 end
+            if result == "kept" then kept = kept + 1 end
+        end
     end
+
+    vim.notify("Cleared hidden buffers" .. summary({ written = written, kept = kept }), vim.log.levels.INFO)
 end
 
 -- Backward compatibility: expose as globals

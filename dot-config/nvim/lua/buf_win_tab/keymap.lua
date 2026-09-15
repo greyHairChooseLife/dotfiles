@@ -67,12 +67,10 @@ end)
 map({ "n", "v" }, "<A-Enter><A-Enter>", function()
     -- it will not close nvim-tree
     Close_all_hidden_buffers()
-    vim.notify("Clear all hidden buffers", 2, { render = "minimal" })
 end)
 map({ "n", "v" }, "<A-Enter><Enter>", function()
     -- it will not close nvim-tree
     Close_all_hidden_buffers()
-    vim.notify("Clear all hidden buffers", 2, { render = "minimal" })
 end)
 
 ---------------------------------------------------------------------------------------------------------------------------------- WINDOW
