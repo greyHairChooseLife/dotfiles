@@ -35,10 +35,12 @@ map("n", "gtq", ManageBuffer_gtq)
 map("n", "gtQ", ManageBuffer_gtQ)
 -- Save
 map("n", "gw", function()
+    if HasUnnamedBuffer() then return end
     vim.cmd("silent w")
     vim.notify("Saved current buffers", 2, { render = "minimal" })
 end)
 map("n", "gW", function()
+    if HasUnnamedBuffer(true) then return end
     vim.cmd("wa")
     vim.notify("Saved all buffers", 2, { render = "minimal" })
 end)

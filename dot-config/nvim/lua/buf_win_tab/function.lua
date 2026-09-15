@@ -193,7 +193,31 @@ function M.gq(bufnr, winid)
     vim.api.nvim_win_close(winid or 0, false)
 end
 
+--- Warn and return true if any buffer targeted by a write has no file name.
+--- Unnamed buffers make :w / :wa fail with E32 instead of a simple message.
+---@param all boolean? check every listed buffer (:wa) instead of only the current one
+---@return boolean has_unnamed
+function M.has_unnamed_buffer(all)
+    local unnamed = {}
+
+    if all then
+        for _, buf in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+            if buf.name == "" and not vim.tbl_contains({ "nofile", "terminal" }, vim.bo[buf.bufnr].buftype) then
+                table.insert(unnamed, "[" .. buf.bufnr .. "]")
+            end
+        end
+    else
+        if vim.fn.bufname("%") == "" and vim.bo.buftype ~= "nofile" then table.insert(unnamed, "[No Name]") end
+    end
+
+    if #unnamed == 0 then return false end
+
+    vim.notify("No file name: " .. table.concat(unnamed, " "), vim.log.levels.WARN, { render = "minimal" })
+    return true
+end
+
 function M.ge()
+    if M.has_unnamed_buffer() then return end
     vim.cmd("w")
     M.gq()
     vim.notify("Saved and closed buffer", vim.log.levels.INFO)
@@ -221,6 +245,7 @@ function M.gQ()
 end
 
 function M.gE()
+    if M.has_unnamed_buffer() then return end
     vim.cmd("w")
     M.gQ()
     vim.notify("Saved and wiped buffer", vim.log.levels.INFO)
@@ -513,6 +538,7 @@ BufferNextDropLastForce = function() M.buffer_next_drop_last(true) end
 CloseOtherBuffersInCurrentTab = M.close_other_buffers_in_tab
 TabOnlyAndCloseHiddenBuffers = M.tab_only_close_hidden
 ManageBuffer_ge = M.ge
+HasUnnamedBuffer = M.has_unnamed_buffer
 ManageBuffer_gq = M.gq
 ManageBuffer_gQ = M.gQ
 ManageBuffer_gE = M.gE
