@@ -133,6 +133,7 @@ map({ "n", "v" }, "<C-e>", "2<C-e>")
 map({ "n", "v" }, "<C-y>", "2<C-y>")
 map("n", ",.<ESC>", "<Nop>") -- do nothing
 map("n", ",.<Space>", "<Nop>") -- do nothing
+map("n", "<F1>", "<Nop>") -- do nothing
 
 -- 선택한 줄 이동
 map("x", "<A-k>", ":move '<-2<CR>gv-gv")
