@@ -157,8 +157,8 @@ return {
             -- stylua: ignore end
 
             -- ── Swap ────────────────────────────────────────────────────────────
-            map("n", "]a", function() swap.swap_next("@parameter.inner") end, { desc = "Swap next parameter" })
-            map("n", "[a", function() swap.swap_previous("@parameter.inner") end, { desc = "Swap prev parameter" })
+            map("n", "]A", function() swap.swap_next("@parameter.inner") end, { desc = "Swap next parameter" })
+            map("n", "[A", function() swap.swap_previous("@parameter.inner") end, { desc = "Swap prev parameter" })
 
       -- ── Movement ────────────────────────────────────────────────────────
       -- stylua: ignore start
@@ -174,6 +174,8 @@ return {
       jump("[i", move.goto_previous_start, "@loop.outer",        "Prev loop")
       jump("]c", move.goto_next_start,     "@conditional.outer", "Next conditional")
       jump("[c", move.goto_previous_start, "@conditional.outer", "Prev conditional")
+      jump("]a", move.goto_next_start,     "@parameter.inner", "Next conditional")
+      jump("[a", move.goto_previous_start, "@parameter.inner", "Prev conditional")
             -- stylua: ignore end
         end,
     },
