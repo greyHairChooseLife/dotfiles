@@ -513,10 +513,7 @@ function M.open(source_buf, initial_filters, opts)
                 vim.cmd("edit " .. vim.fn.fnameescape(item.file))
             end
             -- Reapply foldmethod to fix folds broken by opening buffers.
-            -- Borrowed from snacks.picker's built-in jump action (snacks/picker/actions.lua:156-161).
-            if vim.wo.foldmethod == "expr" then
-                vim.schedule(function() vim.opt.foldmethod = "expr" end)
-            end
+            require("utils.fold").fix()
         end,
         actions = {
             zk_tag  = make_filter_action(function() return meta.tags or {} end,  filters.tags_or,  filters.tags_and,  filters.tags_not,  "tag",  true),
@@ -655,10 +652,8 @@ function M.open_recent()
             picker:close()
             if item and item.file then
                 vim.cmd("edit " .. vim.fn.fnameescape(item.file))
-                -- Borrowed from snacks.picker's built-in jump action (snacks/picker/actions.lua:156-161).
-                if vim.wo.foldmethod == "expr" then
-                    vim.schedule(function() vim.opt.foldmethod = "expr" end)
-                end
+                -- Reapply foldmethod to fix folds broken by opening buffers.
+                require("utils.fold").fix()
             end
         end,
     })

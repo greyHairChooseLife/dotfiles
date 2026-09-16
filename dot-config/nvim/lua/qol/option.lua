@@ -20,13 +20,18 @@ opt.number = false -- just leap & status-line
 opt.relativenumber = false -- just leap & status-line
 opt.signcolumn = "yes:2"
 opt.foldcolumn = "0"
--- opt.foldmethod = "expr"
-opt.foldmethod = "indent"
--- opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+opt.foldmethod = "expr" -- indent
+-- 버퍼에 tree-sitter 파서가 없으면 foldexpr가 폴드를 만들지 못한다.
+-- 이때는 indent 폴딩으로 대체한다.
+function _G.FoldExpr()
+    if vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()] then return vim.treesitter.foldexpr() end
+    return vim.fn.indent(vim.v.lnum) / vim.fn.shiftwidth()
+end
+opt.foldexpr = "v:lua.FoldExpr()"
 opt.foldlevel = 99
 opt.foldlevelstart = 99
 opt.foldnestmax = 4
--- require("UI.foldtext")
+require("UI.foldtext")
 --
 -- -- workaround: neovim#32759 vim.treesitter.foldexpr()가 폴드 시작줄을
 -- -- 편집하면 그 폴드를 임의로 닫는 버그. 편집 직후 커서가 있는 폴드가

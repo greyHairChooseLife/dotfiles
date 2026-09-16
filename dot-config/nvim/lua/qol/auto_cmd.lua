@@ -100,6 +100,13 @@ vim.api.nvim_create_autocmd("BufReadPost", {
         vim.cmd("normal! zR")
         vim.cmd("silent! loadview")
 
+        -- loadview는 view에 저장된 foldexpr/foldmethod를 그대로 복원한다.
+        -- view가 foldexpr가 깨진 시점에 저장됐다면(값 0) 폴드가 아예 안 생긴다.
+        -- 여기서 설정값으로 되돌린다. foldlevel과 zo/zc 상태는
+        -- 사용자의 폴드 기억이므로 건드리지 않는다.
+        vim.wo.foldmethod = "expr"
+        vim.wo.foldexpr = "v:lua.FoldExpr()"
+
         -- 마지막 커서 위치로 이동
         local mark = vim.api.nvim_buf_get_mark(0, '"')
         if mark[1] > 0 and mark[1] <= vim.fn.line("$") then vim.api.nvim_win_set_cursor(0, mark) end
