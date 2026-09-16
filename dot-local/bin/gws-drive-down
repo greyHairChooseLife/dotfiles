@@ -1,0 +1,100 @@
+#!/bin/bash
+# gws-drive-down - browse Drive with fzf, download or copy share link
+# Usage: gws-drive-down [max-results] [output-dir]
+
+set -euo pipefail
+
+MAX="${1:-100}"
+OUTDIR="${2:-.}"
+mkdir -p "$OUTDIR"
+
+# fetch file list (flat JSON, one object per line)
+echo "📋 Fetching $MAX files ..." >&2
+data=$(gws drive files list \
+  --params "{\"pageSize\":$MAX,\"fields\":\"files(id,name,size,mimeType,modifiedTime,webViewLink)\"}")
+
+# build fzf rows with jq doing all formatting (safe — no TSV delimiters to break)
+rows=()
+while IFS='' read -r row; do
+  [[ -z "$row" ]] && continue
+  rows+=("$row")
+done < <(echo "$data" | jq -r '
+  def fmt_size:
+    if . == null then "     —"
+    elif . >= 1073741824 then ((./1073741824*10 | floor)/10 | tostring) + "G"
+    elif . >= 1048576    then ((./1048576*10   | floor)/10 | tostring) + "M"
+    elif . >= 1024       then ((./1024         | floor)     | tostring) + "K"
+    else (. | tostring) + "B"
+    end;
+  def padded($n): tostring | .[0:$n] + (" " * ($n - length));
+  .files[]? |
+  .id + "|" +
+  (.name | .[0:55]) + "|" +
+  ((.size | select(. != null and . != "") | tonumber) // null | fmt_size | padded(6)) + "|" +
+  (.modifiedTime // "?" | .[0:10]) + "|" +
+  (.mimeType // "" | .[0:25])
+')
+
+[[ ${#rows[@]} -eq 0 ]] && { echo "No files found." >&2; exit 1; }
+
+# preview helper
+PREVIEW="/tmp/.gws-drive-preview-$$.sh"
+cat > "$PREVIEW" << 'PREVIEWEOF'
+#!/bin/bash
+id="$1"
+gws drive files get \
+  --params "{\"fileId\":\"$id\",\"fields\":\"id,name,size,mimeType,modifiedTime,owners(displayName),webViewLink\"}" \
+  2>/dev/null | jq -r '
+  def fmt_size:
+    if . == null then "—"
+    elif . >= 1073741824 then ((./1073741824*10 | floor)/10 | tostring) + " GB"
+    elif . >= 1048576    then ((./1048576*10   | floor)/10 | tostring) + " MB"
+    elif . >= 1024       then ((./1024         | floor)     | tostring) + " KB"
+    else (. | tostring) + " B"
+    end;
+  "  Name:     " + (.name // "?"),
+  "  Type:     " + (.mimeType // "?"),
+  "  Size:     " + ((.size | select(. != null and . != "") | tonumber) // null | fmt_size),
+  "  Modified: " + (.modifiedTime // "?"),
+  "  Owner:    " + (.owners[0].displayName // "?"),
+  "",
+  "── share / download ──",
+  "  View:  " + (.webViewLink // "no public link"),
+  "  DL:    https://drive.google.com/uc?export=download&id=" + (.id // ""),
+  ""
+'
+PREVIEWEOF
+chmod +x "$PREVIEW"
+trap "rm -f $PREVIEW" EXIT
+
+# fzf picker
+selected=$(printf '%s\n' "${rows[@]}" | fzf \
+  --delimiter='|' \
+  --with-nth='2,3,4' \
+  --ansi \
+  --preview="$PREVIEW {1}" \
+  --preview-window='right:50%:wrap' \
+  --header='Enter: download | Ctrl+L: copy link | / : filter' \
+  --bind="ctrl-l:execute-silent(
+    id={1}
+    gws drive files get \
+      --params '{\"fileId\":\"'\"\$id\"'\",\"fields\":\"webViewLink\"}' 2>/dev/null \
+    | jq -r '.webViewLink // empty' \
+    | { command -v wl-copy >/dev/null && wl-copy || xclip -selection clipboard; } 2>/dev/null
+  )+abort" \
+  2>/dev/null)
+
+[[ -z "$selected" ]] && { echo "Cancelled." >&2; exit 0; }
+
+IFS='|' read -r id _name _sz _dt _mime <<< "$selected"
+
+# get actual filename
+fname=$(echo "$data" | jq -r ".files[] | select(.id == \"$id\") | .name // \"download-$id\"")
+outfile="$OUTDIR/$fname"
+
+echo "📥 $fname → $outfile" >&2
+gws drive files get \
+  --params "{\"fileId\":\"$id\",\"alt\":\"media\"}" \
+  --output "$outfile" 2>/dev/null && echo "✅ $outfile" >&2
+
+echo "https://drive.google.com/file/d/$id/view" >&2

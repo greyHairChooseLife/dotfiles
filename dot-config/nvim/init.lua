@@ -1,3 +1,5 @@
+vim.env.MAKEFILE_42 = "~/P/complete-42-school-chapters/Makefile"
+
 -- Global variables
 vim.g.mapleader = "\\" -- 리더 키 설정
 

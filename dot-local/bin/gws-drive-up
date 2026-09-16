@@ -1,0 +1,28 @@
+#!/bin/bash
+# gws-drive-up - upload a file to Google Drive, auto-share, print links
+# Usage: gws-drive-up <file>
+
+set -euo pipefail
+
+FILE="${1:-}"
+[[ -z "$FILE" || ! -f "$FILE" ]] && { echo "Usage: gws-drive-up <file>" >&2; exit 1; }
+
+NAME="$(basename "$FILE")"
+echo "📤 Uploading $NAME ..." >&2
+
+result=$(gws drive files create \
+  --json "{\"name\":\"$NAME\"}" \
+  --upload "$FILE")
+
+id=$(echo "$result" | jq -r '.id // empty')
+[[ -z "$id" ]] && echo "Upload failed." >&2 && exit 1
+
+# make publicly readable
+gws drive permissions create \
+  --params "{\"fileId\":\"$id\"}" \
+  --json '{"role":"reader","type":"anyone"}' 2>/dev/null || true
+
+echo "id     $id"
+echo "name   $NAME"
+echo "link   https://drive.google.com/file/d/$id/view?usp=sharing"
+echo "dl     https://drive.google.com/uc?export=download&id=$id"

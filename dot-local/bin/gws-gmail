@@ -1,0 +1,307 @@
+#!/bin/bash
+# gws-gmail - browse Gmail with fzf, export readable .md to /tmp/gmail/{date}-{title}
+# Usage:
+#   gws-gmail [max-results] [query]
+#   gws-gmail --list all|today|week|month [max] [query]
+#
+# fzf keybinds:
+#   Alt+1  all messages
+#   Alt+2  today
+#   Alt+3  last 7 days
+#   Alt+4  last 3 months
+
+set -euo pipefail
+
+# argument parsing
+LIST_MODE=false
+TIME_FILTER="all"
+
+if [[ "${1:-}" == "--list" ]]; then
+  LIST_MODE=true
+  shift
+  TIME_FILTER="${1:-all}"
+  shift || true
+fi
+
+MAX="${1:-100}"
+QUERY="${2:-}"
+
+# map named filters to Gmail query syntax
+case "$TIME_FILTER" in
+  today) TIME_Q="newer_than:1d" ;;
+  week)  TIME_Q="newer_than:7d" ;;
+  month) TIME_Q="newer_than:3m" ;;
+  *)     TIME_Q="" ;;
+esac
+
+FULL_Q=""
+[[ -n "$TIME_Q" ]] && FULL_Q="$TIME_Q"
+[[ -n "$FULL_Q" && -n "$QUERY" ]] && FULL_Q="$FULL_Q $QUERY"
+[[ -z "$FULL_Q" && -n "$QUERY" ]] && FULL_Q="$QUERY"
+
+# paths and cleanup
+OUT=/tmp/gmail
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/gmail-preview"
+PREVIEW_SCRIPT="/tmp/.gws-preview-$$.sh"
+FIELDS_FILE="/tmp/.gws-fields-$$.txt"
+ROWS_FILE="/tmp/.gws-rows-$$.txt"
+
+# ANSI escape codes (must use $'...' so ESC bytes are real, not literal \033)
+BOLD=$'\033[1m'
+DIM=$'\033[2m'
+DGREEN=$'\033[2;32m'
+YELLOW=$'\033[1;33m'
+RESET=$'\033[0m'
+
+cleanup() { rm -f "$PREVIEW_SCRIPT" "$FIELDS_FILE" "$ROWS_FILE"; }
+trap cleanup EXIT
+
+mkdir -p "$OUT" "$CACHE"
+
+# helpers
+
+decode_body() {
+  local json="$1"
+  local b64
+  b64=$(echo "$json" | jq -r '
+    [.. | objects | select(.mimeType == "text/plain") | .body.data][0] // ""
+  ')
+  if [[ -n "$b64" ]]; then
+    echo "$b64" | tr '_-' '/+' | base64 -d 2>/dev/null || echo "(could not decode body)"
+  else
+    b64=$(echo "$json" | jq -r '
+      [.. | objects | select(.mimeType == "text/html") | .body.data][0] // ""
+    ')
+    if [[ -n "$b64" ]]; then
+      echo "$b64" | tr '_-' '/+' | base64 -d 2>/dev/null | sed '
+        s/<[^>]*>//g
+        s/&nbsp;/ /g
+        s/&amp;/\&/g
+        s/&lt;/</g
+        s/&gt;/>/g
+        s/&quot;/"/g
+        s/&#39;/'"'"'/g
+      ' || echo "(could not decode HTML body)"
+    else
+      echo "(no text body found)"
+    fi
+  fi
+}
+
+fmt_date() {
+  local raw="$1"
+  local cleaned
+  cleaned=$(echo "$raw" | sed 's/^[A-Za-z]\+, //; s/ [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\} .*//')
+  local parsed
+  if parsed=$(date -d "$cleaned" '+%b %d' 2>/dev/null); then
+    echo "$parsed"
+  else
+    echo "$raw" | cut -c1-10
+  fi
+}
+
+vwidth() {
+  # Approximate visual display width in terminal cells.
+  # ASCII = 1 cell, 3-byte CJK/Hangul ≈ 2 cells.
+  # Formula: chars + (bytes − chars) / 2   (exact for pure ASCII and pure 3-byte UTF-8)
+  local str="$1"
+  local bytes chars
+  bytes=$(printf '%s' "$str" | wc -c)
+  chars=${#str}
+  echo $(( chars + (bytes - chars) / 2 ))
+}
+
+# build_rows -- fetch + format for fzf
+# stdout: ID¦date¦combined_field
+#   combined = subject (bold) + padding + sender (dim), visual-width-aligned
+build_rows() {
+  local max_q="${1:-$MAX}"
+  local query_q="${2:-$FULL_Q}"
+
+  local params="\"userId\":\"me\",\"maxResults\":$max_q"
+  [[ -n "$query_q" ]] && params="$params, \"q\":\"$query_q\""
+
+  local ids
+  ids=$(gws gmail users messages list \
+    --params "{$params}" \
+    | jq -r '.messages[]? | .id // empty')
+
+  [[ -z "$ids" ]] && return 1
+
+  local n=0 id
+  for id in $ids; do
+    [[ -f "$CACHE/$id.json" ]] && continue
+    (gws gmail users messages get \
+      --params "{\"userId\":\"me\",\"id\":\"$id\",\"format\":\"metadata\",\"metadataHeaders\":[\"Subject\",\"From\",\"Date\"]}" \
+      2>/dev/null > "$CACHE/$id.json") &
+    n=$((n + 1))
+    [[ $((n % 5)) -eq 0 ]] && sleep 0.3
+  done
+  wait
+
+  local f subj from date unread
+  local subj_trunc from_trunc date_short unread_prefix
+  local subj_vw from_vw pad padding combined
+  local TARGET=$(( ${COLUMNS:-100} - 18 ))   # available width minus date-col + fzf chrome
+
+  for id in $ids; do
+    f="$CACHE/$id.json"
+    [[ ! -f "$f" ]] && continue
+
+    subj=$(jq -r '.payload.headers[] | select(.name=="Subject") | .value' "$f" 2>/dev/null || echo "(no subject)")
+    from=$(jq -r '.payload.headers[] | select(.name=="From") | .value' "$f" 2>/dev/null | sed 's/.*<\(.*\)>/\1/' || echo "?")
+    date=$(jq -r '.payload.headers[] | select(.name=="Date") | .value' "$f" 2>/dev/null || echo "?")
+    unread=$(jq -r '.labelIds | contains(["UNREAD"])' "$f" 2>/dev/null || echo "false")
+
+    subj_trunc=$(echo "$subj" | cut -c1-70)
+    from_trunc="${from:0:30}"
+    date_short=$(fmt_date "$date")
+
+    # visual-width-aware padding so sender hits a consistent far-right column
+    subj_vw=$(vwidth "$subj_trunc")
+    from_vw=$(vwidth "$from_trunc")
+    pad=$(( TARGET - subj_vw - from_vw - 2 ))   # -2 for "  " separator
+    [[ $pad -lt 2 ]] && pad=2
+    padding=$(printf '%*s' "$pad" '')
+
+    unread_prefix="  "
+    [[ "$unread" == "true" ]] && unread_prefix="${YELLOW}●${RESET} "
+
+    combined="${unread_prefix}${BOLD}${subj_trunc}${RESET}${padding}${DIM}${from_trunc}${RESET}"
+
+    printf '%s¦\033[2;32m%-8s\033[0m¦%s\n' \
+      "$id" \
+      "$date_short" \
+      "$combined"
+  done
+}
+
+# --list mode: just output rows for fzf reload
+if $LIST_MODE; then
+  build_rows || echo "(no messages)"
+  exit 0
+fi
+
+# main interactive mode
+
+echo "📥 $TIME_FILTER — fetching up to $MAX messages${QUERY:+ matching \"$QUERY\"}..." >&2
+build_rows > "$ROWS_FILE" || { echo "No messages found." >&2; exit 1; }
+echo "   ($(wc -l < "$ROWS_FILE") loaded)" >&2
+
+# preview helper (fzf --preview)
+cat > "$PREVIEW_SCRIPT" << 'PREVIEWEOF'
+#!/bin/bash
+id="$1"
+msg=$(gws gmail users messages get \
+  --params "{\"userId\":\"me\",\"id\":\"$id\",\"format\":\"full\"}" \
+  2>/dev/null)
+
+echo "$msg" | jq -r '
+  "━━━ " + (.payload.headers[] | select(.name == "Subject") | .value // "(no subject)") + " ━━━",
+  "",
+  "From:    " + (.payload.headers[] | select(.name == "From") | .value // ""),
+  "To:      " + (.payload.headers[] | select(.name == "To") | .value // ""),
+  "Date:    " + (.payload.headers[] | select(.name == "Date") | .value // ""),
+  "Labels:  " + (.labelIds | join(", ")),
+  ""
+'
+
+body_b64=$(echo "$msg" | jq -r '
+  [.. | objects | select(.mimeType == "text/plain") | .body.data][0] // ""
+')
+if [[ -n "$body_b64" ]]; then
+  echo "─── body ───────────────────────────────────"
+  echo "$body_b64" | tr '_-' '/+' | base64 -d 2>/dev/null | head -40
+  lines=$(echo "$body_b64" | tr '_-' '/+' | base64 -d 2>/dev/null | wc -l)
+  if (( lines > 40 )); then
+    echo "  … ($((lines - 40)) more lines)"
+  fi
+else
+  body_b64=$(echo "$msg" | jq -r '
+    [.. | objects | select(.mimeType == "text/html") | .body.data][0] // ""
+  ')
+  if [[ -n "$body_b64" ]]; then
+    echo "─── body (HTML, stripped) ────────────────"
+    echo "$body_b64" | tr '_-' '/+' | base64 -d 2>/dev/null | sed '
+      s/<[^>]*>//g
+      s/&nbsp;/ /g
+      s/&amp;/\&/g
+      s/&lt;/</g
+      s/&gt;/>/g
+      s/&quot;/"/g
+    ' | head -40
+  else
+    echo "(no text or HTML body found)"
+  fi
+fi
+PREVIEWEOF
+chmod +x "$PREVIEW_SCRIPT"
+
+# fzf picker with time-filter reload binds
+SELF="$(readlink -f "$0")"
+
+selected=$(< "$ROWS_FILE" fzf \
+  --delimiter='¦' \
+  --with-nth='2..' \
+  --ansi \
+  -m \
+  --preview="$PREVIEW_SCRIPT {1}" \
+  --preview-window='right:50%:wrap' \
+  --header='Alt+1:All  Alt+2:Today  Alt+3:Week  Alt+4:3mo | Enter:export' \
+  --bind='alt-1:reload('"$SELF"' --list all 200 "'"$QUERY"'")' \
+  --bind='alt-2:reload('"$SELF"' --list today 50 "'"$QUERY"'")' \
+  --bind='alt-3:reload('"$SELF"' --list week 100 "'"$QUERY"'")' \
+  --bind='alt-4:reload('"$SELF"' --list month 200 "'"$QUERY"'")' \
+  2>/dev/null)
+
+[[ -z "$selected" ]] && echo "Cancelled." >&2 && exit 0
+
+# export selected messages -> /tmp/gmail/
+echo "" >&2
+echo "$selected" > "$FIELDS_FILE"
+
+while IFS='¦' read -r id _date _combined; do
+  msg=$(gws gmail users messages get \
+    --params "{\"userId\":\"me\",\"id\":\"$id\",\"format\":\"full\"}")
+
+  raw_subj=$(echo "$msg" | jq -r '.payload.headers[] | select(.name=="Subject") | .value // "no-subject"')
+  raw_from=$(echo "$msg" | jq -r '.payload.headers[] | select(.name=="From") | .value // ""')
+  raw_to=$(echo "$msg" | jq -r '.payload.headers[] | select(.name=="To") | .value // ""')
+  raw_cc=$(echo "$msg" | jq -r '.payload.headers[] | select(.name=="Cc") | .value // ""')
+  raw_date=$(echo "$msg" | jq -r '.payload.headers[] | select(.name=="Date") | .value // ""')
+  raw_replyto=$(echo "$msg" | jq -r '.payload.headers[] | select(.name=="Reply-To") | .value // ""')
+
+  clean_subj=$(echo "$raw_subj" \
+    | sed 's/[\/:]/_/g; s/[^a-zA-Z0-9 _.-]//g; s/  */ /g' \
+    | xargs | tr ' ' '_')
+
+  ds="unknown-date"
+  if [[ -n "$raw_date" ]]; then
+    cleaned=$(echo "$raw_date" | sed 's/^[A-Za-z]\+, //; s/ [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\} .*//')
+    parsed=$(date -d "$cleaned" '+%Y-%m-%d' 2>/dev/null) && ds="$parsed"
+  fi
+
+  short_subj="${clean_subj:0:100}"
+  file="$OUT/${ds}-${short_subj}.md"
+
+  {
+    echo "# $raw_subj"
+    echo ""
+    echo "| Field | Value |"
+    echo "|---|---|"
+    echo "| **From** | $raw_from |"
+    echo "| **To** | $raw_to |"
+    [[ -n "$raw_cc" ]] && echo "| **Cc** | $raw_cc |"
+    [[ -n "$raw_replyto" ]] && echo "| **Reply-To** | $raw_replyto |"
+    echo "| **Date** | $raw_date |"
+    echo "| **Labels** | $(echo "$msg" | jq -r '.labelIds | join(", ")') |"
+    echo ""
+    echo "---"
+    echo ""
+    decode_body "$msg"
+  } > "$file"
+
+  echo "✅ Saved: $file" >&2
+done < "$FIELDS_FILE"
+
+echo "✓ Done." >&2

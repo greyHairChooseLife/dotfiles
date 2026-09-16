@@ -1,0 +1,36 @@
+session_name: wine-debug
+start_directory: /home/sy/P/voice-craft.refactor_bot-side/bot/
+suppress_history: false
+
+environment:
+    BOT_DIR: ${BOT_DIR}
+
+windows:
+    - window_name: debug-server
+      layout: main-vertical
+      options:
+          main-pane-height: 80
+      panes:
+        - shell_command:
+            - tm.1_title 'winedbg --gdb'
+            - cmd: winedbg --gdb build/voice-craft-bot.exe
+              enter: false
+          focus: true
+
+        - shell_command:
+            - tm.1_title 'gdb client'
+            - gdb -nx -q -ex "target remote localhost:2023"
+
+    - window_name: util
+      layout: even-horizontal
+      panes:
+        - shell_command:
+            - tm.1_title 'shell'
+
+        - shell_command:
+            - tm.1_title 'output'
+            - cat -
+
+        - shell_command:
+            - tm.1_title 'wine processes'
+            - watch -n 1 'ps aux | grep -E "[w]ine|[Ww]ine" | grep -v grep'
