@@ -21,6 +21,32 @@ function ToggleVirtualText(opts)
     })
 end
 
+function RestartLsp()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local clients = vim.lsp.get_clients({ bufnr = bufnr })
+    if #clients == 0 then
+        print("No LSP client attached to this buffer")
+        return
+    end
+    local names = {}
+    for _, client in ipairs(clients) do
+        names[#names + 1] = client.name
+        client:stop()
+        vim.lsp.enable(client.name, false)
+    end
+
+    -- A stopped client is not revived by `vim.lsp.enable`. Detach it first,
+    -- then re-enable and re-attach so a fresh client is spawned.
+    vim.schedule(function()
+        vim.cmd("silent! edit!")
+        for _, name in ipairs(names) do
+            vim.lsp.enable(name, true)
+        end
+        vim.cmd("silent! edit!")
+    end)
+    print("Restarted: " .. table.concat(names, ", "))
+end
+
 function CopyDiagnosticsAtLine()
     local pos = vim.api.nvim_win_get_cursor(0) -- 현재 커서 위치 가져오기
     local line = pos[1] - 1 -- 0-based 인덱스

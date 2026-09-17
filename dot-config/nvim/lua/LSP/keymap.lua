@@ -80,6 +80,6 @@ wk_map({
         group = "expand",
         order = { "n", "s" },
         ["n"] = { vim.lsp.buf.rename, desc = "reName ", mode = "n" },
-        ["s"] = { "<cmd>LspRestart ", desc = "reStart", mode = "n" },
+        ["s"] = { RestartLsp, desc = "reStart", mode = "n" },
     },
 })
