@@ -1,18 +1,20 @@
-"""Mark the instruction range of the current source line in the disasm context.
+"""Mark the current source line's instruction range in the disasm context.
 
 Wraps pwndbg's `disasm` section so the instructions belonging to the source
-line at $pc are enclosed in a bracket:
+line at $pc are enclosed between two separator rows:
 
-    ┌─ 0x...13c  <main+8>   movl  $1, -4(%rbp)
-      0x...143  <main+15>  movl  -4(%rbp), %eax
-    └─
+    b► 0x...13c <main+8>   movl   $1, -4(%rbp)
+     0x...143 <main+15>  movl   -4(%rbp), %eax
 
-The range comes from `info line <file>:<line>`, the same lookup used by the
-standalone `disassemble` reprint this replaces. Ranges are typically 1-3
-instructions, and $pc is always the range start, so a single-instruction
-range collapses to a single marker pair on one line.
+becomes
 
-Controlled by `mark-line-range` (on by default).
+    ┌───────────────────────────────
+    b► 0x...13c <main+8>   movl   $1, -4(%rbp)
+    └───────────────────────────────
+
+The range comes from `info line <file>:<line>`. A single marker pair is used
+whether the range holds one instruction or many, so the enclosure never
+changes shape. Controlled by `mark-line-range` (on by default).
 """
 
 import re
@@ -38,9 +40,11 @@ LINE_RANGE_RE = re.compile(
 )
 ADDR_RE = re.compile(r"0x[0-9a-fA-F]+")
 
-START_MARK = pwndbg.color.green("\u250c\u2500 ")  # ┌─
-END_MARK = pwndbg.color.green("\u2514\u2500 ")  # └─
-SOLO_MARK = pwndbg.color.green("\u2500\u2500 ")  # ──
+# Length of the dim rule that follows the green start/end cap.
+MARK_WIDTH = 30
+
+START_MARK = pwndbg.color.green("\u250c") + pwndbg.color.gray("\u2500" * MARK_WIDTH)
+END_MARK = pwndbg.color.green("\u2514") + pwndbg.color.gray("\u2500" * MARK_WIDTH)
 
 # pwndbg creates the `set`/`show` commands for its parameters once, at
 # bootstrap. A parameter added afterwards (like ours) is registered but has no
@@ -123,13 +127,9 @@ def _mark(lines):
     if start_idx is None:
         return lines
 
-    if end_idx is None or end_idx == start_idx:
-        # Single-instruction range: one self-contained marker.
-        lines[start_idx] = SOLO_MARK + lines[start_idx]
-        return lines
-
-    lines[start_idx] = START_MARK + lines[start_idx]
-    lines[end_idx] = END_MARK + lines[end_idx]
+    last = start_idx if end_idx is None else end_idx
+    lines.insert(start_idx, START_MARK)
+    lines.insert(last + 2, END_MARK)
     return lines
 
 
