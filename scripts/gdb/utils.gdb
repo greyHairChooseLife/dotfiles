@@ -42,8 +42,6 @@ alias hx = hexdump
 alias hxs = sizedHexDump
 alias rmt = target extended-remote localhost:1234
 
-alias dis_cur_line = python disas_current_line(None)
-
 # record 실행 시점부터 되감기가 가능하다.
 # tmux로 단축키 만들어둠
 

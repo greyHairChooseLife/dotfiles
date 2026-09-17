@@ -25,5 +25,5 @@ set context-code-lines 20
 source /home/sy/dotfiles/scripts/gdb/layout.py
 source /home/sy/dotfiles/scripts/gdb/utils.gdb
 source /home/sy/dotfiles/scripts/gdb/watch_cmd.py
-source /home/sy/dotfiles/scripts/gdb/disasline_auto.py
+source /home/sy/dotfiles/scripts/gdb/mark_line_range.py
 
