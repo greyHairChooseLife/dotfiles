@@ -1,0 +1,76 @@
+# Ghostty — mirrors dot-config/alacritty/alacritty.toml
+# Swap the active terminal in dot-config/i3/config (Mod+Return).
+# Reference: https://ghostty.org/docs/config/reference
+
+# --- environment -------------------------------------------------------------
+
+# Same value as alacritty's [env] TERM, so tmux.conf's `xterm*`
+# terminal-features / terminal-overrides keep applying unchanged.
+# (ghostty's default is xterm-ghostty)
+term = xterm-256color
+
+# alacritty.toml sets [terminal.shell] program = "/bin/zsh", which is a
+# non-login zsh. ghostty defaults to $SHELL, already /bin/zsh here.
+# command = /bin/zsh
+
+# --- window ------------------------------------------------------------------
+
+# alacritty: decorations = "Buttonless"
+window-decoration = none
+
+# alacritty: opacity = 0.95
+background-opacity = 0.95
+# alacritty has blur commented out as well (needs a compositor)
+# background-blur = 16
+
+# alacritty: dynamic_padding = true
+window-padding-balance = true
+# alacritty: padding.x / padding.y, commented out there too
+# window-padding-x = 1
+# window-padding-y = 5
+
+# alacritty never asks before closing. Without this, Mod+q in i3 can leave a
+# "close surface?" dialog behind.
+confirm-close-surface = false
+
+# --- font --------------------------------------------------------------------
+
+# alacritty: normal.family = "D2KodingLigature Nerd Font Propo"
+font-family = D2KodingLigature Nerd Font Propo
+# alacritty keeps the size in the gitignored local.toml, which is absent here
+# (so alacritty runs its default). 13 is what the ghostty test config used.
+font-size = 13
+# alacritty: offset.x = 1 has no ghostty equivalent — ghostty only has cell
+# adjustments, which change the cell size instead of shifting the glyph.
+# adjust-cell-width = 1
+# adjust-cell-height = 1   # used in the test config; no alacritty equivalent
+# font-thicken / font-thicken-strength are macOS-only
+
+# --- cursor ------------------------------------------------------------------
+
+# alacritty: cursor.style = { shape = "Block", blinking = "Off" }
+cursor-style = block
+cursor-style-blink = false
+# alacritty: unfocused_hollow = true — ghostty has no unfocused-cursor option
+
+# --- keyboard ----------------------------------------------------------------
+
+# Copy / paste / new window already match ghostty's defaults, so no bindings:
+#   ctrl+shift+c = copy                (alacritty: Copy)
+#   ctrl+shift+v = paste               (alacritty: Paste)
+#   ctrl+shift+n = new_window          (alacritty: SpawnNewInstance)
+
+# Same bytes as alacritty's Shift+Return binding (linebreak in claude_code).
+keybind = shift+enter=csi:13;2u
+
+# alacritty's Ctrl+[ / Ctrl+i hacks are intentionally not copied: ghostty speaks
+# the kitty keyboard protocol and tmux here runs `extended-keys on` with
+# format csi-u, which gives the same result natively. Kept as a fallback.
+# keybind = ctrl+[=csi:27;5;91~
+# keybind = ctrl+i=csi:105;5u
+
+# CRITICAL, not solved yet: alacritty's Alt+u URL hints, Alt+y path-copy hints and
+# Alt+i vi mode do not exist in ghostty 1.3.1 (no hint subsystem, no open_url,
+# no vi mode). Details and leads: zk note hldhgcfh (task 0e2d3630).
+
+# The config is re-read on save (alacritty's live_config_reload = true).
