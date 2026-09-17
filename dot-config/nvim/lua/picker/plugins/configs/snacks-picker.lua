@@ -499,7 +499,7 @@ local actions = {
     end,
     resume_picker_ui = function(picker)
         picker:close()
-        picker.resume()
+        Snacks.picker.resume("files")
     end,
 }
 

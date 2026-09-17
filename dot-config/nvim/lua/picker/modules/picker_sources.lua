@@ -196,15 +196,14 @@ M.buffers = function()
                     end
                 end
                 if non_buf_delete_requested then Snacks.notify.warn("Only open buffers can be deleted", { title = "Snacks Picker" }) end
+                for _, win_id in ipairs(to_be_closed_win) do
+                    if vim.api.nvim_win_is_valid(win_id) then
+                        vim.api.nvim_win_close(win_id, false)
+                    end
+                end
+                picker:find()
                 picker.list:set_selected()
                 picker.list:set_target()
-                picker:find()
-
-                picker:close()
-                for _, win_id in ipairs(to_be_closed_win) do
-                    vim.api.nvim_win_close(win_id, false)
-                end
-                picker:resume()
             end,
         },
         win = {
