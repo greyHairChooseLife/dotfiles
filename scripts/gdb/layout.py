@@ -83,7 +83,20 @@ for section, p in panes.items():
 contextoutput("legend", panes["regs"][1], True)
 # contextoutput("expressions", panes["regs"][1], True, "top", False)
 
-os.system('xdotool type "tty /dev/pts/"')
+# The "input & output" pane runs `tty; tail -f /dev/null`, and the split above
+# captured its device path as panes["input & output"][1]. Point the inferior's
+# terminal at that pane by running `tty <path>` at the gdb prompt, so program
+# input and output land in the pane.
+#
+# TMUX_PANE is the pane this process actually runs in, so the command is
+# delivered to the gdb pane regardless of which pane is active. This replaces
+# an `xdotool type` call that simulated the keystrokes "tty /dev/pts/" into
+# whichever X window happened to be focused: that did nothing over ssh, and it
+# typed into the wrong window whenever focus was elsewhere.
+gdb_pane = os.environ.get("TMUX_PANE")
+if gdb_pane:
+    io_tty = panes["input & output"][1]
+    os.system(f'tmux send-keys -t {gdb_pane} "tty {io_tty}" C-m')
 
 # To see more options to customize run `theme` and `config` in gdb
 # Increase the amount of lines shown in disasm and stack
