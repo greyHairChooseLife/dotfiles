@@ -300,6 +300,8 @@ local keymaps = {
         -- ["<c-Down>"] = { { "layout_bottom", "focus_input" }, mode = { "i", "n" } }, -- this keymap is taken by tmux
         -- ["<c-Up>"] = { { "layout_top", "focus_input" }, mode = { "i", "n" } }, -- this keymap is taken by tmux
         ["<c-Right>"] = { { "resume_picker_ui", "focus_input" }, mode = { "i", "n" } },
+        ["<c-e>"] = { "copy_and_close", mode = { "i", "n" }, desc = "Copy entry and close" },
+        ["<a-e>"] = { "copy_keep_open", mode = { "i", "n" }, desc = "Copy entry" },
         ["<c-w>H"] = "",
         ["<c-w>J"] = "",
         ["<c-w>K"] = "",
@@ -377,6 +379,49 @@ local keymaps = {
 
 -- Reapply foldmethod to fix folds broken by opening buffers in new windows.
 local fix_folds = require("utils.fold").fix
+
+-- Render of an item as it appears in the picker list, with the leading icon/padding gutter stripped.
+-- Falls back to item.text when the item is not currently rendered in the list.
+local item_to_text = function(picker, item)
+    if not item then return nil end
+    local list = picker.list
+    local buf = list and list.win and list.win.buf
+    if buf and list.visible then
+        for row, visible in pairs(list.visible) do
+            if visible and visible.idx == item.idx then
+                local line = vim.api.nvim_buf_get_lines(buf, row - 1, row, false)[1]
+                if line then
+                    -- strip the icon/selection gutter, which precedes the rendered entry
+                    local anchor = item.file and vim.fn.fnamemodify(item.file, ":t") or nil
+                    if anchor and anchor ~= "" then
+                        local s = line:find(anchor, 1, true)
+                        if s and s > 1 then line = line:sub(s) end
+                    end
+                    return vim.trim(line)
+                end
+            end
+        end
+    end
+    return item.text
+end
+
+local copy_entries = function(picker)
+    local texts = {}
+    for _, item in ipairs(picker:selected({ fallback = true })) do
+        local text = item_to_text(picker, item)
+        if text and text ~= "" then texts[#texts + 1] = text end
+    end
+    if #texts == 0 then
+        Snacks.notify.warn("Nothing to copy", { title = "Snacks Picker" })
+        return
+    end
+    local payload = table.concat(texts, "\n")
+    vim.fn.setreg("+", payload)
+    Snacks.notify.info(
+        (#texts == 1 and "Copied: " .. payload) or ("Copied " .. #texts .. " entries"),
+        { title = "Snacks Picker" }
+    )
+end
 
 local setPostIfPossible = function(item)
     vim.cmd("normal! zz")
@@ -500,6 +545,13 @@ local actions = {
     resume_picker_ui = function(picker)
         picker:close()
         Snacks.picker.resume("files")
+    end,
+    copy_and_close = function(picker)
+        copy_entries(picker)
+        picker:close()
+    end,
+    copy_keep_open = function(picker)
+        copy_entries(picker)
     end,
 }
 
