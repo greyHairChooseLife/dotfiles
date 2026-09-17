@@ -12,3 +12,6 @@ dot-config/claws/chat/*
 !.claude/statusline-command.sh
 dot-config/alacritty/local.toml
 dot-config/nvim/lazy-lock.json
+
+# python
+__pycache__/
