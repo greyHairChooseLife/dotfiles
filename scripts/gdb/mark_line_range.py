@@ -12,12 +12,15 @@ becomes
     b► 0x...13c <main+8>   movl   $1, -4(%rbp)
     └───────────────────────────────
 
-The range comes from `info line <file>:<line>`. A single marker pair is used
-whether the range holds one instruction or many, so the enclosure never
-changes shape. Controlled by `mark-line-range` (on by default).
+The green corner caps mark start and end, and the rule fills the rest of the
+pane width so the enclosure lines up with the section banner. The range comes
+from `info line <file>:<line>`. A single cap pair is used whether the range
+holds one instruction or many, so the enclosure never changes shape.
+Controlled by `mark-line-range` (on by default).
 """
 
 import re
+import sys
 
 import gdb
 
@@ -40,11 +43,24 @@ LINE_RANGE_RE = re.compile(
 )
 ADDR_RE = re.compile(r"0x[0-9a-fA-F]+")
 
-# Length of the dim rule that follows the green start/end cap.
-MARK_WIDTH = 30
+# The rule spans the pane width, resolved the same way the section banner
+# resolves it: an explicit width if the section sets one, otherwise the
+# terminal size. The section settings store `False` (not `None`) when no fixed
+# width is configured, so treat any non-positive value as "auto".
+def _mark_width(target, width):
+    try:
+        width = int(width)
+    except (TypeError, ValueError):
+        width = 0
+    if width <= 0:
+        _height, width = pwndbg.ui.get_window_size(target)
+    return max(int(width), 2)
 
-START_MARK = pwndbg.color.green("\u250c") + pwndbg.color.gray("\u2500" * MARK_WIDTH)
-END_MARK = pwndbg.color.green("\u2514") + pwndbg.color.gray("\u2500" * MARK_WIDTH)
+
+def _cap(corner, width):
+    """Green corner cap plus a rule filling the rest of the pane width."""
+    return pwndbg.color.green(corner + "\u2500" * (width - 1))
+
 
 # pwndbg creates the `set`/`show` commands for its parameters once, at
 # bootstrap. A parameter added afterwards (like ours) is registered but has no
@@ -100,7 +116,7 @@ def _line_address(line):
     return int(m.group(0), 16)
 
 
-def _mark(lines):
+def _mark(lines, width):
     rng = _current_line_range()
     if rng is None:
         return lines
@@ -128,8 +144,8 @@ def _mark(lines):
         return lines
 
     last = start_idx if end_idx is None else end_idx
-    lines.insert(start_idx, START_MARK)
-    lines.insert(last + 2, END_MARK)
+    lines.insert(start_idx, _cap("\u250c", width))
+    lines.insert(last + 2, _cap("\u2514", width))
     return lines
 
 
@@ -146,7 +162,9 @@ if _original_disasm is not None:
         if not mark_line_range:
             return lines
         try:
-            return _mark(lines)
+            target = kwargs.get("target", sys.stdout)
+            width = kwargs.get("width")
+            return _mark(lines, _mark_width(target, width))
         except Exception:
             return lines
 
