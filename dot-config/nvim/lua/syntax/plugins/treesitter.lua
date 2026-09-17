@@ -176,6 +176,8 @@ return {
       jump("[c", move.goto_previous_start, "@conditional.outer", "Prev conditional")
       jump("]a", move.goto_next_start,     "@parameter.inner", "Next conditional")
       jump("[a", move.goto_previous_start, "@parameter.inner", "Prev conditional")
+      jump("]r", move.goto_next_start,     "@return.outer", "Next return")
+      jump("[r", move.goto_previous_start, "@return.outer", "Prev return")
             -- stylua: ignore end
         end,
     },
