@@ -33,12 +33,8 @@ panes = {
     .read()
     .strip()
     .split(":"),
-    "args": os.popen(
-        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -l 40% -t :.+4 -d "cat -"'
-    )
-    .read()
-    .strip()
-    .split(":"),
+    # "args" is created after this dict, so it can target the backtrace pane by
+    # its pane id rather than a pane index (see below).
     # Split vertical next to the stack for the backtrace
     "stack": os.popen(
         'tmux split-window -v -P -F "#{pane_id}:#{pane_tty}" -l 50% -t {top-right} -d "cat -"'
@@ -71,6 +67,20 @@ panes = {
     .strip()
     .split(":"),
 }
+
+# `args` sits to the right of the backtrace pane. Target that pane by the id
+# captured above instead of a pane index: the old target was `:.+4`, which
+# means "four panes after the active one" and shifts whenever a pane is added or
+# removed, splitting the wrong pane.
+panes["args"] = (
+    os.popen(
+        f'tmux split-window -h -P -F "#{{pane_id}}:#{{pane_tty}}" '
+        f'-l 40% -t {panes["backtrace"][0]} -d "cat -"'
+    )
+    .read()
+    .strip()
+    .split(":")
+)
 
 # Tell pwndbg which panes are to be used for what
 # os.system(f'tmux set-option -t {p[0]} -p @mytitle "{section}"')
