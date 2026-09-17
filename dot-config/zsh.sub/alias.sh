@@ -102,14 +102,14 @@ alias aie='pi --no-session'
 # pi 실행 중 pane 배경색 변경
 pi() {
     if [ -n "$TMUX" ]; then
-        command tmux set -p -t "$TMUX_PANE" @mytitle "Pi-agent"
+        # command tmux set -p -t "$TMUX_PANE" @mytitle "Pi-agent"
         command tmux select-pane -t "$TMUX_PANE" -P 'bg=#18181e'
     fi
 
     command pi "$@"
 
     if [ -n "$TMUX" ]; then
-        command tmux set -p -t "$TMUX_PANE" @mytitle ""
+        # command tmux set -p -t "$TMUX_PANE" @mytitle ""
         command tmux select-pane -t "$TMUX_PANE" -P 'bg=#000000'
     fi
 }
