@@ -9,3 +9,4 @@ export QT_IM_MODULE=kime
 export XMODIFIERS=@im=kime
 
 export ZK_NOTEBOOK_DIR="$HOME/Documents/zk"
+export TASKRC="$HOME/Documents/zk/.task/taskrc"
