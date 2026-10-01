@@ -130,3 +130,4 @@ alias b2h='python3 -c "import sys; print(hex(int(sys.argv[1], 2))[2:])"'
 
 # alias enable_touchpad='xinput enable 7'
 # alias disable_touchpad='xinput disable 7'
+alias man="man " # This makes man works with alias.
