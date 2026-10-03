@@ -79,11 +79,12 @@ M.duplicateAndSaveTempFile = function(opts)
         lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
     else
         -- Read from file as before
-        lines = vim.fn.readfile(opts.source_file_path)
-        if vim.v.shell_error ~= 0 then
+        local read_ok, read_result = pcall(vim.fn.readfile, opts.source_file_path)
+        if not read_ok then
             vim.notify("Error reading file: " .. opts.source_file_path, vim.log.levels.ERROR)
             return nil
         end
+        lines = read_result
     end
 
     local lines_to_write
@@ -108,9 +109,9 @@ M.duplicateAndSaveTempFile = function(opts)
         return nil
     end
 
-    local ok = pcall(vim.fn.writefile, lines_to_write, temp_file_path)
-    if not ok or vim.v.shell_error ~= 0 then
-        vim.notify("Error writing to temporary file: " .. temp_file_path, vim.log.levels.ERROR)
+    local write_ok, write_err = pcall(vim.fn.writefile, lines_to_write, temp_file_path)
+    if not write_ok then
+        vim.notify("Error writing to temporary file: " .. temp_file_path .. ": " .. tostring(write_err), vim.log.levels.ERROR)
         pcall(vim.fn.delete, temp_file_path)
         return nil
     end
