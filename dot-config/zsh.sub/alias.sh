@@ -117,6 +117,7 @@ pi() {
 # Search
 alias sg='ast-grep'
 alias sgs='sg_fzf_search.sh'
+alias gr='rg'
 alias rg='rg --ignore-case'
 alias rgs='rg_fzf_search.sh'
 alias grep='grep --color'
