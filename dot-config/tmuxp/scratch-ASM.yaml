@@ -1,0 +1,26 @@
+session_name: scratch-ASM
+start_directory: /tmp
+suppress_history: false
+
+windows:
+    # --- scratch ASM ---
+    - window_name: scratch
+      focus: true
+      layout: even-horizontal
+      panes:
+        - shell_command:
+            - tm.1_title 'main.s'
+            - mkdir -p /tmp/scratch-ASM
+            - 'printf ''%s\n'' ''.global main'' ''.text'' ''main:'' ''    movl $5, %eax'' ''    movl $10, %ebx'' ''    cmpl %ebx, %eax'' ''    ret'' > /tmp/scratch-ASM/main.s'
+            - vi /tmp/scratch-ASM/main.s
+          focus: true
+
+        - shell_command:
+            - tm.1_title 'compile & build'
+            - mkdir -p /tmp/scratch-ASM && cd /tmp/scratch-ASM && watch 'cc -g -O0 main.s -o main && ./main'
+
+    - window_name: debugger
+      panes:
+        - shell_command:
+            - cmd: mkdir -p /tmp/scratch-ASM && cd /tmp/scratch-ASM && gdb main
+              enter: false
