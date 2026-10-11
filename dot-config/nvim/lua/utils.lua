@@ -369,6 +369,7 @@ M.restore_cursor_position = function(for_commit_msg)
         if vim.api.nvim_win_is_valid(saved_cursor.win) then
             -- 먼저 해당 윈도우로 이동
             if saved_cursor.is_fugitive then
+                vim.api.nvim_set_current_win(saved_cursor.win)
                 vim.cmd("G")
             else
                 vim.api.nvim_set_current_win(saved_cursor.win)
@@ -377,8 +378,12 @@ M.restore_cursor_position = function(for_commit_msg)
             -- 버퍼가 변경되었는지 확인
             local current_buf = vim.api.nvim_win_get_buf(saved_cursor.win)
             if current_buf == saved_cursor.buf then
-                -- 저장된 커서 위치로 이동
-                vim.api.nvim_win_set_cursor(saved_cursor.win, { saved_cursor.row, saved_cursor.col })
+                -- 버퍼 내용이 줄었을 수 있으므로 라인/컬럼을 범위 안으로 보정
+                local line_count = vim.api.nvim_buf_line_count(current_buf)
+                local row = math.max(1, math.min(saved_cursor.row, line_count))
+                local line = vim.api.nvim_buf_get_lines(current_buf, row - 1, row, false)[1] or ""
+                local col = math.min(saved_cursor.col, math.max(0, #line - 1))
+                pcall(vim.api.nvim_win_set_cursor, saved_cursor.win, { row, col })
             -- print("Cursor position restored to Window " .. saved_cursor.win)
             else
                 print("Buffer has changed in the target window")
