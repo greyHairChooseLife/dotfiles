@@ -130,12 +130,16 @@
       "man *": "allow"
     },
 
-    "mcp": { "*": "ask" },
+    "mcp": {
+      "*": "ask",
+      "gemini-notebook-mcp": "allow"
+    },
 
     "skill": { "*": "allow" },
 
     "external_directory": {
       "*": "ask",
+      "~/Downloads/gemini-notebook*": "allow",
       "/tmp/*": "allow",
       "/usr/lib/node_modules/pi/*": "allow",
       "/home/sy/dotfiles/*": "allow",
