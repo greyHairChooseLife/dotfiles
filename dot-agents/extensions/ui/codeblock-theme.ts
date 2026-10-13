@@ -22,10 +22,16 @@ function readThemeConfig() {
   try {
     const p = join(homedir(), ".pi", "agent", "themes", "ember-glow.json");
     const raw = JSON.parse(readFileSync(p, "utf-8"));
+    // Theme schema rejects unknown keys under `colors`, so these two custom
+    // values live under `vars` (which allows arbitrary names). Fall back to
+    // `colors` for older theme files.
+    const vars = raw.vars || {};
     const colors = raw.colors || raw;
+    const codeBgValue = vars.codeBlockBg ?? colors.mdCodeBlockBg;
+    const langValue = vars.codeBlockLang ?? colors.mdCodeBlockLang;
     return {
-      codeBg: HEX_COLOR.test(colors.mdCodeBlockBg) ? colors.mdCodeBlockBg : DEFAULT_CODE_BG,
-      langColor: HEX_COLOR.test(colors.mdCodeBlockLang) ? colors.mdCodeBlockLang : DEFAULT_LANG_COLOR,
+      codeBg: HEX_COLOR.test(codeBgValue) ? codeBgValue : DEFAULT_CODE_BG,
+      langColor: HEX_COLOR.test(langValue) ? langValue : DEFAULT_LANG_COLOR,
     };
   } catch {
     return { codeBg: DEFAULT_CODE_BG, langColor: DEFAULT_LANG_COLOR };
@@ -34,6 +40,20 @@ function readThemeConfig() {
 
 function stripAnsi(s: string): string {
   return s.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, "").replace(/\x1b\][^\x07]*\x07/g, "");
+}
+
+// Background SGR sequences: 40-47 (basic), 100-107 (bright), 48 (extended),
+// 49 (default background). The user-message renderer paints one across every line.
+const BG_SEQ = /\x1b\[(?:4[0-7]|10[0-7]|49|48;[0-9;]*)m/g;
+function stripBg(s: string): string {
+  return s.replace(BG_SEQ, "");
+}
+
+// Background the surrounding renderer painted at the start of the line (user
+// messages). Used to keep the padX margins matching the message background.
+const LEADING_BG = /^\x1b\[(?:4[0-7]|10[0-7]|48;[0-9;]*)m/;
+function leadingBg(s: string): string {
+  return LEADING_BG.exec(s)?.[0] ?? "";
 }
 
 function leadingSpaces(line: string): number {
@@ -140,7 +160,16 @@ export default async function () {
 
   // ── Line builders ───────────────────────────────────────
 
-  function buildFenceLine(padX: number, contentW: number, lang: string): string {
+  // The padX margins must show the background already active on the line (the
+  // user-message background). The code background is re-asserted after its own
+  // RESET_BG so the right margin keeps that background too.
+  function wrapMargins(inner: string, padX: number, outerBg: string): string {
+    const margin = " ".repeat(padX);
+    if (!outerBg) return margin + inner + margin;
+    return outerBg + margin + inner + outerBg + margin + RESET_BG;
+  }
+
+  function buildFenceLine(padX: number, contentW: number, lang: string, outerBg: string): string {
     // Backticks stay hidden; the language badge is right-aligned with a small inset.
     const label = "```";
     const inset = 1;
@@ -148,15 +177,22 @@ export default async function () {
     const gap = " ".repeat(Math.max(0, contentW - label.length - name.length - (name ? inset : 0)));
     const pad = name ? " ".repeat(inset) : "";
     const badge = name ? FG_LANG + name + RESET_FG : "";
-    return " ".repeat(padX) + BG + FG_HIDE + label + RESET_FG + gap + badge + pad + RESET_BG + " ".repeat(padX);
+    const inner = BG + FG_HIDE + label + RESET_FG + gap + badge + pad + RESET_BG;
+    return wrapMargins(inner, padX, outerBg);
   }
 
   function buildCodeLine(line: string, padX: number, contentW: number): string {
-    // Drop the renderer's trailing padding, then split at the left margin.
-    // The margin is plain spaces, so slicing by character is column-safe here.
-    const body = line.replace(/ +$/, "").slice(padX);
+    // User-message lines are wrapped in a `userMessageBg` background escape, so
+    // the left margin is not at character 0. Drop the background (it would
+    // cover the code background) and any leading SGR, then split at the margin.
+    const outerBg = leadingBg(line);
+    const stripped = stripBg(line);
+    const leadEsc = /^(?:\x1b\[[0-9;]*m)*/.exec(stripped)?.[0] ?? "";
+    const rest = stripped.slice(leadEsc.length);
+    const lead = Math.min(padX, leadingSpaces(rest));
+    const body = rest.slice(lead).replace(/ +$/, "");
     const fill = " ".repeat(Math.max(0, contentW - visibleWidth(body)));
-    return " ".repeat(padX) + BG + body + fill + RESET_BG + " ".repeat(padX);
+    return wrapMargins(BG + body + fill + RESET_BG, padX, outerBg);
   }
 
   function withCodeBlockBackground(lines: string[], padX: number, width: number): string[] {
@@ -165,16 +201,19 @@ export default async function () {
     let inBlock = false;
 
     for (const line of lines) {
-      const lead = Math.min(padX, leadingSpaces(line));
-      const body = stripAnsi(line).slice(lead);
+      // Strip color/bg escapes before measuring the margin: a user-message line
+      // starts with a background escape, not with its leading spaces.
+      const plain = stripAnsi(line);
+      const lead = Math.min(padX, leadingSpaces(plain));
+      const body = plain.slice(lead);
       const isFence = body.startsWith("```") || body.startsWith("~~~");
 
       if (isFence && !inBlock) {
         inBlock = true;
-        out.push(buildFenceLine(padX, contentW, body.slice(3).trim()));
+        out.push(buildFenceLine(padX, contentW, body.slice(3).trim(), leadingBg(line)));
       } else if (isFence && inBlock) {
         inBlock = false;
-        out.push(buildFenceLine(padX, contentW, ""));
+        out.push(buildFenceLine(padX, contentW, "", leadingBg(line)));
       } else if (inBlock) {
         out.push(buildCodeLine(line, padX, contentW));
       } else {

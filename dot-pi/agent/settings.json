@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.99.1",
+  "lastChangelogVersion": "1.2.0",
   "theme": "ember-glow",
   "defaultProvider": "opencode-go",
   "defaultModel": "deepseek-v4.1-flash",
@@ -16,6 +16,7 @@
   },
   "editorPaddingX": 1,
   "hideThinkingBlock": true,
+  "tuiMode": "regular",
   "quietStartup": true,
   "packages": [
     "npm:pi-web-access",

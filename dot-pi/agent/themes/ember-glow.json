@@ -1,5 +1,5 @@
 {
-	"$schema": "https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
+	"$schema": "https://pi.dev/schemas/theme.schema.json",
 	"name": "ember-glow",
 	"vars": {
 		"bgDarkest": "#18181e",
@@ -22,7 +22,9 @@
 		"syntaxVar": "#70c0d0",
 		"syntaxStr": "#90c090",
 		"syntaxNum": "#d0a0d0",
-		"syntaxType": "#70d0c0"
+		"syntaxType": "#70d0c0",
+		"codeBlockBg": "#000000",
+		"codeBlockLang": "#32CD32"
 	},
 	"colors": {
 		"accent": "accent",
@@ -56,8 +58,6 @@
 		"mdCodeBlock": "fg",
 
 		"mdCodeBlockBorder": "#32CD32",
-    "mdCodeBlockBg": "#000000",
-    "mdCodeBlockLang": "#32CD32",
 
 		"mdQuote": "muted",
 		"mdQuoteBorder": "#3a3a4a",
