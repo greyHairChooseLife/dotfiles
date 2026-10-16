@@ -64,12 +64,9 @@ function leadingSpaces(line: string): number {
 // ── Locate the Markdown class the CLI really renders with ──
 //
 // The CLI entry (dist/bundle/cli.js) loads compiled chunks. pi-tui is inlined
-// into them: `Markdown=class{...}` lives in chunk-*.js but is NOT re-exported.
-// So the class cannot be imported directly, and the standalone
-// @earendil-works/pi-tui copy is a different class object.
-//
-// The live `Container` IS exported. Patch its render() and adopt the prototype
-// of the first Markdown child it renders.
+// into them, and the bundle re-exports `Markdown` from the chunk that defines
+// it. Import that same chunk (ESM cache → same module instance) and patch
+// `Markdown.prototype.render` directly. No tree-walking or adoption heuristics.
 
 function bundleDirs(): string[] {
   const dirs: string[] = [];
@@ -124,7 +121,7 @@ async function loadLiveBundle(): Promise<any | undefined> {
     for (const chunk of chunkPaths(dir)) {
       try {
         const mod: any = await import(pathToFileURL(chunk).href);
-        if (typeof mod?.Container?.prototype?.render === "function") return mod;
+        if (typeof mod?.Markdown?.prototype?.render === "function") return mod;
       } catch {
         // Try the next candidate.
       }
@@ -137,8 +134,8 @@ async function loadLiveBundle(): Promise<any | undefined> {
 
 export default async function () {
   const live = await loadLiveBundle();
-  const Container = live?.Container;
-  if (typeof Container?.prototype?.render !== "function") {
+  const Markdown = live?.Markdown;
+  if (typeof Markdown?.prototype?.render !== "function") {
     console.error("[codeblock-theme] Could not reach the running Markdown class. Extension disabled.");
     return;
   }
@@ -202,10 +199,11 @@ export default async function () {
 
     for (const line of lines) {
       // Strip color/bg escapes before measuring the margin: a user-message line
-      // starts with a background escape, not with its leading spaces.
+      // starts with a background escape, not with its leading spaces. Detect the
+      // fence after all leading whitespace, so fences nested in a list item
+      // (indented past padX) are found too.
       const plain = stripAnsi(line);
-      const lead = Math.min(padX, leadingSpaces(plain));
-      const body = plain.slice(lead);
+      const body = plain.slice(leadingSpaces(plain));
       const isFence = body.startsWith("```") || body.startsWith("~~~");
 
       if (isFence && !inBlock) {
@@ -224,78 +222,20 @@ export default async function () {
     return out;
   }
 
-  // ── Patch the adopted prototype ─────────────────────────
+  // ── Patch the Markdown prototype ────────────────────────
 
-  let markdownProto: any;
-  let shapeMismatch = false;
+  // Guard against a second extension load wrapping the render twice.
+  const PATCHED = Symbol.for("pi.codeblock-theme.patched");
+  if ((Markdown.prototype as any)[PATCHED]) return;
+  (Markdown.prototype as any)[PATCHED] = true;
 
-  function patchMarkdown(proto: any) {
-    if (markdownProto) return;
-    const origRender = proto.render;
-    proto.render = function (this: any, width: number): string[] {
-      const rendered: string[] = origRender.call(this, width);
-      try {
-        return withCodeBlockBackground(rendered, this.paddingX ?? 1, width);
-      } catch {
-        return rendered;
-      }
-    };
-    markdownProto = proto;
-  }
-
-  function isMarkdown(component: any): boolean {
-    return typeof component?.renderToken === "function"
-      && typeof component?.render === "function"
-      && typeof component?.paddingX === "number"
-      && typeof component?.theme?.codeBlockBorder === "function";
-  }
-
-  function looksLikeMarkdown(component: any): boolean {
-    return typeof component?.renderToken === "function"
-      || String(component?.constructor?.name ?? "").includes("Markdown");
-  }
-
-  function adoptMarkdown(node: any, seen: Set<any>): boolean {
-    if (markdownProto) return true;
-    if (!node || seen.size > 2000 || seen.has(node)) return false;
-    seen.add(node);
-    const children = node.children;
-    if (!Array.isArray(children)) return false;
-    for (const child of children) {
-      if (isMarkdown(child)) {
-        patchMarkdown(Object.getPrototypeOf(child));
-        return true;
-      }
-      if (!shapeMismatch && looksLikeMarkdown(child)) shapeMismatch = true;
-      if (adoptMarkdown(child, seen)) return true;
+  const origRender = Markdown.prototype.render;
+  Markdown.prototype.render = function (this: any, width: number): string[] {
+    const rendered: string[] = origRender.call(this, width);
+    try {
+      return withCodeBlockBackground(rendered, this.paddingX ?? 1, width);
+    } catch {
+      return rendered;
     }
-    return false;
-  }
-
-  // Adoption walks the tree, so rate-limit it before the first hit. Markdown
-  // only appears once a message, changelog, or help panel is rendered — that
-  // can be long after startup, so there is no deadline here.
-  let lastAdoptAttempt = 0;
-
-  const origContainerRender = Container.prototype.render;
-  Container.prototype.render = function (this: any, width: number): string[] {
-    if (!markdownProto && Date.now() - lastAdoptAttempt > 100) {
-      lastAdoptAttempt = Date.now();
-      try {
-        adoptMarkdown(this, new Set());
-      } catch {
-        // Never let adoption break rendering.
-      }
-    }
-    return origContainerRender.call(this, width);
   };
-
-  // Report only a real breakage: a Markdown component exists but its shape no
-  // longer matches (usually after a pi update).
-  const warnTimer = setTimeout(() => {
-    if (!markdownProto && shapeMismatch) {
-      console.error("[codeblock-theme] Markdown component shape changed (pi update?). Code block background disabled.");
-    }
-  }, 10000);
-  warnTimer.unref?.();
 }
