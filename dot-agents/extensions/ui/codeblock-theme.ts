@@ -260,7 +260,7 @@ export default async function () {
     return wrapMargins(BG + body + fill + RESET_BG, padX, outerBg);
   }
 
-  function withCodeBlockBackground(lines: string[], padX: number, width: number): string[] {
+  function withCodeBlockBackground(lines: string[], padX: number, width: number, paintInline: boolean): string[] {
     const contentW = Math.max(1, width - padX * 2);
     const out: string[] = [];
     let inBlock = false;
@@ -282,7 +282,7 @@ export default async function () {
         out.push(buildFenceLine(padX, contentW, "", leadingBg(line)));
       } else if (inBlock) {
         out.push(buildCodeLine(line, padX, contentW));
-      } else {
+      } else if (paintInline) {
         // Inline code: paint the span, pad it, and restore the background the
         // line already had (user messages carry one) after its own reset.
         const outerBg = leadingBg(line);
@@ -290,6 +290,8 @@ export default async function () {
           BG + (padded ? padInlineSpan(span) : span) + RESET_BG + outerBg;
         const padded = fitToWidth(line.replace(INLINE_CODE, (span) => paint(span, true)), width);
         out.push(padded ?? line.replace(INLINE_CODE, (span) => paint(span, false)));
+      } else {
+        out.push(line);
       }
     }
 
@@ -298,16 +300,22 @@ export default async function () {
 
   // ── Patch the Markdown prototype ────────────────────────
 
-  // Guard against a second extension load wrapping the render twice.
-  const PATCHED = Symbol.for("pi.codeblock-theme.patched");
-  if ((Markdown.prototype as any)[PATCHED]) return;
-  (Markdown.prototype as any)[PATCHED] = true;
+  // `/reload` runs this module again, but the bundle's Markdown class — and the
+  // wrapper the previous run installed — stay alive in the ESM cache. Restore
+  // the pristine render before wrapping, so a reload installs the current logic
+  // instead of leaving the stale wrapper in place.
+  const proto = Markdown.prototype as any;
+  const ORIGINAL = Symbol.for("pi.codeblock-theme.original");
+  proto[ORIGINAL] ??= proto.render;
 
-  const origRender = Markdown.prototype.render;
-  Markdown.prototype.render = function (this: any, width: number): string[] {
+  const origRender = proto[ORIGINAL];
+  proto.render = function (this: any, width: number): string[] {
     const rendered: string[] = origRender.call(this, width);
+    // Only the user-message component builds Markdown with a background style;
+    // assistant answers pass `undefined` and must keep plain inline code.
+    const paintInline = Boolean(this.defaultTextStyle?.bgColor);
     try {
-      return withCodeBlockBackground(rendered, this.paddingX ?? 1, width);
+      return withCodeBlockBackground(rendered, this.paddingX ?? 1, width, paintInline);
     } catch {
       return rendered;
     }
