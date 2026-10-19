@@ -5,6 +5,7 @@ import { pathToFileURL } from "node:url";
 
 const DEFAULT_CODE_BG = "#232330";
 const DEFAULT_LANG_COLOR = "#7ec8e3";
+const DEFAULT_INLINE_FG = "#78b888";
 const BUNDLE_ENTRY = "/usr/lib/node_modules/pi/packages/coding-agent/dist/bundle/cli.js";
 const TUI_UTILS = "/usr/lib/node_modules/pi/node_modules/@earendil-works/pi-tui/dist/utils.js";
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
@@ -32,10 +33,19 @@ function readThemeConfig() {
     return {
       codeBg: HEX_COLOR.test(codeBgValue) ? codeBgValue : DEFAULT_CODE_BG,
       langColor: HEX_COLOR.test(langValue) ? langValue : DEFAULT_LANG_COLOR,
+      inlineFg: resolveColor(colors.mdCode, vars) ?? DEFAULT_INLINE_FG,
     };
   } catch {
-    return { codeBg: DEFAULT_CODE_BG, langColor: DEFAULT_LANG_COLOR };
+    return { codeBg: DEFAULT_CODE_BG, langColor: DEFAULT_LANG_COLOR, inlineFg: DEFAULT_INLINE_FG };
   }
+}
+
+// `colors.mdCode` is either a hex literal or the name of a `vars` entry.
+function resolveColor(value: unknown, vars: Record<string, unknown>): string | undefined {
+  if (typeof value !== "string") return undefined;
+  if (HEX_COLOR.test(value)) return value;
+  const fromVars = vars[value];
+  return typeof fromVars === "string" && HEX_COLOR.test(fromVars) ? fromVars : undefined;
 }
 
 function stripAnsi(s: string): string {
@@ -59,6 +69,46 @@ function leadingBg(s: string): string {
 function leadingSpaces(line: string): number {
   const match = /^ +/.exec(line);
   return match ? match[0].length : 0;
+}
+
+// ── Inline code colour ────────────────────────────────────
+//
+// pi-tui renders `codespan` through `theme.fg("mdCode", text)`, i.e. a plain
+// foreground span. The line filter can only see escapes, so rebuild both forms
+// the renderer can emit (truecolor and 256-colour approximation).
+
+const CUBE = [0, 95, 135, 175, 215, 255];
+const GRAY = Array.from({ length: 24 }, (_v, index) => 8 + index * 10);
+
+function closestIndex(values: number[], target: number): number {
+  let best = 0;
+  for (let index = 1; index < values.length; index++) {
+    if (Math.abs(target - values[index]) < Math.abs(target - values[best])) best = index;
+  }
+  return best;
+}
+
+function ansi256Of(r: number, g: number, b: number): number {
+  const ri = closestIndex(CUBE, r);
+  const gi = closestIndex(CUBE, g);
+  const bi = closestIndex(CUBE, b);
+  const distance = (c: { r: number; g: number; b: number }) =>
+    (r - c.r) ** 2 * 0.299 + (g - c.g) ** 2 * 0.587 + (b - c.b) ** 2 * 0.114;
+  const grayIndex = closestIndex(GRAY, Math.round(0.299 * r + 0.587 * g + 0.114 * b));
+  const gray = GRAY[grayIndex];
+  const cube = { r: CUBE[ri], g: CUBE[gi], b: CUBE[bi] };
+  if (Math.max(r, g, b) - Math.min(r, g, b) < 10 && distance({ r: gray, g: gray, b: gray }) < distance(cube)) {
+    return 232 + grayIndex;
+  }
+  return 16 + 36 * ri + 6 * gi + bi;
+}
+
+// Span = mdCode foreground escape, text, then the `\x1b[39m` reset theme.fg adds.
+function inlineCodePattern(hex: string): RegExp {
+  const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+  const truecolor = `\\x1b\\[38;2;${r};${g};${b}m`;
+  const indexed = `\\x1b\\[38;5;${ansi256Of(r, g, b)}m`;
+  return new RegExp(`(?:${truecolor}|${indexed})(?:.*?)\\x1b\\[39m`, "g");
 }
 
 // ── Locate the Markdown class the CLI really renders with ──
@@ -140,12 +190,14 @@ export default async function () {
     return;
   }
 
-  const { codeBg, langColor } = readThemeConfig();
+  const { codeBg, langColor, inlineFg } = readThemeConfig();
+  const INLINE_CODE = inlineCodePattern(inlineFg);
   const BG = hexToAnsiBg(codeBg);        // background fill
   const FG_HIDE = hexToAnsiFg(codeBg);   // foreground = background → invisible backticks
   const FG_LANG = hexToAnsiFg(langColor); // accent color for the language badge
   const RESET_BG = "\x1b[49m";
   const RESET_FG = "\x1b[39m";
+  const INLINE_PAD = " ";
 
   let visibleWidth: (s: string) => number = (s) => Array.from(stripAnsi(s)).length;
   try {
@@ -164,6 +216,22 @@ export default async function () {
     const margin = " ".repeat(padX);
     if (!outerBg) return margin + inner + margin;
     return outerBg + margin + inner + outerBg + margin + RESET_BG;
+  }
+
+  // Space before and after the span text, inside the background.
+  function padInlineSpan(span: string): string {
+    return span.replace(/^(\x1b\[[0-9;]*m)([\s\S]*?)(\x1b\[39m)$/, `$1${INLINE_PAD}$2${INLINE_PAD}$3`);
+  }
+
+  // The padding adds visible cells. Reclaim them from the filler spaces the
+  // renderer appended, so the line still occupies exactly `width` cells. Falls
+  // back to undefined when the line has no filler left to give up.
+  function fitToWidth(line: string, width: number): string | undefined {
+    const excess = visibleWidth(line) - width;
+    if (excess <= 0) return line;
+    const tail = /( +)((?:\x1b\[[0-9;]*m)*)$/.exec(line);
+    if (!tail || tail[1].length < excess) return undefined;
+    return line.slice(0, tail.index) + tail[1].slice(excess) + tail[2];
   }
 
   function buildFenceLine(padX: number, contentW: number, lang: string, outerBg: string): string {
@@ -215,7 +283,13 @@ export default async function () {
       } else if (inBlock) {
         out.push(buildCodeLine(line, padX, contentW));
       } else {
-        out.push(line);
+        // Inline code: paint the span, pad it, and restore the background the
+        // line already had (user messages carry one) after its own reset.
+        const outerBg = leadingBg(line);
+        const paint = (span: string, padded: boolean) =>
+          BG + (padded ? padInlineSpan(span) : span) + RESET_BG + outerBg;
+        const padded = fitToWidth(line.replace(INLINE_CODE, (span) => paint(span, true)), width);
+        out.push(padded ?? line.replace(INLINE_CODE, (span) => paint(span, false)));
       }
     }
 
