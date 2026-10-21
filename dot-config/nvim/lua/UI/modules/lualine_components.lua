@@ -31,15 +31,28 @@ M.colors = {
     sepNC = "#5F5F5F",
 }
 
-M.theme = {
-    normal = {
+-- Section colors for every mode. Missing mode entries make lualine fall back to
+-- the mapped section of `normal` (z -> a, x -> c), and `normal.a` is
+-- orange-on-orange, which makes the `lualine_z` components (location, progress)
+-- invisible in visual/insert mode.
+local function mode_sections()
+    return {
         a = { fg = M.colors.orange, bg = M.colors.orange },
         b = { fg = M.colors.orange, bg = M.colors.bg },
         c = { fg = M.colors.orange, bg = M.colors.bg },
         x = { fg = M.colors.orange, bg = M.colors.orange },
         y = { fg = M.colors.orange, bg = M.colors.bg },
         z = { fg = M.colors.bg, bg = M.colors.orange },
-    },
+    }
+end
+
+M.theme = {
+    normal = mode_sections(),
+    insert = mode_sections(),
+    visual = mode_sections(),
+    replace = mode_sections(),
+    command = mode_sections(),
+    terminal = mode_sections(),
     inactive = {
         a = { fg = M.colors.wwhite, bg = M.colors.bg },
         b = { fg = M.colors.wwhite, bg = M.colors.bg },
