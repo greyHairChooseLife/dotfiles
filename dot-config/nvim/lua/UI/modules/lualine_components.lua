@@ -114,6 +114,23 @@ end
 
 function M.winfix_status() return vim.wo.winfixwidth and vim.wo.winfixheight and "" or "" end
 
+--- Buffer name for the statusline.
+--- Long names are middle truncated (extension kept) so that the right side of
+--- the bar (line:col, progress) is not pushed out of a narrow window.
+---@param reserve number columns kept free for the rest of the statusline
+function M.filename(reserve)
+    local name = vim.fn.expand("%:t")
+    if name == "" then name = "New" end
+
+    local max = math.max(12, vim.api.nvim_win_get_width(0) - reserve)
+    if vim.fn.strdisplaywidth(name) <= max then return name end
+
+    local ext = name:match("%.[%w_%-]+$") or ""
+    local keep = max - vim.fn.strdisplaywidth(ext) - 1
+    if keep < 4 then return vim.fn.strcharpart(name, 0, math.max(4, max - 1)) .. "…" end
+    return vim.fn.strcharpart(name, 0, keep) .. "…" .. ext
+end
+
 function M.register_recording()
     local register = vim.fn.reg_recording()
     if #register > 0 then

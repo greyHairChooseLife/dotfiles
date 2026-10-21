@@ -48,15 +48,7 @@ return {
             sections = {
                 lualine_a = {
                     {
-                        "filename",
-                        file_status = false,
-                        newfile_status = false,
-                        symbols = {
-                            modified = "󰈸", -- Text to show when the file is modified.
-                            readonly = "", -- Text to show when the file is non-modifiable or readonly.
-                            unnamed = "New", -- Text to show for unnamed buffers.
-                            newfile = "New", -- Text to show for newly created file before first write
-                        },
+                        function() return lualine_components.filename(45) end,
                         color = function()
                             local bufnr = vim.fn.bufnr("%")
                             local warpItem = require("warp").get_item_by_buf(bufnr)
@@ -242,15 +234,7 @@ return {
             inactive_sections = {
                 lualine_a = {
                     {
-                        "filename",
-                        file_status = false,
-                        newfile_status = false,
-                        symbols = {
-                            modified = "󰈸", -- Text to show when the file is modified.
-                            readonly = "", -- Text to show when the file is non-modifiable or readonly.
-                            unnamed = "New", -- Text to show for unnamed buffers.
-                            newfile = "New", -- Text to show for newly created file before first write
-                        },
+                        function() return lualine_components.filename(35) end,
                         color = function()
                             local bufnr = vim.fn.bufnr()
                             local warpItem = require("warp").get_item_by_buf(bufnr)
