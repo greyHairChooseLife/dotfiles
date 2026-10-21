@@ -32,24 +32,6 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = "vimwiki",
-    callback = function()
-        -- etc
-        -- vim.cmd('IBLEnable')
-        require("gitsigns").toggle_signs(false)
-        vim.cmd("NvimTreeResize 100") -- require('nvim-tree.api').nvim-tree-api.tree.resize(100) 뭐야 외완되
-
-        -- options
-        setOpt("winhighlight", "FoldColumn:VimwikiFoldColumn")
-        setOpt("number", false)
-        setOpt("relativenumber", false)
-        setOpt("signcolumn", "no")
-        setOpt("foldcolumn", "5")
-        setOpt("textwidth", 100)
-    end,
-})
-
-vim.api.nvim_create_autocmd("FileType", {
     pattern = "aerial",
     callback = function()
         -- options

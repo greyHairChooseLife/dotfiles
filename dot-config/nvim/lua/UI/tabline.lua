@@ -103,13 +103,24 @@ function MyTabLine_width_flexible(MinimalLength, MaximumLength)
         if MinimalLength == "" or MinimalLength == 0 then MinimalLength = nil end
         if MaximumLength == "" or MaximumLength == 0 then MaximumLength = nil end
 
-        -- 최대 길이 제한
-        if MaximumLength and #tabname > MaximumLength then tabname = string.sub(tabname, 1, MaximumLength - 3) .. "..." end
+        -- 최대 길이 제한 (표시 폭 기준, 멀티바이트 문자는 쪼개지 않음)
+        if MaximumLength and vim.fn.strdisplaywidth(tabname) > MaximumLength then
+            local limit = MaximumLength - 3
+            local chars = vim.fn.strchars(tabname)
+            local cut = vim.fn.strcharpart(tabname, 0, chars)
+            while chars > 0 and vim.fn.strdisplaywidth(cut) > limit do
+                chars = chars - 1
+                cut = vim.fn.strcharpart(tabname, 0, chars)
+            end
+            tabname = cut .. "..."
+        end
 
-        -- 최소 길이 패딩
-        if MinimalLength and #tabname < MinimalLength then
-            local padding = MinimalLength - #tabname - 4 -- 기본 패딩 제외
-            tabname = string.rep(" ", padding / 2) .. tabname .. string.rep(" ", padding / 2)
+        -- 최소 길이 패딩 (표시 폭 기준)
+        local name_width = vim.fn.strdisplaywidth(tabname)
+        if MinimalLength and name_width < MinimalLength then
+            local padding = math.max(0, MinimalLength - name_width - 4) -- 기본 패딩 제외
+            local left_pad = math.floor(padding / 2)
+            tabname = string.rep(" ", left_pad) .. tabname .. string.rep(" ", padding - left_pad)
         end
 
         -- 기본 좌우 패딩
