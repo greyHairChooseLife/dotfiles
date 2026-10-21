@@ -1,42 +1,28 @@
 {
   "$schema": "https://raw.githubusercontent.com/gotgenes/pi-permission-system/main/schemas/permissions.schema.json",
-
+  "debugLog": false,
   "permissionReviewLog": true,
-
+  "yoloMode": false,
   "permission": {
     "*": "ask",
-
     "path": {
       "*": "allow",
       "*.env": "deny",
       "*.env.*": "deny",
       "*.env.example": "allow"
     },
-
-    "read": "allow",
-    "fffind": "allow",
-    "ffgrep": "allow",
-    "write": "ask",
-    "edit": "ask",
-
-    "fetch_content": "allow",
-    "web_search": "allow",
-    "code_search": "allow",
-    "get_search_content": "allow",
-
-    "ask_user_question": "allow",
-
-    "task_uuid": "allow",
-    "task_add": "allow",
-    "task_list": "allow",
-    "task_show": "allow",
-    "task_modify": "allow",
-    "task_start": "allow",
-    "task_stop": "allow",
-    "task_check": "allow",
-    "task_done": "ask",
-    "task_delete": "ask",
-
+    "external_directory": {
+      "*": "ask",
+      "~/Downloads/gemini-notebook*": "allow",
+      "/tmp/*": "allow",
+      "/usr/lib/node_modules/pi/*": "allow",
+      "/home/sy/dotfiles/*": "allow",
+      "/home/sy/.local/*": "allow",
+      "/home/sy/.config/*": "allow",
+      "/home/sy/.pi/*": "allow",
+      "/home/sy/.agents/*": "allow",
+      "/home/sy/Documents/zk/*": "allow"
+    },
     "bash": {
       "*": "ask",
       "cd *": "allow",
@@ -72,13 +58,10 @@
       "zgrep *": "allow",
       "zless *": "allow",
       "zdiff *": "allow",
-
       "sed *": "allow",
       "sed * -i*": "ask",
-
       "awk *": "allow",
       "awk * -i inplace*": "ask",
-
       "find *": "allow",
       "find * -exec *": "ask",
       "find * -execdir *": "ask",
@@ -92,14 +75,12 @@
       "chmod *": "ask",
       "chown *": "ask",
       "sudo *": "ask",
-
       "curl *": "ask",
       "wget *": "ask",
       "npm *": "ask",
       "pnpm *": "ask",
       "yarn *": "ask",
       "bun *": "ask",
-
       "docker ps *": "allow",
       "docker images *": "allow",
       "docker inspect *": "allow",
@@ -107,7 +88,6 @@
       "docker version": "allow",
       "docker info": "allow",
       "docker *": "ask",
-
       "git *": "ask",
       "git status *": "allow",
       "git diff *": "allow",
@@ -119,35 +99,37 @@
       "git stash show *": "allow",
       "git tag": "allow",
       "git remote -v": "allow",
-      // "git fetch *": "allow",
-      // "git checkout -b *": "allow",
-
       "task *": "allow",
       "task done *": "ask",
       "task delete *": "ask",
-      // "/home/sy/.agents/skills/task/scripts/*": "allow",
-
       "man *": "allow"
     },
-
     "mcp": {
       "*": "ask",
       "gemini-notebook-mcp": "allow"
     },
-
-    "skill": { "*": "allow" },
-
-    "external_directory": {
-      "*": "ask",
-      "~/Downloads/gemini-notebook*": "allow",
-      "/tmp/*": "allow",
-      "/usr/lib/node_modules/pi/*": "allow",
-      "/home/sy/dotfiles/*": "allow",
-      "/home/sy/.local/*": "allow",
-      "/home/sy/.config/*": "allow",
-      "/home/sy/.pi/*": "allow",
-      "/home/sy/.agents/*": "allow",
-      "/home/sy/Documents/zk/*": "allow"
-    }
+    "skill": {
+      "*": "allow"
+    },
+    "read": "allow",
+    "fffind": "allow",
+    "ffgrep": "allow",
+    "write": "ask",
+    "edit": "ask",
+    "fetch_content": "allow",
+    "web_search": "allow",
+    "code_search": "allow",
+    "get_search_content": "allow",
+    "ask_user_question": "allow",
+    "task_uuid": "allow",
+    "task_add": "allow",
+    "task_list": "allow",
+    "task_show": "allow",
+    "task_modify": "allow",
+    "task_start": "allow",
+    "task_stop": "allow",
+    "task_check": "allow",
+    "task_done": "ask",
+    "task_delete": "ask"
   }
 }
