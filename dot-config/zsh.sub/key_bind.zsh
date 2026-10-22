@@ -30,6 +30,7 @@ zle -N _a_widget
 # Key bindings
 # unmap
 bindkey -e
+bindkey '^U' backward-kill-line  # 커서 앞쪽만 삭제 (zsh 기본값 kill-whole-line 대체)
 bindkey -r "^[h"
 bindkey -r "^[H"
 
