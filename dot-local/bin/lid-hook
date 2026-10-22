@@ -1,5 +1,6 @@
 #!/bin/bash
-# lid-hook — payload for the systemd sleep hook (installed by /etc/systemd/system-sleep/50-lid).
+# lid-hook — payload for the systemd sleep hook (installed as
+# /usr/lib/systemd/system-sleep/50-lid).
 #
 #   pre   stop running taskwarrior tasks and prepend a markdown report to $CURRENT_TASKS
 #   post  open (or reuse) a floating alacritty window running nvim on $CURRENT_TASKS
@@ -36,6 +37,12 @@ field() { # $1 json, $2 uuid, $3 key
 }
 
 pre() {
+    # systemd freezes user.slice while sleep hooks run, so anything that talks to
+    # a session daemon blocks until resume. Point the bus at a dead socket: the
+    # on-modify dunstify hooks then fail immediately instead of hanging. Without
+    # this, `task stop` blocks forever and the suspend never happens.
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/nonexistent"
+
     local json uuids u out tmp stop_iso
     json=$("${TASK[@]}" status:pending and start.any: export 2>/dev/null)
     uuids=$(jq -r '.[] | select(has("end") | not) | .uuid' <<<"$json" 2>/dev/null)
@@ -62,7 +69,7 @@ pre() {
             printf -- '    -   stop:  %s\n' "$(iso_local "$stop_iso")"
             printf -- '    -   spent: %s\n' "$(duration "$(iso_epoch "$(field "$json" "$u" start)")" "$(iso_epoch "$stop_iso")")"
         done
-        printf -- '---\n\n\n\n\n'
+        printf -- '\n\n\n---\n\n\n\n\n'
     } >"$tmp"
 
     if [ "${LID_HOOK_DRY:-0}" = "1" ]; then
@@ -83,19 +90,19 @@ pre() {
 post() {
     local i wid
 
-    # i3 is not ready immediately after resume.
-    for i in $(seq 1 40); do
-        i3-msg -t get_version >/dev/null 2>&1 && break
+    # i3 is not ready immediately after resume (Xorg/i3 are still frozen here).
+    for i in $(seq 1 60); do
+        timeout 2 i3-msg -t get_version >/dev/null 2>&1 && break
         sleep 0.5
     done
-    i3-msg -t get_version >/dev/null 2>&1 || return 0
+    timeout 2 i3-msg -t get_version >/dev/null 2>&1 || return 0
 
-    wid=$(i3-msg -t get_tree 2>/dev/null \
+    wid=$(timeout 5 i3-msg -t get_tree 2>/dev/null \
         | jq -r '.. | objects | select((.window_properties.class? // "") == "lid-tasks") | .window' 2>/dev/null \
         | head -1)
 
     if [ -n "$wid" ] && [ "$wid" != "null" ]; then
-        i3-msg "[id=$wid] focus" >/dev/null 2>&1
+        timeout 5 i3-msg "[id=$wid] focus" >/dev/null 2>&1
         # Reload the buffer if the report was prepended while nvim was open.
         if [ -S "$SOCK" ]; then
             nvim --server "$SOCK" --remote-send '<C-\><C-n>:edit<CR>' >/dev/null 2>&1
