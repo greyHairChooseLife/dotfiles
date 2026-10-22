@@ -1,0 +1,118 @@
+#!/bin/bash
+# lid-hook — payload for the systemd sleep hook (installed by /etc/systemd/system-sleep/50-lid).
+#
+#   pre   stop running taskwarrior tasks and prepend a markdown report to $CURRENT_TASKS
+#   post  open (or reuse) a floating alacritty window running nvim on $CURRENT_TASKS
+#
+# Runs as the desktop user, not root. LID_HOOK_DRY=1 prints the report without
+# stopping tasks and without touching $CURRENT_TASKS.
+set -u
+
+: "${HOME:=/home/sy}"
+export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin"
+export TASKRC="${TASKRC:-$HOME/Documents/zk/.task/taskrc}"
+export DISPLAY="${DISPLAY:-:0}"
+export XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}"
+
+CURRENT_TASKS="${CURRENT_TASKS:-$HOME/Documents/TODO.md}"
+SOCK="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/lid-tasks.nvim"
+
+TASK=(task rc.verbose=nothing rc.confirmation=off)
+
+# Taskwarrior stores "20261022T025627Z"; GNU date needs the extended form.
+iso_epoch() { date -d "${1:0:4}-${1:4:2}-${1:6:2}T${1:9:2}:${1:11:2}:${1:13:2}Z" +%s; }
+iso_local() { date -d "@$(iso_epoch "$1")" '+%Y-%m-%d %H:%M'; }
+
+duration() { # $1 start epoch, $2 stop epoch
+    local d=$(( $2 - $1 )) h m
+    (( d < 0 )) && d=0
+    h=$(( d / 3600 ))
+    m=$(( d % 3600 / 60 ))
+    if (( h > 0 )); then printf '%dh %02dm' "$h" "$m"; else printf '%dm' "$m"; fi
+}
+
+field() { # $1 json, $2 uuid, $3 key
+    jq -r --arg u "$2" ".[] | select(.uuid == \$u) | .$3 // \"-\"" <<<"$1"
+}
+
+pre() {
+    local json uuids u out tmp stop_iso
+    json=$("${TASK[@]}" status:pending and start.any: export 2>/dev/null)
+    uuids=$(jq -r '.[] | select(has("end") | not) | .uuid' <<<"$json" 2>/dev/null)
+
+    tmp=$(mktemp) || exit 1
+    {
+        printf '# Suspended %s\n\n' "$(date '+%Y-%m-%d %H:%M')"
+        if [ -z "$uuids" ]; then
+            printf -- '-   (no active task)\n'
+        fi
+        for u in $uuids; do
+            out=$(field "$json" "$u" description)
+            printf -- '-   `#%s` %s (%s)\n' "$(field "$json" "$u" id)" "$out" "$(field "$json" "$u" project)"
+            printf -- '    -   start: %s\n' "$(iso_local "$(field "$json" "$u" start)")"
+
+            if [ "${LID_HOOK_DRY:-0}" = "1" ]; then
+                stop_iso=$(date -u '+%Y%m%dT%H%M%SZ')
+            else
+                "${TASK[@]}" "$u" stop >/dev/null 2>&1
+                stop_iso=$("${TASK[@]}" "$u" export 2>/dev/null | jq -r '.[0].end // empty')
+                [ -n "$stop_iso" ] || stop_iso=$(date -u '+%Y%m%dT%H%M%SZ')
+            fi
+
+            printf -- '    -   stop:  %s\n' "$(iso_local "$stop_iso")"
+            printf -- '    -   spent: %s\n' "$(duration "$(iso_epoch "$(field "$json" "$u" start)")" "$(iso_epoch "$stop_iso")")"
+        done
+        printf -- '---\n\n\n\n\n'
+    } >"$tmp"
+
+    if [ "${LID_HOOK_DRY:-0}" = "1" ]; then
+        cat "$tmp"
+        rm -f "$tmp"
+        return 0
+    fi
+
+    # Prepend in place (`cat >` keeps the inode, so an open nvim buffer is not orphaned).
+    if [ -f "$CURRENT_TASKS" ]; then
+        cat "$tmp" "$CURRENT_TASKS" >"$tmp.new" && cat "$tmp.new" >"$CURRENT_TASKS"
+    else
+        cat "$tmp" >"$CURRENT_TASKS"
+    fi
+    rm -f "$tmp" "$tmp.new"
+}
+
+post() {
+    local i wid
+
+    # i3 is not ready immediately after resume.
+    for i in $(seq 1 40); do
+        i3-msg -t get_version >/dev/null 2>&1 && break
+        sleep 0.5
+    done
+    i3-msg -t get_version >/dev/null 2>&1 || return 0
+
+    wid=$(i3-msg -t get_tree 2>/dev/null \
+        | jq -r '.. | objects | select((.window_properties.class? // "") == "lid-tasks") | .window' 2>/dev/null \
+        | head -1)
+
+    if [ -n "$wid" ] && [ "$wid" != "null" ]; then
+        i3-msg "[id=$wid] focus" >/dev/null 2>&1
+        # Reload the buffer if the report was prepended while nvim was open.
+        if [ -S "$SOCK" ]; then
+            nvim --server "$SOCK" --remote-send '<C-\><C-n>:edit<CR>' >/dev/null 2>&1
+        fi
+        return 0
+    fi
+
+    rm -f "$SOCK"
+    setsid alacritty --class lid-tasks,lid-tasks -e \
+        nvim --listen "$SOCK" "$CURRENT_TASKS" >/dev/null 2>&1 &
+}
+
+case "${1:-}" in
+    pre) pre ;;
+    post) post ;;
+    *)
+        echo "usage: lid-hook {pre|post}" >&2
+        exit 2
+        ;;
+esac

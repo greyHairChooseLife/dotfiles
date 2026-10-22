@@ -1,0 +1,16 @@
+#!/bin/bash
+# systemd sleep hook: run the lid payload as the desktop user.
+# Install: sudo install -m 755 scripts/system-sleep-50-lid /etc/systemd/system-sleep/50-lid
+USER_NAME=sy
+USER_HOME=/home/sy
+
+case "${1:-}" in
+    pre | post)
+        exec runuser -u "$USER_NAME" -- env \
+            HOME="$USER_HOME" \
+            DISPLAY=:0 \
+            XAUTHORITY="$USER_HOME/.Xauthority" \
+            XDG_RUNTIME_DIR="/run/user/$(id -u "$USER_NAME")" \
+            "$USER_HOME/.local/bin/lid-hook" "$1"
+        ;;
+esac
