@@ -238,21 +238,6 @@ for pkg in "${AUR_PKGS[@]}"; do
     fi
 done
 
-# Enable important services
-sudo systemctl enable NetworkManager
-sudo systemctl enable bluetooth
-
-# docker 사용 권한
-sudo usermod -aG docker $USER
-
-# npm global
-mkdir -p ~/.npm-global
-npm config set prefix '~/.npm-global'
-
-mkdir -p $HOME/.local/state/bash.sub
-touch $HOME/.local/state/bash.sub/api-key.sh # template
-touch $HOME/.local/state/bash.sub/ssh.sh     # template
-
 # Summary
 echo ""
 if [ ${#FAILED_PACMAN[@]} -eq 0 ] && [ ${#FAILED_AUR[@]} -eq 0 ]; then
