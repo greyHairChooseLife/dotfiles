@@ -24,7 +24,7 @@ fi
 # Check if yay is installed, if not install it
 if ! command -v yay &> /dev/null; then
     echo "yay not found. Installing yay..."
-    bash scripts/install_yay.sh
+    bash setup.d/install_yay.sh
 
     if [ $? -ne 0 ]; then
         echo "Failed to install yay. Exiting."
@@ -36,14 +36,14 @@ fi
 read -p "Update mirror server? (y/n): " update_mirror_answer
 if [ "$update_mirror_answer" == 'y' ]; then
     echo "Starting mirror server updating..."
-    bash scripts/update_mirror.sh
+    bash setup.d/update_mirror.sh
 fi
 
 # 1. Install packages first (zsh, stow, git, etc. are required for next steps)
 read -p "Install basic packages? (y/n): " install_answer
 if [ "$install_answer" == 'y' ]; then
     echo "Starting package installation..."
-    bash scripts/install_pkgs.sh
+    bash setup.d/install_pkgs.sh
 
     echo "Package installation completed."
 fi

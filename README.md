@@ -29,7 +29,7 @@ dotfiles/
 ├── dot-config                # $HOME/.config  (외부 앱 설정)
 ├── dot-local                 # $HOME/.local   (bin/: 상시 명령)
 ├── features                  # 설치/해제 단위 (아래 표)
-├── scripts                   # repo 유지보수 (stow 대상 아님)
+├── setup.d                   # setup.sh 단계별 스크립트 (yay, mirror, packages)
 ├── devbox                    # 개발 컨테이너
 ├── README.md
 └── setup.sh                  # stow + feature 설치

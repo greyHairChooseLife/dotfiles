@@ -1,3 +1,4 @@
+#!/bin/bash
 # Install dependencies
 sudo pacman -S --needed git base-devel
 
