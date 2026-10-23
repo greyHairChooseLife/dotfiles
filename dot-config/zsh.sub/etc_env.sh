@@ -10,3 +10,4 @@ export XMODIFIERS=@im=kime
 
 export ZK_NOTEBOOK_DIR="$HOME/Documents/zk"
 export TASKRC="$HOME/Documents/zk/.task/taskrc"
+export CURRENT_TASKS="$HOME/Documents/TODO.md"
