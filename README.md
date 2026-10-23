@@ -8,6 +8,16 @@ cd dotfiles
 bash setup.sh
 ```
 
+인자 없이 실행하면 단계(숫자)와 feature(알파벳) 목록을 보여주고 선택을 받는다.
+일부만 다시 실행할 때는 인자로 지정한다.
+
+```bash
+./setup.sh 5              # stow만
+./setup.sh b-d            # feature code-search ~ keyboard
+./setup.sh -e             # feature lid 비활성화
+./setup.sh unstow         # 링크 제거
+```
+
 
 ## manage files
 
