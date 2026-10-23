@@ -1,0 +1,7 @@
+[tools]
+usage = "latest"
+uv = "latest"
+
+# ~/.config/mise/config.toml
+[settings]
+trusted_config_paths = ["~/P"]
