@@ -96,17 +96,23 @@ stow --target $HOME --dotfiles -R .
 # 동일한 이름의 plain text 파일이 있다면 실패할 수 있다.
 if [ $? -ne 0 ]; then exit 1; fi
 
-# 4. lid hook (taskwarrior report on suspend, floating report on resume)
-if [ -f /usr/lib/systemd/system-sleep/50-lid ] && [ -L "$HOME/.local/bin/lid-hook" ]; then
-    read -p "lid hook is already installed. Reinstall/update? (y/n): " lid_answer
-else
-    read -p "Install lid hook? (y/n): " lid_answer
-fi
-if [ "$lid_answer" == 'y' ]; then
-    if ! bash lid/install.sh; then
-        echo "WARNING: lid hook installation failed."
+# 4. features (each one owns its install.sh / uninstall.sh)
+for feature_dir in features/*/; do
+    feature=$(basename "$feature_dir")
+    description=$(awk 'NR>1 && NF {print; exit}' "$feature_dir/README.md" 2>/dev/null)
+
+    if bash "$feature_dir/install.sh" --status >/dev/null 2>&1; then
+        read -p "feature '$feature' is already installed. Reinstall/update? (y/n): " feature_answer
+    else
+        read -p "Install feature '$feature'? $description (y/n): " feature_answer
     fi
-fi
+
+    if [ "$feature_answer" == 'y' ]; then
+        if ! bash "$feature_dir/install.sh"; then
+            echo "WARNING: '$feature' installation failed."
+        fi
+    fi
+done
 
 # 5. Set zsh as default shell (dotfiles are now symlinked, so zsh config is ready)
 if [ "$SHELL" != "$(which zsh)" ]; then

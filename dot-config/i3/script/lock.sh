@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-source ~/.config/zsh.sub/bluetooth.sh
 
 # Enable internal keyboard for lock screen password entry
 btkb off

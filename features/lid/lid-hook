@@ -87,22 +87,30 @@ pre() {
     rm -f "$tmp" "$tmp.new"
 }
 
+win_id() {
+    timeout 5 i3-msg -t get_tree 2>/dev/null \
+        | jq -r '.. | objects | select((.window_properties.class? // "") == "lid-tasks") | .window' 2>/dev/null \
+        | head -1
+}
+
+focus_win() {
+    timeout 5 i3-msg "[id=$1] focus" >/dev/null 2>&1
+}
+
 post() {
     local i wid
 
-    # i3 is not ready immediately after resume (Xorg/i3 are still frozen here).
+    # i3 does not answer while frozen, which is the case right after resume.
     for i in $(seq 1 60); do
         timeout 2 i3-msg -t get_version >/dev/null 2>&1 && break
         sleep 0.5
     done
     timeout 2 i3-msg -t get_version >/dev/null 2>&1 || return 0
 
-    wid=$(timeout 5 i3-msg -t get_tree 2>/dev/null \
-        | jq -r '.. | objects | select((.window_properties.class? // "") == "lid-tasks") | .window' 2>/dev/null \
-        | head -1)
+    wid=$(win_id)
 
     if [ -n "$wid" ] && [ "$wid" != "null" ]; then
-        timeout 5 i3-msg "[id=$wid] focus" >/dev/null 2>&1
+        focus_win "$wid"
         # Reload the buffer if the report was prepended while nvim was open.
         if [ -S "$SOCK" ]; then
             nvim --server "$SOCK" --remote-send '<C-\><C-n>:edit<CR>' >/dev/null 2>&1
@@ -113,6 +121,19 @@ post() {
     rm -f "$SOCK"
     setsid alacritty --class lid-tasks,lid-tasks -e \
         nvim --listen "$SOCK" "$CURRENT_TASKS" >/dev/null 2>&1 &
+
+    # i3 restores the pre-suspend focus when the thaw finishes, so a newly
+    # mapped window loses it again. Focus after it appears, and once more after
+    # a beat, to win that race.
+    for i in $(seq 1 60); do
+        wid=$(win_id)
+        [ -n "$wid" ] && [ "$wid" != "null" ] && break
+        sleep 0.25
+    done
+    [ -n "$wid" ] && [ "$wid" != "null" ] || return 0
+    focus_win "$wid"
+    sleep 1
+    focus_win "$wid"
 }
 
 case "${1:-}" in

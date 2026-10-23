@@ -1,0 +1,80 @@
+#!/bin/bash
+# btkb - switch between the built-in keyboard and the Bluetooth keyboard.
+#
+#   on      use the Bluetooth keyboard: disable the built-in one, clear ctrl/caps swap
+#   off     use the built-in keyboard: enable it, apply ctrl/caps swap
+#   toggle  flip based on the built-in keyboard's current state (notifies via dunst)
+set -u
+
+DEVICE_NAME="AT Translated Set 2 keyboard"
+SUPPORTED_HOSTS="sy-Lenovo-ideapad cbpm-laptop sy-x390"
+
+usage() {
+    echo "usage: btkb {on|off|toggle}" >&2
+    exit 2
+}
+
+supported_host() {
+    local host current
+    host=$(cat /etc/hostname)
+    for current in $SUPPORTED_HOSTS; do
+        [ "$host" = "$current" ] && return 0
+    done
+    echo "btkb: unsupported host '$host'" >&2
+    return 1
+}
+
+internal_enabled() {
+    xinput list-props "$DEVICE_NAME" 2>/dev/null | grep -q "Device Enabled.*1$"
+}
+
+bt_on() {
+    echo "Bluetooth 키보드를 사용합니다."
+    xinput disable "$DEVICE_NAME"
+    setxkbmap -option
+    echo "  - 내장 키보드       : off"
+    echo "  - ctrl/capsLck swap : off"
+}
+
+bt_off() {
+    local id="" i
+
+    echo "내장 키보드를 사용합니다."
+    xinput enable "$DEVICE_NAME"
+
+    for i in $(seq 1 10); do
+        id=$(xinput list --id-only "$DEVICE_NAME" 2>/dev/null)
+        [ -n "$id" ] && break
+        sleep 0.5
+    done
+
+    if [ -z "$id" ]; then
+        echo "내장 키보드 ID를 찾을 수 없습니다. [btkb off]를 다시 실행하세요." >&2
+        return 1
+    fi
+
+    for i in $(seq 1 10); do
+        setxkbmap -device "$id" -option ctrl:swapcaps
+        sleep 0.01
+    done
+    echo "  - 내장 키보드       : on"
+    echo "  - ctrl/capsLck swap : on"
+}
+
+supported_host || exit 1
+
+case "${1:-}" in
+    on) bt_on ;;
+    off) bt_off ;;
+    toggle)
+        if internal_enabled; then
+            bt_on
+            state=ON
+        else
+            bt_off
+            state=OFF
+        fi
+        command -v notify-send >/dev/null && notify-send "BT keyboard:" "$state"
+        ;;
+    *) usage ;;
+esac

@@ -73,7 +73,7 @@ bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
 # bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness down'"
 
 # Power button: toggle built-in / BT keyboard
-bindsym XF86PowerOff exec ~/.local/bin/toggle-btkb.sh
+bindsym XF86PowerOff exec ~/.local/bin/btkb toggle
 
 # Start Applications
 bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
