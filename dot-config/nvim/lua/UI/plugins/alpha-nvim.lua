@@ -82,7 +82,7 @@ return {
                 vim.cmd("only")
             end),
             dashboard.button("ap", "AI Prompt", ":cd ~/.pi/agent | e AGENTS.md<CR>"),
-            dashboard.button("as", "AI Skills", ":cd ~/.agents/skills | e ./<CR>"),
+            dashboard.button("as", "AI Skills", ":cd ~/.pi/agent/skills | e ./<CR>"),
             dashboard.button("aP", "AI Permission", ":cd ~/.pi/agent | e extensions/pi-permission-system/config.json<CR>"),
 
             dashboard.button("_", "                              ______  configs ___", ""),

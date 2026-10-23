@@ -18,18 +18,18 @@ pi extension providing TaskWarrior CRUD tools. All tools use UUIDs, never intege
 
 ## Install
 
-Copy to `~/.agents/extensions/` and add to `~/.pi/agent/settings.json`:
+Copy to `~/.pi/agent/extensions/` and add to `~/.pi/agent/settings.json`:
 
 ```json
 {
-  "extensions": ["/home/sy/.agents/extensions/pi-taskwarrior/src/index.ts"]
+  "extensions": ["extensions/pi-taskwarrior/src/index.ts"]
 }
 ```
 
 Or test with `-e`:
 
 ```bash
-pi -e ~/.agents/extensions/pi-taskwarrior/src/index.ts
+pi -e ~/.pi/agent/extensions/pi-taskwarrior/src/index.ts
 ```
 
 ## Design

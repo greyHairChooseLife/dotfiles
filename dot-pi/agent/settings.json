@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.3.0",
+  "lastChangelogVersion": "1.4.0",
   "theme": "ember-glow",
   "defaultProvider": "opencode-go",
   "defaultModel": "deepseek-v4.1-flash",
@@ -27,9 +27,9 @@
     "npm:@narumitw/pi-btw"
   ],
   "extensions": [
-    "/home/sy/.agents/extensions/pi-taskwarrior/src/index.ts",
-    "/home/sy/.agents/extensions/ui/codeblock-theme.ts",
-    "/home/sy/.agents/extensions/misc/copy-session.ts",
-    "/home/sy/.agents/extensions/misc/turn-navigator.ts"
+    "extensions/pi-taskwarrior/src/index.ts",
+    "extensions/ui/codeblock-theme.ts",
+    "extensions/misc/copy-session.ts",
+    "extensions/misc/turn-navigator.ts"
   ]
 }

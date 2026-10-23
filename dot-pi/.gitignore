@@ -10,16 +10,10 @@
 !/agent/themes/
 /agent/themes/*
 !/agent/themes/ember-glow.json
+
+# 사용자가 작성한 확장과 스킬은 추적한다
 !/agent/extensions/
-/agent/extensions/*
-!/agent/extensions/codeblock-theme.ts
-!/agent/extensions/turn-navigator.ts
-!/agent/extensions/copy-session.ts
-!/agent/extensions/pi-permission-system/
-/agent/extensions/pi-permission-system/*
-!/agent/extensions/pi-permission-system/config.json
 !/agent/skills/
-/agent/skills/*
-!/agent/skills/edit-article/
-/agent/skills/edit-article/*
-!/agent/skills/edit-article/SKILL.md
+
+# 확장이 만드는 런타임 산출물은 제외
+/agent/extensions/pi-permission-system/logs/

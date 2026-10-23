@@ -20,7 +20,6 @@
       "/home/sy/.local/*": "allow",
       "/home/sy/.config/*": "allow",
       "/home/sy/.pi/*": "allow",
-      "/home/sy/.agents/*": "allow",
       "/home/sy/Documents/zk/*": "allow"
     },
     "bash": {
