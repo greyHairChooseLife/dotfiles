@@ -136,3 +136,6 @@ alias man="man " # This makes man works with alias.
 
 # bluetooth
 alias blue="bluetui"
+
+# python
+alias py='python'
