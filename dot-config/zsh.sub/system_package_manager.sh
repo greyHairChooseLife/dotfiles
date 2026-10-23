@@ -15,15 +15,3 @@ pacinstall() {
 pacremove() {
   pacman -Qq | fzf -q "$1" -m --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns
 }
-
-pnpminstall() {
-  if [ -z "$1" ]; then
-    echo "Usage: pnpminstall <package>"
-    return 1
-  fi
-
-  pnpm search "$1" --json | jq --raw-output .[].name \
-    | fzf --preview 'pnpm info {} --color always' \
-      --bind 'ctrl-v:become(pnpm info {} | nvim)' \
-      --bind 'enter:execute(pnpm install {+})+abort'
-}
