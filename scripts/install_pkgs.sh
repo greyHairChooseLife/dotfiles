@@ -124,7 +124,6 @@ PACMAN_PKGS=(
     openssh
     go
     yq
-    cmus
     rclone
     fuse3
     tldr

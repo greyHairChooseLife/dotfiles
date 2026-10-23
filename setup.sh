@@ -45,11 +45,6 @@ if [ "$install_answer" == 'y' ]; then
     echo "Starting package installation..."
     bash scripts/install_pkgs.sh
 
-    echo "Updating MIME type associations in /usr/share/applications/..."
-    if ! sudo bash scripts/mime_desktop.sh; then
-        echo "WARNING: MIME desktop update failed."
-    fi
-
     echo "Package installation completed."
 fi
 
