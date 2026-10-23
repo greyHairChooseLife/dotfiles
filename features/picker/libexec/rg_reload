@@ -18,11 +18,11 @@ case "$ACTION" in
         ;;
 esac
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+libexec="${DOTFILES_LIBEXEC:-$HOME/.local/libexec}/picker"
 
 PROMPT=""
 [[ "$HIDDEN" -eq 1 ]] && PROMPT="(+hidden) "
 [[ -n "$GLOB" ]] && PROMPT="${PROMPT}(glob:$GLOB) "
 PROMPT="${PROMPT}Search> "
 
-echo "reload($SCRIPT_DIR/rg_search.sh)+change-prompt($PROMPT)+clear-query"
+echo "reload($libexec/rg_search)+change-prompt($PROMPT)+clear-query"

@@ -51,5 +51,5 @@ fzf_find_dir() {
 }
 
 alias j='fzf_find_dir'
-alias f='~/dotfiles/scripts/bin/utils/find_file.sh | xargs -r nvim -O'
-alias w='~/dotfiles/scripts/bin/rg_picker.sh'
+alias f='find_file | xargs -r nvim -O'
+alias w='rg_picker'

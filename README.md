@@ -15,23 +15,43 @@ bash setup.sh
 2. `$HOME/.config` 경로에 넣을 것은 `dot-config/`에 넣는다.
 3. 새로운 config을 추가하면 `setup.sh`에 적용/반영 커맨드를 추가한다.
 4. 외부 앱 설정이 아니라 **직접 만든 동작**(설치 단계·sudo·상태·의존이 있는 것)은 `features/<name>/`에 둔다.
-   `README.md`(첫 줄 설명) + `install.sh` + `uninstall.sh` + `bin/`이 규격이고, `setup.sh`가 알아서 목록에 넣는다.
+   - 규격: `README.md`(첫 줄이 설명) + `install.sh`(`--status` 지원, 멱등) + `uninstall.sh` + `bin/*` + `libexec/*`
+   - `bin/*` → `~/.local/bin`, `libexec/*` → `~/.local/libexec/<name>`
+   - feature 끼리 쓰는 기반 기능은 `features/base`에 두고 `require_feature`로 의존을 선언한다
+   - `setup.sh`가 `features/*/install.sh`를 순회하며 설치 여부를 묻는다
 
 ```bash
 # tree -a ~/dotfiles
 
 dotfiles/
-├── deprecated                # ignored by stow, since dir name is 'deprecated'. `.stow-local-ignore` rules this
-├── .dmenurc                  # this level goes to $HOME
-├── dot-config                # this level goes to $HOME/.config
-│   ├── deprecated            # ignored by stow
-│   │   └── ignore_test       
-│   └── dunst
-│       └── dunstrc
-├── README.md                 
-├── .stow-local-ignore        # stow ignore rules
-└── setup.sh                   # stow script
+├── .stow-local-ignore        # stow ignore 규칙 ('deprecated' 등 제외)
+├── .dmenurc                  # 이 레벨은 $HOME으로 링크된다
+├── dot-config                # $HOME/.config  (외부 앱 설정)
+├── dot-local                 # $HOME/.local   (bin/: 상시 명령)
+├── features                  # 설치/해제 단위 (아래 표)
+├── scripts                   # repo 유지보수 (stow 대상 아님)
+├── devbox                    # 개발 컨테이너
+├── README.md
+└── setup.sh                  # stow + feature 설치
 ```
+
+## features
+
+| name | 내용 |
+| --- | --- |
+| `base` | 공용 기반: `find_file`, `show_spinner` |
+| `picker` | fzf 선택 → tmux pane에 경로 입력 (`cc_file_picker`, `find_file_tmux`, `rg_picker`) |
+| `code-search` | 검색 결과를 nvim으로 (`rg_fzf_search`, `sg_fzf_search`) |
+| `keyboard` | 내장/BT 키보드 전환 (`btkb`) |
+| `lid` | suspend 시 taskwarrior 보고서, resume 시 floating nvim |
+| `shell-history` | zsh 히스토리 helper (`zsh-history`) |
+| `task` | taskwarrior 보조 (`task-timespent`, cheatsheet) |
+| `git-worktree` | worktree용 tmux 창 배치 |
+| `system-tuning` | CPU governor / TLP / EPP udev 규칙 |
+| `misc` | `txt2pdf`, 파일·docker 이미지 공유 |
+| `study-english` | 참고용 구현 (설치물 없음) |
+
+feature 안에서 다른 feature의 helper를 쓰면 안 된다. 공용이면 `features/base`로 올린다.
 
 
 ## Tmux

@@ -2,10 +2,9 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-UTILS_DIR=$SCRIPT_DIR/utils
+libexec="${DOTFILES_LIBEXEC:-$HOME/.local/libexec}"
 
-selected=$($UTILS_DIR/find_file.sh)
+selected=$(find_file)
 echo "## sharing: $selected"
 [ -z "$selected" ] && exit 1
 
@@ -20,7 +19,7 @@ tmp_response=$(mktemp)
         https://tmpfiles.org/api/v1/upload > "$tmp_response"
 } &
 curl_pid=$!
-$UTILS_DIR/show_spinner.sh $curl_pid
+"$libexec/base/show_spinner" $curl_pid
 wait $curl_pid
 response=$(cat "$tmp_response")
 

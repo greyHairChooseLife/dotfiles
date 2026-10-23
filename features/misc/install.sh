@@ -1,6 +1,7 @@
 #!/bin/bash
-# Links small standalone utilities.
+# Links small standalone utilities and the sharing commands.
 #
+# Depends on features/base (find_file, show_spinner).
 # Pass --status to exit 0 when every bin/ file is linked.
 set -euo pipefail
 
@@ -13,4 +14,5 @@ if [ "${1:-}" = "--status" ]; then
     exit $?
 fi
 
+require_feature "$(dirname "$DIR")" base
 link_bin "$DIR"
