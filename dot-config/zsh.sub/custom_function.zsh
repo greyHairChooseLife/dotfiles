@@ -134,4 +134,9 @@ EOF
         env CAPSHELL="core:${pct}% / mem:${mem}" "$SHELL"
 }
 
-
+# 디렉토리 선택 후 이동. 선택기는 features/picker/bin/find_dir
+j() {
+    local dir
+    dir=$(find_dir) || return 0
+    [[ -n $dir ]] && cd "$dir"
+}

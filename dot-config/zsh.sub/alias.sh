@@ -139,3 +139,7 @@ alias blue="bluetui"
 
 # python
 alias py='python'
+
+# feature glue
+alias f='find_file | xargs -r nvim -O'
+alias w='rg_picker'
