@@ -111,4 +111,4 @@ alias name_pane='tm.1_title'
 alias 1='tm.1_title'
 alias 2='tm.2_toggle_border'
 # select tmux window and copy its layout
-alias tlayout='zsh ${HOME}/dotfiles/dot-config/zsh.sub/scripts/tmux/cp_layout_fzf.sh'
+alias tlayout='zsh ~/.config/tmux/utils/cp_layout_fzf.sh'
