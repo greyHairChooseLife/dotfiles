@@ -1,9 +1,9 @@
 #!/bin/bash
 # Installs the lid hook.
-#   1. ~/.local/bin/lid-hook               -> payload (symlink)
-#   2. /usr/lib/systemd/system-sleep/50-lid (root, generated with this user/home)
+#   ~/.local/bin/lid-hook                -> bin/lid-hook (symlink)
+#   /usr/lib/systemd/system-sleep/50-lid  -> generated from 50-lid (root)
 #
-# Run as your normal user; sudo is requested only for step 2.
+# Run as your normal user; sudo is requested only for the systemd hook.
 # `install.sh --status` exits 0 when both are in place.
 set -euo pipefail
 
@@ -11,11 +11,10 @@ DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 # shellcheck source=../_lib.sh
 . "$DIR/../_lib.sh"
 
-PAYLOAD="$HOME/.local/bin/lid-hook"
 SLEEP_HOOK=/usr/lib/systemd/system-sleep/50-lid
 
 status() {
-    is_link "$PAYLOAD" || return 1
+    status_bin "$DIR" || return 1
     [ -f "$SLEEP_HOOK" ]
 }
 
@@ -24,8 +23,7 @@ if [ "${1:-}" = "--status" ]; then
     exit $?
 fi
 
-mkdir -p "$HOME/.local/bin"
-link "$DIR/lid-hook" "$PAYLOAD"
+link_bin "$DIR"
 
 tmp=$(mktemp)
 sed -e "s|@@USER@@|$USER|g" -e "s|@@HOME@@|$HOME|g" "$DIR/50-lid" >"$tmp"

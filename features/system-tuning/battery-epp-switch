@@ -1,0 +1,31 @@
+#!/bin/bash
+# Called by udev on battery capacity change.
+# Sets EPP to 'power' below LOW_THRESHOLD, otherwise 'performance'.
+
+LOW_THRESHOLD=20
+
+# Find battery node dynamically
+BATTERY_NODE=""
+for ps in /sys/class/power_supply/*/; do
+    if [ "$(cat "${ps}type" 2>/dev/null)" = "Battery" ]; then
+        BATTERY_NODE="${ps%/}"
+        break
+    fi
+done
+[ -z "$BATTERY_NODE" ] && exit 0
+
+capacity=$(cat "$BATTERY_NODE/capacity" 2>/dev/null) || exit 0
+status=$(cat "$BATTERY_NODE/status" 2>/dev/null)
+
+# On AC power: always performance
+if [ "$status" = "Charging" ] || [ "$status" = "Not charging" ] || [ "$status" = "Full" ]; then
+    epp=performance
+elif [ "$capacity" -le "$LOW_THRESHOLD" ]; then
+    epp=power
+else
+    epp=balance_performance
+fi
+
+for f in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
+    echo "$epp" > "$f" 2>/dev/null || true
+done

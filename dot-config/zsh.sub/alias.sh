@@ -91,8 +91,8 @@ alias volume='pulsemixer'
 # taskwarrior
 alias tw='taskwarrior-tui'
 
-# custom script @~/dotfiles/scripts/bin
-alias cw='create_action_worktree_tmux_window.sh'
+# custom scripts are installed from ~/dotfiles/features/<name>/bin
+alias cw='create_action_worktree_tmux_window'
 
 # run multi-line commands in the clipboard
 alias R='xclip -selection clipboard -o | bash'
@@ -116,10 +116,10 @@ pi() {
 
 # Search
 alias sg='ast-grep'
-alias sgs='sg_fzf_search.sh'
+alias sgs='sg_fzf_search'
 alias gr='rg'
 alias rg='rg --ignore-case'
-alias rgs='rg_fzf_search.sh'
+alias rgs='rg_fzf_search'
 alias grep='grep --color'
 
 d2h() { printf "%x\n" "$1"; }

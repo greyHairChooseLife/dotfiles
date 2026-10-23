@@ -14,8 +14,8 @@
 
 | 경로 | 역할 |
 | --- | --- |
-| `btkb` | 실행 명령 (`on` / `off` / `toggle`) |
-| `install.sh` | `~/.local/bin/btkb` 심볼릭 링크 |
+| `bin/btkb` | 실행 명령 (`on` / `off` / `toggle`) |
+| `install.sh` | `bin/*`를 `~/.local/bin`으로 링크 |
 | `uninstall.sh` | 링크 제거 |
 
 ## 지원 호스트

@@ -10,9 +10,9 @@ resume 후에는 화면이 준비되면 그 파일을 floating 창으로 띄운�
 
 | 경로 | 역할 |
 | --- | --- |
-| `lid-hook` | payload. `pre`는 태스크 중지 + 보고서 prepend, `post`는 창 실행 |
+| `bin/lid-hook` | payload. `pre`는 태스크 중지 + 보고서 prepend, `post`는 창 실행 |
 | `50-lid` | systemd sleep hook 템플릿. `@@USER@@` / `@@HOME@@`는 설치 시 치환된다 |
-| `install.sh` | `~/.local/bin/lid-hook` 링크 생성, `/usr/lib/systemd/system-sleep/50-lid` 설치 |
+| `install.sh` | `bin/*`를 `~/.local/bin`으로 링크, `/usr/lib/systemd/system-sleep/50-lid` 설치 |
 | `uninstall.sh` | 두 산출물 제거 |
 
 ## 설치

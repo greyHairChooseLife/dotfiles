@@ -14,6 +14,8 @@ bash setup.sh
 1. `$HOME`에 넣을 것은 최상위 경로에 만든다.
 2. `$HOME/.config` 경로에 넣을 것은 `dot-config/`에 넣는다.
 3. 새로운 config을 추가하면 `setup.sh`에 적용/반영 커맨드를 추가한다.
+4. 외부 앱 설정이 아니라 **직접 만든 동작**(설치 단계·sudo·상태·의존이 있는 것)은 `features/<name>/`에 둔다.
+   `README.md`(첫 줄 설명) + `install.sh` + `uninstall.sh` + `bin/`이 규격이고, `setup.sh`가 알아서 목록에 넣는다.
 
 ```bash
 # tree -a ~/dotfiles

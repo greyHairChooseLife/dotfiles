@@ -99,6 +99,8 @@ if [ $? -ne 0 ]; then exit 1; fi
 # 4. features (each one owns its install.sh / uninstall.sh)
 for feature_dir in features/*/; do
     feature=$(basename "$feature_dir")
+    # 참고용 디렉터리(install.sh 없음)는 아직 설치할 것이 없다
+    [ -f "${feature_dir}install.sh" ] || continue
     description=$(awk 'NR>1 && NF {print; exit}' "$feature_dir/README.md" 2>/dev/null)
 
     if bash "$feature_dir/install.sh" --status >/dev/null 2>&1; then

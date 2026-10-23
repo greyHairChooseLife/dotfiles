@@ -6,4 +6,4 @@ DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 # shellcheck source=../_lib.sh
 . "$DIR/../_lib.sh"
 
-unlink "$HOME/.local/bin/btkb"
+unlink_bin "$DIR"

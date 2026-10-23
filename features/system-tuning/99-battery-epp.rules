@@ -1,0 +1,3 @@
+# Trigger EPP switch on any battery capacity/status change or AC plug/unplug
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_TYPE}=="Battery", RUN+="/usr/local/bin/battery-epp-switch"
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_TYPE}=="Mains",   RUN+="/usr/local/bin/battery-epp-switch"
