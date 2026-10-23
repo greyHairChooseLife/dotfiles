@@ -27,7 +27,6 @@ dotfiles/
 ├── .stow-local-ignore        # stow ignore 규칙 ('deprecated' 등 제외)
 ├── .dmenurc                  # 이 레벨은 $HOME으로 링크된다
 ├── dot-config                # $HOME/.config  (외부 앱 설정)
-├── dot-local                 # $HOME/.local   (bin/: 상시 명령)
 ├── features                  # 설치/해제 단위 (아래 표)
 ├── setup.d                   # setup.sh 단계별 스크립트 (yay, mirror, packages)
 ├── devbox                    # 개발 컨테이너
@@ -49,7 +48,7 @@ dotfiles/
 | `git-worktree` | worktree용 tmux 창 배치 |
 | `system-tuning` | CPU governor / TLP / EPP udev 규칙 |
 | `misc` | `txt2pdf`, 파일·docker 이미지 공유 |
-| `study-english` | 참고용 구현 (설치물 없음) |
+| `study-english` | 사전 조회 (`dictionary`) + 학습 노트 생성 참고 구현 |
 
 feature 안에서 다른 feature의 helper를 쓰면 안 된다. 공용이면 `features/base`로 올린다.
 

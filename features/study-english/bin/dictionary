@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-krd - Korean-English Dictionary CLI powered by Naver Dictionary
+dictionary - Korean-English Dictionary CLI powered by Naver Dictionary
 
 Usage:
-  krd <word>            Look up word (auto-detects Korean/English)
-  krd -h                Show help
+  dictionary <word>     Look up word (auto-detects Korean/English)
+  dictionary -h         Show help
 """
 import json
 import re
