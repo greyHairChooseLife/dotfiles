@@ -6,7 +6,7 @@ from pwndbg.commands.context import contextoutput
 
 panes = {
     "code": os.popen(
-        'tmux split-window -vb -P -F "#{pane_id}:#{pane_tty}" -l 80% -d "cat -"'
+        'tmux split-window -vb -P -F "#{pane_id}:#{pane_tty}" -l 70% -d "cat -"'
     )
     .read()
     .strip()
@@ -21,7 +21,7 @@ panes = {
     # Split horizontal to make the main window at the bottom
     "disasm": os.popen(
         # 'tmux split-window -vb -P -F "#{pane_id}:#{pane_tty}" -l 75% -d "tmux set -p @mytitle hoho; cat -"'
-        'tmux split-window -v -P -F "#{pane_id}:#{pane_tty}" -l 70% -t {top-left} -d "cat -"'
+        'tmux split-window -v -P -F "#{pane_id}:#{pane_tty}" -l 50% -t {top-left} -d "cat -"'
     )
     .read()
     .strip()
@@ -43,7 +43,7 @@ panes = {
     .strip()
     .split(":"),
     "input & output": os.popen(
-        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -l 50% -t {top-left} -d "tty; tail -f /dev/null"'
+        'tmux split-window -h -P -F "#{pane_id}:#{pane_tty}" -l 30% -t {top-left} -d "tty; tail -f /dev/null"'
     )
     .read()
     .strip()
