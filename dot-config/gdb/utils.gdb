@@ -70,12 +70,14 @@ end
 # - `myvar`가 변경될 때마다 GDB가 자동으로 멈춥니다.
 
 
-#   wa / cw are Python commands (watch_cmd.py):
+#   wa / cw / cws are Python commands (watch_cmd.py):
 #   wa <expr>       watchpoint on expression
 #   wa -f <path>    watchpoint per line of file
 #   cw <expr>       contextwatch expression (live display)
 #   cw -e <cmd>     run <cmd> as a gdb command, live (quotes optional)
 #   cw -f <path>    contextwatch per line of file
+#   cw -d <num>...  contextwatch 제거 (1부터 시작하는 번호, 여러 개 가능)
+#   cws [path]      현재 contextwatch 목록을 파일로 저장 (기본: cw.watch)
 
 define sizedHexDump
     if $argc == 1
@@ -88,7 +90,6 @@ document sizedHexDump
     sizedHexDump <variable> [size] : Dump [size] bytes of the memory of the specified variable using hexdump (address and sizeof).
 end
 
-alias cw_del = contextunwatch
 alias hx = hexdump
 alias hxs = sizedHexDump
 alias rmt = target extended-remote localhost:1234

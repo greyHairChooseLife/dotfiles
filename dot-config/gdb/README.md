@@ -12,7 +12,7 @@ pwndbg를 전제로 하지만, 없으면 경고만 남기고 나머지는 그대
 | --- | --- |
 | `layout.py` | context 창 레이아웃 조정 (pwndbg) |
 | `mark_line_range.py` | 현재 소스 라인에 해당하는 명령어 구간을 disasm에서 구분 표시 (pwndbg) |
-| `watch_cmd.py` | `wa` (watchpoint), `cw` (context에 식을 계속 표시), `cunwatch` / `contextunwatch` |
+| `watch_cmd.py` | `wa` (watchpoint), `cw` (context에 식을 계속 표시), `cw -d` (번호로 제거), `cws` (목록을 파일로 저장), `cunwatch` / `contextunwatch` |
 | `utils.gdb` | `rr` (PIE 여부에 맞춰 `main`에 브레이크포인트 후 `start`), `up`/`down`(`do`/`dow`) wrapper: 프레임을 옮긴 뒤 context 전체를 다시 그린다 |
 | `mapaddr.py` | `mapaddr EXPR`: 주소가 속한 매핑 영역을 찾아 표시 |
 

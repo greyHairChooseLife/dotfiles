@@ -1,15 +1,21 @@
 import gdb
 
+# cw / cws: 기본 저장 파일 이름
+DEFAULT_SAVE_PATH = "cw.watch"
+
 WATCH_HELP = """wa <expr>         : watchpoint on expression (stops on change)
 wa -f <path>      : watchpoint per line of <path>
 cw <expr>         : show expression live in pwndbg context (no stopping)
 cw -e <cmd>       : run <cmd> as a gdb command, shown live (quotes optional)
 cw -f <path>      : contextwatch per line of <path>
-remove with: cunwatch / contextunwatch / delete"""
+cw -d <num>...    : remove contextwatch entries by number (1-based)
+cws [path]        : save current contextwatch entries (default: cw.watch)
+remove with: cw -d / cunwatch / contextunwatch"""
 
 WATCH_FILE_SAMPLE = """# cw -f / wa -f file: one contextwatch argument per line.
 # Each line runs as: contextwatch <line>
 # Blank lines and lines starting with '#' are skipped.
+# cws writes this same format.
 
 # --- eval: show a value inline ---
 # eval lines with spaces must be quoted, otherwise argparse reads the first
@@ -86,6 +92,66 @@ def _run(cmd, arg):
         print(f"{cmd} {arg}: {e}")
 
 
+def _quote(s):
+    """contextwatch 인자로 되돌릴 수 있게 인용한다 (gdb.string_to_argv 규칙)."""
+    if not s:
+        return '""'
+    if not any(c in s for c in " \t\n'\"\\"):
+        return s
+    return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
+def _delete(rest):
+    tokens = rest.split()
+    if not tokens:
+        print("cw: -d requires one or more numbers")
+        return
+    nums = []
+    for token in tokens:
+        try:
+            nums.append(int(token))
+        except ValueError:
+            print(f"cw: -d: not a number: {token}")
+            return
+    # 번호가 밀리지 않도록 큰 번호부터 지운다.
+    for num in sorted(set(nums), reverse=True):
+        try:
+            gdb.execute(f"contextunwatch {num}")
+        except gdb.error as e:
+            print(f"cw: -d {num}: {e}")
+
+
+def _save(path):
+    try:
+        import pwndbg.commands.context as context
+    except Exception as e:
+        print(f"cws: pwndbg not loaded ({e})")
+        return
+
+    if not context.expressions:
+        print("cws: no contextwatch entries to save")
+        return
+
+    lines = []
+    for expression, cmd in context.expressions:
+        if cmd == "eval":
+            lines.append(_quote(expression))
+        else:
+            lines.append(f"execute {_quote(expression)}")
+
+    try:
+        with open(path, "w") as f:
+            f.write("# cws: saved contextwatch entries. load with: cw -f <this file>\n")
+            f.write("# one contextwatch argument per line\n")
+            for line in lines:
+                f.write(line + "\n")
+    except OSError as e:
+        print(f"cws: {path}: {e}")
+        return
+
+    print(f"cws: wrote {len(lines)} entries to {path}")
+
+
 class WaCommand(gdb.Command):
     """wa <expr> | wa -f <path>
 
@@ -99,17 +165,37 @@ class WaCommand(gdb.Command):
 
 
 class CwCommand(gdb.Command):
-    """cw <expr> | cw -e <cmd> | cw -f <path>
+    """cw <expr> | cw -e <cmd> | cw -f <path> | cw -d <num>...
 
     contextwatch: show expression live in pwndbg context, no stopping.
-    -e runs a gdb command (quotes optional), -f loads one per line."""
+    -e runs a gdb command (quotes optional), -f loads one per line,
+    -d removes entries by number (1-based, as shown in the context)."""
 
     def __init__(self):
         super().__init__("cw", gdb.COMMAND_SUPPORT, gdb.COMPLETE_SYMBOL)
 
     def invoke(self, arg, tty):
+        mode, _, rest = arg.strip().partition(" ")
+        if mode == "-d":
+            _delete(rest)
+            return
         _run("contextwatch", arg)
+
+
+class CwsCommand(gdb.Command):
+    """cws [path]
+
+    Save the current contextwatch entries (the context 'expressions'
+    section) to a file that `cw -f <path>` can load again.
+    Default path: cw.watch."""
+
+    def __init__(self):
+        super().__init__("cws", gdb.COMMAND_SUPPORT, gdb.COMPLETE_FILENAME)
+
+    def invoke(self, arg, tty):
+        _save(arg.strip() or DEFAULT_SAVE_PATH)
 
 
 WaCommand()
 CwCommand()
+CwsCommand()
