@@ -12,6 +12,9 @@ end
 
 set disassembly-flavor att
 set print pretty on
+# pwndbg가 로드 시 output-radix를 16으로 덮어쓴다. radix 16에서는 x/c와 p가 문자 주석 없이
+# hex만 출력하므로 10으로 되돌린다. (아래 set은 pwndbg source 이후에 실행되어야 한다.)
+set output-radix 10
 set backtrace limit 0
 set logging file dbg.log
 set logging enabled on
