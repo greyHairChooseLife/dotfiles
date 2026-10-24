@@ -61,7 +61,11 @@ while :; do
                 --preview 'tree --gitignore -dC -L 3 {}'
     )
 
-    [ -z "$dir" ] && exit 1
+    # fzf 중단(Esc/Ctrl+C): 지금까지 들어온 경로를 출력해 호출부가 그곳으로 이동한다.
+    if [ -z "$dir" ]; then
+        printf '%s\n' "$base"
+        exit 0
+    fi
 
     if [ "$dir" = ".." ]; then
         base=$(dirname "$base")
