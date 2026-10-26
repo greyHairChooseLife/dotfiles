@@ -45,13 +45,14 @@ per_process_history() {
 
     local selected
     selected=$(
-        COLUMNS=$COLUMNS zsh-history list-process ${pid} \
+        COLUMNS=$COLUMNS zsh-history list-process ${pid} --reverse \
             | fzf \
             --ansi \
             --multi \
-            --tac \
             --delimiter '\t' \
             --with-nth=1 \
+            --track \
+            --id-nth 2 \
             --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today) | <Alt+d>: delete' \
             --prompt 'history -PID- > ' \
             --preview 'printf %s {2}' \
@@ -61,9 +62,10 @@ per_process_history() {
             --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \
             --bind "alt-1:put(${pwd_escaped})" \
             --bind "alt-2:put(${today})" \
-            --bind "alt-3:reload(zsh-history list-process ${pid})" \
-            --bind "alt-4:reload(zsh-history list-process --no-path ${pid})" \
-            --bind "alt-d:execute-silent(zsh-history delete-process ${pid} {+2})+clear-selection+reload(zsh-history list-process ${pid})" \
+            --bind "alt-3:reload(zsh-history list-process --reverse ${pid})" \
+            --bind "alt-4:reload(zsh-history list-process --no-path --reverse ${pid})" \
+            --bind "resize:reload(zsh-history list-process --reverse ${pid})" \
+            --bind "alt-d:execute-silent(zsh-history delete-process ${pid} {+2})+clear-selection+reload(zsh-history list-process --reverse ${pid})" \
             | awk -F'\t' '{print $2}'
     )
     if [[ -n "$selected" ]]; then
@@ -86,13 +88,14 @@ global_history() {
 
     local selected
     selected=$(
-        COLUMNS=$COLUMNS zsh-history list-global \
+        COLUMNS=$COLUMNS zsh-history list-global --reverse \
             | fzf \
             --ansi \
             --multi \
-            --tac \
             --delimiter '\t' \
             --with-nth=1 \
+            --track \
+            --id-nth 2 \
             --header '<Alt+1>: filter by '${PWD}' | <Alt+2>: filter by Date(today) | <Alt+d>: delete' \
             --prompt 'history -Global- > ' \
             --preview 'printf %s {2}' \
@@ -102,9 +105,10 @@ global_history() {
             --bind 'alt-e:execute(printf "%s" {2} | xclip -selection clipboard)' \
             --bind "alt-1:put(${pwd_escaped})" \
             --bind "alt-2:put(${today})" \
-            --bind "alt-3:reload(zsh-history list-global)" \
-            --bind "alt-4:reload(zsh-history list-global --no-path)" \
-            --bind "alt-d:execute-silent(zsh-history delete-global {+2})+clear-selection+reload(zsh-history list-global)" \
+            --bind "alt-3:reload(zsh-history list-global --reverse)" \
+            --bind "alt-4:reload(zsh-history list-global --no-path --reverse)" \
+            --bind "resize:reload(zsh-history list-global --reverse)" \
+            --bind "alt-d:execute-silent(zsh-history delete-global {+2})+clear-selection+reload(zsh-history list-global --reverse)" \
             | awk -F'\t' '{print $2}'
     )
     if [[ -n "$selected" ]]; then

@@ -17,11 +17,13 @@ HISTDIR="$HOME/.zsh_history_dir"
 # row; commands longer than the column are truncated with an ellipsis (the raw
 # command in field 2 is untouched). path and time are dimmed (ANSI 90).
 _hist_format() {
-    # Width source priority: COLUMNS (exported by the zle wrapper for the initial
-    # list) -> FZF_COLUMNS (set by fzf inside reload subshells) -> tput -> 80.
+    # Width source priority: FZF_COLUMNS (live width inside fzf reload subshells)
+    # -> COLUMNS (exported by the zle wrapper for the initial list) -> tput -> 80.
+    # FZF_COLUMNS must win: a COLUMNS exported into fzf's environment keeps the
+    # pre-resize value and would re-emit stale widths on the resize reload.
     # tput is unreliable here because stdout is a pipe, so it is only a last resort.
     local cols
-    for cols in "${COLUMNS:-}" "${FZF_COLUMNS:-}" "$(tput cols 2>/dev/null)" 80; do
+    for cols in "${FZF_COLUMNS:-}" "${COLUMNS:-}" "$(tput cols 2>/dev/null)" 80; do
         [ -n "$cols" ] && [ "$cols" != "0" ] && break
     done
     awk -F'\t' -v cols="$cols" '
@@ -29,10 +31,18 @@ _hist_format() {
         dim  = "\033[90m"; rst = "\033[0m"
         gap   = 2                      # spaces between columns
         timew = 19                     # YYYY-MM-DD HH:MM:SS
+        # fzf reserves 3 columns left/right of the item text: a 2-column pointer
+        # gutter (pointer + space) and 1 column for the scrollbar (reserved even
+        # when nothing scrolls). Without this the row is 3 chars too wide and fzf
+        # clips the timestamp behind a '··'.
+        reserve = 3
         # path gets a slice of the remaining width; command fills the rest so the
         # whole terminal width is used. time is right-aligned at the far edge.
-        avail = cols - timew - gap*2
-        if (avail < 30) avail = 30
+        # pathw and cmdw have floors of 12 and 10, so avail needs at least 22 or
+        # the row grows wider than the terminal (below ~48 cols fzf then clips
+        # the timestamp instead of shortening the command).
+        avail = cols - reserve - timew - gap*2
+        if (avail < 22) avail = 22
         pathw = int(avail * 0.30)
         if (pathw < 12) pathw = 12
         cmdw  = avail - pathw
@@ -54,26 +64,28 @@ _hist_format() {
 # Dedup by command keeping the NEWEST occurrence. A single awk pass keeps, per
 # command, the latest timestamp+pwd in a hash (no full sort); then one sort by
 # timestamp for display. Stored line is  timestamp<TAB>pwd<TAB>command.
-# $nopath=1 replaces the path column with "...".
+# $nopath=1 replaces the path column with "...". $rev=1 sorts newest-first.
 _dedup_newest() {
-    local nopath="$1"
+    local nopath="$1" rev="${2:-0}"
+    local sortkey="2,2"
+    [ "$rev" = "1" ] && sortkey="2,2r"
     awk -F'\t' -v nopath="$nopath" '
         NF>=3 && $1 >= ts[$3] { ts[$3]=$1; pw[$3]=$2 }
         END { for (c in ts) print c"\t"ts[c]"\t"(nopath=="1" ? "..." : pw[c]) }
-    ' | sort -t$'\t' -k2,2
+    ' | sort -t$'\t' -k"$sortkey"
 }
 
 list_process() {
-    local pid="$1" nopath="$2"
+    local pid="$1" nopath="$2" rev="${3:-0}"
     cat "$HISTDIR/pid_$pid" 2>/dev/null \
-        | _dedup_newest "$nopath" \
+        | _dedup_newest "$nopath" "$rev" \
         | _hist_format
 }
 
 list_global() {
-    local nopath="$1"
+    local nopath="$1" rev="${2:-0}"
     cat "$HISTDIR"/pid_* 2>/dev/null \
-        | _dedup_newest "$nopath" \
+        | _dedup_newest "$nopath" "$rev" \
         | _hist_format
 }
 
@@ -123,12 +135,25 @@ cmd="${1:-}"
 shift || true
 case "$cmd" in
     list-process)
-        nopath=0; [ "${1:-}" = "--no-path" ] && { nopath=1; shift; }
-        list_process "${1:-$$}" "$nopath"
+        nopath=0; rev=0; pid=""
+        for a in "$@"; do
+            case "$a" in
+                --no-path) nopath=1 ;;
+                --reverse) rev=1 ;;
+                *)         pid="$a" ;;
+            esac
+        done
+        list_process "${pid:-$$}" "$nopath" "$rev"
         ;;
     list-global)
-        nopath=0; [ "${1:-}" = "--no-path" ] && { nopath=1; shift; }
-        list_global "$nopath"
+        nopath=0; rev=0
+        for a in "$@"; do
+            case "$a" in
+                --no-path) nopath=1 ;;
+                --reverse) rev=1 ;;
+            esac
+        done
+        list_global "$nopath" "$rev"
         ;;
     delete-process)
         pid="$1"; shift
@@ -138,7 +163,7 @@ case "$cmd" in
         delete_global "$@"
         ;;
     *)
-        echo "usage: zsh-history {list-process [--no-path] [pid]|list-global [--no-path]|delete-process <pid> <entry>...|delete-global <entry>...}" >&2
+        echo "usage: zsh-history {list-process [--no-path] [--reverse] [pid]|list-global [--no-path] [--reverse]|delete-process <pid> <entry>...|delete-global <entry>...}" >&2
         exit 2
         ;;
 esac
