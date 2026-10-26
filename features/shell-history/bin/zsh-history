@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
-# Standalone helper for zsh per-process / global history (used by fzf binds).
+# Standalone helper for zsh history (used by the fzf binds and the startup hook).
 # Functions can't be exported to zsh subshells, so the logic lives here on $PATH.
 #
-# Stored line format: timestamp<TAB>pwd<TAB>command
+# Store: ~/.zsh_history_dir/history, one line per recorded command
+#        timestamp<TAB>pid<TAB>pwd<TAB>command
 # Output line format (for fzf): display<TAB>command   (column 2 = raw command)
+#
+# A single store file means a lookup is one read instead of a glob over thousands
+# of per-pid files. Every rewrite happens in place while holding an exclusive
+# flock on that same inode, and appends take the same lock, so a concurrent
+# append is never lost to a truncating rewrite (see save_successful_history in
+# dot-config/zsh.sub/history.zsh).
 
 set -u
 
 HISTDIR="$HOME/.zsh_history_dir"
+STORE="$HISTDIR/history"
 
 # Build the fzf display line. Input to this awk:  command<TAB>timestamp<TAB>pwd
 # Output:  <display>\t<raw command>
@@ -30,16 +38,16 @@ _hist_format() {
     BEGIN {
         dim  = "\033[90m"; rst = "\033[0m"
         gap   = 2                      # spaces between columns
-        timew = 19                     # YYYY-MM-DD HH:MM:SS
+        timew = 14                     # MM-DD HH:MM:SS (year dropped to save space)
         # fzf reserves 3 columns left/right of the item text: a 2-column pointer
         # gutter (pointer + space) and 1 column for the scrollbar (reserved even
         # when nothing scrolls). Without this the row is 3 chars too wide and fzf
-        # clips the timestamp behind a '··'.
+        # clips the timestamp behind a "··".
         reserve = 3
         # path gets a slice of the remaining width; command fills the rest so the
         # whole terminal width is used. time is right-aligned at the far edge.
         # pathw and cmdw have floors of 12 and 10, so avail needs at least 22 or
-        # the row grows wider than the terminal (below ~48 cols fzf then clips
+        # the row grows wider than the terminal (below ~43 cols fzf then clips
         # the timestamp instead of shortening the command).
         avail = cols - reserve - timew - gap*2
         if (avail < 22) avail = 22
@@ -55,7 +63,7 @@ _hist_format() {
         return r
     }
     {
-        raw = $1; time = $2; path = $3
+        raw = $1; time = substr($2, 6); path = $3
         # plain padding first (so ANSI codes do not skew widths), then color
         printf "%s  %s%s  %s%s\t%s\n", fit(raw, cmdw), dim, fit(path, pathw), time, rst, raw
     }'
@@ -63,72 +71,162 @@ _hist_format() {
 
 # Dedup by command keeping the NEWEST occurrence. A single awk pass keeps, per
 # command, the latest timestamp+pwd in a hash (no full sort); then one sort by
-# timestamp for display. Stored line is  timestamp<TAB>pwd<TAB>command.
+# timestamp for display. Input line is  timestamp<TAB>pid<TAB>pwd<TAB>command.
 # $nopath=1 replaces the path column with "...". $rev=1 sorts newest-first.
 _dedup_newest() {
     local nopath="$1" rev="${2:-0}"
     local sortkey="2,2"
     [ "$rev" = "1" ] && sortkey="2,2r"
     awk -F'\t' -v nopath="$nopath" '
-        NF>=3 && $1 >= ts[$3] { ts[$3]=$1; pw[$3]=$2 }
+        NF>=4 && $1 >= ts[$4] { ts[$4]=$1; pw[$4]=$3 }
         END { for (c in ts) print c"\t"ts[c]"\t"(nopath=="1" ? "..." : pw[c]) }
     ' | sort -t$'\t' -k"$sortkey"
 }
 
 list_process() {
     local pid="$1" nopath="$2" rev="${3:-0}"
-    cat "$HISTDIR/pid_$pid" 2>/dev/null \
+    [ -f "$STORE" ] || return 0
+    awk -F'\t' -v pid="$pid" 'NF>=4 && $2==pid' "$STORE" \
         | _dedup_newest "$nopath" "$rev" \
         | _hist_format
 }
 
 list_global() {
     local nopath="$1" rev="${2:-0}"
-    cat "$HISTDIR"/pid_* 2>/dev/null \
+    [ -f "$STORE" ] || return 0
+    cat "$STORE" \
         | _dedup_newest "$nopath" "$rev" \
         | _hist_format
 }
 
-# Remove every line whose command field (field 3) exactly equals one of the
-# given entries, in a single awk pass. Entries are passed to awk via a NUL-joined
-# env var so any character (spaces, tabs-in-cmd are impossible since field is
-# tab-delimited, quotes, $) is handled literally.
-# Note: grep/awk-filter can empty a file; never gate `mv` on exit status.
+# Ask on the terminal so a fzf execute(...) child can confirm as well.
+# $1 = scope description, rest = entries about to be removed.
+_ask() {
+    local scope="$1"; shift
+    # /dev/tty exists as a device node even without a controlling terminal, so
+    # probe it by opening it; with no terminal there is nothing to ask on.
+    if ! { : <>/dev/tty; } 2>/dev/null; then
+        return 0
+    fi
+    local msg
+    if [ "$#" -eq 1 ]; then
+        msg="delete from $scope: $1"
+    else
+        msg="delete $# entries from $scope"
+    fi
+    printf '\r\033[K%s ? [y/N] ' "$msg" > /dev/tty 2>/dev/null
+    local ans=""
+    IFS= read -r ans < /dev/tty 2>/dev/null || return 1
+    printf '\r\033[K' > /dev/tty 2>/dev/null
+    case "$ans" in
+        [yY]*) return 0 ;;
+        *)     return 1 ;;
+    esac
+}
+
+# Remove every line whose command field (field 4) exactly equals one of the given
+# entries, in a single awk pass. $1 = pid filter ("" matches every process).
+# Entries are passed to awk via a newline-joined env var so any character
+# (spaces, quotes, $) is handled literally; a command field never contains a tab.
+# The rewrite truncates the file in place while the store lock is held, keeping
+# the inode stable so appends waiting on the same lock land in the new content.
 _strip_entries() {
-    local file="$1"; shift
-    [ -e "$file" ] || return 0
-    local tmpfile
-    tmpfile=$(mktemp)
-    # Join entries with newline into ZH_DEL for awk to read as a set.
+    local want="$1"; shift
+    [ "$#" -gt 0 ] || return 0
+    [ -f "$STORE" ] || return 0
     local joined="" e
     for e in "$@"; do joined+="$e"$'\n'; done
-    ZH_DEL="$joined" awk -F'\t' '
-        BEGIN { n=split(ENVIRON["ZH_DEL"], a, "\n"); for(i=1;i<=n;i++) if(a[i]!="") del[a[i]]=1 }
-        !($3 in del)
-    ' "$file" > "$tmpfile"
-    mv "$tmpfile" "$file"
+    (
+        exec 9<>"$STORE" || exit 1
+        flock -x 9
+        local tmp
+        tmp=$(mktemp)
+        ZH_DEL="$joined" ZH_PID="$want" awk -F'\t' '
+            BEGIN {
+                n=split(ENVIRON["ZH_DEL"], a, "\n")
+                for (i=1;i<=n;i++) if (a[i]!="") del[a[i]]=1
+                want=ENVIRON["ZH_PID"]
+            }
+            (want=="" || $2==want) && ($4 in del) { next }
+            { print }
+        ' "$STORE" > "$tmp" && cat "$tmp" > "$STORE"
+        rm -f "$tmp"
+    )
 }
 
 delete_process() {
     local pid="$1"; shift
-    _strip_entries "$HISTDIR/pid_$pid" "$@"
+    local ask=0
+    [ "${1:-}" = "--ask" ] && { ask=1; shift; }
+    [ "$#" -gt 0 ] || return 0
+    # One pid can have run in several sessions over time (pid reuse); the ask
+    # message stays generic because the entries are matched by command text.
+    if [ "$ask" = "1" ] && ! _ask "this process" "$@"; then
+        return 1
+    fi
+    _strip_entries "$pid" "$@"
 }
 
 delete_global() {
-    # Find files containing ANY of the entries as a whole command field, then
-    # strip all entries from each in one pass. rg over all files is ~0.01s;
-    # rewriting all (3000+) files unconditionally would be ~11s. Anchoring as
-    # \t<entry>$ matches the whole command field so 'ls' won't match 'ls -la'.
+    local ask=0
+    [ "${1:-}" = "--ask" ] && { ask=1; shift; }
     [ "$#" -gt 0 ] || return 0
-    local e esc alt=""
-    for e in "$@"; do
-        esc=$(printf '%s' "$e" | sed 's/[][\\.^$*+?(){}|/]/\\&/g')
-        [ -n "$alt" ] && alt+="|"
-        alt+="$esc"
-    done
-    rg -l --no-config -- "\t($alt)\$" "$HISTDIR" -g 'pid_[0-9]*' 2>/dev/null | while IFS= read -r file; do
-        _strip_entries "$file" "$@"
-    done
+    if [ "$ask" = "1" ] && ! _ask "every process" "$@"; then
+        return 1
+    fi
+    _strip_entries "" "$@"
+}
+
+# Keep only the newest N entries. Runs under the store lock for the same reason
+# as _strip_entries.
+trim_store() {
+    local max="${1:-50000}"
+    [ -f "$STORE" ] || return 0
+    local total
+    total=$(wc -l < "$STORE")
+    [ "$total" -gt "$max" ] || return 0
+    (
+        exec 9<>"$STORE" || exit 1
+        flock -x 9
+        local tmp
+        tmp=$(mktemp)
+        sort -t$'\t' -k1,1 "$STORE" | tail -n "$max" > "$tmp" && cat "$tmp" > "$STORE"
+        rm -f "$tmp"
+    )
+}
+
+# Fold the old one-file-per-pid layout into the single store. Idempotent: it does
+# nothing once no pid_* files are left, so it is safe to run on every shell start.
+# Two legacy shapes are handled: the tab-separated  ts<TAB>pwd<TAB>cmd  and the
+# older space-separated  ts<TAB...>  form (date time pwd cmd) that the display
+# already ignored but that is still worth keeping.
+import_legacy() {
+    local files tmp
+    files=$(find "$HISTDIR" -maxdepth 1 -name 'pid_[0-9]*' -type f 2>/dev/null)
+    [ -n "$files" ] || return 0
+    tmp=$(mktemp)
+    # LC_ALL=C: the legacy files can contain bytes that are not valid UTF-8 and
+    # the slices below are ASCII at fixed offsets, so byte semantics are safer.
+    printf '%s\n' "$files" | LC_ALL=C xargs -d '\n' -r awk -F'\t' -v OFS='\t' '
+        function pid_of(f) { sub(/^.*\/pid_/, "", f); return f }
+        NF>=3 { print $1, pid_of(FILENAME), $2, $3; next }
+        # legacy space form: YYYY-MM-DD HH:MM:SS <pwd> <command...>
+        NF==1 && substr($0, 1, 19) ~ /^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/ {
+            rest = substr($0, 21)
+            i = index(rest, " ")
+            if (i > 1) print substr($0, 1, 19), pid_of(FILENAME), substr(rest, 1, i-1), substr(rest, i+1)
+        }
+    ' > "$tmp" || { rm -f "$tmp"; return 1; }
+    if [ -s "$tmp" ]; then
+        (
+            exec 9<>"$STORE" || exit 1
+            flock -x 9
+            cat "$tmp" >> "$STORE"
+        ) || { rm -f "$tmp"; return 1; }
+    fi
+    # Only drop the sources once their content is safely in the store.
+    printf '%s\n' "$files" | xargs -d '\n' -r rm -f
+    rm -f "$tmp"
 }
 
 cmd="${1:-}"
@@ -162,8 +260,14 @@ case "$cmd" in
     delete-global)
         delete_global "$@"
         ;;
+    trim)
+        trim_store "${1:-50000}"
+        ;;
+    import-legacy)
+        import_legacy
+        ;;
     *)
-        echo "usage: zsh-history {list-process [--no-path] [--reverse] [pid]|list-global [--no-path] [--reverse]|delete-process <pid> <entry>...|delete-global <entry>...}" >&2
+        echo "usage: zsh-history {list-process [--no-path] [--reverse] [pid]|list-global [--no-path] [--reverse]|delete-process <pid> [--ask] <entry>...|delete-global [--ask] <entry>...|trim [max]|import-legacy}" >&2
         exit 2
         ;;
 esac

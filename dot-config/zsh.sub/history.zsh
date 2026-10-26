@@ -1,6 +1,13 @@
 # Create history directory if it doesn't exist
 mkdir -p ~/.zsh_history_dir
 
+# Single history store, shared by every shell. One line per recorded command:
+#   timestamp<TAB>pid<TAB>pwd<TAB>command
+# Reads and rewrites live in the `zsh-history` helper; the append below takes the
+# same flock as those rewrites so a truncation never eats a concurrent append.
+HISTDIR=~/.zsh_history_dir
+HISTSTORE=$HISTDIR/history
+
 # Separate zsh internal history from custom history
 export HISTFILE=~/.zsh_history_dir/.zsh_internal_hist_$$
 export HISTSIZE=500
@@ -19,7 +26,7 @@ edit_and_return_command() {
     zle reset-prompt
 }
 
-# Format: timestamp<TAB>pwd<TAB>command
+# Store format: timestamp<TAB>pid<TAB>pwd<TAB>command
 # Function to save only successful commands
 save_successful_history() {
     local exit_code=$?
@@ -27,7 +34,7 @@ save_successful_history() {
         local last_cmd=$(fc -ln -1 | sed 's/^[[:space:]]*//')
         if [[ -n "$last_cmd" ]] && [[ "$last_cmd" != "hi" ]] && [[ "$last_cmd" != "hip" ]]; then
             local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-            printf '%s\t%s\t%s\n' "$timestamp" "$(pwd)" "$last_cmd" >> ~/.zsh_history_dir/pid_$$
+            { flock 9; printf '%s\t%s\t%s\t%s\n' "$timestamp" "$$" "$PWD" "$last_cmd" >&9 } 9>>"$HISTSTORE"
         fi
     fi
     return $exit_code
@@ -41,7 +48,7 @@ precmd_functions+=(save_successful_history)
 per_process_history() {
     local pid="${1:-$$}"
     local pwd_escaped=$(printf ' %s ' "'${PWD}")
-    local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
+    local today=$(printf ' %s ' "'$(date '+%m-%d')")
 
     local selected
     selected=$(
@@ -65,7 +72,7 @@ per_process_history() {
             --bind "alt-3:reload(zsh-history list-process --reverse ${pid})" \
             --bind "alt-4:reload(zsh-history list-process --no-path --reverse ${pid})" \
             --bind "resize:reload(zsh-history list-process --reverse ${pid})" \
-            --bind "alt-d:execute-silent(zsh-history delete-process ${pid} {+2})+clear-selection+reload(zsh-history list-process --reverse ${pid})" \
+            --bind "alt-d:execute(zsh-history delete-process --ask ${pid} {s+2})+clear-selection+reload(zsh-history list-process --reverse ${pid})" \
             | awk -F'\t' '{print $2}'
     )
     if [[ -n "$selected" ]]; then
@@ -84,7 +91,7 @@ zle -N per_process_history
 # Global history function
 global_history() {
     local pwd_escaped=$(printf ' %s ' "'${PWD}")
-    local today=$(printf ' %s ' "'$(date '+%Y-%m-%d')")
+    local today=$(printf ' %s ' "'$(date '+%m-%d')")
 
     local selected
     selected=$(
@@ -108,7 +115,7 @@ global_history() {
             --bind "alt-3:reload(zsh-history list-global --reverse)" \
             --bind "alt-4:reload(zsh-history list-global --no-path --reverse)" \
             --bind "resize:reload(zsh-history list-global --reverse)" \
-            --bind "alt-d:execute-silent(zsh-history delete-global {+2})+clear-selection+reload(zsh-history list-global --reverse)" \
+            --bind "alt-d:execute(zsh-history delete-global --ask {s+2})+clear-selection+reload(zsh-history list-global --reverse)" \
             | awk -F'\t' '{print $2}'
     )
     if [[ -n "$selected" ]]; then
@@ -124,65 +131,22 @@ global_history() {
 }
 zle -N global_history
 
-# LRU cleanup: keep total history lines under MAX_HISTORY_LINES
+# LRU cleanup: keep the store under MAX_HISTORY_LINES entries
 MAX_HISTORY_LINES=50000
 
-cleanup_history_lru() {
-    local histdir="$HOME/.zsh_history_dir"
-    local total
-    total=$(cat "$histdir"/pid_* 2>/dev/null | wc -l)
-
-    if (( total <= MAX_HISTORY_LINES )); then
-        return
-    fi
-
-    local excess=$(( total - MAX_HISTORY_LINES ))
-
-    # Collect lines to delete per file, then remove in batch
-    local tmpmerge=$(mktemp)
-    for f in "$histdir"/pid_*; do
-        [ -s "$f" ] || continue
-        awk -v file="$f" -v OFS='\t' '{print file, $0}' "$f"
-    done | sort -t$'\t' -k2,2 | head -n "$excess" > "$tmpmerge"
-
-    # Group deletions by file for batch processing
-    local prev_file="" tmp=""
-    while IFS=$'\t' read -r file line; do
-        if [[ "$file" != "$prev_file" ]]; then
-            # Flush previous file
-            if [[ -n "$prev_file" && -n "$tmp" ]]; then
-                mv "$tmp" "$prev_file"
-            fi
-            tmp=$(mktemp)
-            cat "$file" > "$tmp"
-            prev_file="$file"
-        fi
-        # Remove first occurrence of the line
-        local tmp2=$(mktemp)
-        awk -v target="$line" 'found || $0 != target { print } !found && $0 == target { found=1 }' "$tmp" > "$tmp2"
-        mv "$tmp2" "$tmp"
-    done < "$tmpmerge"
-    # Flush last file
-    if [[ -n "$prev_file" && -n "$tmp" ]]; then
-        mv "$tmp" "$prev_file"
-    fi
-
-    # Remove empty pid files
-    find "$histdir" -name "pid_*" -empty -delete
-
-    rm -f "$tmpmerge"
-}
-
-# Run LRU cleanup at most once per day (with flock to prevent race conditions)
+# One background pass per shell start: fold any leftover per-pid history files
+# (old layout) into the single store, then trim it at most once a day. Both run
+# inside zsh-history, which takes the store flock, so a concurrent append from
+# another shell is never lost while the file is rewritten.
 (
-    flock -n 9 || exit 0
-    marker="$HOME/.zsh_history_dir/.last_cleanup"
-    if [[ -f "$marker" ]]; then
-        [[ "$(cat "$marker")" == "$(date '+%Y-%m-%d')" ]] && exit 0
+    zsh-history import-legacy
+    if flock -n 8; then
+        marker="$HISTDIR/.last_cleanup"
+        if [[ ! -f "$marker" ]] || [[ "$(cat "$marker")" != "$(date '+%Y-%m-%d')" ]]; then
+            zsh-history trim "$MAX_HISTORY_LINES" && date '+%Y-%m-%d' > "$marker"
+        fi
     fi
-    cleanup_history_lru
-    date '+%Y-%m-%d' > "$marker"
-) 9>"$HOME/.zsh_history_dir/.cleanup.lock" > /dev/null 2>&1 &!
+) 8>"$HISTDIR/.cleanup.lock" > /dev/null 2>&1 &!
 
 # Command aliases
 alias hip=' per_process_history'      # Current process history
