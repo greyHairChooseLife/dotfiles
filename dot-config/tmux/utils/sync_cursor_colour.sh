@@ -26,6 +26,12 @@ if [ -z "$client" ]; then
 fi
 [ -z "$client" ] && exit 0
 
+# Control-mode clients have no cursor of their own, and a short-lived one can be
+# gone by the time an async hook runs (this format is then empty). Nothing to do
+# in either case.
+[ "$(tmux display-message -p -t "$client" '#{client_control_mode}' 2>/dev/null)" = "0" ] ||
+    exit 0
+
 # pane_in_mode must win over client_key_table: copy mode keeps the client key
 # table at "root" and exposes itself only through the pane.
 state=$(tmux display-message -p -t "$client" \
