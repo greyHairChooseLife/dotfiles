@@ -25,18 +25,18 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 
 local map = vim.keymap.set
 
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.softtabstop = 4
-vim.opt.expandtab = true
-vim.opt.textwidth = 95
+vim.opt_local.tabstop = 4
+vim.opt_local.shiftwidth = 4
+vim.opt_local.softtabstop = 4
+vim.opt_local.expandtab = true
+vim.opt_local.textwidth = 95
 -- BUG:: not working as expected
 -- n: 리스트 인식, j: 주석 리더 제거, c: 긴 줄 자동 래핑
-vim.opt.formatoptions:append("n")
+vim.opt_local.formatoptions:append("n")
 -- 리스트 패턴 설정 (불렛 포인트 및 숫자 리스트 대응)
-vim.opt.formatlistpat = [[^\s*[-*+]\s\+]]
+vim.opt_local.formatlistpat = [[^\s*[-*+]\s\+]]
 -- 특정 플러그인이 설정한 formatexpr이 있다면 초기화 (gq가 내장 기능을 쓰도록 함)
-vim.opt.formatexpr = ""
+vim.opt_local.formatexpr = ""
 
 map({ "n", "v" }, "<Right>", "<Esc>WviWo")
 map({ "n", "v" }, "<Left>", "<Esc>BviWo")
