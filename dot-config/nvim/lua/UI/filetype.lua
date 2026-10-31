@@ -1,6 +1,9 @@
 local utils = require("utils")
 local setOpt = utils.setOpt
 
+-- Treat .s as generic assembly (builtin content detection may return vmasm/masm)
+vim.filetype.add({ extension = { s = "asm" } })
+
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
     callback = function()
