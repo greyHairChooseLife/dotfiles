@@ -1,20 +1,30 @@
 session_name: scratch-C
 start_directory: /tmp
 suppress_history: false
+shell_command_before:
+    -   mkdir -p /tmp/scratch-C
 
 windows:
     # --- scratch C ---
     - window_name: scratch
       focus: true
-      layout: even-horizontal
+      layout: 16ff,256x75,0,0{84x75,0,0,547,79x75,85,0,549,91x75,165,0[91x50,165,0,548,91x24,165,51,550]}
+      start_directory: /tmp/scratch-C
       panes:
         - shell_command:
             - tm.1_title 'main.c'
-            - mkdir -p /tmp/scratch-C
-            - 'printf ''%s\n'' ''#include <stdio.h>'' ''#include <stdlib.h>'' '''' ''int main(void) {'' ''    int i = -42;'' ''    unsigned int u = 42;'' ''    float f = 3.14f;'' ''    double d = 2.718281828;'' "    char c = ''A'';" "    char *s = \"hello\";" ''    int arr[3] = {1, 2, 3};'' ''    int mat[2][3] = {{1, 2, 3}, {4, 5, 6}};'' '''' "    printf(\"int:       %d\\n\", i);" "    printf(\"int bin:   %#34b\", i);" "    printf(\"\\n\");" "    printf(\"unsigned:  %u\\n\", u);" "    printf(\"float:     %f\\n\", f);" "    printf(\"double:    %f\\n\", d);" "    printf(\"sci:       %e\\n\", d);" "    printf(\"char:      %c\\n\", c);" "    printf(\"str:       %s\\n\", s);" "    printf(\"arr:       %d %d %d\\n\", arr[0], arr[1], arr[2]);" ''    for (int r = 0; r < 2; r++) {'' "        for (int col = 0; col < 3; col++) printf(\"%d \", mat[r][col]);" "        printf(\"\\n\");" ''    }'' '''' ''    int *p = malloc(3 * sizeof(*p));'' ''    if (p == NULL) return 1;'' ''    p[0] = 7; p[1] = 8; p[2] = 9;'' "    printf(\"malloc:    %d %d %d\\n\", p[0], p[1], p[2]);" ''    free(p);'' '''' ''    return 0;'' ''}'' > /tmp/scratch-C/main.c'
-            - vi /tmp/scratch-C/main.c
+            - 'printf ''%s\n'' ''#include <stdio.h>'' ''#include <stdlib.h>'' '''' ''int main(void) {'' ''    int i = -42;'' ''    unsigned int u = 42;'' ''    float f = 3.14f;'' ''    double d = 2.718281828;'' "    char c = ''A'';" "    char *s = \"hello\";" ''    int arr[3] = {1, 2, 3};'' ''    int mat[2][3] = {{1, 2, 3}, {4, 5, 6}};'' '''' "    printf(\"int:       %d\\n\", i);" "    printf(\"int bin:   %#34b\", i);" "    printf(\"\\n\");" "    printf(\"unsigned:  %u\\n\", u);" "    printf(\"float:     %f\\n\", f);" "    printf(\"double:    %f\\n\", d);" "    printf(\"sci:       %e\\n\", d);" "    printf(\"char:      %c\\n\", c);" "    printf(\"str:       %s\\n\", s);" "    printf(\"arr:       %d %d %d\\n\", arr[0], arr[1], arr[2]);" ''    for (int r = 0; r < 2; r++) {'' "        for (int col = 0; col < 3; col++) printf(\"%d \", mat[r][col]);" "        printf(\"\\n\");" ''    }'' '''' ''    int *p = malloc(3 * sizeof(*p));'' ''    if (p == NULL) return 1;'' ''    p[0] = 7; p[1] = 8; p[2] = 9;'' "    printf(\"malloc:    %d %d %d\\n\", p[0], p[1], p[2]);" ''    free(p);'' '''' ''    return 0;'' ''}'' > main.c'
+            - vi main.c
           focus: true
 
         - shell_command:
-            - tm.1_title 'asan'
-            - mkdir -p /tmp/scratch-C && cd /tmp/scratch-C && watch 'cc -g -O0 -fsanitize=address,undefined main.c -o main && ./main'
+            - tm.1_title 'ASan & DSan'
+            - watch 'cc -g -O0 -fsanitize=address,undefined main.c -o main && ./main'
+
+        - shell_command:
+            - tm.1_title 'assembly'
+            - vi main.s
+
+        - shell_command:
+            - tm.1_title 'compile to get assembly'
+            - watch 'cc -Og -S main.c -o main.s'
