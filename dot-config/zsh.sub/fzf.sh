@@ -17,8 +17,8 @@ export FZF_DEFAULT_OPTS="
   --bind 'alt-p:change-preview-window(right,70%|up,90%,border-horizontal|down,40%,border-horizontal|hidden|right)'
   --bind 'tab:toggle-up'
   --bind 'shift-tab:toggle-down'
-  --bind 'ctrl-e:execute(printf "%s" {} | $_fzf_copy_cmd)+abort'
-  --bind 'alt-e:execute(printf "%s" {} | $_fzf_copy_cmd)'
+  --bind 'ctrl-e:execute(printf \"%s\n\" {+} | tac | $_fzf_copy_cmd)+abort'
+  --bind 'alt-e:execute(printf \"%s\n\" {+} | tac | $_fzf_copy_cmd)'
   --bind 'ctrl-alt-w:execute(echo {+} | xargs -d \" \" -I{} printf \"%s\\n\" {} | tac | xclip -selection clipboard)'
   --color='
     hl:#1e90ff,
