@@ -73,6 +73,7 @@ per_process_history() {
             --bind "alt-4:reload(zsh-history list-process --no-path --reverse ${pid})" \
             --bind "resize:reload(zsh-history list-process --reverse ${pid})" \
             --bind "alt-d:execute(zsh-history delete-process --ask ${pid} {s+2})+clear-selection+reload(zsh-history list-process --reverse ${pid})" \
+            --bind 'change:first' \
             | awk -F'\t' '{print $2}'
     )
     if [[ -n "$selected" ]]; then
@@ -116,6 +117,7 @@ global_history() {
             --bind "alt-4:reload(zsh-history list-global --no-path --reverse)" \
             --bind "resize:reload(zsh-history list-global --reverse)" \
             --bind "alt-d:execute(zsh-history delete-global --ask {s+2})+clear-selection+reload(zsh-history list-global --reverse)" \
+            --bind 'change:first' \
             | awk -F'\t' '{print $2}'
     )
     if [[ -n "$selected" ]]; then
