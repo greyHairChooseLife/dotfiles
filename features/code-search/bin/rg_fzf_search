@@ -1,16 +1,16 @@
 #!/bin/bash
-# rg_fzf_search.sh — ripgrep search with fzf preview + nvim open
+# rg_fzf_search — ripgrep search with fzf preview + nvim open
 #
 # Passes arguments through to `rg`, pipes results through fzf + bat,
 # and opens selection in nvim at matched line.
 #
 # Usage:
-#   rg_fzf_search.sh <pattern> [rg flags] [paths...]
+#   rg_fzf_search <pattern> [rg flags] [paths...]
 #
 # Examples:
-#   rg_fzf_search.sh foo src/
-#   rg_fzf_search.sh -i 'error.*timeout'
-#   rg_fzf_search.sh --hidden 'TODO' ~/project
+#   rg_fzf_search foo src/
+#   rg_fzf_search -i 'error.*timeout'
+#   rg_fzf_search --hidden 'TODO' ~/project
 #
 # Dependencies: rg, fzf, bat
 #
@@ -20,6 +20,10 @@
 #   Tab        multi-select
 
 set -euo pipefail
+
+# The fzf execute binding re-invokes this script (via fzf's sh -c), so resolve
+# the path instead of relying on the name being on PATH.
+SELF=$(readlink -f "$0")
 
 # --peek helper mode: called from fzf execute binding
 # Receives: <file1> <file2> ... -- <line1> <line2> ...
@@ -80,7 +84,7 @@ SELECTED=$(echo "$DATA" \
         --delimiter ':' \
         --preview 'bat --style=numbers --color=always --highlight-line {2} {1}' \
         --preview-window 'right:60%:+{2}-5' \
-        --bind "ctrl-f:execute(rg_fzf_search.sh --peek {+1} -- {+2})" \
+        --bind "ctrl-f:execute($SELF --peek {+1} -- {+2})" \
         --header 'Enter: open in nvim (vsplits) | Ctrl-f: peek')
 
 [ -z "$SELECTED" ] && exit 0

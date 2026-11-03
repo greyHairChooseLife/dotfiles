@@ -1,18 +1,18 @@
 #!/bin/bash
-# sg_fzf_search.sh — ast-grep search with fzf preview + nvim open
+# sg_fzf_search — ast-grep search with fzf preview + nvim open
 #
 # Passes arguments through to `ast-grep`, adds --json, pipes results
 # through jq + fzf + bat, and opens selection in nvim at matched line.
 #
 # Usage:
-#   sg_fzf_search.sh -p '<pattern>' -l <lang> [paths...]   # inline pattern
-#   sg_fzf_search.sh -r <rule.yml> [paths...]               # rule file
-#   sg_fzf_search.sh -k <kind> -l <lang>                    # kind-based
+#   sg_fzf_search -p '<pattern>' -l <lang> [paths...]   # inline pattern
+#   sg_fzf_search -r <rule.yml> [paths...]               # rule file
+#   sg_fzf_search -k <kind> -l <lang>                    # kind-based
 #
 # Examples:
-#   sg_fzf_search.sh -p 'def $NAME($$): $$$BODY' -l python
-#   sg_fzf_search.sh -p 'console.log($$$ARGS)' -l typescript
-#   sg_fzf_search.sh -r ~/script.yml src/
+#   sg_fzf_search -p 'def $NAME($$): $$$BODY' -l python
+#   sg_fzf_search -p 'console.log($$$ARGS)' -l typescript
+#   sg_fzf_search -r ~/script.yml src/
 #
 # Dependencies: ast-grep, jq, fzf, bat
 #
@@ -22,6 +22,10 @@
 #   Tab        multi-select
 
 set -euo pipefail
+
+# The fzf execute binding re-invokes this script (via fzf's sh -c), so resolve
+# the path instead of relying on the name being on PATH.
+SELF=$(readlink -f "$0")
 
 # --peek helper mode: called from fzf execute binding
 # Receives: <file1> <file2> ... -- <line1> <line2> ...
@@ -89,7 +93,7 @@ SELECTED=$(echo "$DATA" \
         --delimiter ':' \
         --preview 'bat --style=numbers --color=always --highlight-line {2} {1}' \
         --preview-window 'right:60%:+{2}-5' \
-        --bind "ctrl-f:execute(sg_fzf_search.sh --peek {+1} -- {+2})" \
+        --bind "ctrl-f:execute($SELF --peek {+1} -- {+2})" \
         --header 'Enter: open in nvim (vsplits) | Ctrl-f: peek')
 
 [ -z "$SELECTED" ] && exit 0
