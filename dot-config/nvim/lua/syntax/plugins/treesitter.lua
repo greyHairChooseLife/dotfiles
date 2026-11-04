@@ -8,6 +8,7 @@ return {
         ---@param opts TSConfig
         config = function(_, opts)
             local ts = require("nvim-treesitter")
+            local utils = require("utils")
             ts.setup(opts)
             vim.treesitter.language.register("bash", "zsh")
 
@@ -88,7 +89,7 @@ return {
             if #missing > 0 then ts.install(missing) end
 
             -- exclude auto parser installing
-            local excluded_filetypes = { "oil", "env", "DiffviewFiles", "DiffviewFileHistory", "toggleterm", "bigfile" }
+            local excluded_filetypes = { "oil", "env", "DiffviewFiles", "DiffviewFileHistory", "toggleterm", "bigfile", "directory" }
 
             vim.api.nvim_create_autocmd("FileType", {
                 callback = function(ev)
@@ -103,7 +104,7 @@ return {
                     local lang = vim.treesitter.language.get_lang(vim.bo[ev.buf].filetype)
                     if lang and not vim.list_contains(ts.get_installed(), lang) then ts.install({ lang }) end
                     local ok = pcall(vim.treesitter.start, ev.buf)
-                    if not ok then vim.schedule(function() vim.notify("treesitter: no parser for " .. vim.bo[ev.buf].filetype, vim.log.levels.WARN) end) end
+                    if not ok then vim.schedule(function() utils.print_in_time("treesitter: no parser for " .. vim.bo[ev.buf].filetype, 1.5) end) end
                 end,
             })
         end,
