@@ -27,7 +27,6 @@ local predefined = {
     generate_commit_msg = "/generate_commit_msg",
     simplify_paragraph = "/simplify_paragraph",
     translate = "/translate",
-    polish = "/polish_english",
 }
 local chat = {
     -- improve_readability
@@ -120,6 +119,5 @@ wk_map({
         group = "Language",
         order = { "t", "r" },
         ["t"] = { gen_command("pre", predefined.translate), desc = "translate 󰗊 ", mode = { "v" } },
-        ["p"] = { gen_command("pre", predefined.polish), desc = "polish English", mode = { "v" } },
     },
 })

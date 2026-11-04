@@ -204,8 +204,6 @@ return {
         require("AI.codecompanion.utils.basic_autocmd_as_callback").setup()
         require("AI.codecompanion.utils.diff_highlights").setup()
         require("AI.codecompanion.utils.extmarks").setup()
-        require("AI.codecompanion.utils.save_english_study_records").setup()
-        require("AI.codecompanion.utils.save_english_study_notes").setup()
         require("AI.codecompanion.utils.filter_models").setup()
     end,
 }
