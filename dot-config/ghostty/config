@@ -18,8 +18,8 @@ term = xterm-256color
 # alacritty: decorations = "Buttonless"
 window-decoration = none
 
-# alacritty: opacity = 0.95
-background-opacity = 0.95
+# alacritty: opacity = 0.95 — needs a compositor, none is running here
+background-opacity = 1.0
 # alacritty has blur commented out as well (needs a compositor)
 # background-blur = 16
 
@@ -37,13 +37,10 @@ confirm-close-surface = false
 
 # alacritty: normal.family = "D2KodingLigature Nerd Font Propo"
 font-family = D2KodingLigature Nerd Font Propo
-# alacritty keeps the size in the gitignored local.toml, which is absent here
-# (so alacritty runs its default). 13 is what the ghostty test config used.
+# alacritty: size = 13.0 in local.toml
 font-size = 13
-# alacritty: offset.x = 1 has no ghostty equivalent — ghostty only has cell
-# adjustments, which change the cell size instead of shifting the glyph.
-# adjust-cell-width = 1
-# adjust-cell-height = 1   # used in the test config; no alacritty equivalent
+# wider cells: ghostty's default spacing is tighter than alacritty's
+adjust-cell-width = 10%
 # font-thicken / font-thicken-strength are macOS-only
 
 # --- cursor ------------------------------------------------------------------
@@ -52,6 +49,9 @@ font-size = 13
 cursor-style = block
 cursor-style-blink = false
 # alacritty: unfocused_hollow = true — ghostty has no unfocused-cursor option
+
+# shell integration sets a bar cursor per zle keymap; keep the block instead
+shell-integration-features = no-cursor
 
 # --- keyboard ----------------------------------------------------------------
 
@@ -69,8 +69,14 @@ keybind = shift+enter=csi:13;2u
 # keybind = ctrl+[=csi:27;5;91~
 # keybind = ctrl+i=csi:105;5u
 
+# --- performance -------------------------------------------------------------
+
+# alpha-blending stays at its default; `native` washes the whole surface out
+gtk-single-instance = true
+scrollback-limit-bytes = 20000000
+
 # CRITICAL, not solved yet: alacritty's Alt+u URL hints, Alt+y path-copy hints and
 # Alt+i vi mode do not exist in ghostty 1.3.1 (no hint subsystem, no open_url,
 # no vi mode). Details and leads: zk note hldhgcfh (task 0e2d3630).
 
-# The config is re-read on save (alacritty's live_config_reload = true).
+# No auto-reload: Ctrl+Shift+, or `kill -USR2 <pid>` after editing.

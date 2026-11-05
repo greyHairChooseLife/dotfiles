@@ -19,6 +19,9 @@ set $mod Mod4
 default_border pixel 2
 default_floating_border pixel 15
 
+# ghostty sets _MOTIF_WM_HINTS decorations=0, which makes i3 drop the frame
+for_window [class="com.mitchellh.ghostty"] border pixel 1
+
 # Hide borders
 hide_edge_borders none
 
