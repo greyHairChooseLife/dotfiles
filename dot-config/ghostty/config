@@ -38,7 +38,7 @@ confirm-close-surface = false
 # alacritty: normal.family = "D2KodingLigature Nerd Font Propo"
 font-family = D2KodingLigature Nerd Font Propo
 # alacritty: size = 13.0 in local.toml
-font-size = 13
+font-size = 12
 # wider cells: ghostty's default spacing is tighter than alacritty's
 adjust-cell-width = 10%
 # font-thicken / font-thicken-strength are macOS-only
