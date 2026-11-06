@@ -7,14 +7,20 @@ Usage:
   dictionary -h         Show help
 """
 import json
+import os
 import re
 import sys
+import time
 import html
 import urllib.request
 import urllib.parse
 
 API_URL = "https://en.dict.naver.com/api3/enko/search"
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+LOG_FILE = os.path.join(
+    os.environ.get('XDG_STATE_HOME') or os.path.join(os.path.expanduser('~'), '.local', 'state'),
+    'english', 'lookups.jsonl'
+)
 
 def has_korean(text):
     return bool(re.search(r'[\uac00-\ud7a3\u3131-\u3163]', text))
@@ -97,12 +103,34 @@ def fmt(result):
     return '\n'.join(lines)
 
 
+MIN_LOG_LEN = 5
+
+
+def log_lookup(word):
+    """Append one lookup so study notes can be built from real word searches.
+
+    Short entries ("go", "q", particles) are noise for study notes.
+    """
+    if len(word) < MIN_LOG_LEN:
+        return
+    try:
+        os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+        with open(LOG_FILE, 'a') as f:
+            f.write(json.dumps({'ts': int(time.time()), 'query': word}, ensure_ascii=False) + '\n')
+    except OSError:
+        pass
+
+
 def main():
     args = sys.argv[1:]
     if not args or '-h' in args or '--help' in args:
         print(__doc__.strip())
         return
-    word = ' '.join(args)
+    word = ' '.join(args).strip()
+    if not word:
+        print(__doc__.strip())
+        return
+    log_lookup(word)
     result, err = lookup(word)
     if err:
         print(err, file=sys.stderr)

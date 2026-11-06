@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# dict-popup - look up word after word in one popup window.
+#
+# Optional first argument: a word to show immediately.
+# Only Ctrl-c quits. At the pager, q or Esc returns to the prompt.
+set -uo pipefail
+
+DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+DICT="$DIR/dictionary"
+
+trap 'exit 130' INT
+
+lookup() {
+    clear
+    "$DICT" "$1" | bat --plain --paging=always
+}
+
+if [[ $# -gt 0 && -n "${1:-}" ]]; then
+    lookup "$1"
+fi
+
+while :; do
+    clear
+    printf ' = Translator =   (C-c: quit)\n\n: '
+    read -r word || exit 0
+    [[ -z "$word" ]] && continue
+    lookup "$word"
+done
