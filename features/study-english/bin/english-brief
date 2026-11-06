@@ -3,7 +3,7 @@
 
 Reads:
   ~/.local/state/english/lookups.jsonl          words looked up in the dictionary popup
-  ~/.local/state/english/reviews/*.jsonl        English reviews from the pi extension
+  ~/.local/state/english/transcripts/*.jsonl    session transcripts written by english-transcript.ts
 
 Writes:
   ~/Documents/english_study_note/YYYY-MM-DD-tutor-brief.md
@@ -15,8 +15,11 @@ while walking 5-10 minutes.
 One brief per day. If today's file already exists the run does nothing, so cron can fire
 repeatedly without producing duplicates. Use --force to rebuild it.
 
+The transcript review happens here, not at pi shutdown: a model call during shutdown is lost
+when a pane or window close kills the process.
+
 Usage:
-  english-brief [--days N] [--no-upload] [--force]
+  english-brief [--days N] [--no-upload] [--force] [--max-chars N]
 """
 import argparse
 import json
@@ -30,7 +33,7 @@ from pathlib import Path
 
 STATE_DIR = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state") / "english"
 LOOKUPS = STATE_DIR / "lookups.jsonl"
-REVIEWS = STATE_DIR / "reviews"
+TRANSCRIPTS = STATE_DIR / "transcripts"
 OUTPUT_DIR = Path(os.environ.get("ENGLISH_BRIEF_DIR") or Path.home() / "Documents" / "english_study_note")
 RCLONE_REMOTE = "gdrive:english-study-notes"
 
@@ -81,8 +84,13 @@ What to do after the prepared material: free talk topics that keep forcing the s
 Hard limits for the tutor: no definitions read aloud, no screen references, no new vocabulary,
 no correcting inside a story.
 
+You also get raw session transcripts. Review the learner's own turns in them, using the
+assistant turns only as context for what the situation required. That review is where
+"Patterns" comes from: find what he actually wrote, quote it exactly, and pick the one pattern
+worth the session. Drop tool names, code blocks, and any Korean turns from your repair lines.
+
 Rules for content:
-- Use only the data given below. Do not invent lookup words.
+- Use only the data given below. Do not invent lookup words or errors.
 - Quote the learner's real phrasing when you give a repair.
 - Keep the whole brief under 60 lines. It must be readable to the tutor in one pass.
 - Speakable: write every tutor line as the sentence he says out loud.
@@ -125,13 +133,15 @@ def load_lookups(since: int) -> list[dict]:
     return picked
 
 
-def load_reviews(since: int) -> list[dict]:
-    """Free-form review texts inside the window, newest first."""
-    if not REVIEWS.is_dir():
-        return []
+def load_transcripts(since: int, max_chars: int) -> tuple[list[dict], int]:
+    """Session transcripts inside the window, newest first, bounded by max_chars (0 = no limit)."""
+    if not TRANSCRIPTS.is_dir():
+        return [], 0
 
     records: list[dict] = []
-    for path in sorted(REVIEWS.glob("*.jsonl")):
+    for path in sorted(TRANSCRIPTS.glob("*.jsonl")):
+        if path.name == "errors.jsonl":
+            continue
         with open(path) as f:
             for line in f:
                 line = line.strip()
@@ -141,24 +151,35 @@ def load_reviews(since: int) -> list[dict]:
                     record = json.loads(line)
                 except json.JSONDecodeError:
                     continue
-                review = str(record.get("review", "")).strip()
                 ts = record.get("ts")
-                if not review or not isinstance(ts, (int, float)):
+                messages = record.get("messages")
+                if not isinstance(ts, (int, float)) or not isinstance(messages, list) or not messages:
                     continue
                 seconds = to_seconds(ts)
                 if seconds < since:
                     continue
-                records.append({"ts": seconds, "review": review})
+                records.append({"ts": seconds, "messages": messages, "cwd": record.get("cwd", "")})
 
     records.sort(key=lambda r: r["ts"], reverse=True)
-    return records
+
+    if max_chars > 0:
+        kept, used = [], 0
+        for record in records:
+            size = sum(len(m.get("text", "")) for m in record["messages"])
+            if used + size > max_chars:
+                break
+            kept.append(record)
+            used += size
+        dropped = len(records) - len(kept)
+        return kept, dropped
+    return records, 0
 
 
 def day(ts: int) -> str:
     return datetime.fromtimestamp(ts).strftime("%Y-%m-%d")
 
 
-def build_prompt(lookups: list[dict], reviews: list[dict], days: int) -> str:
+def build_prompt(lookups: list[dict], transcripts: list[dict], days: int) -> str:
     parts = [f"Lookup window: last {days} days. Walk length: 5-10 minutes.", "", "## Looked-up words"]
     if lookups:
         for w in lookups:
@@ -168,10 +189,20 @@ def build_prompt(lookups: list[dict], reviews: list[dict], days: int) -> str:
     else:
         parts.append("- none")
 
-    parts += ["", "## Review notes from his pi sessions"]
-    if reviews:
-        for r in reviews:
-            parts.append(f"### {day(r['ts'])}\n{r['review']}")
+    parts += ["", "## Session transcripts (assistant turns are context only)"]
+    if transcripts:
+        for t in transcripts:
+            when = datetime.fromtimestamp(t["ts"]).strftime("%Y-%m-%d %H:%M")
+            parts.append(f"### {when}  {t['cwd']}")
+            for m in t["messages"]:
+                text = str(m.get("text", "")).strip()
+                if not text:
+                    continue
+                tools = m.get("tools")
+                label = m.get("role", "?")
+                if tools:
+                    label += f" [tools: {', '.join(tools)}]"
+                parts.append(f"{label}: {text}")
     else:
         parts.append("- none")
 
@@ -194,6 +225,8 @@ def main() -> int:
     parser.add_argument("--days", type=int, default=7, help="lookup and review window (default 7)")
     parser.add_argument("--no-upload", action="store_true", help="skip the rclone upload")
     parser.add_argument("--force", action="store_true", help="rebuild even if today's brief exists")
+    parser.add_argument("--max-chars", type=int, default=60000,
+                        help="transcript budget, newest sessions first (0 = no limit)")
     args = parser.parse_args()
 
     today = datetime.now().strftime("%Y-%m-%d")
@@ -204,14 +237,15 @@ def main() -> int:
 
     since = int(time.time()) - args.days * 86400
     lookups = load_lookups(since)
-    reviews = load_reviews(since)
+    transcripts, dropped = load_transcripts(since, args.max_chars)
 
-    print(f"last {args.days} days: {len(lookups)} words, {len(reviews)} review notes")
-    if not lookups and not reviews:
+    print(f"last {args.days} days: {len(lookups)} words, {len(transcripts)} transcripts"
+          + (f" ({dropped} older dropped by --max-chars)" if dropped else ""))
+    if not lookups and not transcripts:
         print("nothing to build a brief from - do some lookups or pi sessions first")
         return 0
 
-    prompt = build_prompt(lookups, reviews, args.days)
+    prompt = build_prompt(lookups, transcripts, args.days)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as tmp:
