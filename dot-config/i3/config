@@ -38,9 +38,11 @@ font xft:URWGothic-Book 11
 floating_modifier $mod
 
 # start a terminal
+# Separate instance pinned to $HOME: --gtk-single-instance=false makes the window
+# skip cwd inheritance from the focused window (see ghostty config).
 # bindsym $mod+Return exec terminal
 # bindsym $mod+Return exec alacritty
-bindsym $mod+Return exec ghostty
+bindsym $mod+Return exec --no-startup-id ghostty --gtk-single-instance=false --working-directory=$HOME
 # bindsym $mod+Return exec ~/.cargo/bin/alacritty
 # bindsym $mod+Return exec wezterm
 

@@ -36,6 +36,16 @@ window-padding-balance = true
 # "close surface?" dialog behind.
 confirm-close-surface = false
 
+# No "93x58" banner in the middle of the window while i3 resizes it.
+resize-overlay = never
+
+# i3 (super+CR) opens a fresh instance pinned to $HOME, while ctrl+shift+n inside a
+# running instance inherits the focused window's cwd. The inherit flag is global
+# and beats working-directory, so the i3 launch has to skip single-instance to
+# keep "new terminal = $HOME".
+window-inherit-working-directory = true
+working-directory = home
+
 # --- font --------------------------------------------------------------------
 
 # alacritty: normal.family = "D2KodingLigature Nerd Font Propo"
@@ -68,6 +78,14 @@ shell-integration-features = no-cursor
 
 # Same bytes as alacritty's Shift+Return binding (linebreak in claude_code).
 keybind = shift+enter=csi:13;2u
+
+# Free Ctrl+Shift+arrows for tmux (bind -n C-S-up/down = switch-client, C-S-left/right
+# = select-layout). Ghostty's defaults swallow them first: jump_to_prompt:-1/+1 and
+# previous_tab/next_tab. Unbound keys go to the pty, where tmux sees ESC[1;6{A,B,C,D}.
+keybind = ctrl+shift+arrow_up=unbind
+keybind = ctrl+shift+arrow_down=unbind
+keybind = ctrl+shift+arrow_left=unbind
+keybind = ctrl+shift+arrow_right=unbind
 
 # alacritty's Ctrl+[ / Ctrl+i hacks are intentionally not copied: ghostty speaks
 # the kitty keyboard protocol and tmux here runs `extended-keys on` with
