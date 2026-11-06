@@ -11,7 +11,9 @@
 -   `english-brief [--days N] [--no-upload]`: 조회 기록과 pi 세션 리뷰를 모아 **말로 하는 튜터 세션용 브리프**를
     만든다. 화면으로 읽는 문서가 아니라, 산책(5-10분) 중 AI 튜터가 즉흥적으로 진행할 대본이다.
     `~/Documents/english_study_note/YYYY-MM-DD-tutor-brief.md`에 쓰고 `gdrive:english-study-notes`로 올린다.
-    조회 기록은 단어별로 합치고, 개수 상한은 두지 않는다
+    조회 기록은 단어별로 합치고, 개수 상한은 두지 않는다. 하루 한 파일이 원칙이라 오늘 파일이 이미 있으면
+    아무것도 하지 않고, 다시 만들려면 `--force`를 준다. crontab이 00:00, 12:00-22:00 두 시간 간격으로
+    실행한다 (00:00에 그날 파일이 만들어져 아침 산책에 쓸 수 있다)
 -   `cc-generate-study-note`: **참고용** 구현. 설치하지 않는다. Claude Code 대화 기록을 OpenAI로 분석해
     학습 노트를 만들고 rclone으로 Drive에 업로드하는 방식의 예시다
 

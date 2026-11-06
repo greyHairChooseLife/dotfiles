@@ -12,8 +12,11 @@ Writes:
 The brief is not read on screen. It is the input for a spoken AI tutor session
 while walking 5-10 minutes.
 
+One brief per day. If today's file already exists the run does nothing, so cron can fire
+repeatedly without producing duplicates. Use --force to rebuild it.
+
 Usage:
-  english-brief [--days N] [--no-upload]
+  english-brief [--days N] [--no-upload] [--force]
 """
 import argparse
 import json
@@ -190,7 +193,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Build a spoken-session tutor brief.")
     parser.add_argument("--days", type=int, default=7, help="lookup and review window (default 7)")
     parser.add_argument("--no-upload", action="store_true", help="skip the rclone upload")
+    parser.add_argument("--force", action="store_true", help="rebuild even if today's brief exists")
     args = parser.parse_args()
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    output = OUTPUT_DIR / f"{today}-tutor-brief.md"
+    if output.exists() and not args.force:
+        print(f"{output.name} already exists - nothing to do")
+        return 0
 
     since = int(time.time()) - args.days * 86400
     lookups = load_lookups(since)
@@ -202,9 +212,7 @@ def main() -> int:
         return 0
 
     prompt = build_prompt(lookups, reviews, args.days)
-    today = datetime.now().strftime("%Y-%m-%d")
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    output = OUTPUT_DIR / f"{today}-tutor-brief.md"
 
     with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as tmp:
         tmp.write(prompt)
