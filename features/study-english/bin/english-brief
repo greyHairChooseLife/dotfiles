@@ -1,0 +1,245 @@
+#!/usr/bin/env python3
+"""english-brief - build a tutor brief from real lookups and pi session reviews.
+
+Reads:
+  ~/.local/state/english/lookups.jsonl          words looked up in the dictionary popup
+  ~/.local/state/english/reviews/*.jsonl        English reviews from the pi extension
+
+Writes:
+  ~/Documents/english_study_note/YYYY-MM-DD-tutor-brief.md
+  then uploads it to gdrive:english-study-notes/
+
+The brief is not read on screen. It is the input for a spoken AI tutor session
+while walking 5-10 minutes.
+
+Usage:
+  english-brief [--days N] [--no-upload]
+"""
+import argparse
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import time
+from datetime import datetime, timedelta
+from pathlib import Path
+
+STATE_DIR = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state") / "english"
+LOOKUPS = STATE_DIR / "lookups.jsonl"
+REVIEWS = STATE_DIR / "reviews"
+OUTPUT_DIR = Path(os.environ.get("ENGLISH_BRIEF_DIR") or Path.home() / "Documents" / "english_study_note")
+RCLONE_REMOTE = "gdrive:english-study-notes"
+
+SYSTEM_PROMPT = """You build a spoken-session brief for an AI English tutor. The learner is a Korean
+software developer. He walks 5-10 minutes to work, listens to the tutor over audio, and speaks back.
+He never looks at a screen during the session, so the brief is instructions for the tutor, not a study
+document for him.
+
+Design the brief on these rules, and keep them visible in the brief itself:
+
+1. Retrieval, not recognition. Never let the tutor say a target word first. Every target word is
+   elicited by a question or a spoken gap that forces him to produce it.
+2. Prompts beat recasts (Lyster & Saito 2010 meta-analysis: effects were larger for prompts than
+   recasts, and clearest in free constructed speech). On an error, the tutor repeats the wrong part
+   with a questioning tone, or asks which word he meant, then waits. Reformulation only after he
+   stalls twice.
+3. Corrections arrive between rounds, never during the story.
+4. One grammar pattern per session, repeated across rounds. Do not list five.
+5. Balance four strands (Nation 2007): meaning-focused input, meaning-focused output,
+   language-focused learning, fluency development. A walk is not a vocabulary quiz.
+6. Session is 5-10 minutes. Plan the core for 5. If he has more time, the tutor continues with free
+   talk and reuses the targets. Never stretch by adding new vocabulary.
+7. The 4/3/2 technique (Nation 1989) is available only as the extended ending: the same short talk
+   three times under shrinking time pressure. Fluency improves, accuracy does not (Thai & Boers 2016),
+   so corrections go after it.
+
+Write the brief in Markdown, in this shape, and nothing else:
+
+# Tutor Brief — <date>
+
+One-line setup: session length, learner, register.
+
+## Targets
+Every word from the lookup list, each with a one-line elicitation the tutor can speak aloud.
+Order them: least familiar first.
+
+## Patterns
+The grammar patterns worth one session, with a prompt-style repair line each. Pick the ones that
+recur in the reviews.
+
+## Flow
+Time blocks for a 5-10 minute walk, with the exact spoken opening line the tutor starts with.
+
+## If he has more time
+What to do after the prepared material: free talk topics that keep forcing the same targets.
+
+## Do not
+Hard limits for the tutor: no definitions read aloud, no screen references, no new vocabulary,
+no correcting inside a story.
+
+Rules for content:
+- Use only the data given below. Do not invent lookup words.
+- Quote the learner's real phrasing when you give a repair.
+- Keep the whole brief under 60 lines. It must be readable to the tutor in one pass.
+- Speakable: write every tutor line as the sentence he says out loud.
+"""
+
+
+def to_seconds(ts: float) -> int:
+    """Both sources are accepted: the dictionary writes seconds, the pi hook writes ms."""
+    return int(ts / 1000) if ts > 1e11 else int(ts)
+
+
+def load_lookups(since: int) -> list[dict]:
+    """Unique words first seen inside the window, newest first."""
+    if not LOOKUPS.exists():
+        return []
+
+    words: dict[str, dict] = {}
+    with open(LOOKUPS) as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            query = str(record.get("query", "")).strip()
+            ts = record.get("ts")
+            if not query or not isinstance(ts, (int, float)):
+                continue
+            seconds = to_seconds(ts)
+            key = query.lower()
+            entry = words.setdefault(key, {"word": query, "first": seconds, "last": seconds, "count": 0})
+            entry["count"] += 1
+            entry["first"] = min(entry["first"], seconds)
+            entry["last"] = max(entry["last"], seconds)
+
+    picked = [w for w in words.values() if w["last"] >= since]
+    picked.sort(key=lambda w: w["last"], reverse=True)
+    return picked
+
+
+def load_reviews(since: int) -> list[dict]:
+    """Free-form review texts inside the window, newest first."""
+    if not REVIEWS.is_dir():
+        return []
+
+    records: list[dict] = []
+    for path in sorted(REVIEWS.glob("*.jsonl")):
+        with open(path) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                review = str(record.get("review", "")).strip()
+                ts = record.get("ts")
+                if not review or not isinstance(ts, (int, float)):
+                    continue
+                seconds = to_seconds(ts)
+                if seconds < since:
+                    continue
+                records.append({"ts": seconds, "review": review})
+
+    records.sort(key=lambda r: r["ts"], reverse=True)
+    return records
+
+
+def day(ts: int) -> str:
+    return datetime.fromtimestamp(ts).strftime("%Y-%m-%d")
+
+
+def build_prompt(lookups: list[dict], reviews: list[dict], days: int) -> str:
+    parts = [f"Lookup window: last {days} days. Walk length: 5-10 minutes.", "", "## Looked-up words"]
+    if lookups:
+        for w in lookups:
+            parts.append(
+                f"- {w['word']}  (first seen {day(w['first'])}, last {day(w['last'])}, seen {w['count']}x)"
+            )
+    else:
+        parts.append("- none")
+
+    parts += ["", "## Review notes from his pi sessions"]
+    if reviews:
+        for r in reviews:
+            parts.append(f"### {day(r['ts'])}\n{r['review']}")
+    else:
+        parts.append("- none")
+
+    return "\n".join(parts)
+
+
+def upload(path: Path) -> None:
+    if not subprocess.run(["rclone", "listremotes"], capture_output=True, text=True).stdout.count("gdrive:"):
+        print("rclone remote 'gdrive' not configured - skipped upload", file=sys.stderr)
+        return
+    result = subprocess.run(["rclone", "copy", str(path), RCLONE_REMOTE], capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"rclone upload failed: {result.stderr.strip()}", file=sys.stderr)
+        return
+    print(f"uploaded to {RCLONE_REMOTE}/")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Build a spoken-session tutor brief.")
+    parser.add_argument("--days", type=int, default=7, help="lookup and review window (default 7)")
+    parser.add_argument("--no-upload", action="store_true", help="skip the rclone upload")
+    args = parser.parse_args()
+
+    since = int(time.time()) - args.days * 86400
+    lookups = load_lookups(since)
+    reviews = load_reviews(since)
+
+    print(f"last {args.days} days: {len(lookups)} words, {len(reviews)} review notes")
+    if not lookups and not reviews:
+        print("nothing to build a brief from - do some lookups or pi sessions first")
+        return 0
+
+    prompt = build_prompt(lookups, reviews, args.days)
+    today = datetime.now().strftime("%Y-%m-%d")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    output = OUTPUT_DIR / f"{today}-tutor-brief.md"
+
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as tmp:
+        tmp.write(prompt)
+        prompt_file = tmp.name
+
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as tmp:
+        brief_file = tmp.name
+
+    try:
+        with open(brief_file, "w") as out, tempfile.TemporaryFile("w+") as err:
+            result = subprocess.run(
+                ["pi", "-p", "--no-tools", "--system-prompt", SYSTEM_PROMPT,
+                 f"@{prompt_file}", f"Write the tutor brief for {today}."],
+                stdout=out, stderr=err, text=True,
+            )
+            if result.returncode != 0:
+                err.seek(0)
+                print(f"pi failed (exit {result.returncode}):\n{err.read()[-2000:]}", file=sys.stderr)
+                return 1
+
+        brief = Path(brief_file).read_text().strip()
+        if not brief:
+            print("pi produced no output - brief not written", file=sys.stderr)
+            return 1
+
+        output.write_text(brief + "\n")
+    finally:
+        os.unlink(prompt_file)
+        os.unlink(brief_file)
+
+    print(f"brief: {output}")
+    if not args.no_upload:
+        upload(output)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
