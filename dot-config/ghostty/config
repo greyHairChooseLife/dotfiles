@@ -4,10 +4,13 @@
 
 # --- environment -------------------------------------------------------------
 
-# Same value as alacritty's [env] TERM, so tmux.conf's `xterm*`
-# terminal-features / terminal-overrides keep applying unchanged.
-# (ghostty's default is xterm-ghostty)
-term = xterm-256color
+# Keep ghostty's own terminfo entry (not alacritty's xterm-256color). tmux and
+# snacks.nvim read the client terminal name from this value: with xterm-256color
+# snacks strips the prefix and detects "256color", so it never matches its
+# ghostty/kitty entry and reports that the kitty graphics protocol is
+# unsupported. "xterm-ghostty" still matches tmux.conf's `xterm*`
+# terminal-features, so extended keys and the rest keep working.
+term = xterm-ghostty
 
 # alacritty.toml sets [terminal.shell] program = "/bin/zsh", which is a
 # non-login zsh. ghostty defaults to $SHELL, already /bin/zsh here.
