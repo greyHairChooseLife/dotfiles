@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.4.0",
+  "lastChangelogVersion": "1.5.0",
   "theme": "ember-glow",
   "defaultProvider": "opencode-go",
   "defaultModel": "deepseek-v4.1-flash",
@@ -30,6 +30,13 @@
     "extensions/pi-taskwarrior/src/index.ts",
     "extensions/ui/codeblock-theme.ts",
     "extensions/misc/copy-session.ts",
-    "extensions/misc/turn-navigator.ts"
-  ]
+    "extensions/misc/turn-navigator.ts",
+    "extensions/misc/english-transcript.ts"
+  ],
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
+    "{\"source\":\"npm:@gotgenes/pi-permission-system\",\"scope\":\"user\"}": "42.0.0",
+    "{\"source\":\"npm:pi-chrome\",\"scope\":\"user\"}": "0.15.57",
+    "{\"source\":\"npm:@narumitw/pi-btw\",\"scope\":\"user\"}": "0.63.5"
+  }
 }
