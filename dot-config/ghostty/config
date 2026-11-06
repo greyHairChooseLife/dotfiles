@@ -39,6 +39,9 @@ confirm-close-surface = false
 font-family = D2KodingLigature Nerd Font Propo
 # alacritty: size = 13.0 in local.toml
 font-size = 12
+# only ligature variants of D2Koding are installed, so kill ligatures here
+font-feature = -calt
+font-feature = -liga
 # wider cells: ghostty's default spacing is tighter than alacritty's
 adjust-cell-width = 10%
 # font-thicken / font-thicken-strength are macOS-only
