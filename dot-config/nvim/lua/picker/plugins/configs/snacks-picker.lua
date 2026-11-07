@@ -553,6 +553,16 @@ local actions = {
     copy_keep_open = function(picker)
         copy_entries(picker)
     end,
+    -- Default "cmd" action calls setcmdline() right after input(":"), but that
+    -- runs before the cmdline is active (custom cmdline UIs like noice need
+    -- extra loop iterations), so setcmdline() returns 1 and nothing is filled.
+    -- Feeding ":<cmd>" as keys removes the race: cmdline opens with the text.
+    cmd = function(picker, item)
+        picker:close()
+        if item and item.cmd then
+            vim.schedule(function() vim.api.nvim_feedkeys(":" .. item.cmd, "n", false) end)
+        end
+    end,
 }
 
 local M = {}
