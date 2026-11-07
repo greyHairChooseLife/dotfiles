@@ -59,6 +59,14 @@ font-feature = -liga
 adjust-cell-width = 10%
 # font-thicken / font-thicken-strength are macOS-only
 
+# D2Koding ships Regular + Bold only. ghostty 1.4 on Linux does not synthesize
+# italic: it silently renders the regular face upright (upstream
+# ghostty-org/ghostty discussion #3588), so SGR 3 and nvim italic highlights are
+# invisible. Borrow real italic faces from Liberation Mono (0.6em advance vs the
+# 0.5em cell, so mild bleed; ok at 10% widened cells).
+font-family-italic = Liberation Mono
+font-family-bold-italic = Liberation Mono
+
 # --- cursor ------------------------------------------------------------------
 
 # alacritty: cursor.style = { shape = "Block", blinking = "Off" }
