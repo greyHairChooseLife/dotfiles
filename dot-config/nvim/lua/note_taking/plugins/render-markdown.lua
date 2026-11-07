@@ -328,6 +328,8 @@ return {
                 highlight = "RenderMarkdownHtmlComment",
             },
             tag = {
+                -- `<i>text</i>`: hide the tags, render the content as italic
+                i = { scope_highlight = "RenderMarkdownItalic" },
                 url = { icon = "󰖟 ", highlight = "RenderMarkdownWebLink" },
                 buf = { icon = " ", highlight = "RenderMarkdownHtmlBUF" },
                 file = { icon = " ", highlight = "RenderMarkdownFileLink" },

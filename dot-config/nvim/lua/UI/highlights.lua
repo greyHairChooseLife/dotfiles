@@ -178,6 +178,8 @@ vim.cmd([[
   highlight RenderMarkdownYellow guifg=#FFBF00 gui=bold
 
   highlight RenderMarkdownHtmlBUF guifg=#CA4500
+  " `<i>text</i>` HTML tag content, see html.tag.i in render-markdown.lua
+  highlight RenderMarkdownItalic guifg=#DCDCAA gui=italic
 
   " MEMO:: no guibg on purpose. render-markdown draws this group as a full line
   " highlight at priority 4096, so any guibg here paints over inline code (x)
