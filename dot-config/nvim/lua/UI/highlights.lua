@@ -179,12 +179,15 @@ vim.cmd([[
 
   highlight RenderMarkdownHtmlBUF guifg=#CA4500
 
-  highlight RenderMarkdownH1Bg guifg=#FFBF00 guibg=#004F4F gui=bold,italic
-  highlight RenderMarkdownH2Bg guibg=#24283b guifg=#1e90ff
-  highlight RenderMarkdownH3Bg guibg=#24283b guifg=#e0af68
-  highlight RenderMarkdownH4Bg guibg=#24283b guifg=#DCDCAA
-  highlight RenderMarkdownH5Bg guibg=#24283b guifg=#8b8378
-  highlight RenderMarkdownH6Bg guibg=#24283b guifg=#708090
+  " MEMO:: no guibg on purpose. render-markdown draws this group as a full line
+  " highlight at priority 4096, so any guibg here paints over inline code (x)
+  " inside a heading. Same color as Normal bg for H2-H6, so no visual loss.
+  highlight RenderMarkdownH1Bg guifg=#FFBF00 guibg=NONE gui=bold,italic
+  highlight RenderMarkdownH2Bg guibg=NONE guifg=#1e90ff
+  highlight RenderMarkdownH3Bg guibg=NONE guifg=#e0af68
+  highlight RenderMarkdownH4Bg guibg=NONE guifg=#DCDCAA
+  highlight RenderMarkdownH5Bg guibg=NONE guifg=#8b8378
+  highlight RenderMarkdownH6Bg guibg=NONE guifg=#708090
 
   highlight RenderMarkdownH1 guifg=#24283b guibg=#24283b
   highlight RenderMarkdownH2 guifg=#24283b guibg=#24283b
@@ -205,12 +208,14 @@ vim.cmd([[
   highlight @markup.strong guifg=#e0af68 gui=bold
   highlight @markup.italic guifg=#DCDCAA gui=italic
   highlight @markup guifg=#FFFFFF
-  highlight @markup.heading.1.markdown guifg=#AF4500
-  highlight @markup.heading.2.markdown guifg=#FFFFFF
-  highlight @markup.heading.3.markdown guifg=#FFFFFF
-  highlight @markup.heading.4.markdown guifg=#FFFFFF
-  highlight @markup.heading.5.markdown guifg=#FFFFFF
-  highlight @markup.heading.6.markdown guifg=#FFFFFF
+  " tokyonight sets @markup.heading.N.markdown with a blended guibg per level.
+  " guibg=NONE removes it, so only the heading text color remains.
+  highlight @markup.heading.1.markdown guifg=#AF4500 guibg=NONE
+  highlight @markup.heading.2.markdown guifg=#FFFFFF guibg=NONE
+  highlight @markup.heading.3.markdown guifg=#FFFFFF guibg=NONE
+  highlight @markup.heading.4.markdown guifg=#FFFFFF guibg=NONE
+  highlight @markup.heading.5.markdown guifg=#FFFFFF guibg=NONE
+  highlight @markup.heading.6.markdown guifg=#FFFFFF guibg=NONE
 
   " @markup.raw.markdown_inline
   " @markup.heading.6.markdown
