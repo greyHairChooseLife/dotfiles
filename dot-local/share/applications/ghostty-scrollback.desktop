@@ -1,11 +1,12 @@
 [Desktop Entry]
 Type=Application
 Name=Ghostty Text Viewer
-Comment=Open a text file in Neovim inside a new Ghostty window
-# Ghostty's write_scrollback_file:open runs xdg-open. The default handler for
-# text/plain is nvim.desktop with Terminal=true, and there is no terminal
-# launcher here, so nothing opens. This handler starts its own window instead.
-Exec=ghostty --gtk-single-instance=false -e nvim %F
+Comment=Open a text file in Neovim, in a tmux split when tmux is attached
+# Ghostty's dump bindings (write_screen_file:open) run xdg-open. The default
+# handler for text/plain is nvim.desktop with Terminal=true, and there is no
+# terminal launcher here, so nothing opens. This points at a script that
+# splits the attached tmux session, or starts a Ghostty window otherwise.
+Exec=ghostty-dump-open %f
 Terminal=false
 NoDisplay=true
 MimeType=text/plain;

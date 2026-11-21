@@ -106,11 +106,12 @@ keybind = ctrl+shift+arrow_right=unbind
 # keybind = ctrl+[=csi:27;5;91~
 # keybind = ctrl+i=csi:105;5u
 
-# Dump the scrollback and open it. `open` shells out to xdg-open, so
-# text/plain must resolve to a handler that does not need a terminal: see
-# dot-local/share/applications/ghostty-scrollback.desktop (Terminal=false,
-# runs `ghostty -e nvim`). With nvim.desktop as the default (Terminal=true)
-# the file was written but nothing opened.
+# Dump the screen and open it. `open` shells out to xdg-open, so text/plain
+# must resolve to a handler that does not need a terminal: see
+# dot-local/share/applications/ghostty-scrollback.desktop, which runs a script
+# that splits the attached tmux session (or starts a ghostty window when tmux
+# has no client). With nvim.desktop as the default (Terminal=true) the file was
+# written but nothing opened.
 keybind = ctrl+shift+o=write_screen_file:open
 # keybind = ctrl+shift+o=write_scrollback_file:open
 

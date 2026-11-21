@@ -1,0 +1,25 @@
+#!/bin/sh
+# Open a Ghostty dump (write_screen_file, ctrl+shift+o) where the user is
+# looking: a tmux split when a tmux client is attached, a new Ghostty window
+# otherwise.
+#
+# Ghostty runs this through xdg-open, so there is no $TMUX here. The target is
+# the most recently active client, which is the session the key was pressed in
+# unless another terminal was touched in between.
+set -eu
+
+file=$1
+
+tmux_split() {
+    command -v tmux >/dev/null 2>&1 || return 1
+    target=$(tmux list-clients -F '#{client_activity} #{client_session}' 2>/dev/null |
+        sort -rn | head -n 1 | cut -d ' ' -f 2-)
+    [ -n "$target" ] || return 1
+    tmux split-window -h -t "$target:" -c '#{pane_current_path}' -- nvim "$file"
+}
+
+if tmux_split; then
+    exit 0
+fi
+
+exec ghostty --gtk-single-instance=false -e nvim "$file"
