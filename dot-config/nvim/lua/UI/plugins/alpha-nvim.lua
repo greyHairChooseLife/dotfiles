@@ -88,7 +88,7 @@ return {
             dashboard.button("_", "                              ______  configs ___", ""),
             dashboard.button(" L", "lazy plugins", ":Lazy<CR>"),
             dashboard.button("i3", "i3", ":cd ~/.config/i3 | e config<CR>"),
-            dashboard.button("te", "term", ":cd ~/.config/alacritty | e alacritty.toml<CR>"),
+            dashboard.button("te", "term", ":cd ~/.config/ghostty | e config | set ft=toml<CR>"),
             dashboard.button("tm", "tmux", ":cd ~/.config/tmux | e tmux.conf<CR>"),
             dashboard.button("tw", "taskwarrior", ":cd ~/Documents/zk | e .task<CR>"),
             dashboard.button("vi", "vi", ":cd ~/.config | e nvim<CR>"),
