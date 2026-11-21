@@ -89,7 +89,7 @@ return {
             if #missing > 0 then ts.install(missing) end
 
             -- exclude auto parser installing
-            local excluded_filetypes = { "oil", "env", "DiffviewFiles", "DiffviewFileHistory", "toggleterm", "bigfile", "directory" }
+            local excluded_filetypes = { "oil", "env", "DiffviewFiles", "DiffviewFileHistory", "toggleterm", "bigfile", "directory", "text" }
 
             vim.api.nvim_create_autocmd("FileType", {
                 callback = function(ev)

@@ -5,3 +5,4 @@ audio/flac=mpv.desktop
 audio/ogg=mpv.desktop
 x-scheme-handler/webcal=brave-browser.desktop
 application/pdf=org.pwmt.zathura.desktop
+text/plain=ghostty-scrollback.desktop

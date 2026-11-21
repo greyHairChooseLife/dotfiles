@@ -84,6 +84,11 @@ shell-integration-features = no-cursor
 #   ctrl+shift+v = paste               (alacritty: Paste)
 #   ctrl+shift+n = new_window          (alacritty: SpawnNewInstance)
 
+keybind = alt+k=scroll_page_fractional:-0.5
+keybind = alt+j=scroll_page_fractional:0.5
+keybind = alt+shift+k=scroll_page_lines:-7
+keybind = alt+shift+j=scroll_page_lines:7
+
 # Same bytes as alacritty's Shift+Return binding (linebreak in claude_code).
 keybind = shift+enter=csi:13;2u
 
@@ -100,6 +105,14 @@ keybind = ctrl+shift+arrow_right=unbind
 # format csi-u, which gives the same result natively. Kept as a fallback.
 # keybind = ctrl+[=csi:27;5;91~
 # keybind = ctrl+i=csi:105;5u
+
+# Dump the scrollback and open it. `open` shells out to xdg-open, so
+# text/plain must resolve to a handler that does not need a terminal: see
+# dot-local/share/applications/ghostty-scrollback.desktop (Terminal=false,
+# runs `ghostty -e nvim`). With nvim.desktop as the default (Terminal=true)
+# the file was written but nothing opened.
+keybind = ctrl+shift+o=write_screen_file:open
+# keybind = ctrl+shift+o=write_scrollback_file:open
 
 # --- performance -------------------------------------------------------------
 
