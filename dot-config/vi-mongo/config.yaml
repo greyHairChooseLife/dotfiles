@@ -1,44 +1,28 @@
-version: v0.2.1
+version: 1.0.0
 log:
     path: /tmp/vi-mongo.log
     level: info
     prettyPrint: true
 editor:
-    command: /usr/bin/nvim
+    command: ""
     env: EDITOR
 ui:
     databasePanelWidth: 30
 showConnectionPage: true
-showWelcomePage: false
-currentConnection: academic_society-dev
+showWelcomePage: true
+currentConnection: ""
 connections:
-    - url: mongodb://localhost:27017
+    - url: ""
       host: localhost
       port: 27017
       database: ""
       username: ""
       password: ""
-      name: kiosk-demo
-      timeout: 5
-      options: {}
-    - url: mongodb://dev:dev@localhost:27017/academic_society?authSource=admin
-      host: localhost
-      port: 27017
-      database: academic_society
-      username: ""
-      password: ""
-      name: academic_society-dev
-      timeout: 5
-      options: {}
-    - url: mongodb://admin:admin0207@localhost:27018/academic_society?authSource=admin
-      host: localhost
-      port: 27018
-      database: academic_society
-      username: ""
-      password: ""
-      name: academic_society-prod
-      timeout: 5
-      options: {}
+      name: prod
+      timeout: 0
+      options:
+        readOnly: true
 styles:
     betterSymbols: true
-    currentStyle: dark-blue.yaml
+    currentStyle: default.yaml
+historyLimit: 10
