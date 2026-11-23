@@ -39,6 +39,9 @@ confirm-close-surface = false
 # No "93x58" banner in the middle of the window while i3 resizes it.
 resize-overlay = never
 
+# alacritty has no tab bar; ghostty's GTK one appears at the second tab.
+window-show-tab-bar = never
+
 # i3 (super+CR) opens a fresh instance pinned to $HOME, while ctrl+shift+n inside a
 # running instance inherits the focused window's cwd. The inherit flag is global
 # and beats working-directory, so the i3 launch has to skip single-instance to
@@ -76,6 +79,35 @@ cursor-style-blink = false
 
 # shell integration sets a bar cursor per zle keymap; keep the block instead
 shell-integration-features = no-cursor
+
+# --- mouse -------------------------------------------------------------------
+
+# no ctrl+hover URL helper text in the bottom-left corner
+link-previews = false
+
+# alacritty's right button does nothing; ghostty 1.4 opens a Copy/Paste menu.
+right-click-action = ignore
+
+# --- clipboard ---------------------------------------------------------------
+
+# no "this text looks dangerous, paste anyway?" modal
+clipboard-paste-protection = false
+
+# alacritty doesn't gate clipboard reads; OSC 52 reads from tmux/TUIs just work
+# instead of raising an allow/deny dialog. Use `deny` instead to refuse them.
+clipboard-read = allow
+
+# --- notifications -----------------------------------------------------------
+
+# no toasts on copy / config reload (GTK in-app overlays)
+app-notifications = false
+
+# no OSC 9 / OSC 777 desktop notifications in the i3 bar
+desktop-notifications = false
+# no OSC 9;4 progress bars in the titlebar
+progress-style = false
+# no bell raising i3 urgency or rewriting the window title
+bell-features = no-attention,no-title
 
 # --- keyboard ----------------------------------------------------------------
 
