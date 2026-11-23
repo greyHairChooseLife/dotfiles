@@ -232,44 +232,37 @@ return {
                 },
             },
             inactive_sections = {
-                lualine_a = {
-                    {
+                lualine_a = vim.list_extend(
+                    lualine_components.warp_variants({
                         function() return lualine_components.filename(35) end,
-                        color = function()
-                            local bufnr = vim.fn.bufnr()
-                            local warpItem = require("warp").get_item_by_buf(bufnr)
-                            if warpItem then return { bg = colors.bg, fg = colors.warp, gui = "bold,italic" } end
-                            return {
-                                bg = colors.bg,
-                                fg = colors.wwhite,
-                                gui = "italic",
-                            }
-                        end,
                         padding = { left = 4, right = 2 },
                         separator = { right = "" },
-                    },
+                    }, { bg = colors.bg, fg = colors.warp, gui = "bold,italic" },
+                        { bg = colors.bg, fg = colors.wwhite, gui = "italic" }),
                     {
-                        function()
-                            if vim.bo.modified then
-                                return "󰈸󰈸󰈸"
-                            elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-                                return "  "
-                            else
-                                return "   "
-                            end
-                        end,
-                        padding = { left = 0, right = 1 },
-                        color = function()
-                            if vim.bo.modified then
-                                return { fg = colors.red2, bg = colors.bg }
-                            elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
-                                return { fg = colors.wwhite, bg = colors.bg }
-                            else
-                                return { fg = colors.orange, bg = colors.bg }
-                            end
-                        end,
-                    },
-                },
+                        {
+                            function()
+                                if vim.bo.modified then
+                                    return "󰈸󰈸󰈸"
+                                elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
+                                    return "  "
+                                else
+                                    return "   "
+                                end
+                            end,
+                            padding = { left = 0, right = 1 },
+                            color = function()
+                                if vim.bo.modified then
+                                    return { fg = colors.red2, bg = colors.bg }
+                                elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
+                                    return { fg = colors.wwhite, bg = colors.bg }
+                                else
+                                    return { fg = colors.orange, bg = colors.bg }
+                                end
+                            end,
+                        },
+                    }
+                ),
                 lualine_b = {
                     {
                         "diff",
@@ -325,24 +318,16 @@ return {
                 },
                 lualine_z = {
                     {
+                        -- plain on purpose: a warp buffer must not paint line:col / percent
+                        -- with a warp background while it is inactive
                         "location",
                         padding = { left = 1, right = 1 },
-                        color = function()
-                            local bufnr = vim.fn.bufnr("%")
-                            local warpItem = require("warp").get_item_by_buf(bufnr)
-                            if warpItem then return { bg = colors.warp, fg = colors.white } end
-                            return { bg = colors.bg, fg = colors.wwhite }
-                        end,
+                        color = { bg = colors.bg, fg = colors.wwhite },
                     },
                     {
                         "progress",
                         padding = { left = 0, right = 1 },
-                        color = function()
-                            local bufnr = vim.fn.bufnr("%")
-                            local warpItem = require("warp").get_item_by_buf(bufnr)
-                            if warpItem then return { bg = colors.warp, fg = colors.white } end
-                            return { bg = colors.bg, fg = colors.wwhite }
-                        end,
+                        color = { bg = colors.bg, fg = colors.wwhite },
                     },
                     {
                         function()
@@ -353,12 +338,8 @@ return {
                             return ""
                         end,
                         padding = { left = 1, right = 1 },
-                        color = function()
-                            local bufnr = vim.fn.bufnr()
-                            local warpItem = require("warp").get_item_by_buf(bufnr)
-                            if warpItem then return { bg = colors.bg, fg = colors.warp, gui = "bold" } end
-                            return { bg = colors.bg, fg = colors.warp, gui = "bold" }
-                        end,
+                        -- warp count is only drawn for warp buffers, so a static color is enough
+                        color = { bg = colors.bg, fg = colors.warp, gui = "bold" },
                     },
                 },
             },

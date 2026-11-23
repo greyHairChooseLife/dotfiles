@@ -114,6 +114,31 @@ end
 
 function M.winfix_status() return vim.wo.winfixwidth and vim.wo.winfixheight and "" or "" end
 
+--- Is the buffer shown in the drawn window part of the warp list?
+--- lualine draws every statusline inside `nvim_win_call`, so `%` is the window
+--- being drawn, not the focused one.
+function M.is_warp_buf()
+    local ok, warp = pcall(require, "warp")
+    if not ok then return false end
+    return warp.get_item_by_buf(vim.fn.bufnr("%")) ~= nil
+end
+
+--- Two components with static colors: one for warp buffers, one for the rest.
+--- Do not use a `color` function for per-window colors. lualine keeps one
+--- highlight group per component and re-defines it on every draw, so the last
+--- drawn window's colors apply to every other window sharing that group, which
+--- turns the inactive statuslines of the whole tab red.
+---@param component table component spec without `cond` and `color`
+---@param warp_color table color for buffers in the warp list
+---@param normal_color table color for all other buffers
+function M.warp_variants(component, warp_color, normal_color)
+    local function variant(cond, color) return vim.tbl_extend("keep", { cond = cond, color = color }, component) end
+    return {
+        variant(M.is_warp_buf, warp_color),
+        variant(function() return not M.is_warp_buf() end, normal_color),
+    }
+end
+
 --- Buffer name for the statusline.
 --- Long names are middle truncated (extension kept) so that the right side of
 --- the bar (line:col, progress) is not pushed out of a narrow window.
