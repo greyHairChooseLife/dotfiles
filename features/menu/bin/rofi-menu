@@ -5,7 +5,8 @@
 #   rofi -show menu -modi "menu:rofi-menu,window,notif:rofi-notif"
 #
 # Rows switch the running rofi instance in place (rofi's \0switch-mode), so no
-# second rofi is started. Text that matches no row searches Google instead.
+# second rofi is started. Text that matches no row becomes a web search: plain
+# text goes to Google, a "w " prefix to English Wikipedia, "g " for Google.
 # Shift+Left (kb-mode-previous) goes back one mode, which is the only way back
 # out of the builtin window mode because it cannot carry a row of its own.
 set -uo pipefail
@@ -14,10 +15,15 @@ ME="$(readlink -f "$0")"
 NOTIF="$HOME/.local/bin/rofi-notif"
 BROWSER="${BROWSER:-brave}"
 
-open_google() {
-    local query="$1" url browser
+open_search() {
+    local query="$1" base="https://www.google.com/search?q=" url browser
     [ -n "$query" ] || return 0
-    url="https://www.google.com/search?q=$(python3 -c \
+    case "$query" in
+        w\ *) base="https://en.wikipedia.org/w/index.php?search="; query="${query#w }" ;;
+        g\ *) query="${query#g }" ;;
+    esac
+    [ -n "$query" ] || return 0
+    url="$base$(python3 -c \
         'import sys, urllib.parse; print(urllib.parse.quote_plus(sys.argv[1]))' "$query")"
     # A new window, not a tab: the running browser already owns the window the
     # URL would otherwise land in. $BROWSER overrides the browser binary.
@@ -33,17 +39,17 @@ if [ -n "${ROFI_RETV:-}" ]; then
     case "$ROFI_RETV" in
         0)
             printf '\0prompt\x1frofi\n'
-            printf '\0message\x1fEnter: switch mode / no match: search Google\n'
+            printf '\0message\x1fEnter: switch mode / text: Google, w text: Wikipedia\n'
             printf 'windows\nnotifications\n'
             ;;
         1)
             case "${1:-}" in
                 windows) printf '\0switch-mode\x1fwindow\n' ;;
                 notifications) printf '\0switch-mode\x1fnotif\n' ;;
-                *) open_google "${1:-}" ;;
+                *) open_search "${1:-}" ;;
             esac
             ;;
-        2) open_google "${1:-}" ;;  # typed text that matched no row
+        2) open_search "${1:-}" ;;  # typed text that matched no row
     esac
     exit 0
 fi

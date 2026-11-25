@@ -5,9 +5,14 @@ rofi 모드 메뉴. 키바인드 하나(`$mod+n`)로 열고, row를 고르면 **
 
 -   `windows`: rofi window 모드
 -   `notifications`: `rofi-notif` (dunst 히스토리)
--   매칭되는 row가 없는 문자열을 입력하고 Enter: Google 검색. 이미 떠 있는 브라우저 탭을
-    덮어쓰지 않도록 `--new-window`로 새 창을 연다. 브라우저는 `$BROWSER`(기본 `brave`),
-    그게 없으면 `xdg-open`
+-   매칭되는 row가 없는 문자열을 입력하고 Enter: 웹 검색. 접두사로 엔진을 고른다.
+    -   `dunst rofi`: Google
+    -   `w dunst rofi`: 영문 Wikipedia
+    -   `g dunst rofi`: Google (접두사 없을 때와 같음)
+    -   접두사는 공백까지 포함해서 `w `, `g ` 형태여야 한다. `w` 한 글자는 그냥 검색어다
+
+    이미 떠 있는 브라우저 탭을 덮어쓰지 않도록 `--new-window`로 새 창을 연다. 브라우저는
+    `$BROWSER`(기본 `brave`), 그게 없으면 `xdg-open`
 
 `rofi-notif`는 `ROFI_MENU=1`을 물려받았을 때만 마지막 row에 `← back`을 붙인다. 그래서
 `rofi-notif`를 직접 실행하면 back row가 없다. builtin `window` 모드에는 row를 넣을 수
