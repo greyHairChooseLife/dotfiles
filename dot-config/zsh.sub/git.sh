@@ -16,7 +16,7 @@ alias gb='git branch'
 alias gba='git branch --all'
 alias gsc='git switch'
 alias gs='git status'
-alias gl='git log'
+alias gl='git log --stat'
 # alias gd='git --no-pager diff | delta --diff-so-fancy'
 # function gd() { git --no-pager diff "$@" | delta --diff-so-fancy }
 gd() {
@@ -86,6 +86,7 @@ gd() {
 }
 
 alias gdv='vi -c "lua require(\"snacks\").picker.git_diff({ layout = { fullscreen = true } })"'
+alias glv='vi -c "lua require(\"picker.modules.picker_sources\").git_log()"'
 
 alias gst='git stash'
 alias gls='git log --oneline --simplify-by-decoration --all'

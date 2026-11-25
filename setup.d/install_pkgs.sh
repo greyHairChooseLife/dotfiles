@@ -212,6 +212,7 @@ AUR_PKGS=(
     worktrunk-bin
     vivify-bin
     pi
+    onlyoffice-bin
     # google-cloud-cli
 )
 
