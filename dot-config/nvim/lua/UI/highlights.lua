@@ -1,223 +1,240 @@
 -- ref - run: so /usr/share/nvim/runtime/syntax/hitest.vim
 -- ref - run: so $VIMRUNTIME/syntax/hitest.vim
 -- ref - https://www.youtube.com/watch?v=CXVDfg3W9Jk
+--
+-- Every color below is a `$token` resolved from UI/palette.lua. `apply()`
+-- renders the block against the palette of the current 'background', so
+-- switching day/night re-uses this one file (see UI/theme.lua).
+--
+-- Only 'Normal' and 'NormalNC' are set outside day/night tuning on purpose:
+-- they must follow the palette background (white in day mode).
 
-vim.cmd([[
+local M = {}
+
+local template = [[
   " MEMO:: Basic
-  highlight LineNr guifg=#4e4451 ctermfg=red
-  highlight TabLine guifg=lightgrey gui=bold guibg=black
-  highlight TabLineFill guibg=#24283b
-  highlight TabLineNotSel guibg=#4e4451
-  highlight TabLineSelBg guibg=#98c379 guifg=#24283b
-  highlight TabLineSelBorder guifg=#98c379 guifg=#24283b
-  highlight TabLineGVBg guibg=#FF8C00 guifg=#24283b
-  highlight TabLineGVBorder guifg=#FF8C00 guifg=#24283b
-  highlight TabLineOilBg guibg=#BDB80B guifg=#24283b
-  highlight TabLineOilBorder guifg=#BDB80B guifg=#24283b
-  highlight TabLineTempBg guibg=#FFFFFF guifg=#24283b
-  highlight TabLineTempBorder guifg=#FFFFFF guifg=#24283b
-  highlight Search guibg=#FFFF00 guifg=#1d202f
-  highlight CurSearch gui=bold guibg=#0000FF guifg=white
-  highlight Visual guibg=#4d6652 guifg=NONE
-  highlight CursorLine guibg=#1d202f guifg=NONE
-  highlight Folded guibg=#24283b guifg=NONE gui=NONE
-  highlight StatusLine guibg=#24283b
-  highlight StatusLineNC guibg=#24283b
-  highlight FoldColumn guifg=#24283b
+  highlight Normal guifg=$fg_body guibg=$bg
+  highlight NormalNC guifg=$fg_body guibg=$bg
+  highlight LineNr guifg=$line_nr ctermfg=red
+  highlight TabLine guifg=$fg gui=bold guibg=$bg_panel
+  highlight TabLineFill guibg=$bg_bar
+  highlight TabLineNotSel guibg=$bg_tab
+  highlight TabLineSelBg guibg=$green guifg=$fg_on_chip
+  highlight TabLineSelBorder guifg=$green guifg=$fg_on_chip
+  highlight TabLineGVBg guibg=$orange guifg=$fg_on_chip
+  highlight TabLineGVBorder guifg=$orange guifg=$fg_on_chip
+  highlight TabLineOilBg guibg=$oil_tag guifg=$fg_on_chip
+  highlight TabLineOilBorder guifg=$oil_tag guifg=$fg_on_chip
+  highlight TabLineTempBg guibg=$bg_chip_pale guifg=$fg_on_pale
+  highlight TabLineTempBorder guifg=$bg_chip_pale guifg=$fg_on_pale
+  highlight Search guibg=$search_bg guifg=$search_fg
+  highlight IncSearch guibg=$search_bg guifg=$search_fg gui=bold
+  highlight CurSearch gui=bold guibg=$blue_flag guifg=$on_accent
+  highlight Visual guibg=$bg_visual guifg=NONE
+  highlight CursorLine guibg=$bg_cursorline guifg=NONE
+  highlight Folded guibg=$bg_soft guifg=$folded_fg gui=NONE
+  highlight StatusLine guifg=$bar_fg guibg=$bg_bar
+  highlight StatusLineNC guifg=$bar_fg_nc guibg=$bg_bar
+  highlight FoldColumn guifg=$bg
+  highlight WinSeparator guifg=$border gui=bold
+  highlight VertSplit guifg=$border
+  highlight NonText guifg=$faint
+  highlight SpecialKey guifg=$faint
+  highlight Whitespace guifg=$faint_soft
 
 
   " MEMO:: Outline
-  highlight OutlineNormal guifg=#a9b1d6 guibg=#1f2335
-  highlight OutlineCurrent guifg=#1d202f guibg=#9ece6a
-  highlight MyOutlineNormal guibg=#2e2e2e
+  highlight OutlineNormal guifg=$fg_note guibg=$bg_outline
+  highlight OutlineCurrent guifg=$fg_on_chip guibg=$green
+  highlight MyOutlineNormal guibg=$bg_float2
 
 
   " MEMO:: Fugitive
-  highlight fugitiveUntrackedHeading guifg=#7f52ff gui=bold
-  highlight fugitiveUnstagedHeading guifg=#f1502f gui=bold
-  highlight fugitiveStagedHeading guifg=#50cd5a gui=bold
-  highlight FugitiveNormal guibg=#242024
-  highlight FugitiveEOB guifg=#242024
-  highlight FugitiveFoldColumn guifg=#242024
+  highlight fugitiveUntrackedHeading guifg=$git_untracked gui=bold
+  highlight fugitiveUnstagedHeading guifg=$warp gui=bold
+  highlight fugitiveStagedHeading guifg=$git_add2 gui=bold
+  highlight FugitiveNormal guibg=$bg_note
+  highlight FugitiveEOB guifg=$bg_note
+  highlight FugitiveFoldColumn guifg=$bg_note
 
 
   " MEMO:: NvimTree
-  highlight NvimTreeNormal guibg=#333342 guifg=NONE
-  highlight NvimTreeNormalNC guibg=#333342 guifg=NONE
-  highlight NvimTreeCursorLine guibg=#242024 guifg=NONE
-  highlight NvimTreeFolderIcon guifg=#569CD6
-  highlight NvimTreeFolderArrowOpen guifg=#ffcc00
-  highlight NvimTreeFolderName guifg=#569CD6 gui=bold
-  highlight NvimTreeOpenedFolderName guifg=#569CD6 gui=bold
-  highlight NvimTreeEmptyFolderName guifg=#569CD6
-  highlight NvimTreeSymlink guifg=#56B6C2
-  highlight NvimTreeRootFolder guifg=#C678DD
-  highlight NvimTreeGitDirty guifg=#FFFF00 " #f1502f
-  highlight NvimTreeGitStagedIcon guifg=#50cd5a
-  " highlight NvimTreeGitMerge guifg=#E5C07B
-  highlight NvimTreeGitRenamedIcon guifg=#50cd5a " #61AFEF
-  " highlight NvimTreeGitNew guifg=#D19A66
-  highlight NvimTreeGitNew guifg=#7f52ff
-  highlight NvimTreeGitDeleted guifg=#f1502f
-  highlight NvimTreeGitIgnoredIcon guifg=#ffffff
-  highlight NvimTreeModifiedIcon guifg=#FF3000
-  highlight NvimTreeOpenedHL guifg=#FF8C00 gui=italic,underline
-  highlight NvimTreeIndentMarker guifg=#569CD6
-  highlight NvimTreeEOB guifg=#333342
+  highlight NvimTreeNormal guibg=$bg_tree guifg=NONE
+  highlight NvimTreeNormalNC guibg=$bg_tree guifg=NONE
+  highlight NvimTreeCursorLine guibg=$bg_note guifg=NONE
+  highlight NvimTreeFolderIcon guifg=$tree_blue
+  highlight NvimTreeFolderArrowOpen guifg=$git_change
+  highlight NvimTreeFolderName guifg=$tree_blue gui=bold
+  highlight NvimTreeOpenedFolderName guifg=$tree_blue gui=bold
+  highlight NvimTreeEmptyFolderName guifg=$tree_blue
+  highlight NvimTreeSymlink guifg=$cyan2
+  highlight NvimTreeRootFolder guifg=$purple
+  highlight NvimTreeGitDirty guifg=$yellow " $warp
+  highlight NvimTreeGitStagedIcon guifg=$git_add2
+  " highlight NvimTreeGitMerge guifg=$beige2
+  highlight NvimTreeGitRenamedIcon guifg=$git_add2 " $blue3
+  " highlight NvimTreeGitNew guifg=$orange2
+  highlight NvimTreeGitNew guifg=$git_untracked
+  highlight NvimTreeGitDeleted guifg=$warp
+  highlight NvimTreeGitIgnoredIcon guifg=$icon_dim
+  highlight NvimTreeModifiedIcon guifg=$red_hot
+  highlight NvimTreeOpenedHL guifg=$orange gui=italic,underline
+  highlight NvimTreeIndentMarker guifg=$tree_blue
+  highlight NvimTreeEOB guifg=$bg_tree
 
 
   " MEMO:: Vimwiki
   "
   " 헤더 색상 설정
-  highlight VimwikiHeader1 guifg=#AF4500 guibg=#007F7F gui=bold
-  highlight VimwikiHeader2 guifg=#ffffff gui=bold
-  highlight VimwikiHeader3 guifg=#ffffff gui=bold
-  highlight VimwikiHeader4 guifg=#ffffff
-  highlight VimwikiHeader5 guifg=#ffffff
+  highlight VimwikiHeader1 guifg=$markdown_h1 guibg=$teal gui=bold
+  highlight VimwikiHeader2 guifg=$heading_text gui=bold
+  highlight VimwikiHeader3 guifg=$heading_text gui=bold
+  highlight VimwikiHeader4 guifg=$heading_text
+  highlight VimwikiHeader5 guifg=$heading_text
   " highlight VimwikiHeader6
   " 링크 색상 설정
-  highlight VimwikiLink guifg=#FFFF00
+  highlight VimwikiLink guifg=$yellow
   " 리스트 항목 색상 설정
   highlight VimwikiList gui=italic
   " 코드 블록 색상 설정
-  highlight VimwikiCode guibg=#333342 guifg=#ffffff gui=italic
+  highlight VimwikiCode guibg=$bg_tree guifg=$fg_markup gui=italic
   " 강조 텍스트 색상 설정
   highlight VimwikiBold gui=bold,underline
-  highlight VimwikiItalic guifg=#DCDCAA gui=italic
+  highlight VimwikiItalic guifg=$beige gui=italic
   " ToDo 항목 색상 설정
-  highlight VimwikiTodo guifg=#000000 guibg=#87CEFA gui=bold
-  highlight VimwikiFoldColumn guifg=#24283B
+  highlight VimwikiTodo guifg=$fg_on_chip guibg=$lightblue gui=bold
+  highlight VimwikiFoldColumn guifg=$bg
 
   " MEMO:: Warp aka. harpoon
-  highlight WarpFloatBorder guifg=#f1502f guibg=NONE
-  highlight WarpAdded guifg=#40cd52 guibg=NONE
+  highlight WarpFloatBorder guifg=$warp guibg=NONE
+  highlight WarpAdded guifg=$git_add guibg=NONE
 
 
 
   " MEMO:: GitSigns
-  highlight GitSignsAdd guifg=#40cd52
-  highlight GitSignsStagedAdd guifg=#40cd52
-  highlight GitSignsAddNr guifg=#40cd52
-  highlight GitSignsAddLn guibg=#1a472a guifg=NONE
-  highlight GitSignsChange guifg=#ffcc00
-  highlight GitSignsStagedChange guifg=#ffcc00
-  highlight GitSignsChangeNr guifg=#ffcc00
-  highlight GitSignsChangeLn guibg=#867300 guifg=NONE
-  highlight GitSignsChangedelete guifg=#f1502f
-  highlight GitSignsDelete guifg=#f1502f
-  highlight GitSignsStagedDelete guifg=#f1502f
-  highlight GitSignsTopdelete guifg=#f1502f
-  highlight GitSignsStagedTopdelete guifg=#f1502f
-  highlight GitSignsChangedeleteNr guifg=#f1502f
-  highlight GitSignsDeleteNr guifg=#f1502f
-  highlight GitSignsTopdeleteNr guifg=#f1502f
-  highlight GitSignsUntracked guifg=#7f52ff
-  highlight GitSignsStagedUntracked guifg=#7f52ff
+  highlight GitSignsAdd guifg=$git_add
+  highlight GitSignsStagedAdd guifg=$git_add
+  highlight GitSignsAddNr guifg=$git_add
+  highlight GitSignsAddLn guibg=$diff_add guifg=NONE
+  highlight GitSignsChange guifg=$git_change
+  highlight GitSignsStagedChange guifg=$git_change
+  highlight GitSignsChangeNr guifg=$git_change
+  highlight GitSignsChangeLn guibg=$inline_add guifg=NONE
+  highlight GitSignsChangedelete guifg=$warp
+  highlight GitSignsDelete guifg=$warp
+  highlight GitSignsStagedDelete guifg=$warp
+  highlight GitSignsTopdelete guifg=$warp
+  highlight GitSignsStagedTopdelete guifg=$warp
+  highlight GitSignsChangedeleteNr guifg=$warp
+  highlight GitSignsDeleteNr guifg=$warp
+  highlight GitSignsTopdeleteNr guifg=$warp
+  highlight GitSignsUntracked guifg=$git_untracked
+  highlight GitSignsStagedUntracked guifg=$git_untracked
 
-  highlight GitSignsAddInline guibg=#867300 guifg=NONE gui=italic
-  highlight GitSignsChangeInline guibg=#FFFF00 guifg=NONE " useless?
-  highlight GitSignsDeleteInline guibg=#800000 guifg=NONE
-  highlight GitSignsAddLnInline guibg=#32CD32 guifg=NONE
-  highlight GitSignsChangeLnInline guibg=#FFFF00 guifg=NONE
-  highlight GitSignsDeleteLnInline guibg=#800000 guifg=NONE
+  highlight GitSignsAddInline guibg=$inline_add guifg=NONE gui=italic
+  highlight GitSignsChangeInline guibg=$inline_change guifg=NONE " useless?
+  highlight GitSignsDeleteInline guibg=$inline_delete guifg=NONE
+  highlight GitSignsAddLnInline guibg=$green_bright guifg=NONE
+  highlight GitSignsChangeLnInline guibg=$inline_change guifg=NONE
+  highlight GitSignsDeleteLnInline guibg=$inline_delete guifg=NONE
 
 
   " MEMO:: Gvdiff, diffview
-  highlight DiffAdd guibg=#1a472a guifg=NONE " #1e6e40
-  highlight DiffChange guibg=#312E03 guifg=NONE
-  highlight DiffText guibg=#605D08 guifg=NONE gui=italic
-  highlight DiffDelete guibg=#4f2d3d guifg=NONE
-  highlight DiffviewFilePanelInsertions guifg=#117e40 guibg=NONE
-  highlight DiffviewFilePanelDeletions guifg=#aa3000 guibg=NONE
-  highlight DiffviewStatusModified guifg=#6183BB guibg=NONE
-  highlight DiffviewStatusAdded guifg=#449DAB guibg=NONE
-  highlight DiffviewStatusUntracked guifg=#449DAB guibg=NONE
-  highlight DiffviewStatusBroken guifg=#914C54 guibg=NONE
-  highlight DiffviewStatusDeleted guifg=#914C54 guibg=NONE
-  highlight DiffviewStatusRenamed guifg=#6183BB guibg=NONE
-  highlight DiffviewStatusModified guifg=#6183BB guibg=NONE
-  highlight DiffviewCursorLine guifg=NONE guibg=#14283B
-  highlight DiffviewMessageSignColumn guifg=NONE guibg=#000000
+  highlight DiffAdd guibg=$diff_add guifg=NONE " $green_dark
+  highlight DiffChange guibg=$diff_change guifg=NONE
+  highlight DiffText guibg=$diff_text guifg=NONE gui=italic
+  highlight DiffDelete guibg=$diff_delete guifg=NONE
+  highlight DiffviewFilePanelInsertions guifg=$dv_insert guibg=NONE
+  highlight DiffviewFilePanelDeletions guifg=$dv_delete guibg=NONE
+  highlight DiffviewStatusModified guifg=$dv_modified guibg=NONE
+  highlight DiffviewStatusAdded guifg=$dv_added guibg=NONE
+  highlight DiffviewStatusUntracked guifg=$dv_added guibg=NONE
+  highlight DiffviewStatusBroken guifg=$dv_broken guibg=NONE
+  highlight DiffviewStatusDeleted guifg=$dv_broken guibg=NONE
+  highlight DiffviewStatusRenamed guifg=$dv_modified guibg=NONE
+  highlight DiffviewStatusModified guifg=$dv_modified guibg=NONE
+  highlight DiffviewCursorLine guifg=NONE guibg=$bg_diffcur
+  highlight DiffviewMessageSignColumn guifg=NONE guibg=$bg_panel
 
   " MEMO:: render-markdown
-  highlight RenderMarkdownCode guibg=#181818 guifg=NONE
-  highlight RenderMarkdownCodeInline guibg=#181818 guifg=NONE
-  highlight RenderMarkdownCodeNofile guibg=#181818 guifg=NONE
-  highlight RenderMarkdownCodeCodeCompanion guibg=#000000 guifg=NONE
-  highlight RenderMarkdownDash guifg=#FFFFFF
-  highlight RenderMarkdownQuote guifg=#FFFFFF
-  highlight RenderMarkdownBullet guifg=#007F7F gui=bold
-  highlight RenderMarkdownBulletItem guifg=#fffacd
-  highlight RenderMarkdownMath guifg=#00FFFF gui=italic,bold
-  highlight RenderMarkdownUnchecked guifg=#CA4500
-  highlight RenderMarkdownUncheckedScope guifg=#f08080
-  highlight RenderMarkdownChecked guifg=#32CD32
-  highlight RenderMarkdownCheckedScope guifg=#98C379
-  highlight RenderMarkdownCancel guifg=#8b8378
-  highlight RenderMarkdownCancelScope guifg=#8b8378 gui=strikethrough
+  highlight RenderMarkdownCode guibg=$bg_code guifg=NONE
+  highlight RenderMarkdownCodeInline guibg=$bg_code guifg=NONE
+  highlight RenderMarkdownCodeNofile guibg=$bg_code guifg=NONE
+  highlight RenderMarkdownCodeCodeCompanion guibg=$bg_panel guifg=NONE
+  highlight RenderMarkdownDash guifg=$fg_markup
+  highlight RenderMarkdownQuote guifg=$fg_markup
+  highlight RenderMarkdownBullet guifg=$teal gui=bold
+  highlight RenderMarkdownBulletItem guifg=$cream
+  highlight RenderMarkdownMath guifg=$cyan gui=italic,bold
+  highlight RenderMarkdownUnchecked guifg=$markdown_todo
+  highlight RenderMarkdownUncheckedScope guifg=$pinkish
+  highlight RenderMarkdownChecked guifg=$green_bright
+  highlight RenderMarkdownCheckedScope guifg=$green
+  highlight RenderMarkdownCancel guifg=$fg_muted
+  highlight RenderMarkdownCancelScope guifg=$fg_muted gui=strikethrough
 
-  highlight RenderMarkdownMyTodoHeader guifg=#CA4500 guibg=#24283b gui=bold,italic
-  highlight RenderMarkdownMyTodoFinHeader guifg=#004F4F guibg=#24283b gui=bold,italic
-  highlight RenderMarkdownMyReferenceHeader guifg=#C678DD guibg=#24283b gui=bold,italic
+  highlight RenderMarkdownMyTodoHeader guifg=$markdown_todo guibg=$bg gui=bold,italic
+  highlight RenderMarkdownMyTodoFinHeader guifg=$markdown_done guibg=$bg gui=bold,italic
+  highlight RenderMarkdownMyReferenceHeader guifg=$purple guibg=$bg gui=bold,italic
 
-  highlight RenderMarkdownMyTodo guifg=#CA4500 gui=bold,italic
-  highlight RenderMarkdownMyTodoFin guifg=#1e6e40 gui=bold,italic
-  highlight RenderMarkdownMySimpleTodo guifg=#ffffff guibg=#CA4500 gui=bold,italic
-  highlight RenderMarkdownMySimpleDone guifg=#ffffff guibg=#004F4F gui=bold,italic
-  highlight RenderMarkdownMySimpleCancel guifg=#ffffff guibg=#181818 gui=italic
-  highlight RenderMarkdownResult guifg=#ffffff guibg=#3a0ff9 gui=bold,italic
-  highlight RenderMarkdownMyQuestion guifg=#FFFF00 gui=italic
-  highlight RenderMarkdownMyTest guifg=#B0C4DE gui=bold,italic
-  highlight RenderMarkdownMyReference guifg=#C678DD gui=bold,italic
-  highlight RenderMarkdownMyLog guifg=#000000 guibg=#B0C4DE gui=bold,italic
-  highlight RenderMarkdownMyNote guifg=#32CD32 gui=bold
+  highlight RenderMarkdownMyTodo guifg=$markdown_todo gui=bold,italic
+  highlight RenderMarkdownMyTodoFin guifg=$green_dark gui=bold,italic
+  highlight RenderMarkdownMySimpleTodo guifg=$on_accent guibg=$markdown_todo gui=bold,italic
+  highlight RenderMarkdownMySimpleDone guifg=$on_accent guibg=$markdown_done gui=bold,italic
+  highlight RenderMarkdownMySimpleCancel guifg=$fg_on_code guibg=$bg_code gui=italic
+  highlight RenderMarkdownResult guifg=$on_accent guibg=$bg_result gui=bold,italic
+  highlight RenderMarkdownMyQuestion guifg=$yellow gui=italic
+  highlight RenderMarkdownMyTest guifg=$lavender gui=bold,italic
+  highlight RenderMarkdownMyReference guifg=$purple gui=bold,italic
+  highlight RenderMarkdownMyLog guifg=$fg_on_chip guibg=$lavender gui=bold,italic
+  highlight RenderMarkdownMyNote guifg=$green_bright gui=bold
 
-  highlight RenderMarkdownRed  guifg=#FF3000 gui=bold
-  highlight RenderMarkdownBlue   guifg=#4169E1 gui=bold
-  highlight RenderMarkdownGreen  guifg=#32CD32 gui=bold
-  highlight RenderMarkdownYellow guifg=#FFBF00 gui=bold
+  highlight RenderMarkdownRed  guifg=$red_hot gui=bold
+  highlight RenderMarkdownBlue   guifg=$link gui=bold
+  highlight RenderMarkdownGreen  guifg=$green_bright gui=bold
+  highlight RenderMarkdownYellow guifg=$orange_light gui=bold
 
-  highlight RenderMarkdownHtmlBUF guifg=#CA4500
+  highlight RenderMarkdownHtmlBUF guifg=$markdown_todo
   " `<i>text</i>` HTML tag content, see html.tag.i in render-markdown.lua
-  highlight RenderMarkdownItalic guifg=#DCDCAA gui=italic
+  highlight RenderMarkdownItalic guifg=$beige gui=italic
 
   " MEMO:: no guibg on purpose. render-markdown draws this group as a full line
   " highlight at priority 4096, so any guibg here paints over inline code (x)
   " inside a heading. Same color as Normal bg for H2-H6, so no visual loss.
-  highlight RenderMarkdownH1Bg guifg=#FFBF00 guibg=NONE gui=bold,italic
-  highlight RenderMarkdownH2Bg guibg=NONE guifg=#1e90ff
-  highlight RenderMarkdownH3Bg guibg=NONE guifg=#e0af68
-  highlight RenderMarkdownH4Bg guibg=NONE guifg=#DCDCAA
-  highlight RenderMarkdownH5Bg guibg=NONE guifg=#8b8378
-  highlight RenderMarkdownH6Bg guibg=NONE guifg=#708090
+  highlight RenderMarkdownH1Bg guifg=$orange_light guibg=NONE gui=bold,italic
+  highlight RenderMarkdownH2Bg guibg=NONE guifg=$blue
+  highlight RenderMarkdownH3Bg guibg=NONE guifg=$tan
+  highlight RenderMarkdownH4Bg guibg=NONE guifg=$beige
+  highlight RenderMarkdownH5Bg guibg=NONE guifg=$fg_muted
+  highlight RenderMarkdownH6Bg guibg=NONE guifg=$fg_slate
 
-  highlight RenderMarkdownH1 guifg=#24283b guibg=#24283b
-  highlight RenderMarkdownH2 guifg=#24283b guibg=#24283b
-  highlight RenderMarkdownH3 guifg=#24283b guibg=#24283b
-  highlight RenderMarkdownH4 guifg=#24283b guibg=#24283b
-  highlight RenderMarkdownH5 guifg=#24283b guibg=#24283b    gui=bold
-  highlight RenderMarkdownH6 guifg=#24283b guibg=#24283b    gui=bold
+  highlight RenderMarkdownH1 guifg=$bg guibg=$bg
+  highlight RenderMarkdownH2 guifg=$bg guibg=$bg
+  highlight RenderMarkdownH3 guifg=$bg guibg=$bg
+  highlight RenderMarkdownH4 guifg=$bg guibg=$bg
+  highlight RenderMarkdownH5 guifg=$bg guibg=$bg    gui=bold
+  highlight RenderMarkdownH6 guifg=$bg guibg=$bg    gui=bold
 
-  highlight RenderMarkdownDocLink guifg=#FFBF00 gui=bold
-  highlight RenderMarkdownWebLink guifg=#4169E1 gui=bold
-  highlight RenderMarkdownFileLink guifg=#FFBF00 gui=bold
-  highlight RenderMarkdownYoutubeLink guifg=#FF3000 gui=bold
-  highlight RenderMarkdownDiaryLink guifg=#DCDCAA gui=bold
+  highlight RenderMarkdownDocLink guifg=$orange_light gui=bold
+  highlight RenderMarkdownWebLink guifg=$link gui=bold
+  highlight RenderMarkdownFileLink guifg=$orange_light gui=bold
+  highlight RenderMarkdownYoutubeLink guifg=$red_hot gui=bold
+  highlight RenderMarkdownDiaryLink guifg=$beige gui=bold
 
   " markup highlight for TreeSitter
-  highlight @markup.link guifg=#4169E1
-  highlight @markup.link.label guifg=#DCDCAA "FFF500
-  highlight @markup.strong guifg=#e0af68 gui=bold
-  highlight @markup.italic guifg=#DCDCAA gui=italic
-  highlight @markup guifg=#FFFFFF
+  highlight @markup.link guifg=$link
+  highlight @markup.link.label guifg=$beige "FFF500
+  highlight @markup.strong guifg=$tan gui=bold
+  highlight @markup.italic guifg=$beige gui=italic
+  highlight @markup guifg=$fg_markup
   " tokyonight sets @markup.heading.N.markdown with a blended guibg per level.
   " guibg=NONE removes it, so only the heading text color remains.
-  highlight @markup.heading.1.markdown guifg=#AF4500 guibg=NONE
-  highlight @markup.heading.2.markdown guifg=#FFFFFF guibg=NONE
-  highlight @markup.heading.3.markdown guifg=#FFFFFF guibg=NONE
-  highlight @markup.heading.4.markdown guifg=#FFFFFF guibg=NONE
-  highlight @markup.heading.5.markdown guifg=#FFFFFF guibg=NONE
-  highlight @markup.heading.6.markdown guifg=#FFFFFF guibg=NONE
+  highlight @markup.heading.1.markdown guifg=$markdown_h1 guibg=NONE
+  highlight @markup.heading.2.markdown guifg=$heading_text guibg=NONE
+  highlight @markup.heading.3.markdown guifg=$heading_text guibg=NONE
+  highlight @markup.heading.4.markdown guifg=$heading_text guibg=NONE
+  highlight @markup.heading.5.markdown guifg=$heading_text guibg=NONE
+  highlight @markup.heading.6.markdown guifg=$heading_text guibg=NONE
 
   " @markup.raw.markdown_inline
   " @markup.heading.6.markdown
@@ -248,158 +265,173 @@ vim.cmd([[
 
   "MEMO:: Fold Text
   highlight FoldIndent guifg=NONE guibg=NONE
-  highlight MDFoldBlock guifg=#2e3a4a guibg=NONE
-  highlight MDFoldHeaderInfo guifg=#c678dd guibg=#2e3a4a
-  highlight FoldText guifg=#c678dd
-  highlight FoldTextCodeblock guifg=#c678dd guibg=#181818
-  highlight FoldTextCodeblockReverse guifg=#181818
-  highlight FoldTextMDTable guifg=#c678dd guibg=#2e3a4a
-  highlight FoldTextMDTableSuffix guifg=#2e3a4a
+  highlight MDFoldBlock guifg=$bg_fold guibg=NONE
+  highlight MDFoldHeaderInfo guifg=$purple guibg=$bg_fold
+  highlight FoldText guifg=$purple
+  highlight FoldTextCodeblock guifg=$purple guibg=$bg_code
+  highlight FoldTextCodeblockReverse guifg=$bg_code
+  highlight FoldTextMDTable guifg=$purple guibg=$bg_fold
+  highlight FoldTextMDTableSuffix guifg=$bg_fold
 
   " MEMO:: QuickFix
-  highlight Delimiter guifg=#9ece6a
-  highlight QFBufferBG guibg=#201010
-  highlight QFBufferEOB guifg=#201010
+  highlight Delimiter guifg=$green
+  highlight QFBufferBG guibg=$bg_qf
+  highlight QFBufferEOB guifg=$bg_qf
 
 
   " MEMO:: Oil
-  highlight OilDirIcon guifg=#ffcc00
-  highlight OilNormal guibg=#1A1601
-  highlight OilEOB guifg=#1A1601
-  highlight OilSignColumn guibg=#1A1601
+  highlight OilDirIcon guifg=$git_change
+  highlight OilNormal guibg=$bg_oil
+  highlight OilEOB guifg=$bg_oil
+  highlight OilSignColumn guibg=$bg_oil
 
 
   " MEMO:: Aerial
-  highlight AerialGuide1 guifg=#FF4500
-  highlight AerialGuide2 guifg=#E0E0E0
-  highlight AerialGuide3 guifg=#E0E0E0
-  highlight AerialFunction guifg=#67b3ff gui=bold
-  highlight AerialVariable guifg=#DCDCAA gui=italic
-  highlight AerialVariableIcon guifg=#DCDCAA
-  highlight AerialLine guibg=#4d6652
-  highlight AerialNormal guibg=#333342
-  highlight AerialEOB guifg=#333342
-  highlight AerialFoldColumn guifg=#333342
+  highlight AerialGuide1 guifg=$match
+  highlight AerialGuide2 guifg=$fg_soft
+  highlight AerialGuide3 guifg=$fg_soft
+  highlight AerialFunction guifg=$blue2 gui=bold
+  highlight AerialVariable guifg=$beige gui=italic
+  highlight AerialVariableIcon guifg=$beige
+  highlight AerialLine guibg=$bg_visual
+  highlight AerialNormal guibg=$bg_tree
+  highlight AerialEOB guifg=$bg_tree
+  highlight AerialFoldColumn guifg=$bg_tree
 
 
   " MEMO:: Pmenu for completion
-  highlight Pmenu guibg=#000000 guifg=#c8ccd4
-  highlight PmenuSel guibg=#000080 gui=bold
-  highlight PmenuSbar guibg=#000000 " scrollbar bg
-  highlight PmenuThumb guibg=#4d6652
-  highlight PmenuThumbSel guibg=#4d6652
-  highlight PmenuMatch guifg=#FF4500
-  highlight PmenuMatchSel guifg=#FF4500
+  highlight Pmenu guibg=$bg_panel guifg=$fg
+  highlight PmenuSel guibg=$bg_select gui=bold
+  highlight PmenuSbar guibg=$bg_panel " scrollbar bg
+  highlight PmenuThumb guibg=$bg_visual
+  highlight PmenuThumbSel guibg=$bg_visual
+  highlight PmenuMatch guifg=$match
+  highlight PmenuMatchSel guifg=$match
 
-  highlight BlinkCmpMenu guibg=#000000 guifg=#c8ccd4
-  highlight BlinkCmpLabelMatch guifg=#FF4500 gui=bold
-  highlight BlinkCmpSource guifg=#5f5f5f gui=italic
+  highlight BlinkCmpMenu guibg=$bg_panel guifg=$fg
+  highlight BlinkCmpLabelMatch guifg=$match gui=bold
+  highlight BlinkCmpSource guifg=$fg_dim gui=italic
 
-  highlight BlinkCmpDoc guibg=#000000 guifg=#c8ccd4
-  highlight BlinkCmpDocSeparator guifg=#5f52ff guibg=#000000
-  highlight BlinkCmpDocBorder guifg=#5f52ff guibg=#000000
-  highlight BlinkCmpSignatureHelp guibg=#000000 guifg=#c8ccd4
+  highlight BlinkCmpDoc guibg=$bg_panel guifg=$fg
+  highlight BlinkCmpDocSeparator guifg=$float_blue guibg=$bg_panel
+  highlight BlinkCmpDocBorder guifg=$float_blue guibg=$bg_panel
+  highlight BlinkCmpSignatureHelp guibg=$bg_panel guifg=$fg
 
 
   " MEMO:: Borders
-  highlight FloatBorder guifg=#000000 guibg=#000000
-  highlight NormalFloat guifg=NONE guibg=#000000
-  highlight DiagnosticsBorder guifg=#FF4500 guibg=#000000
-  highlight BlinkCmpSignatureHelpBorder guifg=#ffff00 guibg=#000000
-  highlight GitSignsPreviewBorder guifg=NONE guibg=#000000
+  highlight FloatBorder guifg=$bg_panel guibg=$bg_panel
+  highlight NormalFloat guifg=NONE guibg=$bg_panel
+  highlight DiagnosticsBorder guifg=$match guibg=$bg_panel
+  highlight BlinkCmpSignatureHelpBorder guifg=$yellow guibg=$bg_panel
+  highlight GitSignsPreviewBorder guifg=NONE guibg=$bg_panel
 
 
   " MEMO:: Lualine
-  highlight CustomSeparator guifg=#98c379 guibg=NONE
+  highlight CustomSeparator guifg=$green guibg=NONE
 
 
   " MEMO:: Indent Blank Line
-  highlight @ibl.scope.underline.1 guifg=#Ff0000 guibg=#00ff00 " not working
-  highlight IblScope guifg=#7f52ff guibg=NONE
+  highlight @ibl.scope.underline.1 guifg=$red_pure guibg=$green_flag " not working
+  highlight IblScope guifg=$git_untracked guibg=NONE
   highlight IblIndent guifg=NONE guibg=NONE
-  " highlight IblIndent guifg=#5f5f5f guibg=NONE
+  " highlight IblIndent guifg=$fg_dim guibg=NONE
 
 
   " MEMO:: Noice
-  highlight NoiceMini guifg=#BDB76B guibg=NONE
-  highlight NoiceVirtualText guifg=#FFFF00 guibg=NONE gui=italic " highlight search
+  highlight NoiceMini guifg=$tag_info guibg=NONE
+  highlight NoiceVirtualText guifg=$yellow guibg=NONE gui=italic " highlight search
 
 
   " MEMO:: WhichKey
-  highlight WhichKeyNormal guibg=#000000 guifg=#c8ccd4
+  highlight WhichKeyNormal guibg=$bg_panel guifg=$fg
   highlight WhichKeyDesc gui=italic
 
 
   " MEMO:: global-note
-  highlight NoteBackground guibg=#24283b guifg=NONE
-  highlight NoteBorder guibg=#24283b guifg=#ff0000
-  highlight NoteTitle guibg=#ff0000 guifg=#000000 gui=bold
-  highlight LocalNoteBorder guibg=#24283b guifg=#98c379
-  highlight LocalNoteTitle guibg=#98c379 guifg=#000000 gui=bold
-  highlight LocalTodoBorder guibg=#24283b guifg=#1e90ff
-  highlight LocalTodoTitle guibg=#1e90ff guifg=#000000 gui=bold
-  highlight NoteEOB guifg=#24283b
-  highlight NoteFoldColumn guifg=#24283b
+  highlight NoteBackground guibg=$bg guifg=NONE
+  highlight NoteBorder guibg=$bg guifg=$red_pure
+  highlight NoteTitle guibg=$red_pure guifg=$fg_on_chip gui=bold
+  highlight LocalNoteBorder guibg=$bg guifg=$green
+  highlight LocalNoteTitle guibg=$green guifg=$fg_on_chip gui=bold
+  highlight LocalTodoBorder guibg=$bg guifg=$blue
+  highlight LocalTodoTitle guibg=$blue guifg=$fg_on_chip gui=bold
+  highlight NoteEOB guifg=$bg
+  highlight NoteFoldColumn guifg=$bg
 
 
   " MEMO:: markdown
-  highlight MDFoldColumn guifg=#24283B
-  " highlight MDLineNrAbove guifg=#24283B
-  " highlight MDLineNrBelow guifg=#24283B
+  highlight MDFoldColumn guifg=$bg
+  " highlight MDLineNrAbove guifg=$bg
+  " highlight MDLineNrBelow guifg=$bg
 
 
   " MEMO:: Terminal
-  highlight TerminalNormal guibg=#0c0c0c
-  highlight TerminalEOB guifg=#0c0c0c
-  highlight TerminalSignColumn guibg=#0c0c0c
+  highlight TerminalNormal guibg=$bg_term
+  highlight TerminalEOB guifg=$bg_term
+  highlight TerminalSignColumn guibg=$bg_term
 
 
   " MEMO:: CodeCompanion
-  highlight CodeCompanionMeHeader guibg=#1E5631 guifg=#000000
-  highlight CodeCompanionCopilotHeader guibg=#181d5f guifg=#E0E0E0
-  highlight CodeCompanionNormal guibg=#242024 guifg=NONE
-  highlight CodeCompanionSignColumn guibg=#242024  guifg=NONE
-  highlight CodeCompanionEOB  guibg=NONE guifg=#242024
-  highlight CodeCompanionFolded guibg=#242024 guifg=#8b8378 gui=italic
-  highlight CodeCompanionH1Bg guibg=#242024 guifg=#FFFFFF gui=italic,bold
-  highlight CodeCompanionH2Bg guibg=#242024 guifg=#FFFF0a gui=bold,italic
-  highlight CodeCompanionH3Bg guibg=#242024 guifg=#1e90ff gui=bold
-  highlight CodeCompanionH4Bg guibg=#242024 guifg=#e0af68 gui=bold
-  highlight CodeCompanionH5Bg guibg=#242024 guifg=#8b8378 gui=bold
-  highlight CodeCompanionH6Bg guibg=#242024 guifg=#B0C4DE gui=bold
-  highlight CodeCompanionDiffBanner guibg=#000000 guifg=#bb9af7 gui=italic
+  highlight CodeCompanionMeHeader guibg=$bg_cc_me guifg=$fg_on_chip
+  highlight CodeCompanionCopilotHeader guibg=$bg_cc_copilot guifg=$fg_soft
+  highlight CodeCompanionNormal guibg=$bg_note guifg=NONE
+  highlight CodeCompanionSignColumn guibg=$bg_note  guifg=NONE
+  highlight CodeCompanionEOB  guibg=NONE guifg=$bg_note
+  highlight CodeCompanionFolded guibg=$bg_note guifg=$fg_muted gui=italic
+  highlight CodeCompanionH1Bg guibg=$bg_note guifg=$fg_markup gui=italic,bold
+  highlight CodeCompanionH2Bg guibg=$bg_note guifg=$yellow_hi gui=bold,italic
+  highlight CodeCompanionH3Bg guibg=$bg_note guifg=$blue gui=bold
+  highlight CodeCompanionH4Bg guibg=$bg_note guifg=$tan gui=bold
+  highlight CodeCompanionH5Bg guibg=$bg_note guifg=$fg_muted gui=bold
+  highlight CodeCompanionH6Bg guibg=$bg_note guifg=$lavender gui=bold
+  highlight CodeCompanionDiffBanner guibg=$bg_panel guifg=$violet gui=italic
 
   " MEMO:: Snacks
-  highlight SnacksPickerInputTitle guibg=#000000 guifg=#A1C98A
-  " highlight SnacksPickerListCursorLine guibg=#242024 guifg=NONE
-  highlight SnacksPickerListCursorLine guibg=#000080 guifg=NONE
+  highlight SnacksPickerInputTitle guibg=$bg_panel guifg=$sage
+  " highlight SnacksPickerListCursorLine guibg=$bg_note guifg=NONE
+  highlight SnacksPickerListCursorLine guibg=$bg_select guifg=NONE
   " highlight SnacksPickerPreviewCursorLine guibg=NONE
-  highlight SnacksPickerInputBorder guibg=#000000 guifg=#000000
-  highlight SnacksPickerPreviewBorder guibg=NONE guifg=#007F7F
-  highlight SnacksPickerCursorLine guibg=#24283B guifg=NONE
-  highlight SnacksPickerMatch guifg=#FF4500
-  highlight SnacksPickerPreview guibg=#24283B guifg=NONE
-  highlight SnacksPickerDropdownPreview guibg=#000000 guifg=NONE
+  highlight SnacksPickerInputBorder guibg=$bg_panel guifg=$bg_panel
+  highlight SnacksPickerPreviewBorder guibg=NONE guifg=$teal
+  highlight SnacksPickerCursorLine guibg=$bg guifg=NONE
+  highlight SnacksPickerMatch guifg=$match
+  highlight SnacksPickerPreview guibg=$bg guifg=NONE
+  highlight SnacksPickerDropdownPreview guibg=$bg_panel guifg=NONE
 
-  highlight SnacksGhNormal guibg=#000000 guifg=NONE
-  highlight SnacksGhNormalFloat guibg=#000000 guifg=NONE
-  highlight SnacksGhBorder guibg=#000000 guifg=#FF4500
-  highlight SnacksGhTitle guibg=#000000 guifg=NONE
-  highlight SnacksGhFooter guibg=#000000 guifg=NONE
+  highlight SnacksGhNormal guibg=$bg_panel guifg=NONE
+  highlight SnacksGhNormalFloat guibg=$bg_panel guifg=NONE
+  highlight SnacksGhBorder guibg=$bg_panel guifg=$match
+  highlight SnacksGhTitle guibg=$bg_panel guifg=NONE
+  highlight SnacksGhFooter guibg=$bg_panel guifg=NONE
 
 
-  highlight MarkSignHL guifg=#FF4500 guibg=NONE gui=italic
+  highlight MarkSignHL guifg=$match guibg=NONE gui=italic
 
   " MEMO:: Snacks
-  highlight DebugBreakPointText guifg=#FF4500 guibg=NONE
-  highlight DebugBreakPointRejectedText guifg=#9932cc guibg=NONE
-  highlight DebugStoppedText guifg=#32CD32 guibg=NONE
-  highlight DebugStoppedLine guifg=NONE guibg=#000000
+  highlight DebugBreakPointText guifg=$match guibg=NONE
+  highlight DebugBreakPointRejectedText guifg=$violet2 guibg=NONE
+  highlight DebugStoppedText guifg=$green_bright guibg=NONE
+  highlight DebugStoppedLine guifg=NONE guibg=$bg_panel
 
   " MEMO:: Atone(undotree)
-  highlight AtoneCurrentNode guifg=#32CD32 gui=NONE
+  highlight AtoneCurrentNode guifg=$green_bright gui=NONE
 
-]])
+]]
+
+---@param palette table<string, string>
+local function render(palette)
+    return (template:gsub("%$([%w_]+)", function(token)
+        local color = palette[token]
+        if not color then error("[UI.highlights] unknown palette token: $" .. token, 2) end
+        return color
+    end))
+end
+
+--- Apply the UI overrides for the current 'background'.
+function M.apply() vim.cmd(render(require("UI.palette").get())) end
+
+return M
+
 
 --
 --

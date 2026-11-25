@@ -58,12 +58,10 @@ function BlinkCursorLine(duration)
     vim.cmd("highlight CursorLine guibg=#ffff00")
     vim.wo.cursorline = true
     vim.defer_fn(function()
-        if vim.bo.filetype == "NvimTree" then
-            vim.cmd("highlight CursorLine guibg=#242024")
-        else
-            vim.cmd("highlight CursorLine guibg=#242024")
-            vim.wo.cursorline = false
-        end
+        local palette = require("UI.palette").get()
+        local restore = vim.bo.filetype == "NvimTree" and palette.bg_note or palette.bg_cursorline
+        vim.cmd("highlight CursorLine guibg=" .. restore)
+        if vim.bo.filetype ~= "NvimTree" then vim.wo.cursorline = false end
     end, duration)
 end
 

@@ -25,7 +25,20 @@ return {
             --- You can override specific color groups to use other groups or a hex color
             --- function will be called with a ColorScheme table
             ---@param colors ColorScheme
-            on_colors = function(colors) end,
+            on_colors = function(colors)
+                -- TokyoNight day inverts storm, so it lands on a grey-blue
+                -- background. The day palette wants a white editor and a
+                -- neutral body text instead.
+                if vim.o.background ~= "light" then return end
+                local p = require("UI.palette").get()
+                colors.bg = p.bg
+                colors.bg_dark = p.bg_note
+                colors.bg_sidebar = p.bg_panel
+                colors.bg_float = p.bg_panel
+                colors.fg = p.fg_body
+                colors.fg_dark = p.fg_soft
+                colors.comment = p.fg_muted
+            end,
             --- You can override specific highlights to use other groups or a hex color
             --- function will be called with a Highlights and ColorScheme table
             ---@param highlights tokyonight.Highlights

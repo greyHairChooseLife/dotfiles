@@ -2,7 +2,8 @@ return {
     "sphamba/smear-cursor.nvim",
     lazy = false,
     opts = {
-        cursor_color = "#d3cdc3",
+        -- no cursor_color on purpose: smear falls back to the `Cursor` group,
+        -- so the trail follows the day/night palette
         -- Smear cursor when switching buffers or windows.
         smear_between_buffers = true,
 

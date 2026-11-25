@@ -30,7 +30,7 @@ wk_map({
 wk_map({
     ["<Space>u"] = {
         group = "UI",
-        order = { "i", "s", "S", "d" },
+        order = { "i", "s", "S", "d", "t" },
         ["i"] = { "<cmd>IBLToggle<CR>", desc = "IBL-toggle", mode = "n" },
         ["s"] = {
             function()
@@ -59,6 +59,11 @@ wk_map({
         ["v"] = { ToggleVirtualText, desc = "virtual text toggle", mode = { "n" } },
         ["r"] = { "<cmd>RenderMarkdown buf_toggle<CR>", desc = "  rendering toggle", mode = { "n" } },
         ["c"] = { "<cmd>HighlightColors Toggle<CR>", desc = "Color toggle", mode = { "n" } },
+        ["t"] = {
+            function() require("UI.theme").toggle() end,
+            desc = "theme day/night toggle",
+            mode = "n",
+        },
     },
 })
 

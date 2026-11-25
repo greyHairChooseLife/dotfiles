@@ -1,34 +1,42 @@
 -- Lualine components and configuration
 local M = {}
 
+-- Colors follow the day/night palette (UI/palette.lua). The module is reloaded
+-- by UI/theme.lua on a theme switch, so every table below is rebuilt then.
+local p = require("UI.palette").get()
+
 M.colors = {
-    warp = "#f1502f",
-    real_blue = "#0020fc",
-    blue = "#61afef",
-    git_add = "#40cd52",
-    git_change = "#ffcc00",
-    git_delete = "#f1502f",
-    greenbg = "#98c379",
-    purple = "#c678dd",
-    orange = "#FF8C00",
-    orange_deep = "#cd853f",
-    wwhite = "#abb2bf",
-    white = "#ffffff",
-    bblack = "#282c34",
-    black = "#000000",
-    terminal_bg = "#0c0c0c",
-    grey = "#333342",
-    bg = "#24283b",
-    bg2 = "#242024", -- this is note bg color
-    active_qf = "#db4b4b",
-    qf_bg = "#201010",
-    nvimTree = "#333342",
-    active_oil = "#BDB80B",
-    oil_bg = "#1A1601",
-    purple1 = "#A020F0",
-    red2 = "#DC143C",
-    search = "#ffff00",
-    sepNC = "#5F5F5F",
+    warp = p.warp,
+    real_blue = p.blue_flag,
+    blue = p.blue3,
+    git_add = p.git_add,
+    git_change = p.git_change,
+    git_delete = p.warp,
+    greenbg = p.green,
+    purple = p.purple,
+    orange = p.orange,
+    orange_deep = p.orange_deep,
+    wwhite = p.fg_soft2,
+    white = p.on_accent,
+    bblack = p.bg_note,
+    black = p.black,
+    term_chip = p.bg_term_chip,
+    term_chip_fg = p.fg_term_chip,
+    grey = p.bg_tree,
+    bg = p.bg_bar, -- statusline / inactive surface
+    bar_accent = p.bar_accent, -- active section anchor
+    fg_on_chip = p.fg_on_chip,
+    bg2 = p.bg_note, -- this is note bg color
+    active_qf = p.red_active,
+    qf_bg = p.bg_qf,
+    nvimTree = p.bg_tree,
+    active_oil = p.oil_tag,
+    oil_bg = p.bg_oil,
+    purple1 = p.purple_bright,
+    red2 = p.red_crimson,
+    alert = p.alert,
+    search = p.search_bg,
+    sepNC = p.fg_dim,
 }
 
 -- Section colors for every mode. Missing mode entries make lualine fall back to
@@ -37,12 +45,12 @@ M.colors = {
 -- invisible in visual/insert mode.
 local function mode_sections()
     return {
-        a = { fg = M.colors.orange, bg = M.colors.orange },
-        b = { fg = M.colors.orange, bg = M.colors.bg },
-        c = { fg = M.colors.orange, bg = M.colors.bg },
-        x = { fg = M.colors.orange, bg = M.colors.orange },
-        y = { fg = M.colors.orange, bg = M.colors.bg },
-        z = { fg = M.colors.bg, bg = M.colors.orange },
+        a = { fg = M.colors.bar_accent, bg = M.colors.bar_accent },
+        b = { fg = M.colors.bar_accent, bg = M.colors.bg },
+        c = { fg = M.colors.bar_accent, bg = M.colors.bg },
+        x = { fg = M.colors.bar_accent, bg = M.colors.bar_accent },
+        y = { fg = M.colors.bar_accent, bg = M.colors.bg },
+        z = { fg = M.colors.bg, bg = M.colors.bar_accent },
     }
 end
 
@@ -56,9 +64,9 @@ M.theme = {
     inactive = {
         a = { fg = M.colors.wwhite, bg = M.colors.bg },
         b = { fg = M.colors.wwhite, bg = M.colors.bg },
-        c = { fg = M.colors.orange, bg = M.colors.bg },
-        x = { fg = M.colors.orange, bg = M.colors.bg },
-        y = { fg = M.colors.orange, bg = M.colors.bg },
+        c = { fg = M.colors.bar_accent, bg = M.colors.bg },
+        x = { fg = M.colors.bar_accent, bg = M.colors.bg },
+        y = { fg = M.colors.bar_accent, bg = M.colors.bg },
         z = { fg = M.colors.wwhite, bg = M.colors.bg },
     },
 }
@@ -207,7 +215,7 @@ M.my_terminal = {
         lualine_a = {
             {
                 "filetype",
-                color = { bg = M.colors.white, fg = M.colors.terminal_bg, gui = "bold,italic" },
+                color = { bg = M.colors.term_chip, fg = M.colors.term_chip_fg, gui = "bold,italic" },
                 padding = { left = 1, right = 5 },
             },
         },
@@ -216,7 +224,7 @@ M.my_terminal = {
         lualine_a = {
             {
                 "filetype",
-                color = { bg = M.colors.terminal_bg, fg = M.colors.white, gui = "italic" },
+                color = { bg = M.colors.term_chip_fg, fg = M.colors.term_chip, gui = "italic" },
                 padding = { left = 1, right = 5 },
             },
         },
@@ -297,7 +305,7 @@ M.my_fugitive = {
                 separator = { right = "" },
             },
         },
-        lualine_b = M.fill_color2("#242024", "#242024", M.get_git_branch, function() return "- fugitive -" end, 11),
+        lualine_b = M.fill_color2(M.colors.bg2, M.colors.bg2, M.get_git_branch, function() return "- fugitive -" end, 11),
         lualine_z = {
             {
                 function() return "- fugitive -" end,
@@ -315,7 +323,7 @@ M.my_fugitive = {
                 -- separator = { right = "" },
             },
         },
-        lualine_b = M.fill_color("#242024"),
+        lualine_b = M.fill_color(M.colors.bg2),
     },
 }
 

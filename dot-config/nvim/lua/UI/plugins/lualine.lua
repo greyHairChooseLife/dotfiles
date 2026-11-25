@@ -7,7 +7,7 @@ return {
         local utils = require("utils")
 
         -- Import lualine components
-        local lualine_components = require("UI.modules/lualine_components")
+        local lualine_components = require("UI.modules.lualine_components")
         local colors = lualine_components.colors
         local my_theme = lualine_components.theme
 
@@ -84,7 +84,9 @@ return {
                                 local bufnr = vim.fn.bufnr("%")
                                 local warpItem = require("warp").get_item_by_buf(bufnr)
                                 if warpItem then return { bg = colors.warp, fg = colors.real_blue } end
-                                return { fg = colors.red2 }
+                                -- red on the bar surface: readable on both the dark and the day
+                                -- accent chip (red on the accent itself has no contrast)
+                                return { fg = colors.alert, bg = colors.bg, gui = "bold" }
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                 return { fg = colors.bg }
                             else
@@ -193,7 +195,7 @@ return {
                     {
                         "selectioncount",
                         padding = { left = 1, right = 1 },
-                        color = { bg = colors.purple, fg = colors.black, gui = "bold" },
+                        color = { bg = colors.purple, fg = colors.fg_on_chip, gui = "bold" },
                     },
                     {
                         "location",
@@ -253,7 +255,7 @@ return {
                             padding = { left = 0, right = 1 },
                             color = function()
                                 if vim.bo.modified then
-                                    return { fg = colors.red2, bg = colors.bg }
+                                    return { fg = colors.alert, bg = colors.bg }
                                 elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                     return { fg = colors.wwhite, bg = colors.bg }
                                 else

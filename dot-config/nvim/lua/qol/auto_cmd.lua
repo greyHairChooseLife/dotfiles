@@ -157,8 +157,9 @@ vim.api.nvim_create_autocmd("CmdlineLeave", {
 
 vim.api.nvim_create_autocmd("CmdwinEnter", {
     callback = function()
-        vim.api.nvim_set_hl(0, "CmdlineWindowBG", { bg = "#0d0d0d" })
-        vim.api.nvim_set_hl(0, "CmdlineWindowFG", { fg = "#0d0d0d" })
+        local panel = require("UI.palette").get().bg_panel
+        vim.api.nvim_set_hl(0, "CmdlineWindowBG", { bg = panel })
+        vim.api.nvim_set_hl(0, "CmdlineWindowFG", { fg = panel })
         vim.wo.winhighlight = "Normal:CmdlineWindowBG,EndOfBuffer:CmdlineWindowFG,SignColumn:CmdlineWindowBG"
         vim.wo.relativenumber = false
         vim.wo.number = false
