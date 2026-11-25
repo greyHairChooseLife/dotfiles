@@ -11,7 +11,7 @@ LIBEXEC="${DOTFILES_LIBEXEC:-$HOME/.local/libexec}"
 PYTHON_DIR="$LIBEXEC/vocal/python"
 
 # --- 설정 ---
-MODE="api" # "local" 또는 "api"로 설정
+MODE="local" # "local" 또는 "api"로 설정
 
 # API 설정 (MODE="api"일 때)
 API_KEY="${OPENAI_API_KEY:-}"
@@ -20,6 +20,8 @@ MODEL_API="whisper-1"
 # 로컬 설정 (MODE="local"일 때)
 MODEL_LOCAL="base"
 MODEL_PATH="$HOME/whisper"
+# faster-whisper는 전용 venv에 설치한다 (README 참고). 전역 python을 더럽히지 않는다.
+LOCAL_PYTHON="$HOME/.venvs/transcribe/bin/python"
 
 # --- 상태 ---
 # 상태는 프로세스 이름(pgrep)이 아니라 PID 파일로 관리한다.
@@ -157,7 +159,12 @@ if pid=$(recorder_pid); then
         RESULT=$(python3 "$PYTHON_DIR/openai_uploader.py" "$API_KEY" "$wav" "$MODEL_API" "text" "0" "60" 2>"$LOG_FILE")
         ;;
     *)
-        RESULT=$(python3 "$PYTHON_DIR/transcribe.py" "$wav" "$MODEL_LOCAL" "$MODEL_PATH" 2>"$LOG_FILE")
+        if [ ! -x "$LOCAL_PYTHON" ]; then
+            notify_replace "$nid" "Error: local engine not installed" -h string:bgcolor:#ffcc00 -h string:fgcolor:#004F4F -t 5000
+            rm -f "$wav" "$NOTIFY_FILE"
+            exit 1
+        fi
+        RESULT=$("$LOCAL_PYTHON" "$PYTHON_DIR/transcribe.py" "$wav" "$MODEL_LOCAL" "$MODEL_PATH" 2>"$LOG_FILE")
         ;;
     esac
 

@@ -195,7 +195,7 @@ AUR_PKGS=(
     portal-bin
     pvw-bin
     python-edge-tts
-    python-openai-whisper
+    # python-openai-whisper
     rustnet-bin
     sqlit
     stu

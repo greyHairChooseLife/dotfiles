@@ -4,19 +4,19 @@
 `vocal cancel`은 진행 중인 녹음/전사를 취소한다.
 
 -   `bin/vocal`: 진입점 (zsh). 녹음은 `parecord`(PulseAudio), 전사는 `libexec/python/`의 스크립트가 한다
--   `libexec/python/transcribe.py`: 로컬 whisper 모델로 전사 (`MODE="local"`, 모델 경로 `~/whisper`)
+-   `libexec/python/transcribe.py`: `faster-whisper`로 전사 (`MODE="local"`, 모델 경로 `~/whisper`)
 -   `libexec/python/openai_uploader.py`: OpenAI API로 전사 (`MODE="api"`, `OPENAI_API_KEY` 필요)
 
 i3에서 `$mod+i`(시작/완료), `$mod+Shift+i`(취소)로 호출한다.
 
 ## 상태
 
-상태는 `$XDG_RUNTIME_DIR/vocal`에 파일로 남는다. 프로세스 이름으로 상태를 추측하지 않는다.
+상태는 `$XDG_RUNTIME_DIR/vocal`(없으면 `/tmp/vocal`)에 파일로 남는다. 프로세스 이름으로 상태를 추측하지 않는다.
 
 | 파일 | 내용 |
 | --- | --- |
 | `lock` | `flock` 잠금. 시작/종료 전환을 한 번에 하나만 한다 |
-| `pid`, `wav` | 녹음 중인 `parecord`의 PID와 wav 경로 |
+| `pid`, `wav` | 녹음 중인 `parecord`의 PID와 wav 경로 (`rec-XXXXXXXX.wav`) |
 | `transcribing` | 전사 중인 wav 경로 |
 | `notify` | 덮어쓸 dunst 알림 ID |
 | `cancel` | `vocal cancel` 표시. 전사 인스턴스가 오류 알림을 내지 않게 한다 |
@@ -26,15 +26,29 @@ i3에서 `$mod+i`(시작/완료), `$mod+Shift+i`(취소)로 호출한다.
 
 ## 의존
 
-`parecord`(PulseAudio 또는 pipewire-pulse), `flock`(util-linux), `python3`, `notify-send`(dunst), `xclip`,
-그리고 모드에 따라 `openai` 패키지 또는 로컬 `whisper` 모델.
+`parecord`(PulseAudio 또는 pipewire-pulse), `flock`(util-linux), `python3`, `notify-send`(dunst), `xclip`.
+
+`MODE="api"`: 전역 `python3`의 `requests` 패키지와 `OPENAI_API_KEY`.
+
+`MODE="local"`: `faster-whisper`(CTranslate2). 전역 python을 건드리지 않도록 전용 venv
+`~/.venvs/transcribe`를 쓴다. `av>=19`는 faster-whisper 1.2.1을 깨므로 버전을 고정한다.
+
+```sh
+# 이미 ~/.venvs/transcribe가 있으면 첫 줄은 건너뛴다 (uv venv는 기존 venv에서 실패한다)
+uv venv --python 3.14 ~/.venvs/transcribe
+uv pip install --python ~/.venvs/transcribe/bin/python faster-whisper "av<19"
+```
+
+모델은 `MODEL_PATH`(기본 `~/whisper`)에 처음 한 번 받는다. `MODEL_LOCAL="base"`는 약 142 MB,
+8스레드 CPU에서 11초 오디오를 2초에 전사한다. `small`은 약 3-5배 느리고 메모리를 약 1.3 GB
+쓰므로 이 노트북(7.4 GiB)에서는 `base`가 기본이다. 한국어 정확도는 아직 비교하지 않았다.
 
 ## 구조
 
 | 경로 | 역할 |
 | --- | --- |
 | `bin/vocal` | 녹음/전사/취소 진입점 |
-| `libexec/python/transcribe.py` | 로컬 whisper 전사 |
+| `libexec/python/transcribe.py` | 로컬 `faster-whisper` 전사 |
 | `libexec/python/openai_uploader.py` | API 전사 |
 | `install.sh` | `bin/*` → `~/.local/bin`, `libexec/*` → `~/.local/libexec/vocal` |
 | `uninstall.sh` | 링크 제거 |
