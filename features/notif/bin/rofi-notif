@@ -1,0 +1,151 @@
+#!/usr/bin/env python3
+"""Rofi script-mode frontend for dunst history.
+
+    rofi-notif                                  # open the list (what the i3 keybind runs)
+    rofi -show notif -modi "notif:rofi-notif"    # same thing, spelled out
+
+Keys:
+    Enter    copy the message body to the clipboard
+    Alt+1    re-show the notification as a dunst popup (read long messages)
+    Alt+2    remove the notification from dunst history
+
+dunst only moves a notification into history when it is closed, so the list
+first runs `dunstctl close-all`; notifications on screen become readable here
+but disappear from the screen.
+"""
+
+import html
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+
+PROMPT = "Notifications"
+DISPLAY_LIMIT = 110
+FIELD_SEP = "\x1f"
+ROW_SEP = "\0"
+
+
+def dunstctl(*args):
+    """Run dunstctl, returning the CompletedProcess or None when unavailable."""
+    if not shutil.which("dunstctl"):
+        return None
+    return subprocess.run(["dunstctl", *args], capture_output=True, text=True)
+
+
+def field(raw, index):
+    return raw.split(FIELD_SEP)[index]
+
+
+def plain(text):
+    """Strip dunst markup and collapse whitespace: rofi rows are single lines."""
+    if not isinstance(text, str):
+        return ""
+    return " ".join(html.unescape(re.sub(r"<[^>]+>", " ", text)).split())
+
+
+def dismiss_displayed():
+    """Close shown notifications so they land in history before we read it."""
+    if dunstctl("close-all") is None:
+        return
+    for _ in range(25):
+        res = dunstctl("count", "displayed")
+        if res is None or res.returncode != 0 or res.stdout.strip() in ("", "0"):
+            return
+        time.sleep(0.02)
+
+
+def history():
+    res = dunstctl("history")
+    if res is None or res.returncode != 0:
+        return []
+    try:
+        notes = json.loads(res.stdout)["data"][0]
+    except (ValueError, KeyError, IndexError):
+        return []
+    return [{k: v.get("data") if isinstance(v, dict) else v for k, v in n.items()} for n in notes]
+
+
+def rows():
+    """One rofi row per history entry; the raw row carries id/app/summary/body."""
+    out = []
+    for note in history():
+        nid = note.get("id")
+        if not isinstance(nid, int):
+            continue
+        app = plain(note.get("appname"))
+        summary = plain(note.get("summary")) or app or "(notification)"
+        body = plain(note.get("body"))
+        text = summary if not body or body == summary else "%s — %s" % (summary, body)
+        display = text if len(text) <= DISPLAY_LIMIT else text[: DISPLAY_LIMIT - 1] + "…"
+        row = FIELD_SEP.join((str(nid), app, summary, body))
+        row += ROW_SEP + "display" + FIELD_SEP + display
+        icon = note.get("icon_path")
+        if isinstance(icon, str) and icon:
+            row += ROW_SEP + "icon" + FIELD_SEP + icon
+        if note.get("urgency") == "CRITICAL":
+            row += ROW_SEP + "urgent" + FIELD_SEP + "true"
+        out.append(row)
+    return out
+
+
+def copy(text):
+    if not text:
+        return
+    if shutil.which("xclip"):
+        cmd = ["xclip", "-selection", "clipboard"]
+    elif shutil.which("wl-copy"):
+        cmd = ["wl-copy"]
+    else:
+        sys.exit("rofi-notif: neither xclip nor wl-copy is installed")
+    # xclip forks a daemon that keeps inherited fds open; rofi waits for our
+    # stdout to close, so the helper must not share it.
+    with open(os.devnull, "wb") as devnull:
+        proc = subprocess.Popen(
+            cmd, stdin=subprocess.PIPE, stdout=devnull, stderr=devnull, start_new_session=True
+        )
+    proc.communicate(text.encode())
+
+
+def emit_options():
+    for option in (
+        "prompt" + FIELD_SEP + PROMPT,
+        "use-hot-keys" + FIELD_SEP + "true",
+        "no-custom" + FIELD_SEP + "true",
+        "keep-filter" + FIELD_SEP + "true",
+    ):
+        print(ROW_SEP + option)
+
+
+def main():
+    retv = os.environ.get("ROFI_RETV")
+    raw = sys.argv[1] if len(sys.argv) > 1 else ""
+
+    if retv is None:
+        os.execvp("rofi", ["rofi", "-show", "notif", "-modi", "notif:" + os.path.realpath(__file__)])
+
+    if retv == "0":
+        dismiss_displayed()
+    elif retv == "1":
+        fields = raw.split(FIELD_SEP)
+        if len(fields) > 3:
+            copy(fields[3] or fields[2])
+        return
+    elif retv == "10":
+        dunstctl("history-pop", field(raw, 0))
+        return
+    elif retv == "11":
+        dunstctl("history-rm", field(raw, 0))
+
+    emit_options()
+    out = rows()
+    if not out:
+        out = ["No notifications" + ROW_SEP + "nonselectable" + FIELD_SEP + "true"]
+    print("\n".join(out))
+
+
+if __name__ == "__main__":
+    main()

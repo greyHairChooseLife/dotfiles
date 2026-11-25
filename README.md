@@ -60,6 +60,7 @@ dotfiles/
 | `system-tuning` | CPU governor / TLP / EPP udev 규칙 |
 | `misc` | `txt2pdf`, 파일·docker 이미지 공유 |
 | `vocal` | 녹음 → 전사 (whisper 또는 OpenAI API) |
+| `notif` | dunst 알림 히스토리를 rofi 목록으로 (`rofi-notif`) |
 | `study-english` | 사전 조회 (`dictionary`) + 학습 노트 생성 참고 구현 |
 
 feature 안에서 다른 feature의 helper를 쓰면 안 된다. 공용이면 `features/base`로 올린다.

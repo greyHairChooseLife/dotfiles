@@ -59,6 +59,7 @@ bindsym $mod+z exec --no-startup-id morc_menu
 # Rofi
 bindsym $mod+n exec --no-startup-id rofi -show window
 bindsym $mod+Shift+n exec --no-startup-id rofi -show drun
+bindsym $mod+Shift+m exec --no-startup-id rofi-notif  # 알림 히스토리 목록
 
 
 ################################################################################################
