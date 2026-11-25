@@ -34,7 +34,6 @@ M.colors = {
     oil_bg = p.bg_oil,
     purple1 = p.purple_bright,
     red2 = p.red_crimson,
-    alert = p.alert,
     search = p.search_bg,
     sepNC = p.fg_dim,
 }

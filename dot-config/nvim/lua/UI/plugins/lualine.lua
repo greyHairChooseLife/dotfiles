@@ -84,9 +84,8 @@ return {
                                 local bufnr = vim.fn.bufnr("%")
                                 local warpItem = require("warp").get_item_by_buf(bufnr)
                                 if warpItem then return { bg = colors.warp, fg = colors.real_blue } end
-                                -- red on the bar surface: readable on both the dark and the day
-                                -- accent chip (red on the accent itself has no contrast)
-                                return { fg = colors.alert, bg = colors.bg, gui = "bold" }
+                                -- no bg on purpose: the mark keeps the accent chip background
+                                return { fg = colors.red2 }
                             elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                 return { fg = colors.bg }
                             else
@@ -255,7 +254,7 @@ return {
                             padding = { left = 0, right = 1 },
                             color = function()
                                 if vim.bo.modified then
-                                    return { fg = colors.alert, bg = colors.bg }
+                                    return { fg = colors.red2, bg = colors.bg }
                                 elseif vim.bo.readonly or vim.bo.buftype == "nowrite" or vim.bo.buftype == "nofile" then
                                     return { fg = colors.wwhite, bg = colors.bg }
                                 else
