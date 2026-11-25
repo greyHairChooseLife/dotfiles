@@ -12,13 +12,21 @@ set -uo pipefail
 
 ME="$(readlink -f "$0")"
 NOTIF="$HOME/.local/bin/rofi-notif"
+BROWSER="${BROWSER:-brave}"
 
 open_google() {
-    local query="$1" url
+    local query="$1" url browser
     [ -n "$query" ] || return 0
     url="https://www.google.com/search?q=$(python3 -c \
         'import sys, urllib.parse; print(urllib.parse.quote_plus(sys.argv[1]))' "$query")"
-    setsid xdg-open "$url" >/dev/null 2>&1 &
+    # A new window, not a tab: the running browser already owns the window the
+    # URL would otherwise land in. $BROWSER overrides the browser binary.
+    browser="${BROWSER%:*}"
+    if [ -n "$browser" ] && command -v "$browser" >/dev/null 2>&1; then
+        setsid "$browser" --new-window "$url" >/dev/null 2>&1 &
+    else
+        setsid xdg-open "$url" >/dev/null 2>&1 &
+    fi
 }
 
 if [ -n "${ROFI_RETV:-}" ]; then
