@@ -1,8 +1,8 @@
 # notif
 
-rofi로 dunst 알림 히스토리를 목록으로 보고, body를 클립보드로 복사한다. i3에서는
-`$mod+Shift+m`이 `rofi-notif`를 실행한다. rofi의 script mode(`-modi`)로 동작하므로
-목록 생성과 키 처리를 같은 스크립트가 맡는다.
+rofi로 dunst 알림 히스토리를 목록으로 보고, body를 클립보드로 복사한다. i3에서는 키바인드가
+없고 `$mod+n` → `features/menu`의 `notifications` row로 들어간다. rofi의 script mode(`-modi`)로
+동작하므로 목록 생성과 키 처리를 같은 스크립트가 맡는다.
 
 -   `rofi-notif`: 알림 목록을 띄운다. 직접 실행해도 되고 `rofi -show notif -modi "notif:rofi-notif"`로도 된다.
 -   Enter: 선택한 알림의 body를 클립보드(`xclip`)로 복사

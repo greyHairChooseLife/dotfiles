@@ -35,6 +35,7 @@ if [ -n "${ROFI_RETV:-}" ]; then
                 *) open_google "${1:-}" ;;
             esac
             ;;
+        2) open_google "${1:-}" ;;  # typed text that matched no row
     esac
     exit 0
 fi

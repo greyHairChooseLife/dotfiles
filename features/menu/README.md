@@ -8,11 +8,11 @@ rofi 모드 메뉴. 키바인드 하나(`$mod+n`)로 열고, row를 고르면 **
 -   매칭되는 row가 없는 문자열을 입력하고 Enter: Google 검색 (`xdg-open`)
 
 `rofi-notif`는 `ROFI_MENU=1`을 물려받았을 때만 마지막 row에 `← back`을 붙인다. 그래서
-`$mod+Shift+m`으로 바로 열 때는 back row가 없다. builtin `window` 모드에는 row를 넣을 수
+`rofi-notif`를 직접 실행하면 back row가 없다. builtin `window` 모드에는 row를 넣을 수
 없으므로 거기서는 `Shift+Left`(`kb-mode-previous`)로 돌아온다.
 
-`$mod+n`이 이 메뉴, `$mod+Shift+n`은 drun, `$mod+Shift+m`은 알림 목록이다. `$mod+z`의
-`morc_menu`는 이 메뉴로 대체했다. 의존: `features/notif`, `rofi`, `xdg-open`.
+키바인드는 `$mod+n` 하나다(`$mod+Shift+n` drun은 그대로). `morc_menu`는 없어졌고 `$mod+z`도
+걸지 않았다. 의존: `features/notif`, `rofi`, `xdg-open`.
 
 ## 구조
 
