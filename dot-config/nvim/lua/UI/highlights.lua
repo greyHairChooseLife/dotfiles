@@ -32,7 +32,7 @@ local template = [[
   highlight CurSearch gui=bold guibg=$blue_flag guifg=$on_accent
   highlight Visual guibg=$bg_visual guifg=NONE
   highlight CursorLine guibg=$bg_cursorline guifg=NONE
-  highlight Folded guibg=$bg_soft guifg=$folded_fg gui=NONE
+  highlight Folded guibg=$bg_fold guifg=$folded_fg gui=NONE
   highlight StatusLine guifg=$bar_fg guibg=$bg_bar
   highlight StatusLineNC guifg=$bar_fg_nc guibg=$bg_bar
   highlight FoldColumn guifg=$bg
@@ -61,7 +61,7 @@ local template = [[
   " MEMO:: NvimTree
   highlight NvimTreeNormal guibg=$bg_tree guifg=NONE
   highlight NvimTreeNormalNC guibg=$bg_tree guifg=NONE
-  highlight NvimTreeCursorLine guibg=$bg_note guifg=NONE
+  highlight NvimTreeCursorLine guibg=$bg_tree_cursor guifg=NONE
   highlight NvimTreeFolderIcon guifg=$tree_blue
   highlight NvimTreeFolderArrowOpen guifg=$git_change
   highlight NvimTreeFolderName guifg=$tree_blue gui=bold
@@ -265,13 +265,13 @@ local template = [[
 
   "MEMO:: Fold Text
   highlight FoldIndent guifg=NONE guibg=NONE
-  highlight MDFoldBlock guifg=$bg_fold guibg=NONE
-  highlight MDFoldHeaderInfo guifg=$purple guibg=$bg_fold
+  highlight MDFoldBlock guifg=$bg_fold_deco guibg=NONE
+  highlight MDFoldHeaderInfo guifg=$purple guibg=$bg_fold_deco
   highlight FoldText guifg=$purple
   highlight FoldTextCodeblock guifg=$purple guibg=$bg_code
   highlight FoldTextCodeblockReverse guifg=$bg_code
-  highlight FoldTextMDTable guifg=$purple guibg=$bg_fold
-  highlight FoldTextMDTableSuffix guifg=$bg_fold
+  highlight FoldTextMDTable guifg=$purple guibg=$bg_fold_deco
+  highlight FoldTextMDTableSuffix guifg=$bg_fold_deco
 
   " MEMO:: QuickFix
   highlight Delimiter guifg=$green
