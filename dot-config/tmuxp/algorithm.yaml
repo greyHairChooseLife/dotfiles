@@ -1,0 +1,43 @@
+session_name: algorithm
+start_directory: ${HOME}/Study/algorithm
+suppress_history: false
+
+windows:
+    # --- 코딩 & 실행 ---
+    - window_name: solve
+      focus: true
+      layout: bb15,284x83,0,0{211x83,0,0,130,72x83,212,0,131}
+      panes:
+        - shell_command:
+            - tm.1_title 'editor (Py -> C++ -> C)'
+            - vi .
+          focus: true
+
+        - shell_command:
+            - tm.1_title 'runner (30m habit / 15m stuck limit)'
+            - cmd: ./run.sh new 0x02_basic/10871
+              enter: false
+
+    # --- 체크리스트 & 트랩 노트 ---
+    - window_name: checklist
+      start_directory: ${HOME}/Documents/zk
+      layout: c8ea,284x83,0,0{60x83,0,0,133,223x83,61,0,132}
+      panes:
+        - shell_command:
+            - tm.1_title 'task tracker'
+            - cmd: task 0c9c356f start
+              enter: false
+
+        - shell_command:
+            - tm.1_title 'master checklist (task 0c9c356f)'
+            - vi /home/sy/Documents/zk/pv1yp4jw.md
+          focus: true
+
+    # --- Pi 세션 복구 ---
+    - window_name: pi
+      start_directory: ${HOME}/Documents/zk
+      panes:
+        - shell_command:
+            - tm.1_title 'pi (algorithm grill-me session)'
+            - cmd: pi --session /home/sy/.pi/agent/sessions/--home-sy-Documents-zk--/2026-11-25T08-00-50-109Z_01a211b8-bfbc-7464-a123-d7e8d7d043e1.jsonl
+              enter: false
