@@ -97,8 +97,9 @@ bindsym $mod+Mod1+5 exec --no-startup-id "brave --app=https://notebooklm.google.
 # bindsym $mod+F3 exec ranger
 bindsym $mod+Shift+F3 exec pcmanfm_pkexec
 bindsym $mod+F5 exec terminal -e 'mocp'
-bindsym $mod+i exec --no-startup-id ~/.local/bin/vocal
-bindsym $mod+Shift+i exec --no-startup-id ~/.local/bin/vocal cancel
+# --release: 키를 누른 채 유지하면 key repeat이 토글을 반복 실행한다
+bindsym --release $mod+i exec --no-startup-id ~/.local/bin/vocal
+bindsym --release $mod+Shift+i exec --no-startup-id ~/.local/bin/vocal cancel
 # bindsym $mod+t exec --no-startup-id pkill picom
 bindsym $mod+Ctrl+t exec --no-startup-id picom -b
 bindsym $mod+Shift+p exec --no-startup-id flameshot gui

@@ -1,99 +1,225 @@
 #!/bin/zsh
 
+# vocal: 녹음하고 전사한다.
+#   vocal          녹음 시작 / 다시 실행하면 녹음을 끝내고 전사
+#   vocal cancel   진행 중인 녹음이나 전사를 버린다
+
+set -u
+
 # 1. python helper 경로 (feature 설치 위치 기준)
 LIBEXEC="${DOTFILES_LIBEXEC:-$HOME/.local/libexec}"
 PYTHON_DIR="$LIBEXEC/vocal/python"
-AUDIO_FILE="/tmp/vocal_recording.wav"
-NOTIFY_ID_FILE="/tmp/vocal_notify_id"
 
 # --- 설정 ---
 MODE="api" # "local" 또는 "api"로 설정
 
 # API 설정 (MODE="api"일 때)
-API_KEY=$OPENAI_API_KEY
+API_KEY="${OPENAI_API_KEY:-}"
 MODEL_API="whisper-1"
 
 # 로컬 설정 (MODE="local"일 때)
 MODEL_LOCAL="base"
 MODEL_PATH="$HOME/whisper"
 
-# --- 취소 ---
-if [ "$1" = "cancel" ]; then
-    pkill -INT -x "rec" 2>/dev/null
-    pkill -f "openai_uploader.py" 2>/dev/null
-    pkill -f "transcribe.py" 2>/dev/null
+# --- 상태 ---
+# 상태는 프로세스 이름(pgrep)이 아니라 PID 파일로 관리한다.
+# 세션마다 wav 경로가 다르므로, 전사 중에 새 녹음이 시작돼도
+# 이전 작업이 새 녹음 파일을 지울 수 없다.
+STATE_DIR="${XDG_RUNTIME_DIR:-/tmp}/vocal"
+LOCK_FILE="$STATE_DIR/lock"
+PID_FILE="$STATE_DIR/pid"
+WAV_FILE="$STATE_DIR/wav"
+NOTIFY_FILE="$STATE_DIR/notify"
+CANCEL_FILE="$STATE_DIR/cancel"
+TRANSCRIBE_FILE="$STATE_DIR/transcribing"
+LOG_FILE="$STATE_DIR/last.log"
 
-    # 프로세스 종료 대기
-    sleep 0.2
+RECORDER=(parecord --channels=1 --rate=16000 --file-format=wav)
 
-    if [ -f "$NOTIFY_ID_FILE" ]; then
-        LAST_ID=$(cat "$NOTIFY_ID_FILE")
-        notify-send -r "$LAST_ID" -h string:bgcolor:#f1502f -h string:fgcolor:#333342 -t 1500 "Vocal" "Recording cancelled"
+mkdir -p "$STATE_DIR"
+
+# --- 헬퍼 ---
+lock_state() {
+    exec 9>"$LOCK_FILE"
+    flock -w 3 9 || {
+        notify-send "Vocal" "Error: vocal is busy"
+        exit 0
+    }
+}
+
+unlock_state() {
+    exec 9>&-
+}
+
+# 녹음 중인 parecord의 PID. 없으면 1을 반환한다.
+recorder_pid() {
+    local pid comm
+    [ -r "$PID_FILE" ] || return 1
+    pid=$(<"$PID_FILE")
+    [ -n "$pid" ] || return 1
+    kill -0 "$pid" 2>/dev/null || return 1
+    # PID 재사용 방지
+    comm=$(</proc/$pid/comm 2>/dev/null) || return 1
+    [ "$comm" = "parecord" ] || return 1
+    print -r -- "$pid"
+}
+
+# stop_recorder <pid>: parecord가 wav 헤더를 마무리할 시간을 준다.
+stop_recorder() {
+    local pid="$1" i
+    kill -TERM "$pid" 2>/dev/null
+    for i in {1..30}; do
+        kill -0 "$pid" 2>/dev/null || return 0
+        sleep 0.1
+    done
+    kill -KILL "$pid" 2>/dev/null
+    return 0
+}
+
+# notify_replace <id> <message> [extra args...]
+notify_replace() {
+    local id="$1" msg="$2"
+    shift 2
+    if [ -n "$id" ]; then
+        notify-send -r "$id" "$@" "Vocal" "$msg"
     else
-        # ID 없어도 강제로 닫기
-        dunstctl close-all
+        notify-send "$@" "Vocal" "$msg"
     fi
-    rm -f "$AUDIO_FILE" "$NOTIFY_ID_FILE"
+}
+
+# --- 취소 ---
+if [ "${1:-}" = "cancel" ]; then
+    lock_state
+    nid=""
+    [ -r "$NOTIFY_FILE" ] && nid=$(<"$NOTIFY_FILE")
+
+    if pid=$(recorder_pid); then
+        wav=""
+        [ -r "$WAV_FILE" ] && wav=$(<"$WAV_FILE")
+        stop_recorder "$pid"
+        rm -f "$PID_FILE" "$WAV_FILE"
+        [ -n "$wav" ] && rm -f "$wav"
+        notify_replace "$nid" "Recording cancelled" -h string:bgcolor:#f1502f -h string:fgcolor:#333342 -t 1500
+    elif [ -r "$TRANSCRIBE_FILE" ]; then
+        # 전사 중: 전사기를 죽이고, 부모가 오류 알림을 겹쳐 띄우지 않도록 표시를 남긴다
+        wav=$(<"$TRANSCRIBE_FILE")
+        print -r -- "$wav" > "$CANCEL_FILE"
+        rm -f "$TRANSCRIBE_FILE"
+        pkill -f "vocal/python/openai_uploader.py" 2>/dev/null
+        pkill -f "vocal/python/transcribe.py" 2>/dev/null
+        rm -f "$wav"
+        notify_replace "$nid" "Recording cancelled" -h string:bgcolor:#f1502f -h string:fgcolor:#333342 -t 1500
+    else
+        notify_replace "$nid" "Nothing to cancel" -t 1500
+    fi
+
+    rm -f "$NOTIFY_FILE"
+    unlock_state
     exit 0
 fi
 
-# --- 녹음 중단(완료) ---
-if pgrep -x "rec" > /dev/null; then
+# --- 토글 ---
+lock_state
+
+if pid=$(recorder_pid); then
     # 1. 녹음 중단
-    # `pkill`은 기본적으로 SIGTERM을 보내는데, SoX의 `rec`은 SIGINT(Ctrl+C)를 받아야 파일을 정상적으로 flush하고 종료함. SIGTERM으로 죽이면 마지막 버퍼가 날아감.
-    pkill -INT -x "rec"
+    wav=""
+    [ -r "$WAV_FILE" ] && wav=$(<"$WAV_FILE")
+    nid=""
+    [ -r "$NOTIFY_FILE" ] && nid=$(<"$NOTIFY_FILE")
 
-    # rec 프로세스가 완전히 종료될 때까지 대기 (파일 저장 보장)
-    while pgrep -x "rec" > /dev/null; do sleep 0.1; done
+    # parecord는 SIGTERM을 받으면 wav 헤더를 마무리하고 종료한다.
+    stop_recorder "$pid"
+    rm -f "$PID_FILE" "$WAV_FILE"
 
-    # 이전 알림 ID 가져오기
-    if [ -f "$NOTIFY_ID_FILE" ]; then
-        LAST_ID=$(cat "$NOTIFY_ID_FILE")
-        # 기존 알림을 갱신하여 "변환 중" 메시지 표시 (노란색 느낌을 위해 critical 사용 가능, 혹은 일반)
-        notify-send -r "$LAST_ID" -h string:bgcolor:#50cd5a -h string:fgcolor:#333342 "Vocal" "Transcribing..."
-    else
-        notify-send "Vocal" "Transcribing..."
+    # 전사 중에도 cancel이 이 작업을 찾을 수 있게 상태를 남긴다
+    print -r -- "$wav" > "$TRANSCRIBE_FILE"
+
+    notify_replace "$nid" "Transcribing..." -h string:bgcolor:#50cd5a -h string:fgcolor:#333342
+
+    # 전사 중에도 cancel이 상태를 잡을 수 있게 잠금을 푼다
+    unlock_state
+
+    # 2. 전사
+    if [ ! -s "$wav" ]; then
+        notify_replace "$nid" "Error: no audio recorded" -h string:bgcolor:#ffcc00 -h string:fgcolor:#004F4F -t 3000
+        rm -f "$wav" "$NOTIFY_FILE"
+        exit 1
     fi
 
-    # 2. 전사 수행
-    if [ "$MODE" = "api" ]; then
-        RESULT=$(python3 "$PYTHON_DIR/openai_uploader.py" "$API_KEY" "$AUDIO_FILE" "$MODEL_API" "text" "0" "60")
-    else
-        RESULT=$(python3 "$PYTHON_DIR/transcribe.py" "$AUDIO_FILE" "$MODEL_LOCAL" "$MODEL_PATH")
+    case "$MODE" in
+    api)
+        if [ -z "$API_KEY" ]; then
+            notify_replace "$nid" "Error: OPENAI_API_KEY not set" -h string:bgcolor:#ffcc00 -h string:fgcolor:#004F4F -t 5000
+            rm -f "$wav" "$NOTIFY_FILE"
+            exit 1
+        fi
+        RESULT=$(python3 "$PYTHON_DIR/openai_uploader.py" "$API_KEY" "$wav" "$MODEL_API" "text" "0" "60" 2>"$LOG_FILE")
+        ;;
+    *)
+        RESULT=$(python3 "$PYTHON_DIR/transcribe.py" "$wav" "$MODEL_LOCAL" "$MODEL_PATH" 2>"$LOG_FILE")
+        ;;
+    esac
+
+    # cancel이 이미 알림을 띄웠다. 오류 알림을 겹쳐 띄우지 않는다.
+    if [ -r "$CANCEL_FILE" ] && [ "$(<"$CANCEL_FILE")" = "$wav" ]; then
+        rm -f "$CANCEL_FILE" "$wav" "$LOG_FILE"
+        exit 0
     fi
 
-    # 3. 결과 입력 (xdotool 사용)
+    # 전사 상태 정리 (새 세션이 이미 덮어썼다면 그대로 둔다)
+    if [ -r "$TRANSCRIBE_FILE" ] && [ "$(<"$TRANSCRIBE_FILE")" = "$wav" ]; then
+        rm -f "$TRANSCRIBE_FILE"
+    fi
+
+    # 3. 결과 처리
     if [ -n "$RESULT" ]; then
-        # 한글 입력 오류 방지를 위해 클립보드 복사 -> 붙여넣기 방식으로 변경
-        echo -n "$RESULT" | xclip -selection clipboard
-
-        # 클립보드 반영을 위해 아주 짧은 대기 후 붙여넣기 실행
-        # sleep 0.2
-        # xdotool key --clearmodifiers ctrl+shift+v
-
-        # 완료 알림 (기존 알림 덮어쓰기)
-        if [ -n "$LAST_ID" ]; then
-            notify-send -r "$LAST_ID" -t 2000 "Vocal" "Copied to clipboard"
-        else
-            notify-send "Vocal" "Copied to clipboard"
-        fi
+        # 한글 입력 오류 방지를 위해 클립보드 복사 -> 붙여넣기
+        print -rn -- "$RESULT" | xclip -selection clipboard
+        notify_replace "$nid" "Copied to clipboard" -t 2000
     else
-        if [ -n "$LAST_ID" ]; then
-            notify-send -r "$LAST_ID" -h string:bgcolor:#ffcc00 -h string:fgcolor:#004F4F "Vocal" "Error: Transcription failed"
-        else
-            notify-send "Vocal" "Error: Transcription failed"
-        fi
+        reason=""
+        [ -r "$LOG_FILE" ] && reason=$(tail -n 1 "$LOG_FILE")
+        notify_replace "$nid" "Error: transcription failed${reason:+ — $reason}" -h string:bgcolor:#ffcc00 -h string:fgcolor:#004F4F -t 5000
     fi
 
-    rm -f "$AUDIO_FILE"
-    rm -f "$NOTIFY_ID_FILE"
-else
-    # 녹음 시작
-    # -t 0: 알림이 사라지지 않음
-    # -u critical: 긴급 수준 (보통 강조된 색상/노란색 or 빨간색)
-    # -p: 알림 ID 출력 -> 파일에 저장
-    NOTIFY_ID=$(notify-send -p -t 0 -h string:bgcolor:#ffcc00 -h string:fgcolor:#004F4F "Vocal" "Recording started... (Listening)")
-    echo "$NOTIFY_ID" > "$NOTIFY_ID_FILE"
+    rm -f "$wav" "$LOG_FILE"
 
-    rec -q -c 1 -r 16000 "$AUDIO_FILE" &
+    # 전사 중에 새 녹음이 시작됐다면 그 알림 ID는 건드리지 않는다
+    if [ -n "$nid" ] && [ -r "$NOTIFY_FILE" ] && [ "$(<"$NOTIFY_FILE")" = "$nid" ]; then
+        rm -f "$NOTIFY_FILE"
+    fi
+else
+    # --- 녹음 시작 ---
+    if ! command -v parecord >/dev/null; then
+        notify-send "Vocal" "Error: parecord not found"
+        unlock_state
+        exit 1
+    fi
+
+    rm -f "$CANCEL_FILE" "$NOTIFY_FILE"
+    wav=$(mktemp "$STATE_DIR/rec-XXXXXXXX.wav")
+
+    # 9>&-: 녹음기가 잠금 fd를 물려받으면 잠금이 영원히 풀리지 않는다
+    "${RECORDER[@]}" "$wav" 9>&- 2>"$STATE_DIR/recorder.log" &
+    print -r -- "$!" > "$PID_FILE"
+    print -r -- "$wav" > "$WAV_FILE"
+
+    # 즉시 죽는 경우(오디오 서버 없음 등)를 녹음 시작으로 오인하지 않는다
+    sleep 0.15
+    if ! recorder_pid >/dev/null; then
+        reason=""
+        [ -s "$STATE_DIR/recorder.log" ] && reason=$(tail -n 1 "$STATE_DIR/recorder.log")
+        rm -f "$PID_FILE" "$WAV_FILE" "$wav"
+        notify-send "Vocal" "Error: recorder failed to start${reason:+ — $reason}"
+        unlock_state
+        exit 1
+    fi
+
+    # -p: 알림 ID 출력 -> 파일에 저장해 이후 알림을 덮어쓴다
+    # -t 0: 사라지지 않음
+    nid=$(notify-send -p -t 0 -h string:bgcolor:#ffcc00 -h string:fgcolor:#004F4F "Vocal" "Recording started... (Listening)")
+    [ -n "$nid" ] && print -r -- "$nid" > "$NOTIFY_FILE"
+
+    unlock_state
 fi
