@@ -25,6 +25,7 @@ import time
 
 PROMPT = "Notifications"
 DISPLAY_LIMIT = 110
+BACK_ROW = "← back"
 FIELD_SEP = "\x1f"
 ROW_SEP = "\0"
 
@@ -130,6 +131,9 @@ def main():
     if retv == "0":
         dismiss_displayed()
     elif retv == "1":
+        if raw == BACK_ROW:
+            print(ROW_SEP + "switch-mode" + FIELD_SEP + "menu")
+            return
         fields = raw.split(FIELD_SEP)
         if len(fields) > 3:
             copy(fields[3] or fields[2])
@@ -144,6 +148,10 @@ def main():
     out = rows()
     if not out:
         out = ["No notifications" + ROW_SEP + "nonselectable" + FIELD_SEP + "true"]
+    if os.environ.get("ROFI_MENU"):
+        # Entered from rofi-menu: offer a way back. Last row, so the newest
+        # notification stays selected when the list opens.
+        out.append(BACK_ROW)
     print("\n".join(out))
 
 

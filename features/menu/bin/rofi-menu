@@ -1,0 +1,44 @@
+#!/bin/bash
+# Single rofi entry point: a menu whose rows switch rofi into another mode.
+#
+#   rofi-menu                          # what $mod+n runs
+#   rofi -show menu -modi "menu:rofi-menu,window,notif:rofi-notif"
+#
+# Rows switch the running rofi instance in place (rofi's \0switch-mode), so no
+# second rofi is started. Text that matches no row searches Google instead.
+# Shift+Left (kb-mode-previous) goes back one mode, which is the only way back
+# out of the builtin window mode because it cannot carry a row of its own.
+set -uo pipefail
+
+ME="$(readlink -f "$0")"
+NOTIF="$HOME/.local/bin/rofi-notif"
+
+open_google() {
+    local query="$1" url
+    [ -n "$query" ] || return 0
+    url="https://www.google.com/search?q=$(python3 -c \
+        'import sys, urllib.parse; print(urllib.parse.quote_plus(sys.argv[1]))' "$query")"
+    setsid xdg-open "$url" >/dev/null 2>&1 &
+}
+
+if [ -n "${ROFI_RETV:-}" ]; then
+    case "$ROFI_RETV" in
+        0)
+            printf '\0prompt\x1frofi\n'
+            printf '\0message\x1fEnter: switch mode / no match: search Google\n'
+            printf 'windows\nnotifications\n'
+            ;;
+        1)
+            case "${1:-}" in
+                windows) printf '\0switch-mode\x1fwindow\n' ;;
+                notifications) printf '\0switch-mode\x1fnotif\n' ;;
+                *) open_google "${1:-}" ;;
+            esac
+            ;;
+    esac
+    exit 0
+fi
+
+# Launched from a keybind: own the rofi instance. ROFI_MENU reaches the mode
+# scripts through rofi's environment and lets rofi-notif show a back row.
+ROFI_MENU=1 exec rofi -show menu -modi "menu:$ME,window,notif:$NOTIF"
