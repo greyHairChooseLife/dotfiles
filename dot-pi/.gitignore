@@ -13,7 +13,10 @@
 
 # 사용자가 작성한 확장과 스킬은 추적한다
 !/agent/extensions/
+!/agent/extensions/**
 !/agent/skills/
+!/agent/skills/**
 
 # 확장이 만드는 런타임 산출물은 제외
 /agent/extensions/pi-permission-system/logs/
+/agent/extensions/pi-permission-system/logs/**
